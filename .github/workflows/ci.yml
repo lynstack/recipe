@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   check:
-    name: Check
+    name: Check the repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -24,4 +24,7 @@ jobs:
         with:
           cache: true
           require-lockfile: true
-      - run: pnpm check
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm --filter docs check

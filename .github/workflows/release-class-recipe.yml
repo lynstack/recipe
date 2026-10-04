@@ -1,4 +1,4 @@
-name: Release
+name: Release @lynstack/class-recipe
 
 on:
   release:
@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   publish:
+    if: startsWith(github.event.release.tag_name, 'class-recipe@')
     runs-on: ubuntu-latest
     environment: npm
     permissions:
@@ -31,11 +32,18 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          version="$(node -p 'require("./package.json").version')"
-          if [ "$TAG" != "v$version" ]; then
-            echo "::error::The tag $TAG does not match the version v$version."
+          version="$(node -p 'require("./packages/class-recipe/package.json").version')"
+          if [ "$TAG" != "class-recipe@$version" ]; then
+            echo "::error::The tag $TAG does not match the version class-recipe@$version."
             exit 1
           fi
-      - run: pnpm check
+      # The package depends on the built @lynstack/recipe.
+      - run: pnpm --filter @lynstack/recipe build
+      - run: pnpm --filter @lynstack/class-recipe check
       - run: npm --version
-      - run: npm publish
+      # pnpm pack turns workspace:* dependencies into their exact versions,
+      # which npm publish would leave as they are.
+      - name: Pack the package
+        working-directory: packages/class-recipe
+        run: pnpm pack --pack-destination "$RUNNER_TEMP/package"
+      - run: npm publish "$RUNNER_TEMP"/package/*.tgz

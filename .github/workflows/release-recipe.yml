@@ -1,0 +1,47 @@
+name: Release @lynstack/recipe
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: startsWith(github.event.release.tag_name, 'recipe@')
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Trusted publishing needs npm 11.5.1 or newer, which Node.js 24 ships.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: package.json
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          require-lockfile: true
+      - name: Check that the release tag matches the package version
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version="$(node -p 'require("./packages/recipe/package.json").version')"
+          if [ "$TAG" != "recipe@$version" ]; then
+            echo "::error::The tag $TAG does not match the version recipe@$version."
+            exit 1
+          fi
+      - run: pnpm --filter @lynstack/recipe check
+      - run: npm --version
+      # pnpm pack turns workspace:* dependencies into their exact versions,
+      # which npm publish would leave as they are.
+      - name: Pack the package
+        working-directory: packages/recipe
+        run: pnpm pack --pack-destination "$RUNNER_TEMP/package"
+      - run: npm publish "$RUNNER_TEMP"/package/*.tgz
