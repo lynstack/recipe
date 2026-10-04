@@ -1,0 +1,22 @@
+{
+  "name": "docs",
+  "private": true,
+  "description": "The documentation site of the @lynstack/recipe packages.",
+  "license": "MIT",
+  "author": "Tim Phan",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro sync && tsc -p tsconfig.json",
+    "lint": "oxlint",
+    "format:check": "prettier --check . --ignore-path ../.gitignore --ignore-path ../.prettierignore",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm build"
+  },
+  "devDependencies": {
+    "@astrojs/starlight": "0.42.5",
+    "astro": "7.3.5",
+    "starlight-sidebar-topics": "0.9.0"
+  }
+}

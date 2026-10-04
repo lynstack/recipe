@@ -1,0 +1,47 @@
+---
+title: class-recipe
+description: Fast, type-safe class name recipes with variants, compound variants, and slots, plus a clsx-compatible cx.
+---
+
+import { speedup } from "../../../measurements/class-recipe.ts";
+
+Fast, type-safe class name recipes for any CSS approach, with variants,
+compound variants, slots, and a pluggable join function such as
+`tailwind-merge`. It also includes `cx`, a drop-in replacement for `clsx`.
+
+```ts
+import { cva } from "@lynstack/class-recipe";
+
+const button = cva({
+  base: "inline-flex items-center rounded-md font-medium",
+  variants: {
+    tone: {
+      neutral: "bg-gray-100 text-gray-900",
+      danger: "bg-red-600 text-white",
+    },
+    size: {
+      sm: "h-8 px-3 text-sm",
+      md: "h-10 px-4",
+    },
+  },
+  defaultVariants: { size: "md" },
+});
+
+button({ tone: "danger" });
+// => "inline-flex items-center rounded-md font-medium bg-red-600 text-white h-10 px-4"
+```
+
+- **Fast.** A recipe compiles its config once and caches the class name of
+  each selection, so most calls are a lookup. It runs about {speedup} times as
+  many calls per second as `class-variance-authority` (see
+  [Performance](/recipe/class-recipe/performance/)).
+- **Type-safe.** Variant names, options, and slots are inferred from the
+  config. An unknown option or slot is a type error, and a variant without
+  a default is required, so a component cannot forget to choose it.
+- **Pluggable.** Bring your own join function, such as `twMerge`, to
+  resolve conflicting classes. It runs once per selection, not on every
+  call.
+- **Small.** ES modules only and tree-shakable. Its one dependency is
+  [`@lynstack/recipe`](/recipe/recipe/), which it is built on.
+  [Bundlephobia](https://bundlephobia.com/package/@lynstack/class-recipe)
+  shows its size.

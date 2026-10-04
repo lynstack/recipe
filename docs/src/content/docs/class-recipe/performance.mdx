@@ -1,0 +1,101 @@
+---
+title: Performance
+description: How class-recipe stays fast, and how fast it is compared with other libraries.
+---
+
+import BarTable from "../../../components/BarTable.astro";
+import Measurement from "../../../components/Measurement.astro";
+import {
+  cacheGroups,
+  cxFastest,
+  cxLibraries,
+  cxRows,
+  cxSpread,
+  libraries,
+  measurements,
+  recipeGroups,
+  slotRecipeGroups,
+} from "../../../measurements/class-recipe.ts";
+import { formatMillions } from "../../../measurements/format.ts";
+
+<Measurement environment={measurements} libraries={libraries} />
+
+Performance is the first goal of this library, and it is measured on every
+change to it.
+
+A recipe compiles its config once, when it is created: each variant numbers
+its options, so a selection of variants becomes one integer. Calling the
+recipe reads each variant's option, looks up its number, and returns the
+class name cached under that integer. The first call for a selection, or a
+call with an undeclared option, builds the class name by concatenating
+precomputed strings.
+
+The cache belongs to the recipe, so create each recipe once, at the top
+level of a module, not inside a component. It grows with the selections
+the recipe is called with, up to one entry per combination of declared
+options.
+
+## Compared with other libraries
+
+Each benchmark runs against the built package. Each iteration calls the
+same recipe, written for each library, with six different selections, which
+cover default variants, compound variants, boolean variants, and class
+overrides. Every library returns the same classes. Higher is better.
+
+<BarTable title="Recipe" groups={recipeGroups} />
+
+<BarTable title="Slot recipe" groups={slotRecipeGroups} />
+
+Without `tailwind-merge`, tailwind-variants runs from its `lite` entry
+point. With it, class-variance-authority calls `twMerge` on every result,
+as its documentation recommends. class-variance-authority has no slots.
+
+Across every input, `cx`, `clsx`, and `classnames` stay within {cxSpread}%
+of each other, and {cxFastest === undefined ? "no library" : cxFastest} is
+fastest on every input. Calls per second, in millions:
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Input</th>
+      {cxLibraries.map((name) => (
+        <th scope="col" class="number">
+          {name} <code>{measurements.versions[name]}</code>
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {cxRows.map(({ name, speeds }) => (
+      <tr>
+        <td>{name}</td>
+        {speeds.map((hz) => (
+          <td class="number">{formatMillions(hz)}</td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+## With and without the cache
+
+<BarTable title="Cache" groups={cacheGroups} />
+
+## Method
+
+- The benchmarks first check that each call returns the expected classes,
+  and that every library compared returns the same ones.
+- They import the package by its name, so they run the built bundle, not
+  the sources. The test runner reads module exports through getters, so
+  each benchmark holds the function under test in a local binding to keep
+  that cost out of the measurement.
+- Each benchmark adds up the length of the class names it gets, so the
+  measurement adds no work of its own, such as hashing strings.
+- The benchmarks assert that a recipe and a slot recipe are faster with
+  their cache than without it.
+
+Run them with `pnpm bench`, which builds the package first, or with
+`pnpm measure`, which also saves the results shown here. The comparisons
+with other libraries are in the `*.compare.bench.ts` files. The benchmarks
+are not part of CI, because shared runners are too noisy for timing
+assertions.

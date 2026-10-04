@@ -1,0 +1,74 @@
+---
+import { Code } from "@astrojs/starlight/components";
+import Default from "@astrojs/starlight/components/Hero.astro";
+
+const example = `import { cva } from "@lynstack/class-recipe";
+
+const button = cva({
+  base: "rounded-md",
+  variants: {
+    tone: {
+      neutral: "bg-gray-100 text-gray-900",
+      danger: "bg-red-600 text-white",
+    },
+    size: { sm: "h-8 px-3", md: "h-10 px-4" },
+  },
+  defaultVariants: { size: "md" },
+});
+
+button({ tone: "danger" });
+// => "rounded-md bg-red-600 text-white h-10 px-4"`;
+---
+
+<div class="hero-shell">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <Default />
+  <div class="hero-example not-content">
+    <Code code={example} lang="ts" title="button.ts" />
+  </div>
+</div>
+
+<style>
+  .hero-shell {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-block-end: 1rem;
+  }
+
+  .hero-glow {
+    position: absolute;
+    inset: -6rem -50vw auto;
+    z-index: -1;
+    height: 34rem;
+    background:
+      radial-gradient(
+        40rem 20rem at 70% 40%,
+        color-mix(in srgb, var(--sl-color-accent) 22%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        30rem 16rem at 20% 20%,
+        color-mix(in srgb, var(--sl-color-accent-high) 10%, transparent),
+        transparent 70%
+      );
+    pointer-events: none;
+  }
+
+  .hero-shell :global(.hero) {
+    grid-template-columns: 100%;
+  }
+
+  .hero-example {
+    min-width: 0;
+    filter: drop-shadow(0 1.5rem 3rem rgb(0 0 0 / 0.25));
+  }
+
+  @media (min-width: 72rem) {
+    .hero-shell {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+      gap: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+title: Migrating from class-variance-authority
+description: Move recipes from class-variance-authority to class-recipe.
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+The concepts are the same, so most recipes move over with a few
+mechanical changes:
+
+| class-variance-authority              | class-recipe                                            |
+| ------------------------------------- | ------------------------------------------------------- |
+| `cva(base, config)`                   | `cva({ base, ...config })`                              |
+| Arrays of classes                     | One string of classes for `base` and for each option    |
+| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }` |
+| `class` or `className` prop           | `className` prop                                        |
+| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`                             |
+| `twMerge(button(props))`              | `createRecipes({ join: twMerge })`, once                |
+| `cx` (`clsx`)                         | `cx`                                                    |
+
+<Tabs>
+  <TabItem label="Before">
+
+```ts
+// class-variance-authority
+const button = cva("rounded-md font-medium", {
+  variants: {
+    intent: { primary: "bg-blue-600 text-white", secondary: "bg-gray-100" },
+    size: { sm: "h-8 px-3", md: "h-10 px-4" },
+  },
+  compoundVariants: [{ intent: "primary", size: "md", class: "shadow-sm" }],
+  defaultVariants: { intent: "primary", size: "md" },
+});
+```
+
+  </TabItem>
+  <TabItem label="After">
+
+```ts
+// class-recipe
+const button = cva({
+  base: "rounded-md font-medium",
+  variants: {
+    intent: { primary: "bg-blue-600 text-white", secondary: "bg-gray-100" },
+    size: { sm: "h-8 px-3", md: "h-10 px-4" },
+  },
+  compoundVariants: [
+    { variants: { intent: "primary", size: "md" }, className: "shadow-sm" },
+  ],
+  defaultVariants: { intent: "primary", size: "md" },
+});
+```
+
+  </TabItem>
+</Tabs>
+
+Two behaviors change:
+
+- **A variant without a default becomes required.** Every call that omits
+  it is a type error. Add a default to keep it optional.
+- **A boolean variant without a default uses its `false` option.**
+  class-variance-authority adds no classes for it when the prop is
+  omitted.

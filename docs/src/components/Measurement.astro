@@ -1,0 +1,26 @@
+---
+import type { Environment, Library } from "../measurements/format.ts";
+import { formatDate, machineOf } from "../measurements/format.ts";
+
+interface Props {
+  readonly environment: Environment;
+  readonly libraries: readonly Library[];
+}
+
+const { environment, libraries } = Astro.props;
+---
+
+<aside class="measurement" aria-label="Measurement">
+  <p>Measured on</p>
+  <p class="measurement-date">
+    <time datetime={environment.date}>{formatDate(environment.date)}</time>
+  </p>
+  <p>On {machineOf(environment)}, against:</p>
+  <ul class="measurement-versions">
+    {libraries.map(({ name, version }) => (
+      <li>
+        {name} <code>{version}</code>
+      </li>
+    ))}
+  </ul>
+</aside>

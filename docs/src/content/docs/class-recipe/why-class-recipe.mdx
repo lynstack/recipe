@@ -1,0 +1,25 @@
+---
+title: Why class-recipe
+description: How class-recipe compares with class-variance-authority and tailwind-variants.
+---
+
+import {
+  measurements,
+  recipeSpeedOf,
+} from "../../../measurements/class-recipe.ts";
+import { formatRoughHz } from "../../../measurements/format.ts";
+
+class-recipe solves the same problem as
+[class-variance-authority](https://cva.style) and
+[tailwind-variants](https://www.tailwind-variants.org): turning component
+props into class names. It differs from them in these ways:
+
+|                           | class-recipe <code>{measurements.versions["class-recipe"]}</code> | class-variance-authority <code>{measurements.versions["class-variance-authority"]}</code> | tailwind-variants <code>{measurements.versions["tailwind-variants"]}</code>, lite |
+| ------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Slots                     | Yes                                                               | No                                                                                        | Yes                                                                               |
+| Variant without a default | Required by its type                                              | Optional                                                                                  | Optional                                                                          |
+| Conflict resolution       | Any join function, cached                                         | Call `twMerge` on the result                                                              | `tailwind-merge`, built in                                                        |
+| Recipe calls per second   | {formatRoughHz(recipeSpeedOf("class-recipe"))}                    | {formatRoughHz(recipeSpeedOf("class-variance-authority"))}                                | {formatRoughHz(recipeSpeedOf("tailwind-variants"))}                               |
+
+The calls per second come from the
+[benchmarks](/recipe/class-recipe/performance/#compared-with-other-libraries).

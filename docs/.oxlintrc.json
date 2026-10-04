@@ -1,0 +1,22 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../.oxlintrc.json"],
+  "rules": {
+    // Components import the modules that format the measurements, which
+    // sit next to them in src.
+    "import/no-relative-parent-imports": "off"
+  },
+  "overrides": [
+    {
+      // Astro components are named in PascalCase, as Starlight names the
+      // components they override.
+      "files": ["**/*.astro"],
+      "rules": { "unicorn/filename-case": "off" }
+    },
+    {
+      // Astro loads the collections from a named export.
+      "files": ["src/content.config.ts"],
+      "rules": { "import/prefer-default-export": "off" }
+    }
+  ]
+}

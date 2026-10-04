@@ -1,0 +1,30 @@
+---
+title: Performance
+description: How fast a recipe is with and without its cache.
+---
+
+import BarTable from "../../../components/BarTable.astro";
+import Measurement from "../../../components/Measurement.astro";
+import {
+  cacheGroups,
+  libraries,
+  measurements,
+} from "../../../measurements/recipe.ts";
+
+<Measurement environment={measurements} libraries={libraries} />
+
+A recipe numbers the options of each variant when it is created, so a
+selection of variants becomes one integer, under which the recipe caches
+its result (see [Cache](/recipe/recipe/recipes/#cache)).
+
+The benchmark calls a recipe of style objects with five selections in each
+iteration, which cover default variants, compound variants, and boolean
+variants. It first checks that the recipe returns the expected values,
+then compares a recipe of a kind with the cache and one without it. Higher
+is better.
+
+<BarTable title="Cache" groups={cacheGroups} />
+
+The benchmark asserts that the recipe is faster with the cache than
+without it. Run it with `pnpm bench`, which builds the package first, or
+with `pnpm measure`, which also saves the results shown here.

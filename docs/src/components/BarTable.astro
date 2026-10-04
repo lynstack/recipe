@@ -1,0 +1,80 @@
+---
+import { formatHz, percentOf } from "../measurements/format.ts";
+import type { BarGroup } from "../measurements/bars.ts";
+
+interface Props {
+  readonly title: string;
+  readonly groups: readonly BarGroup[];
+}
+
+const { title, groups } = Astro.props;
+const fastest = Math.max(
+  ...groups.flatMap((group) => group.rows.map((row) => row.hz)),
+);
+---
+
+<div
+  class="bars-wrap"
+  tabindex="0"
+  role="region"
+  aria-label={`${title} benchmark`}
+>
+  <table class="bars">
+    <caption class="sr-only">{`${title} benchmark`}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{title}</th>
+        <th scope="col" class="number">
+          Iterations/s
+        </th>
+        <th scope="col" class="bar-cell">
+          <span class="sr-only">Relative to the fastest</span>
+        </th>
+      </tr>
+    </thead>
+    {groups.map((group) => (
+      <tbody>
+        {group.heading !== undefined && (
+          <tr>
+            <th class="group-head" scope="rowgroup" colspan="3">
+              {group.heading}
+            </th>
+          </tr>
+        )}
+        {group.rows.map((row) => {
+          const percent = percentOf(row.hz, fastest);
+          return (
+            <tr>
+              <td>
+                {row.emphasis === "strong" ? (
+                  <strong>{row.label}</strong>
+                ) : (
+                  row.label
+                )}
+                {row.version !== undefined && (
+                  <>
+                    {" "}
+                    <code>{row.version}</code>
+                  </>
+                )}
+              </td>
+              <td class="number">{formatHz(row.hz)}</td>
+              <td class="bar-cell">
+                <div
+                  class:list={[
+                    "bar",
+                    { "bar-muted": row.emphasis !== "strong" },
+                  ]}
+                  role="img"
+                  aria-label={`${Math.round(percent)}% of the fastest`}
+                >
+                  <span style={`width: ${percent.toFixed(1)}%`} />
+                </div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    ))}
+  </table>
+</div>

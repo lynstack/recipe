@@ -1,0 +1,54 @@
+---
+title: recipe
+description: Fast, type-safe recipes that map a component's variants to its styles.
+template: splash
+hero:
+  title: Variants in, <span class="hero-accent">styles out</span>.
+  tagline: Fast, type-safe recipes that map a component's variants to its class names, or to values of any type.
+  actions:
+    - text: Get started
+      link: /recipe/class-recipe/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/lynstack/recipe
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+import { speedup } from "../../measurements/class-recipe.ts";
+
+<CardGrid>
+  <Card title="Fast" icon="rocket">
+    A recipe compiles its config once and caches each selection, so most calls
+    are a lookup: about {speedup} times as many calls per second as
+    class-variance-authority.
+  </Card>
+  <Card title="Type-safe" icon="approve-check">
+    Variants, options, and slots are inferred from the config. An unknown option
+    is a type error, and a variant without a default is required.
+  </Card>
+  <Card title="Pluggable" icon="puzzle">
+    Bring your own join function, such as `twMerge`. It runs once per selection,
+    not on every call.
+  </Card>
+  <Card title="Any value" icon="setting">
+    Recipes are not tied to class names: define a kind of recipe for style
+    objects, or any value you can combine.
+  </Card>
+</CardGrid>
+
+## Packages
+
+<CardGrid>
+  <LinkCard
+    title="@lynstack/class-recipe"
+    description="Class name recipes with variants, compound variants, and slots, plus cx, a drop-in replacement for clsx."
+    href="/recipe/class-recipe/"
+  />
+  <LinkCard
+    title="@lynstack/recipe"
+    description="Recipes for values of any type: define how a kind of recipe combines values, then create recipes of that kind."
+    href="/recipe/recipe/"
+  />
+</CardGrid>

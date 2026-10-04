@@ -1,0 +1,10 @@
+{
+  "cpu": "Apple M1 Pro",
+  "date": "2026-10-04",
+  "node": "24.21.0",
+  "cache": [
+    { "hz": 3031030.4392593605, "name": "cached" },
+    { "hz": 360928.0724685965, "name": "uncached" }
+  ],
+  "versions": { "recipe": "1.0.0" }
+}

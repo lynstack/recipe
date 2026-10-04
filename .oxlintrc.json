@@ -118,8 +118,7 @@
       }
     }
   ],
-  // The docs site is plain browser JavaScript, outside the TypeScript project.
-  "ignorePatterns": ["dist", "docs"],
+  "ignorePatterns": ["dist", ".astro"],
   "env": {
     "builtin": true
   }
