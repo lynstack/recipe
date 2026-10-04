@@ -41,9 +41,21 @@ jobs:
       - run: pnpm --filter @lynstack/recipe build
       - run: pnpm --filter @lynstack/class-recipe check
       - run: npm --version
+      # A release of a version already on npm, such as a rerun, publishes
+      # nothing.
+      - name: Check whether the version is already on npm
+        id: npm
+        run: |
+          version="$(node -p 'require("./packages/class-recipe/package.json").version')"
+          if [ "$(npm view "@lynstack/class-recipe@$version" version)" = "$version" ]; then
+            echo "::notice::@lynstack/class-recipe@$version is already on npm."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          fi
       # pnpm pack turns workspace:* dependencies into their exact versions,
       # which npm publish would leave as they are.
       - name: Pack the package
+        if: steps.npm.outputs.published != 'true'
         working-directory: packages/class-recipe
         run: pnpm pack --pack-destination "$RUNNER_TEMP/package"
-      - run: npm publish "$RUNNER_TEMP"/package/*.tgz
+      - if: steps.npm.outputs.published != 'true'
+        run: npm publish "$RUNNER_TEMP"/package/*.tgz

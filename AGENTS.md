@@ -124,7 +124,9 @@ tag names the package and its version: `recipe@1.0.0` for
 package's release workflow checks that the tag matches the version in its
 `package.json`, runs its `check`, packs it with `pnpm pack`, which writes
 the exact version of `@lynstack/recipe` into `@lynstack/class-recipe`, and
-publishes it to npm. Release `@lynstack/recipe` first when
+publishes it to npm, unless that version is already there, so that a
+release of a version published by hand, or a rerun, publishes nothing.
+Release `@lynstack/recipe` first when
 `@lynstack/class-recipe` needs a new version of it.
 
 ## Rules
