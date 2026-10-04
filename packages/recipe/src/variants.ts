@@ -1,49 +1,55 @@
-/** Variant definitions in the loose shape the runtime works with. */
-type LooseVariants<Classes> = Readonly<
-  Record<string, Readonly<Record<string, Classes>>>
+/**
+ * Variant definitions in the loose shape the runtime works with: for each
+ * variant name, the value of each of its options.
+ */
+type LooseVariants<Value> = Readonly<
+  Record<string, Readonly<Record<string, Value>>>
 >;
 
 /** A selection in the loose shape the runtime works with. */
 type SelectedVariants = Readonly<Record<string, unknown>>;
 
 /** A compound variant in the loose shape the runtime works with. */
-interface LooseCompoundVariant<Classes> {
+interface LooseCompoundVariant<Value> {
   readonly variants: SelectedVariants;
-  readonly classes: Classes;
+  readonly value: Value;
 }
 
 /** The variant's index and the option indexes that a condition matches. */
 type CompoundCondition = readonly [number, readonly number[]];
 
 /** A compound variant prepared for matching. */
-interface Compound<Classes> {
+interface Compound<Value> {
   readonly conditions: readonly CompoundCondition[];
-  readonly classes: Classes;
+  readonly value: Value;
 }
 
 /** What {@link compileVariants} prepares. */
-interface VariantsConfig<Classes> {
-  readonly variants: LooseVariants<Classes>;
+interface VariantsConfig<Value> {
+  readonly variants: LooseVariants<Value>;
   readonly defaultVariants: SelectedVariants;
-  readonly compoundVariants: readonly LooseCompoundVariant<Classes>[];
-  /** The classes of an option that declares none. */
-  readonly noClasses: Classes;
+  readonly compoundVariants: readonly LooseCompoundVariant<Value>[];
+  /**
+   * The value of a variant without a selected option, and of a boolean
+   * option that the variant does not declare.
+   */
+  readonly noValue: Value;
 }
 
 /**
- * Variants prepared for selecting classes. Each variant numbers its options
+ * Variants prepared for selecting values. Each variant numbers its options
  * from 1, and 0 stands for no option, so a selection is a list of option
  * indexes. Read together as the digits of a mixed-radix number, they form
  * the selection's key.
  */
-interface CompiledVariants<Classes> {
+interface CompiledVariants<Value> {
   readonly names: readonly string[];
   readonly defaultOptions: readonly (string | undefined)[];
   readonly indexByOption: readonly ReadonlyMap<string, number>[];
-  /** The classes of each variant's options, by option index. */
-  readonly classesByIndex: readonly (readonly Classes[])[];
+  /** The value of each variant's options, by option index. */
+  readonly valuesByIndex: readonly (readonly Value[])[];
   readonly strides: readonly number[];
-  readonly compounds: readonly Compound<Classes>[];
+  readonly compounds: readonly Compound<Value>[];
   /** Whether every selection's key is a safe integer. */
   readonly isCacheable: boolean;
 }
@@ -57,32 +63,32 @@ const undeclared = -1;
 const noProps: SelectedVariants = Object.freeze({});
 
 /**
- * Prepares variants for selecting classes. A variant that declares an option
- * named `"true"` or `"false"` also declares the other one, without classes,
- * and a variant whose only options are those defaults to `"false"`. A
- * compound variant that names an undeclared variant or option, or lists no
- * option for a variant, never matches and is left out.
+ * Prepares variants for selecting values. A variant that declares an option
+ * named `"true"` or `"false"` also declares the other one, with
+ * `config.noValue`, and a variant whose only options are those defaults to
+ * `"false"`. A compound variant that names an undeclared variant or option,
+ * or lists no option for a variant, never matches and is left out.
  */
-function compileVariants<Classes>(
-  config: VariantsConfig<Classes>,
-): CompiledVariants<Classes> {
+function compileVariants<Value>(
+  config: VariantsConfig<Value>,
+): CompiledVariants<Value> {
   const names = Object.keys(config.variants);
-  const options = names.map((name) =>
-    withBooleanOptions(config.variants[name] ?? {}, config.noClasses),
+  const optionValues = names.map((name) =>
+    withBooleanOptions(config.variants[name] ?? {}, config.noValue),
   );
-  const indexByOption: readonly ReadonlyMap<string, number>[] = options.map(
-    (classesByOption) =>
-      new Map(
-        Object.keys(classesByOption).map((option, index) => [
-          option,
-          index + 1,
-        ]),
-      ),
-  );
+  const indexByOption: readonly ReadonlyMap<string, number>[] =
+    optionValues.map(
+      (valuesByOption) =>
+        new Map(
+          Object.keys(valuesByOption).map((option, index) => [
+            option,
+            index + 1,
+          ]),
+        ),
+    );
   const radixes = indexByOption.map((indexes) => indexes.size + 1);
 
   return {
-    classesByIndex: classesByIndexOf(options, config.noClasses),
     compounds: compileCompounds(config.compoundVariants, names, indexByOption),
     defaultOptions: names.map(
       (name, index) =>
@@ -93,6 +99,7 @@ function compileVariants<Classes>(
     isCacheable: product(radixes) <= Number.MAX_SAFE_INTEGER,
     names,
     strides: radixes.map((_radix, index) => product(radixes.slice(0, index))),
+    valuesByIndex: valuesByIndexOf(optionValues, config.noValue),
   };
 }
 
@@ -118,42 +125,6 @@ function select(
   return key;
 }
 
-/** Whether every condition of `compound` matches the selected indexes. */
-function matches(compound: Compound<unknown>, indexes: Int32Array): boolean {
-  for (const [variant, matchingIndexes] of compound.conditions) {
-    if (!matchingIndexes.includes(indexes[variant] ?? noOption)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Returns the classes that apply to a selection, in order of precedence:
- * the base classes, the classes of each variant's option, then the classes
- * of each matching compound variant.
- */
-function collectClasses<Classes>(
-  compiled: CompiledVariants<Classes>,
-  base: Classes,
-  indexes: Int32Array,
-): Classes[] {
-  const collected = [base];
-  const { classesByIndex } = compiled;
-  for (let variant = 0; variant < classesByIndex.length; variant += 1) {
-    const classes = classesByIndex[variant]?.[indexes[variant] ?? noOption];
-    if (classes !== undefined) {
-      collected.push(classes);
-    }
-  }
-  for (const compound of compiled.compounds) {
-    if (matches(compound, indexes)) {
-      collected.push(compound.classes);
-    }
-  }
-  return collected;
-}
-
 function selectIndex(
   compiled: CompiledVariants<unknown>,
   selected: SelectedVariants,
@@ -167,45 +138,45 @@ function selectIndex(
     : compiled.indexByOption[variant]?.get(option);
 }
 
-function classesByIndexOf<Classes>(
-  options: readonly Readonly<Record<string, Classes>>[],
-  noClasses: Classes,
-): Classes[][] {
-  const classesByIndex: Classes[][] = [];
-  for (const classesByOption of options) {
-    classesByIndex.push([noClasses, ...Object.values(classesByOption)]);
+function valuesByIndexOf<Value>(
+  optionValues: readonly Readonly<Record<string, Value>>[],
+  noValue: Value,
+): Value[][] {
+  const valuesByIndex: Value[][] = [];
+  for (const valuesByOption of optionValues) {
+    valuesByIndex.push([noValue, ...Object.values(valuesByOption)]);
   }
-  return classesByIndex;
+  return valuesByIndex;
 }
 
 function product(numbers: readonly number[]): number {
   return numbers.reduce((result, number) => result * number, 1);
 }
 
-function withBooleanOptions<Classes>(
-  classesByOption: Readonly<Record<string, Classes>>,
-  noClasses: Classes,
-): Readonly<Record<string, Classes>> {
-  const optionNames = Object.keys(classesByOption);
+function withBooleanOptions<Value>(
+  valuesByOption: Readonly<Record<string, Value>>,
+  noValue: Value,
+): Readonly<Record<string, Value>> {
+  const optionNames = Object.keys(valuesByOption);
   if (!optionNames.some((option) => isBooleanName(option))) {
-    return classesByOption;
+    return valuesByOption;
   }
-  return { false: noClasses, true: noClasses, ...classesByOption };
+  return { false: noValue, true: noValue, ...valuesByOption };
 }
 
-function compileCompounds<Classes>(
-  compoundVariants: readonly LooseCompoundVariant<Classes>[],
+function compileCompounds<Value>(
+  compoundVariants: readonly LooseCompoundVariant<Value>[],
   names: readonly string[],
   indexByOption: readonly ReadonlyMap<string, number>[],
-): Compound<Classes>[] {
-  return compoundVariants.flatMap(({ variants, classes }) => {
+): Compound<Value>[] {
+  return compoundVariants.flatMap(({ variants, value }) => {
     const conditions = Object.keys(variants)
       .filter((name) => variants[name] !== undefined)
       .map((name) =>
         compileCondition(indexByOption, names.indexOf(name), variants[name]),
       );
     return conditions.every(([, indexes]) => indexes.length > 0)
-      ? [{ classes, conditions }]
+      ? [{ conditions, value }]
       : [];
   });
 }
@@ -270,9 +241,7 @@ function isBooleanName(option: string): boolean {
 }
 
 export {
-  collectClasses,
   compileVariants,
-  matches,
   noOption,
   noProps,
   select,

@@ -1,5 +1,6 @@
-import { createRecipe, cva, makeCreateRecipe } from "./recipe.js";
 import { describe, expect, expectTypeOf, it } from "vitest";
+
+import { createRecipe, cva, makeCreateRecipe } from "./recipe.js";
 import type { ClassJoin } from "./join.js";
 import type { VariantsOf } from "./types.js";
 

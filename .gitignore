@@ -11,4 +11,4 @@ coverage/
 *.tgz
 *.log
 *.tsbuildinfo
-fixtures/consumer/out/
+**/fixtures/consumer/out/

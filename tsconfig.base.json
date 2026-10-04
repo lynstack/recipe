@@ -19,6 +19,5 @@
     "skipLibCheck": true,
 
     "noEmit": true
-  },
-  "include": ["src", "*.config.ts"]
+  }
 }

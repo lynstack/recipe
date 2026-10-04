@@ -1,0 +1,47 @@
+{
+  "name": "@lynstack/recipe",
+  "version": "1.0.0",
+  "description": "Fast, type-safe recipes for values of any type: define how a kind of recipe combines values, such as class names or styles, then create recipes of that kind.",
+  "keywords": [
+    "recipe",
+    "styles",
+    "variants"
+  ],
+  "homepage": "https://lynstack.github.io/recipe/recipe/",
+  "bugs": "https://github.com/lynstack/recipe/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynstack/recipe.git",
+    "directory": "packages/recipe"
+  },
+  "license": "MIT",
+  "author": "Tim Phan",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit",
+    "lint": "oxlint",
+    "format:check": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:consumer": "tsc -p fixtures/consumer/tsconfig.json",
+    "bench": "pnpm build && vitest bench --run",
+    "check": "pnpm build && pnpm typecheck && pnpm test:consumer && pnpm lint && pnpm format:check && pnpm test",
+    "prepack": "pnpm build"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,6 +1,7 @@
+import { describe, expect, it } from "vitest";
+
 import { createRecipe, cva } from "./recipe.js";
 import { createSlotRecipe, sva } from "./slot-recipe.js";
-import { describe, expect, it } from "vitest";
 import type { ClassJoin } from "./join.js";
 import { createRecipes } from "./create-recipes.js";
 import { cx } from "./cx.js";

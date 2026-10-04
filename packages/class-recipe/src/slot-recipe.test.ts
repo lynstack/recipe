@@ -1,5 +1,6 @@
-import { createSlotRecipe, makeCreateSlotRecipe, sva } from "./slot-recipe.js";
 import { describe, expect, expectTypeOf, it } from "vitest";
+
+import { createSlotRecipe, makeCreateSlotRecipe, sva } from "./slot-recipe.js";
 import type { ClassJoin } from "./join.js";
 import type { VariantsOf } from "./types.js";
 

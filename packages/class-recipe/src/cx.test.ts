@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import type { ClassArray } from "./cx.js";
 import { cx } from "./cx.js";
 

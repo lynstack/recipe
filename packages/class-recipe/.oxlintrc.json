@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "overrides": [
+    {
+      // Guarding each key halves the speed of objects and drops inherited
+      // keys, which clsx keeps.
+      "files": ["src/cx.ts"],
+      "rules": { "eslint/guard-for-in": "off" }
+    }
+  ],
+  "rules": {
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestContext"] },
+          // TypeScript has no readonly typed arrays, and ReadonlyMap is
+          // read-only although it has methods.
+          { "from": "lib", "name": ["Int32Array", "ReadonlyMap"] },
+          // A slot recipe extends the classes of each slot in place while it
+          // reduces a selection, so that building it allocates one array;
+          // returning a new array for each value is measurably slower.
+          {
+            "from": "file",
+            "name": ["SlotAccumulator"],
+            "path": "src/compile-slot-recipe.ts"
+          }
+        ]
+      }
+    ]
+  }
+}

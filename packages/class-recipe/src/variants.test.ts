@@ -1,5 +1,6 @@
-import { createRecipe, makeCreateRecipe } from "./recipe.js";
 import { describe, expect, expectTypeOf, it } from "vitest";
+
+import { createRecipe, makeCreateRecipe } from "./recipe.js";
 import type { ClassJoin } from "./join.js";
 
 describe("variants", () => {

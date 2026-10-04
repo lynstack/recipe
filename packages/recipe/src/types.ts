@@ -37,7 +37,7 @@ type VariantOption<Options> =
   | BooleanOption<OptionName<Options>>;
 
 /**
- * The variants a recipe accepts. A variant with a default may be omitted,
+ * The variants a selection names. A variant with a default may be omitted,
  * and so may a boolean variant, whose only options are `"true"` and
  * `"false"`; any other variant is required.
  *
@@ -62,7 +62,7 @@ type VariantSelection<
 >;
 
 /**
- * The option each defaulted variant uses when a recipe is called without it.
+ * The option each defaulted variant uses when a selection leaves it out.
  *
  * @typeParam Variants - The variant definitions, keyed by variant name.
  * @typeParam DefaultedName - The names of the variants that have a default.
@@ -86,11 +86,11 @@ type CompoundCondition<Variants> = {
 };
 
 /**
- * A recipe function, whose argument is optional when every property of
- * `Props` is.
+ * A function that takes the properties of a selection, whose argument is
+ * optional when every property of `Props` is.
  *
- * @typeParam Props - The properties the recipe accepts.
- * @typeParam Result - What the recipe returns.
+ * @typeParam Props - The properties the function accepts.
+ * @typeParam Result - What the function returns.
  */
 type RecipeFunction<Props, Result> =
   Partial<Props> extends Props
@@ -104,32 +104,11 @@ type KeyName<Key> = Key extends string
     : never;
 
 /**
- * The name of each variant in a recipe's props, as a string.
+ * The name of each variant in a selection, as a string.
  *
- * @typeParam Props - The properties the recipe accepts.
+ * @typeParam Selection - The variants a selector accepts.
  */
-type VariantKey<Props> = KeyName<
-  Exclude<keyof Props, "className" | "classNames">
->;
-
-/**
- * The variants a recipe accepts, without its `className` or `classNames`
- * property. Use it to type the props of a component built on a recipe.
- *
- * @typeParam Recipe - The type of a recipe made by `createRecipe` or
- *   `createSlotRecipe`.
- *
- * @example
- * ```ts
- * const button = createRecipe({ variants: { size: { sm: "h-8", md: "h-10" } } });
- *
- * type ButtonVariants = VariantsOf<typeof button>;
- * // => { readonly size: "sm" | "md" }
- * ```
- */
-type VariantsOf<Recipe extends (props: never) => unknown> = Simplify<
-  Omit<NonNullable<Parameters<Recipe>[0]>, "className" | "classNames">
->;
+type VariantKey<Selection> = KeyName<keyof Selection>;
 
 export type {
   CompoundCondition,
@@ -139,5 +118,4 @@ export type {
   VariantOption,
   VariantKey,
   VariantSelection,
-  VariantsOf,
 };

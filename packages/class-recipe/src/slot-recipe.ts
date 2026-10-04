@@ -1,3 +1,5 @@
+import type { KindVariants } from "@lynstack/recipe";
+
 import type {
   CompoundCondition,
   DefaultVariants,
@@ -11,7 +13,6 @@ import type {
   LooseSlotRecipeConfig,
 } from "./compile-slot-recipe.js";
 import type { BuildOptions } from "./build-options.js";
-import type { LooseVariants } from "./variants.js";
 import { buildSlotRecipe } from "./compile-slot-recipe.js";
 import { defaultBuildOptions } from "./build-options.js";
 
@@ -36,7 +37,7 @@ type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
  * The variants of a {@link SlotRecipeConfig}: for each variant name, the
  * classes of each slot for each of its options.
  */
-type SlotRecipeVariants = LooseVariants<SlotClasses<string>>;
+type SlotRecipeVariants = KindVariants<SlotClasses<string>>;
 
 type NoUnknownSlots<Variants, Slot extends string> = {
   readonly [Name in keyof Variants]: {
@@ -201,7 +202,7 @@ function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
  *
  * Classes are added, never removed, so without a join function that merges
  * them, set each CSS property of an element in one place; see
- * {@link https://github.com/lynstack/class-recipe#writing-conflict-free-recipes | Writing conflict-free recipes}.
+ * {@link https://lynstack.github.io/recipe/class-recipe/conflict-free-recipes/ | Writing conflict-free recipes}.
  *
  * @example
  * ```ts

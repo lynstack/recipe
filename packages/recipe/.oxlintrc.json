@@ -1,0 +1,5 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  // The shared rules of the repository; this package adds none.
+  "extends": ["../../.oxlintrc.json"]
+}

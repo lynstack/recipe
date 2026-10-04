@@ -175,15 +175,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 5.0.3
         version: 5.0.3(vitest@5.0.3)
-      class-variance-authority:
-        specifier: 0.7.1
-        version: 0.7.1
-      classnames:
-        specifier: 2.5.1
-        version: 2.5.1
-      clsx:
-        specifier: 2.1.1
-        version: 2.1.1
       marked:
         specifier: 18.0.14
         version: 18.0.14
@@ -205,12 +196,6 @@ importers:
       rolldown:
         specifier: 1.2.12
         version: 1.2.12
-      tailwind-merge:
-        specifier: 3.7.0
-        version: 3.7.0
-      tailwind-variants:
-        specifier: 3.3.1
-        version: 3.3.1(tailwind-merge@3.7.0)
       tsdown:
         specifier: 0.23.0
         version: 0.23.0(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@7.0.2)
@@ -220,6 +205,30 @@ importers:
       vitest:
         specifier: 5.0.3
         version: 5.0.3(@types/node@24.19.1)(@vitest/coverage-v8@5.0.3)(vite@8.3.1(@types/node@24.19.1))
+
+  packages/class-recipe:
+    dependencies:
+      '@lynstack/recipe':
+        specifier: workspace:*
+        version: link:../recipe
+    devDependencies:
+      class-variance-authority:
+        specifier: 0.7.1
+        version: 0.7.1
+      classnames:
+        specifier: 2.5.1
+        version: 2.5.1
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
+      tailwind-merge:
+        specifier: 3.7.0
+        version: 3.7.0
+      tailwind-variants:
+        specifier: 3.3.1
+        version: 3.3.1(tailwind-merge@3.7.0)
+
+  packages/recipe: {}
 
 packages:
 

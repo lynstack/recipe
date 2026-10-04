@@ -1,6 +1,7 @@
+import { describe, expect, it } from "vitest";
+
 import { createRecipe, makeCreateRecipe } from "./recipe.js";
 import { createSlotRecipe, makeCreateSlotRecipe } from "./slot-recipe.js";
-import { describe, expect, it } from "vitest";
 import type { ClassJoin } from "./join.js";
 import type { RecipeVariants } from "./recipe.js";
 import { createRecipes } from "./create-recipes.js";

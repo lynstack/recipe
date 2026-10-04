@@ -42,6 +42,10 @@
     ],
     "eslint/no-use-before-define": ["error", { "functions": false }],
     "eslint/one-var": ["error", "never"],
+    // Imports are grouped, with a blank line between groups: packages
+    // first, then the modules of this package. Each group is sorted on its
+    // own.
+    "eslint/sort-imports": ["error", { "allowSeparatedGroups": true }],
     "typescript/no-confusing-void-expression": [
       "error",
       { "ignoreArrowShorthand": true }
@@ -86,20 +90,20 @@
   "overrides": [
     {
       // The tools load their configuration from a default export.
-      "files": ["*.config.ts"],
+      "files": ["**/*.config.ts"],
       "rules": { "import/no-default-export": "off" }
     },
     {
-      "files": ["src/**/*.test.ts", "src/**/*.bench.ts"],
+      "files": ["**/*.test.ts", "**/*.bench.ts"],
       "rules": {
         // vitest/require-top-level-describe puts a whole file in one
         // function, which no size limit for functions can allow.
         "eslint/max-lines-per-function": "off",
         "eslint/max-statements": "off",
-        // The order of variants and options decides the order of classes,
-        // which the tests assert.
+        // The order of variants and options decides the order of the
+        // values, which the tests assert.
         "eslint/sort-keys": "off",
-        // Numbers and null are inputs that cx must handle.
+        // Numbers and null are inputs that the packages must handle.
         "eslint/no-magic-numbers": "off",
         "unicorn/no-null": "off"
       }
@@ -112,12 +116,6 @@
         "import/no-nodejs-modules": "off",
         "vitest/require-hook": "off"
       }
-    },
-    {
-      // Guarding each key halves the speed of objects and drops inherited
-      // keys, which clsx keeps.
-      "files": ["src/cx.ts"],
-      "rules": { "eslint/guard-for-in": "off" }
     }
   ],
   // The docs site is plain browser JavaScript, outside the TypeScript project.

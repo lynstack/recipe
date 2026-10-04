@@ -1,3 +1,5 @@
+import type { KindVariants } from "@lynstack/recipe";
+
 import type {
   CompoundCondition,
   DefaultVariants,
@@ -8,15 +10,14 @@ import type {
 } from "./types.js";
 import type { LooseRecipe, LooseRecipeConfig } from "./compile-recipe.js";
 import type { BuildOptions } from "./build-options.js";
-import type { LooseVariants } from "./variants.js";
-import { buildRecipe } from "./compile-recipe.js";
+import { createRecipeBuilder } from "./compile-recipe.js";
 import { defaultBuildOptions } from "./build-options.js";
 
 /**
  * The variants of a {@link RecipeConfig}: for each variant name, the classes
  * of each of its options.
  */
-type RecipeVariants = LooseVariants<string>;
+type RecipeVariants = KindVariants<string>;
 
 /**
  * Classes added when several variants have particular options at the same
@@ -117,6 +118,8 @@ type CreateRecipe = <
  * `options.join` and cache them unless `options.cache` is false.
  */
 function makeCreateRecipe(options: BuildOptions): CreateRecipe {
+  const buildRecipe = createRecipeBuilder(options);
+
   function createRecipe<
     const Variants extends RecipeVariants,
     const DefaultedName extends keyof Variants = never,
@@ -125,7 +128,7 @@ function makeCreateRecipe(options: BuildOptions): CreateRecipe {
   ): Recipe<RecipeProps<Variants, DefaultedName>>;
 
   function createRecipe(config: LooseRecipeConfig): LooseRecipe {
-    return buildRecipe(config, options);
+    return buildRecipe(config);
   }
 
   return createRecipe;
@@ -150,7 +153,7 @@ function makeCreateRecipe(options: BuildOptions): CreateRecipe {
  *
  * Classes are added, never removed, so without a join function that merges
  * them, set each CSS property of an element in one place; see
- * {@link https://github.com/lynstack/class-recipe#writing-conflict-free-recipes | Writing conflict-free recipes}.
+ * {@link https://lynstack.github.io/recipe/class-recipe/conflict-free-recipes/ | Writing conflict-free recipes}.
  *
  * @example
  * ```ts
