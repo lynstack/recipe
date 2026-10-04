@@ -1,6 +1,6 @@
 ---
 title: Resolving conflicts with tailwind-merge
-description: Resolve conflicting classes with a join function such as twMerge.
+description: "Resolve conflicting Tailwind classes with a join function such as twMerge, which class-recipe runs once per selection, or turn off the cache."
 ---
 
 To resolve conflicting classes, such as `px-4` and `px-2`, rather than

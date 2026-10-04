@@ -1,6 +1,6 @@
 ---
 title: Building a library on it
-description: Define kinds once and handle overrides around the recipe.
+description: "Build a styling library on @lynstack/recipe: define its kinds once, accept configs whose variant names are not known in advance, and handle overrides."
 ---
 
 A library defines its kinds once and handles what its recipes add, such as

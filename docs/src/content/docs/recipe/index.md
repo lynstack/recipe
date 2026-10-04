@@ -1,6 +1,6 @@
 ---
 title: recipe
-description: Fast, type-safe recipes for values of any type.
+description: "Fast, type-safe recipes for values of any type: define how a kind of recipe combines values, such as class names or style objects, then create recipes of that kind."
 ---
 
 Fast, type-safe recipes for values of any type. Define a kind of recipe by

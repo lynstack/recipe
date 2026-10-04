@@ -1,6 +1,6 @@
 ---
 title: cva
-description: Create a recipe that returns the class name of one element.
+description: "Create a recipe with cva that maps variants, compound variants, and default variants to the class name of one element, with types inferred from its config."
 ---
 
 `cva` creates a recipe, which returns the class name of one element for a

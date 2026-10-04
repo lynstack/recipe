@@ -1,6 +1,8 @@
 ---
-title: TypeScript
-description: Types that recipes infer, and the types the package exports.
+title: recipe with TypeScript
+description: "How recipes infer their selection from a config, which variants are required, and the types that @lynstack/recipe exports to name them."
+sidebar:
+  label: TypeScript
 ---
 
 A recipe infers its selection from its config: an unknown option is a type

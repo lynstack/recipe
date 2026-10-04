@@ -1,6 +1,6 @@
 ---
 title: Practices
-description: Write recipe kinds and recipes that stay fast and correct.
+description: "Write recipe kinds and recipes that stay fast and correct: type the values, freeze shared results, create recipes once, and apply overrides around them."
 ---
 
 - **Annotate the `value` parameter of `reduce`, or the `base` parameter of

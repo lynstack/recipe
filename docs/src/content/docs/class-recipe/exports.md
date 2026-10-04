@@ -1,6 +1,8 @@
 ---
-title: Exports
-description: Every export of @lynstack/class-recipe.
+title: class-recipe exports
+description: "Every function and type that @lynstack/class-recipe exports: cx, cva, sva, createRecipes, and the types of recipes, slot recipes, and their configs."
+sidebar:
+  label: Exports
 ---
 
 ## Functions

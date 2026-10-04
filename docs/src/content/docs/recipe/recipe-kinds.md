@@ -1,6 +1,6 @@
 ---
 title: Recipe kinds
-description: Define how a kind of recipe combines values.
+description: "Define a kind of recipe with createRecipeKind: how it starts from a base, reduces the values of a selection, finishes the result, and caches it."
 ---
 
 `createRecipeKind` takes the functions that turn the values of a selection

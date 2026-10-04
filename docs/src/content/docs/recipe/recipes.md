@@ -1,6 +1,6 @@
 ---
 title: Recipes
-description: Create recipes of a kind and select their variants.
+description: "Create recipes of a kind, select their variants, list them with variantKeys, and learn how each recipe caches the result of every selection."
 ---
 
 A recipe takes the same config as `cva`, with values of the kind's type

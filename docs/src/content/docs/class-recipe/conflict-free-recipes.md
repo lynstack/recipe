@@ -1,6 +1,6 @@
 ---
 title: Writing conflict-free recipes
-description: Design recipes whose classes never conflict.
+description: "Design class name recipes whose classes never conflict, without tailwind-merge, by setting each CSS property of an element in one place."
 ---
 
 By default, classes are joined with `cx`, which keeps every class. When two

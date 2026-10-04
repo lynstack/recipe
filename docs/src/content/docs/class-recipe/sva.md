@@ -1,6 +1,6 @@
 ---
 title: sva
-description: Create a slot recipe that returns the class names of several elements.
+description: "Create a slot recipe with sva that maps variants to the class names of several elements, such as the root, header, and body of a card."
 ---
 
 `sva` creates a slot recipe, which styles a component made of several

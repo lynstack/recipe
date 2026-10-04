@@ -3,9 +3,11 @@ import starlight from "@astrojs/starlight";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 
 const repository = "https://github.com/lynstack/recipe";
+const site = "https://lynstack.github.io";
+const base = "/recipe";
 
 export default defineConfig({
-  base: "/recipe",
+  base,
   integrations: [
     starlight({
       components: { Hero: "./src/components/Hero.astro" },
@@ -15,6 +17,26 @@ export default defineConfig({
       editLink: { baseUrl: `${repository}/edit/main/docs/` },
       favicon: "/favicon.svg",
       head: [
+        {
+          attrs: { content: `${site}${base}/og.png`, property: "og:image" },
+          tag: "meta",
+        },
+        {
+          attrs: { content: "1200", property: "og:image:width" },
+          tag: "meta",
+        },
+        {
+          attrs: { content: "630", property: "og:image:height" },
+          tag: "meta",
+        },
+        {
+          attrs: {
+            content:
+              "lynstack recipe: variants in, styles out. Fast, type-safe recipes for class names and styles.",
+            property: "og:image:alt",
+          },
+          tag: "meta",
+        },
         {
           attrs: { href: "https://fonts.googleapis.com", rel: "preconnect" },
           tag: "link",
@@ -112,8 +134,8 @@ export default defineConfig({
         ]),
       ],
       social: [{ href: repository, icon: "github", label: "GitHub" }],
-      title: "recipe",
+      title: "lynstack recipe",
     }),
   ],
-  site: "https://lynstack.github.io",
+  site,
 });

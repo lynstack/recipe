@@ -1,6 +1,8 @@
 ---
-title: TypeScript
-description: Type component props from a recipe.
+title: class-recipe with TypeScript
+description: "Type the props of a component from its recipe or slot recipe with VariantsOf, and learn which prop names class-recipe reserves for overrides."
+sidebar:
+  label: TypeScript
 ---
 
 Use `VariantsOf` to type the props of a component from its recipe or slot

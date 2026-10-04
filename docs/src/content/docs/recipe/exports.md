@@ -1,6 +1,8 @@
 ---
-title: Exports
-description: Every export of @lynstack/recipe.
+title: recipe exports
+description: "Every function and type that @lynstack/recipe exports: createRecipeKind and the types of recipe kinds, recipes, configs, and selections."
+sidebar:
+  label: Exports
 ---
 
 | Export                | Description                                                                                 |
