@@ -38,10 +38,13 @@ type LooseSlotRecipe = ((
   readonly variantKeys: readonly string[];
 };
 
-/** The slots of a slot recipe and how it joins their classes. */
+/**
+ * The slots of a slot recipe and how it adds the classes of `classNames` to
+ * the class name of a slot.
+ */
 interface Slots {
   readonly names: readonly string[];
-  readonly joinClasses: JoinClasses;
+  readonly addClasses: (className: string, classes: string) => string;
 }
 
 /**
@@ -52,14 +55,17 @@ function buildSlotRecipe(
   config: LooseSlotRecipeConfig,
   options: BuildOptions,
 ): LooseSlotRecipe {
+  const joinClasses = createJoinClasses(options.join);
+  const concatenates = joinClasses === concatClasses;
   const slots: Slots = {
-    joinClasses: createJoinClasses(options.join),
+    addClasses: concatenates
+      ? appendClasses
+      : (className, classes) => joinClasses([className, classes]),
     names: [...config.slots],
   };
-  const classRecipe =
-    slots.joinClasses === concatClasses
-      ? concatKind(options)
-      : joinKind(slots.joinClasses, options);
+  const classRecipe = concatenates
+    ? concatKind(options)
+    : joinKind(joinClasses, options);
   const classNamesOf = classRecipe(withStringClasses(config, slots.names));
 
   const slotRecipe = (
@@ -158,25 +164,24 @@ function stringClasses(
   return classesBySlot;
 }
 
+/**
+ * Returns `classNames` with the classes of `overrides` added to each slot,
+ * or `classNames` itself when `overrides` adds no classes.
+ */
 function withOverrides(
   slots: Slots,
   classNames: LooseSlotClassNames,
   overrides: LooseSlotClasses,
 ): LooseSlotClassNames {
-  const overridden = slots.names.filter(
-    (slot) => classOfSlot(overrides, slot) !== "",
-  );
-  if (overridden.length === 0) {
-    return classNames;
+  let result: Record<string, string> | undefined = undefined;
+  for (const slot of slots.names) {
+    const classes = classOfSlot(overrides, slot);
+    if (classes !== "") {
+      result ??= { ...classNames };
+      result[slot] = slots.addClasses(classOfSlot(classNames, slot), classes);
+    }
   }
-  const result = { ...classNames };
-  for (const slot of overridden) {
-    result[slot] = slots.joinClasses([
-      classOfSlot(classNames, slot),
-      classOfSlot(overrides, slot),
-    ]);
-  }
-  return result;
+  return result ?? classNames;
 }
 
 function classOfSlot(classes: LooseSlotClasses, slot: string): string {
