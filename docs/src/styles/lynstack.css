@@ -324,6 +324,62 @@ a.site-title-product:hover {
   color: var(--lyn-muted-foreground);
 }
 
+/*
+ * Table of contents: an eyebrow over a hairline rail, the items muted, the
+ * current one ink with a brand mark on the rail.
+ */
+
+.right-sidebar-panel {
+  padding-top: 2rem;
+}
+
+.right-sidebar-panel h2#starlight__on-this-page {
+  margin-bottom: 0.75rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+starlight-toc nav > ul {
+  border-inline-start: 1px solid var(--lyn-border);
+}
+
+starlight-toc ul ul a {
+  padding-inline-start: 1.75rem;
+}
+
+starlight-toc a {
+  position: relative;
+  padding: 0.3125rem 0.5rem 0.3125rem 0.875rem;
+  border-radius: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--lyn-muted-foreground);
+  transition: color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+starlight-toc a:hover {
+  color: var(--lyn-foreground);
+}
+
+starlight-toc a[aria-current="true"] {
+  color: var(--lyn-foreground);
+  font-weight: 500;
+}
+
+starlight-toc a[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.25rem;
+  inset-inline-start: -1px;
+  width: 2px;
+  border-radius: 1px;
+  background-color: var(--lyn-brand);
+}
+
 /* Package meta: the version and the links of a package, under its overview's title. */
 
 .package-meta {
