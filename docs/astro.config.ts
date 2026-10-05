@@ -108,27 +108,31 @@ export default defineConfig({
                 items: [
                   { label: "Overview", link: "/recipe/" },
                   "recipe/installation",
+                  "recipe/quick-start",
                 ],
                 label: "Get started",
               },
               {
                 items: [
+                  "recipe/how-it-works",
                   "recipe/recipe-kinds",
-                  "recipe/recipes",
+                  "recipe/variants",
+                  "recipe/caching",
                   "recipe/slot-recipes",
                 ],
-                label: "API",
+                label: "Concepts",
               },
               {
                 items: [
-                  "recipe/practices",
+                  "recipe/designing-a-kind",
                   "recipe/building-a-library",
+                  "recipe/practices",
                   "recipe/typescript",
                 ],
                 label: "Guides",
               },
               {
-                items: ["recipe/performance", "recipe/exports"],
+                items: ["recipe/api", "recipe/exports", "recipe/performance"],
                 label: "Reference",
               },
             ],

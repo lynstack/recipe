@@ -28,5 +28,7 @@ sidebar:
 | `CompoundCondition`       | The condition of a compound variant: the options it matches for each variant it names.                            |
 | `RecipeFunction`          | A function that takes a selection, whose argument is optional when every variant is.                              |
 
-Every export is documented with TSDoc, so your editor shows the full
-reference.
+See [API](/recipe/recipe/api/) for the parameters of the two functions,
+and [TypeScript](/recipe/recipe/typescript/#types-for-library-authors) for
+how a library uses the types. Every export is documented with TSDoc, so
+your editor shows the full reference.

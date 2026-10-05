@@ -1,16 +1,61 @@
 ---
 title: recipe with TypeScript
-description: "How recipes infer their selection from a config, which variants are required, how to type component props with VariantsOf, and the types that @lynstack/recipe exports."
+description: "How recipes infer their selection and result from a kind and a config, which variants are required, how to type component props with VariantsOf, and the types for library authors."
 sidebar:
   label: TypeScript
 ---
 
-A recipe infers its selection from its config: an unknown option is a type
-error, and a variant without a default is required. The package exports
-the types of a kind, `RecipeKind`, of a recipe's config and of a recipe,
-`KindRecipeConfig` and `KindRecipe`, and the types they are built from,
-such as `VariantSelection` and `CompoundCondition`, for code that builds
-on them.
+A recipe's types come from two places: the kind sets the type of its
+values and its result, and the config sets the variants a selection
+accepts.
+
+## Types from the kind
+
+`createRecipeKind` infers a kind's `Value` from the `value` parameter of
+`reduce` or the `base` parameter of `initial`, and its result from
+`finish`, or from `initial` without it (see
+[Recipe kinds](/recipe/recipe/recipe-kinds/#types)). Every config of the
+kind is checked against `Value`:
+
+```ts
+const text = styleRecipe({
+  variants: {
+    // @ts-expect-error: a style is an object, not a string.
+    size: { sm: "small" },
+  },
+});
+```
+
+## Types from the config
+
+A recipe infers its selection from its config:
+
+- An option that a variant does not declare is a type error.
+- A variant without a default is required; a variant with a default, or a
+  boolean variant, is optional.
+- A boolean variant accepts `true`, `false`, `"true"`, and `"false"`, and
+  an option whose name is a number accepts the number and the string.
+- A compound variant or a default that names an undeclared variant or
+  option is a type error.
+
+```ts
+const button = styleRecipe({
+  variants: {
+    tone: { primary: { color: "white" }, neutral: { color: "black" } },
+    size: { sm: { height: 32 }, lg: { height: 48 } },
+  },
+  defaultVariants: { size: "sm" },
+});
+
+button({ tone: "primary" });
+
+// @ts-expect-error: tone has no default, so it is required.
+button({ size: "lg" });
+```
+
+A config written inline is inferred as it is. Declare a config before the
+call `as const`, so that the options named in its compound and default
+variants stay literal types.
 
 ## Typing component props
 
@@ -18,30 +63,53 @@ on them.
 props of a component built on a recipe:
 
 ```ts
-import { createRecipeKind, type VariantsOf } from "@lynstack/recipe";
+import type { VariantsOf } from "@lynstack/recipe";
 
-type Style = Readonly<Record<string, string | number>>;
-
-const styleRecipe = createRecipeKind({
-  initial: (base?: Style): Style => ({ ...base }),
-  reduce: (style, value: Style): Style => ({ ...style, ...value }),
-  finish: (style): Style => Object.freeze(style),
-});
-
-const box = styleRecipe({
-  variants: { size: { sm: { padding: 4 }, md: { padding: 8 } } },
-  defaultVariants: { size: "md" },
-});
-
-type BoxVariants = VariantsOf<typeof box>;
-// => { readonly size?: "sm" | "md" | undefined }
+type ButtonVariants = VariantsOf<typeof button>;
+// => { readonly tone: "primary" | "neutral";
+//      readonly size?: "sm" | "lg" | undefined }
 ```
 
-A variant with a default, or a boolean variant, is optional; any other
-variant is required. `VariantKey` names the variants of a selection as
-strings, as a recipe's `variantKeys` lists them:
-`VariantKey<BoxVariants>` is `"size"`.
+`VariantKey` names the variants of a selection as strings, as a recipe's
+`variantKeys` lists them: `VariantKey<ButtonVariants>` is
+`"tone" | "size"`.
 
-A library that builds a kind of recipe can define its own `VariantsOf` on
-this one, for example to leave out props that its recipes take besides
-their variants, as `@lynstack/class-recipe` leaves out `className`.
+## Variant names not known in advance
+
+When the variant names of a config are not known at compile time, as in a
+function that passes on a config it received, a recipe accepts any
+selection, compound condition, and default variants:
+
+```ts
+import type { KindVariants } from "@lynstack/recipe";
+
+function createBox(variants: KindVariants<Style>) {
+  return styleRecipe({ variants });
+}
+
+createBox({ size: { sm: { padding: 4 } } })({ size: "sm", other: 1 });
+// => { padding: 4 }
+```
+
+## Types for library authors
+
+A library with its own config shape builds its types on the engine's, as
+[Building a library](/recipe/recipe/building-a-library/#type-the-librarys-config)
+shows:
+
+| Type                | Use it for                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `KindVariants`      | The `variants` of a config, to constrain the variants a function infers.             |
+| `VariantSelection`  | The selection a recipe accepts, from the variants and the names that have a default. |
+| `DefaultVariants`   | The `defaultVariants` of a config.                                                   |
+| `CompoundCondition` | The `variants` of a compound variant.                                                |
+| `VariantOption`     | The values one variant accepts.                                                      |
+| `RecipeFunction`    | A function whose argument is optional when every variant is.                         |
+| `VariantKey`        | The names in `variantKeys`.                                                          |
+| `VariantsOf`        | The variants a recipe accepts, which a library can define its own version of.        |
+
+A library can define its own `VariantsOf` to leave out the props its
+recipes take besides their variants, as `@lynstack/class-recipe` leaves
+out `className`. Slot recipes have their own config types,
+`KindSlotRecipeConfig` and `KindSlotVariants`; see
+[Exports](/recipe/recipe/exports/) for the full list.

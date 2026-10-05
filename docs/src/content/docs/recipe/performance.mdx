@@ -17,7 +17,10 @@ import {
 
 A recipe numbers the options of each variant when it is created, so a
 selection of variants becomes one integer, under which the recipe caches
-its result (see [Cache](/recipe/recipe/recipes/#cache)).
+its result (see [How it works](/recipe/recipe/how-it-works/)). A cached call
+costs one lookup per variant and one for the cache, and allocates nothing;
+an uncached call also costs the work of the kind (see
+[Designing a kind](/recipe/recipe/designing-a-kind/#what-each-design-costs)).
 
 The benchmarks call a recipe of style objects, and a slot recipe of style
 objects with three slots, with five selections in each iteration, which

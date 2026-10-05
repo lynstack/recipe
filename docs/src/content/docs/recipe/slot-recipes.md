@@ -1,27 +1,16 @@
 ---
 title: Slot recipes
-description: "Create slot recipes of a kind with createSlotRecipeKind, which map a selection of variants to the result of each element of a component, such as a card's root and title."
+description: "Create slot recipes with createSlotRecipeKind, which map a selection of variants to the result of each element of a component, such as a card's root and title, with the same kind as a recipe."
 ---
 
 A component often has several elements, its slots, each with its own
-result, such as a button's root and label. `createSlotRecipeKind` takes the
+result, such as a card's root and title. `createSlotRecipeKind` takes the
 same kind as `createRecipeKind` and returns the function that creates slot
 recipes of that kind:
 
 ```ts
-import { createRecipeKind, createSlotRecipeKind } from "@lynstack/recipe";
+import { createSlotRecipeKind } from "@lynstack/recipe";
 
-type Style = Readonly<Record<string, string | number>>;
-
-const styleKind = {
-  initial: (base?: Style): Record<string, string | number> => ({ ...base }),
-  reduce: (style: Record<string, string | number>, value: Style) =>
-    Object.assign(style, value),
-  finish: (style: Record<string, string | number>): Style =>
-    Object.freeze(style),
-};
-
-const styleRecipe = createRecipeKind(styleKind);
 const slotStyleRecipe = createSlotRecipeKind(styleKind);
 
 const card = slotStyleRecipe({
@@ -40,54 +29,74 @@ const card = slotStyleRecipe({
 });
 
 card();
-// => { root: { padding: 16, backgroundColor: "white" }, title: { fontSize: 18 } }
+// => { root: { padding: 16, backgroundColor: "white" },
+//      title: { fontSize: 18 } }
 
 card({ tone: "dark" });
-// => {
-//   root: { padding: 16, backgroundColor: "black" },
-//   title: { fontSize: 18, color: "white", fontWeight: 600 },
-// }
+// => { root: { padding: 16, backgroundColor: "black" },
+//      title: { fontSize: 18, color: "white", fontWeight: 600 } }
 
 card.variantKeys; // => ["tone"]
 ```
 
-A slot recipe takes the config of a [recipe](/recipe/recipe/recipes/), with
-`slots`, the names of its slots, and, for `base`, each option, and each
-compound variant, an object of values keyed by slot name. Variants, default
-variants, boolean variants, compound conditions, and the cache behave as in
-a recipe.
+`styleKind` is the kind of the [Quick start](/recipe/recipe/quick-start/).
+`@lynstack/class-recipe` builds its `sva` on slot recipes of a class name
+kind.
 
-## Each slot
+## The config
 
-Each slot reduces its own values as a recipe of the same kind would:
-`initial` returns its accumulator for its base value, `reduce` adds its
-value of each variant's selected option, then of each matching compound
-variant, and `finish` turns the accumulator into its result. A slot that
-an option or compound variant gives no value is left as it is.
+A slot recipe takes the config of a recipe, with `slots`, and with an
+object of values keyed by slot name wherever a recipe takes one value:
+
+| Property           | Description                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| `slots`            | The names of the slots, in the order of the result.                                 |
+| `base`             | Optional. The base value of each slot.                                              |
+| `variants`         | For each variant name, the values of each slot for each of its options.             |
+| `compoundVariants` | Optional. Values added to some slots when several variants have particular options. |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.              |
+
+An option or compound variant gives values only to the slots it names.
+Variants, default variants, boolean variants, compound conditions, and
+undeclared options behave as in a recipe (see
+[Variants](/recipe/recipe/variants/)).
+
+## How each slot is built
+
+Each slot is built as a recipe of the same kind would build it, from that
+slot's values only:
+
+1. `initial` returns the slot's accumulator for its base value.
+2. `reduce` adds the slot's value of each variant's selected option, in the
+   order of `variants`, then of each matching compound variant, in the
+   order of `compoundVariants`. A value that does not name the slot adds
+   nothing to it.
+3. `finish` turns the accumulator into the slot's result.
 
 A slot without any value gets the result of `initial` for an `undefined`
 base, so every slot is in the result: an empty style here, an empty string
 for class names.
 
-`initial` is called for each slot of each result a slot recipe builds, so
-`reduce` can change the accumulator it returns in place, as `Object.assign`
-does above. Building a result then copies each style once instead of once
-per value.
+`initial` is called for each slot of each result, so `reduce` can change
+the accumulator in place, as `Object.assign` does in `styleKind`.
 
-## Result
+## The result
 
 The result is a frozen object of each slot's result, keyed by slot name in
-the order of `slots`. With the cache, a slot recipe builds it once for each
-declared selection, and calling it again with the same variants returns
-the same object, holding the same result for each slot.
+the order of `slots`. Values of slots that `slots` does not name are
+ignored. With the cache, a slot recipe builds the result once for each
+declared selection, and returns the same object, with the same result for
+each slot, to every call with the same variants (see
+[Caching](/recipe/recipe/caching/)).
 
 ## Types
 
-A slot recipe infers its slot names from `slots`: a value for a slot that
+A slot recipe infers its slot names from `slots`. A value for a slot that
 `slots` does not name is a type error, and the result is typed with the
-slot names. Its values are checked against the kind's values, as in a
-recipe.
+slot names:
 
 ```ts
-card({ tone: "dark" }).title; // Style
+const { title } = card({ tone: "dark" }); // title: Style
 ```
+
+Each value is checked against the kind's `Value`, as in a recipe.
