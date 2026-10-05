@@ -1,6 +1,6 @@
 ---
 title: Migrating from class-variance-authority
-description: "Move recipes from class-variance-authority to class-recipe: the concepts are the same, and only two behaviors change."
+description: "Move recipes from class-variance-authority to class-recipe: the concepts are the same, and only a few behaviors change."
 ---
 
 import { TabItem, Tabs } from "@astrojs/starlight/components";
@@ -54,10 +54,21 @@ const button = cva({
   </TabItem>
 </Tabs>
 
-Two behaviors change:
+Two behaviors change for most recipes:
 
 - **A variant without a default becomes required.** Every call that omits
   it is a type error. Add a default to keep it optional.
 - **A boolean variant without a default uses its `false` option.**
   class-variance-authority adds no classes for it when the prop is
   omitted.
+
+Two more change only compound variants that name an option in an unusual
+way:
+
+- **A compound condition on `undefined` matches any option,** as a
+  variant left out of the condition does. class-variance-authority matches
+  it only when the prop is omitted.
+- **A compound condition matches an option by its name.** A condition on
+  `"true"` matches the prop `true`, and one on `"1"` matches the prop `1`.
+  class-variance-authority compares the condition with the prop as it is,
+  so it matches only the same type.
