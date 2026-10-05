@@ -219,9 +219,29 @@ a.site-title-product:hover {
   color: var(--lyn-muted-foreground);
 }
 
+/* The groups keep no guide line: their items are indented and spaced instead. */
+.sidebar-content .top-level > li + li {
+  margin-top: 1.25rem;
+}
+
+.sidebar-content ul ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+}
+
+.sidebar-content ul ul li {
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
 .sidebar-content a {
   position: relative;
+  padding: 0.375rem 0.625rem 0.375rem 1rem;
   border-radius: var(--lyn-radius-md);
+  line-height: 1.35;
   color: var(--lyn-muted-foreground);
   transition:
     color var(--lyn-motion-duration) var(--lyn-motion-easing),
@@ -238,13 +258,14 @@ a.site-title-product:hover {
 .sidebar-content a[aria-current="page"]:focus {
   background-color: var(--lyn-active);
   color: var(--lyn-foreground);
+  font-weight: 500;
 }
 
 .sidebar-content a[aria-current="page"]::before {
   content: "";
   position: absolute;
-  inset-block: 0.375rem;
-  inset-inline-start: 0;
+  inset-block: 0.5rem;
+  inset-inline-start: 0.4375rem;
   width: 2px;
   border-radius: 1px;
   background-color: var(--lyn-brand);
@@ -285,6 +306,23 @@ a.site-title-product:hover {
 .topic[aria-current="true"] {
   background-color: var(--lyn-active);
   color: var(--lyn-foreground);
+}
+
+/* On the near-white chrome of the light theme, the current package is a raised card. */
+:root[data-theme="light"] .topic {
+  border: 1px solid transparent;
+  color: var(--lyn-foreground);
+}
+
+:root[data-theme="light"] .topic[aria-current="true"] {
+  border-color: var(--lyn-border);
+  background-color: var(--lyn-background);
+  box-shadow: 0 1px 2px rgb(17 17 19 / 0.06);
+}
+
+:root[data-theme="light"] .topic[aria-current="true"] .topic-icon {
+  border-color: color-mix(in oklab, var(--lyn-brand) 35%, transparent);
+  background-color: var(--lyn-brand-subtle);
 }
 
 .topic-icon {
