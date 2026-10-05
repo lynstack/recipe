@@ -48,12 +48,35 @@ small.body; // => "text-gray-600 italic"
 card.variantKeys; // => ["size", "elevated"]
 ```
 
-A slot recipe follows the same rules as a recipe, with an object of
-classes per slot wherever a recipe takes a string, and `classNames`
-instead of `className`.
+## The config
 
-Every slot is present in the result, as `""` when it has no classes. The
-result is frozen, and calling the recipe again with the same variants
-returns the same object, which keeps props stable for memoized
-components. Passing `classNames` with at least one class returns a new
-object.
+A slot recipe takes the config of a [recipe](/recipe/class-recipe/cva/),
+with `slots`, and with an object of classes keyed by slot name wherever a
+recipe takes a string:
+
+| Property           | Description                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `slots`            | The names of the slots, in the order of the result.                                     |
+| `base`             | Optional. The classes each slot always has.                                             |
+| `variants`         | For each variant name, the classes of each slot for each of its options.                |
+| `compoundVariants` | Optional. Classes added to some slots, under `classNames`, when several variants match. |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                  |
+
+An option or compound variant gives classes only to the slots it names.
+Variants, default variants, boolean variants, compound conditions, and
+undeclared options behave as in a recipe. A slot that `slots` does not
+name is a type error, and its classes are ignored.
+
+## The result
+
+Every slot is in the result, as `""` when it has no classes. The result is
+frozen, and calling the recipe again with the same variants returns the
+same object, which keeps props stable for memoized components.
+
+## Overriding classes
+
+Pass `classNames`, an object of classes keyed by slot name, to add classes
+after every class of those slots. Passing it with at least one class
+returns a new object and leaves the cached one unchanged. As with
+`className`, the default join adds the classes rather than substituting
+them (see [How it works](/recipe/class-recipe/how-it-works/#overrides)).

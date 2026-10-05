@@ -5,9 +5,18 @@ description: "Fast, type-safe class name recipes with variants, compound variant
 
 import { speedup } from "../../../measurements/class-recipe.ts";
 
-Fast, type-safe class name recipes for any CSS approach, with variants,
-compound variants, slots, and a pluggable join function such as
-`tailwind-merge`. It also includes `cx`, a drop-in replacement for `clsx`.
+`@lynstack/class-recipe` maps a component's variants to its class names,
+for any CSS approach. It has three functions, and one more to configure
+them:
+
+- [`cva`](/recipe/class-recipe/cva/) creates a recipe for the class name of
+  one element.
+- [`sva`](/recipe/class-recipe/sva/) creates a slot recipe for the class
+  names of several elements, such as a card's root, header, and body.
+- [`cx`](/recipe/class-recipe/cx/) joins class names, as a drop-in
+  replacement for `clsx`.
+- [`createRecipes`](/recipe/class-recipe/create-recipes/) returns them with
+  a join function such as `twMerge`, or with the cache turned off.
 
 ```ts
 import { cva } from "@lynstack/class-recipe";
@@ -31,6 +40,8 @@ button({ tone: "danger" });
 // => "inline-flex items-center rounded-md font-medium bg-red-600 text-white h-10 px-4"
 ```
 
+## What it gives you
+
 - **Fast.** A recipe compiles its config once and caches the class name of
   each selection, so most calls are a lookup. It runs about {speedup} times as
   many calls per second as `class-variance-authority` (see
@@ -42,6 +53,22 @@ button({ tone: "danger" });
   resolve conflicting classes. It runs once per selection, not on every
   call.
 - **Small.** ES modules only and tree-shakable. Its one dependency is
-  [`@lynstack/recipe`](/recipe/recipe/), which it is built on.
+  [`@lynstack/recipe`](/recipe/recipe/), the engine it is built on, and
   [Bundlephobia](https://bundlephobia.com/package/@lynstack/class-recipe)
   shows its size.
+
+## When to use it
+
+Use it to style components with class names: Tailwind CSS, CSS Modules, or
+any stylesheet. To map variants to values other than class names, such as
+style objects, use [`@lynstack/recipe`](/recipe/recipe/), the engine
+class-recipe is built on.
+
+## Next steps
+
+- [Quick start](/recipe/class-recipe/quick-start/) styles a button and a
+  card, and types their props.
+- [How it works](/recipe/class-recipe/how-it-works/) explains the cache,
+  the join, and overrides.
+- [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
+  shows how to design recipes that need no `tailwind-merge`.

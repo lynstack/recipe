@@ -47,8 +47,11 @@ button({ tone: "danger" });
   variants to the class name of one element.
 - [`sva`](https://lynstack.github.io/recipe/class-recipe/sva/) maps
   variants to the class names of several elements.
-- [`createRecipes`](https://lynstack.github.io/recipe/class-recipe/tailwind-merge/)
+- [`createRecipes`](https://lynstack.github.io/recipe/class-recipe/create-recipes/)
   binds them to a join function such as `twMerge`.
+
+See the [Quick start](https://lynstack.github.io/recipe/class-recipe/quick-start/)
+to style a component step by step.
 
 ## Agent skill
 

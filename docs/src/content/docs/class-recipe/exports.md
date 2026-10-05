@@ -47,8 +47,11 @@ sidebar:
 | `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                                               |
 | `RecipeFunction`      | A function that takes a selection, whose argument is optional when every variant is.                                                 |
 
-Every export is documented with TSDoc, so your editor shows the full
-reference, including the types of each config and its props.
+The functions are described in [cx](/recipe/class-recipe/cx/),
+[cva](/recipe/class-recipe/cva/), [sva](/recipe/class-recipe/sva/), and
+[createRecipes](/recipe/class-recipe/create-recipes/). Every export is
+documented with TSDoc, so your editor shows the full reference, including
+the types of each config and its props.
 
 The recipes are recipes of a class name kind, built on
 [`@lynstack/recipe`](/recipe/recipe/). Use

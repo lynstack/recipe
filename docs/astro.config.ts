@@ -101,15 +101,21 @@ export default defineConfig({
                 items: [
                   { label: "Overview", link: "/class-recipe/" },
                   "class-recipe/installation",
+                  "class-recipe/quick-start",
                   "class-recipe/why-class-recipe",
                 ],
                 label: "Get started",
+              },
+              {
+                items: ["class-recipe/how-it-works"],
+                label: "Concepts",
               },
               {
                 items: [
                   "class-recipe/cx",
                   "class-recipe/cva",
                   "class-recipe/sva",
+                  "class-recipe/create-recipes",
                 ],
                 label: "API",
               },
@@ -117,13 +123,14 @@ export default defineConfig({
                 items: [
                   "class-recipe/conflict-free-recipes",
                   "class-recipe/tailwind-merge",
+                  "class-recipe/building-components",
                   "class-recipe/typescript",
                   "class-recipe/migrating-from-cva",
                 ],
                 label: "Guides",
               },
               {
-                items: ["class-recipe/performance", "class-recipe/exports"],
+                items: ["class-recipe/exports", "class-recipe/performance"],
                 label: "Reference",
               },
             ],

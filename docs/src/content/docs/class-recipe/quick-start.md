@@ -1,0 +1,141 @@
+---
+title: Quick start
+description: "Style a button with cva and a card with sva, use them in React components, and type their props with VariantsOf."
+---
+
+This page styles a button and a card with Tailwind CSS classes. The same
+steps apply to any CSS approach. Install the package first (see
+[Installation](/recipe/class-recipe/installation/)).
+
+## 1. Create a recipe
+
+`cva` takes the classes of an element: those it always has, in `base`, and
+those of each option of each variant. Create it once, at the top level of
+a module:
+
+```ts
+import { cva } from "@lynstack/class-recipe";
+
+export const button = cva({
+  base: "inline-flex items-center rounded-md font-medium",
+  variants: {
+    tone: {
+      primary: "bg-blue-600 text-white",
+      neutral: "bg-gray-100 text-gray-900",
+    },
+    size: {
+      sm: "h-8 px-3 text-sm",
+      md: "h-10 px-4",
+    },
+    loading: {
+      true: "cursor-wait opacity-75",
+    },
+  },
+  compoundVariants: [
+    {
+      variants: { tone: "primary", loading: false },
+      className: "hover:bg-blue-700",
+    },
+  ],
+  defaultVariants: { tone: "primary", size: "md" },
+});
+```
+
+## 2. Call it
+
+A recipe takes a selection of variants and returns the class name:
+
+```ts
+button();
+// => "inline-flex items-center rounded-md font-medium bg-blue-600 text-white h-10 px-4 hover:bg-blue-700"
+
+button({ tone: "neutral", size: "sm" });
+// => "inline-flex items-center rounded-md font-medium bg-gray-100 text-gray-900 h-8 px-3 text-sm"
+
+button({ loading: true });
+// => "inline-flex items-center rounded-md font-medium bg-blue-600 text-white h-10 px-4 cursor-wait opacity-75"
+```
+
+- `tone` and `size` have defaults, so a selection may leave them out.
+- `loading` declares only `true`, so it is a boolean variant: optional,
+  and `false` by default.
+- The compound variant adds its classes when `tone` is `primary` and
+  `loading` is `false`, which the first call matches through the
+  defaults.
+
+## 3. Use it in a component
+
+`VariantsOf` types a component's props from its recipe, and the recipe
+takes a `className` that it adds last:
+
+```tsx
+import type { ComponentProps } from "react";
+import type { VariantsOf } from "@lynstack/class-recipe";
+
+type ButtonProps = ComponentProps<"button"> & VariantsOf<typeof button>;
+
+export function Button({
+  tone,
+  size,
+  loading,
+  className,
+  ...props
+}: ButtonProps) {
+  return (
+    <button className={button({ tone, size, loading, className })} {...props} />
+  );
+}
+```
+
+See [Building components](/recipe/class-recipe/building-components/) for
+passing all props at once with `variantKeys`.
+
+## 4. Style several elements with `sva`
+
+A component with several elements, its slots, uses one slot recipe, which
+returns the class name of every slot:
+
+```ts
+import { sva } from "@lynstack/class-recipe";
+
+export const card = sva({
+  slots: ["root", "header", "body"],
+  base: {
+    root: "rounded-lg border",
+    header: "font-semibold",
+    body: "text-gray-600",
+  },
+  variants: {
+    size: {
+      sm: { root: "p-3", header: "text-sm" },
+      md: { root: "p-5", header: "text-base" },
+    },
+  },
+  defaultVariants: { size: "md" },
+});
+
+const classes = card({ size: "sm" });
+classes.root; // => "rounded-lg border p-3"
+classes.header; // => "font-semibold text-sm"
+classes.body; // => "text-gray-600"
+```
+
+See [sva](/recipe/class-recipe/sva/).
+
+## 5. Resolve conflicts, if you need to
+
+With the default join, every class is kept, so a recipe should never set
+one CSS property twice (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)).
+To let classes override each other instead, create the functions with
+`twMerge`, once, in a module of your own:
+
+```ts
+// src/lib/recipe.ts
+import { createRecipes } from "@lynstack/class-recipe";
+import { twMerge } from "tailwind-merge";
+
+export const { cx, cva, sva } = createRecipes({ join: twMerge });
+```
+
+See [Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/).

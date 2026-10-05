@@ -1,11 +1,18 @@
 ---
 title: Resolving conflicts with tailwind-merge
-description: "Resolve conflicting Tailwind classes with a join function such as twMerge, which class-recipe runs once per selection, or turn off the cache."
+description: "Resolve conflicting Tailwind classes with a join function such as twMerge, which class-recipe runs once per selection rather than on every call."
 ---
 
-To resolve conflicting classes, such as `px-4` and `px-2`, rather than
-avoid them, create the functions with a join function of your choice,
-once, in a module of your own:
+With the default join, every class is kept: when two classes set the same
+CSS property, such as `px-4` and `px-2`, the one defined later in the
+stylesheet wins, whatever their order in the class name. You can avoid
+such conflicts by design (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)),
+or resolve them with a join function such as `twMerge`, which keeps the
+last class of each property.
+
+Create the functions with it once, in a module of your own, with
+[`createRecipes`](/recipe/class-recipe/create-recipes/):
 
 ```ts
 // src/lib/recipe.ts
@@ -27,26 +34,14 @@ button({ size: "sm", className: "px-3" }); // => "rounded-md py-1 px-3"
 cx("p-2", isLarge && "p-4"); // => "p-4" when isLarge is true
 ```
 
-A join function receives the class strings in order of precedence, lowest
-first, and returns the final class name: any
-`(...classNames: readonly string[]) => string` works. It always receives at
-least one class string, and never an empty one. A recipe calls it once for
-each declared selection of variants and caches the result, then again for
-each call that passes `className` or `classNames`, or an undeclared option.
-The configured `cx` first joins its inputs like the default `cx`, then
-passes the result to the join function. `createRecipes` also returns
-`createRecipe` and `createSlotRecipe`, the same functions as the `cva` and
-`sva` it returns.
+Now `className`, `classNames`, and compound variants can replace the
+classes they conflict with.
 
-## Turning off the cache
+## What it costs
 
-Recipes cache the class names of each declared selection of variants (see
-[Performance](/recipe/class-recipe/performance/)). Pass `cache: false` to build them on every
-call instead, alone or together with `join`:
-
-```ts
-export const { cx, cva, sva } = createRecipes({ cache: false });
-```
-
-Without the cache, a slot recipe returns a new object on every call, even
-for the same variants.
+`twMerge` is slow next to concatenating strings, but a recipe calls it
+once for each declared selection and caches the result. Only a call that
+passes `className` or `classNames`, or an undeclared option, calls it
+again (see [How it works](/recipe/class-recipe/how-it-works/#the-join-function)).
+The configured `cx` calls it on every call, after joining its inputs like
+the default `cx`.

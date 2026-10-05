@@ -16,3 +16,7 @@ cx("btn", isActive && "btn-active", { "btn-disabled": isDisabled });
 cx(["flex", ["items-center", null]], { hidden: false }, 0, "");
 // => "flex items-center"
 ```
+
+`cx` keeps every class it is given. To resolve conflicting Tailwind
+classes, use the `cx` that [`createRecipes`](/recipe/class-recipe/create-recipes/)
+returns with a join such as `twMerge`.

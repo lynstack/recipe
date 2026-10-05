@@ -32,16 +32,25 @@ badge({ tone: "danger", outlined: true, className: "uppercase" });
 // => "inline-flex rounded-full px-2 text-xs bg-red-100 text-red-800 ring-1 ring-inset ring-current uppercase"
 ```
 
+## The config
+
+| Property           | Description                                                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `base`             | Optional. The classes the element always has.                                                               |
+| `variants`         | For each variant name, the classes of each of its options. `className` and `classNames` are reserved names. |
+| `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.           |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                      |
+
 Classes are added in this order: `base`, then each variant in the order
 the config declares it, then the matching compound variants, then
-`className`.
+`className` (see [How it works](/recipe/class-recipe/how-it-works/)).
 
-## Default and required variants
+## Required and default variants
 
-A variant listed in `defaultVariants` may be omitted, and then uses its
-default. A variant without a default is required, so a component cannot
-forget to choose, for example, its tone. When every variant has a default,
-the argument itself is optional.
+A variant listed in `defaultVariants` may be left out or passed as
+`undefined`, and then uses its default. A variant without a default is
+required, so a component cannot forget to choose, for example, its tone.
+When every variant has a default, the argument itself is optional.
 
 ```ts
 const stack = cva({
@@ -76,6 +85,20 @@ const input = cva({
 input(); // => "rounded-md border border-gray-300"
 input({ invalid: true, disabled: true });
 // => "rounded-md border border-red-600 opacity-50"
+```
+
+## Option names that are numbers
+
+An option whose name is a number accepts that number as well as the
+string:
+
+```ts
+const heading = cva({
+  variants: { level: { 1: "text-3xl", 2: "text-2xl" } },
+});
+
+heading({ level: 1 }); // => "text-3xl"
+heading({ level: "2" }); // => "text-2xl"
 ```
 
 ## Compound variants
@@ -113,61 +136,41 @@ button({ tone: "neutral", size: "sm", outlined: true });
 ```
 
 Conditions are checked after defaults are applied, which is why the first
-call matches `size: "md"` without passing it. Matching compound variants
-are added in the order they are declared. A compound variant that names an
-undeclared variant, or lists no declared option for one, never matches.
+call matches `size: "md"` without passing it, and a condition can match
+the `false` of a boolean variant. Matching compound variants are added in
+the order they are declared. A compound variant that names an undeclared
+variant or option never matches; its config is a type error.
 
 ## Overriding classes
 
-Pass `className` to add classes after every class of the recipe. These
-classes are added, not substituted: one that sets the same CSS property as
-a class of the recipe leaves both in the class name. Design the recipe so
-that it needs no override (see [Writing conflict-free
-recipes](/recipe/class-recipe/conflict-free-recipes/)), or use a join function such as
-`twMerge` (see [Resolving conflicts with
-tailwind-merge](/recipe/class-recipe/tailwind-merge/)) to let these
-classes replace conflicting ones.
+Pass `className` to add classes after every class of the recipe. With the
+default join they are added, not substituted: one that sets the same CSS
+property as a class of the recipe leaves both in the class name. Design
+the recipe so that it needs no override (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)),
+or use a join function such as `twMerge` (see
+[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/))
+to let these classes replace conflicting ones.
 
-## Variant keys
+## Undeclared options and other props
 
-A recipe lists the names of its variants in `variantKeys`, a frozen array
-typed with those names. Use it to split a component's props into the
-recipe's variants and the rest, without writing the names again.
+- The types accept only the options the config declares. A value from
+  untyped data can still bypass them: an option that its variant does not
+  declare adds no classes, and its class name is built on every call
+  instead of being cached.
+- Properties of the selection that are not variants, besides `className`,
+  are ignored, so a component can pass a recipe all of its props.
+- Calling a recipe without a selection, or with `undefined` or `null`, is
+  the same as calling it with an empty one.
 
-```tsx
-import { cva, type VariantsOf } from "@lynstack/class-recipe";
-import type { ComponentProps } from "react";
+## `variantKeys`
 
-const button = cva({
-  base: "inline-flex rounded-md",
-  variants: {
-    tone: { neutral: "bg-gray-100", danger: "bg-red-600 text-white" },
-    size: { sm: "h-8 px-3", md: "h-10 px-4" },
-  },
-  defaultVariants: { size: "md" },
-});
+A recipe lists the names of its variants, in the order of `variants`, in
+`variantKeys`, a frozen array typed with those names:
 
-button.variantKeys; // => ["tone", "size"]
-
-type ButtonProps = ComponentProps<"button"> & VariantsOf<typeof button>;
-
-export function Button({ className, ...props }: ButtonProps) {
-  const buttonProps: Partial<typeof props> = { ...props };
-  for (const key of button.variantKeys) {
-    delete buttonProps[key];
-  }
-  return (
-    <button {...buttonProps} className={button({ ...props, className })} />
-  );
-}
+```ts
+button.variantKeys; // => ["tone", "size", "outlined"]
 ```
 
-The recipe reads only its variants and `className`, so it can take every
-prop of the component. A slot recipe has the same property.
-
-## Undeclared options
-
-The types accept only the options the config declares. A value from
-untyped data can still bypass them; an option the config does not declare
-adds no classes for its variant, and its class name is built on every call
-instead of being cached.
+Use it to split a component's props into the recipe's variants and the
+rest (see [Building components](/recipe/class-recipe/building-components/)).
