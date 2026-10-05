@@ -15,7 +15,6 @@ published on npm and as a
 
 Deprecated: it cannot be installed. Use 1.0.1.
 
-
 The first release of `@lynstack/native-recipe`, which maps a component's
 variants to its React Native styles.
 
