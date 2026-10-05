@@ -7,77 +7,106 @@ interface CodePalette {
   readonly background: string;
   readonly foreground: string;
   readonly mutedForeground: string;
+  /** Keywords and storage, such as `const` and `import`. */
+  readonly keyword: string;
+  /** Strings. */
+  readonly string: string;
+  /** Functions, where they are declared and called. */
+  readonly function: string;
+  /** Types, numbers, and constants such as `true`. */
+  readonly constant: string;
 }
 
+/** The roles of a palette that color tokens. */
+type TokenRole = Exclude<keyof CodePalette, "name" | "type" | "background">;
+
+/** The TextMate scopes that each role colors, later ones winning. */
+const scopesByRole: readonly (readonly [TokenRole, readonly string[]])[] = [
+  [
+    "foreground",
+    [
+      "variable",
+      "meta.object-literal.key",
+      "variable.other.property",
+      "support.type.property-name",
+    ],
+  ],
+  [
+    "mutedForeground",
+    [
+      "comment",
+      "punctuation",
+      "punctuation.definition.comment",
+      "meta.brace",
+      "keyword.operator",
+    ],
+  ],
+  [
+    "keyword",
+    [
+      "keyword",
+      "storage",
+      "storage.type",
+      "storage.modifier",
+      "variable.language",
+    ],
+  ],
+  ["string", ["string", "punctuation.definition.string"]],
+  ["function", ["entity.name.function", "support.function"]],
+  [
+    "constant",
+    [
+      "constant.numeric",
+      "constant.language",
+      "entity.name.type",
+      "support.type",
+      "support.class",
+      "entity.other.inherited-class",
+    ],
+  ],
+];
+
 /**
- * Returns a monochrome code theme, as lyn-ui's CodeBlock styles code:
- * keywords and properties stand out by weight, strings and numbers are
- * `foreground`, and comments and punctuation `muted-foreground`. No hues,
- * so color stays free for status and the code reads the same in both
- * themes.
+ * Returns a code theme in the hues of the lyn-ui chart tokens, never the
+ * brand orange, each at 4.5:1 or better on the code background. Comments
+ * and punctuation are `muted-foreground`, and names `foreground`.
  */
-function monochromeTheme(palette: CodePalette): ExpressiveCodeTheme {
+function codeTheme(palette: CodePalette): ExpressiveCodeTheme {
   return new ExpressiveCodeTheme({
     colors: {
       "editor.background": palette.background,
       "editor.foreground": palette.foreground,
     },
     name: palette.name,
-    tokenColors: [
-      {
-        scope: [
-          "comment",
-          "punctuation",
-          "punctuation.definition.comment",
-          "meta.brace",
-          "keyword.operator",
-        ],
-        settings: { foreground: palette.mutedForeground },
-      },
-      {
-        scope: [
-          "keyword",
-          "storage",
-          "storage.type",
-          "storage.modifier",
-          "constant.language",
-          "variable.language",
-          "meta.object-literal.key",
-          "variable.other.property",
-          "support.type.property-name",
-          "entity.name.tag",
-        ],
-        settings: { fontStyle: "bold", foreground: palette.foreground },
-      },
-      {
-        scope: [
-          "string",
-          "constant.numeric",
-          "variable",
-          "entity.name",
-          "support",
-          "meta",
-        ],
-        settings: { foreground: palette.foreground },
-      },
-    ],
+    tokenColors: scopesByRole.map(([role, scope]) => ({
+      scope: [...scope],
+      settings: { foreground: palette[role] },
+    })),
     type: palette.type,
   });
 }
 
-const lynstackDark = monochromeTheme({
+const lynstackDark = codeTheme({
   background: "#19191c",
+  constant: "#f2b33d",
   foreground: "#ededef",
+  function: "#6f9ff2",
+  keyword: "#ae95f5",
   mutedForeground: "#a1a1aa",
   name: "lynstack-dark",
+  string: "#3fc2af",
   type: "dark",
 });
 
-const lynstackLight = monochromeTheme({
+const lynstackLight = codeTheme({
   background: "#f4f4f5",
+  constant: "#8f5a00",
   foreground: "#18181b",
+  function: "#2c6bd2",
+  keyword: "#7a52d1",
   mutedForeground: "#5f5f68",
   name: "lynstack-light",
+  string: "#0b7466",
   type: "light",
 });
 

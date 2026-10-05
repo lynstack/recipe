@@ -643,11 +643,6 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   }
 }
 
-/* Keywords use the heaviest JetBrains Mono the docs load, never a synthesized bold. */
-.expressive-code pre {
-  font-synthesis-weight: none;
-}
-
 /* Code shows the characters it is written with, never ligatures such as ⇒ for =>. */
 :is(code, kbd, pre, .expressive-code pre) {
   font-variant-ligatures: none;
