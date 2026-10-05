@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "overrides": [
+    {
+      // prefer-readonly-parameter-types allows StyleAccumulator by its name,
+      // which an alias of Record loses, so it is an interface with an index
+      // signature, which consistent-indexed-object-style would make a Record.
+      "files": ["src/compile-style-recipe.ts"],
+      "rules": { "typescript/consistent-indexed-object-style": "off" }
+    }
+  ],
+  "rules": {
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestContext"] },
+          // TypeScript has no readonly typed arrays, and ReadonlyMap is
+          // read-only although it has methods.
+          { "from": "lib", "name": ["Int32Array", "ReadonlyMap"] },
+          // A recipe merges the styles of a selection into one new style in
+          // place, so that building it copies each style once; merging into
+          // a new style for each value is measurably slower.
+          {
+            "from": "file",
+            "name": ["StyleAccumulator"],
+            "path": "src/compile-style-recipe.ts"
+          },
+          // A recipe's config holds React Native styles, whose values, such
+          // as colors and transforms, are types of React Native that are not
+          // read-only.
+          {
+            "from": "file",
+            "name": ["StyleRecipeConfig"],
+            "path": "src/style-recipe.ts"
+          },
+          {
+            "from": "file",
+            "name": ["SlotStyleRecipeConfig"],
+            "path": "src/slot-style-recipe.ts"
+          }
+        ]
+      }
+    ]
+  }
+}

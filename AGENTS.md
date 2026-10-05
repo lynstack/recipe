@@ -1,6 +1,6 @@
 # recipe
 
-This repository holds two small TypeScript libraries, each a public
+This repository holds three small TypeScript libraries, each a public
 package published to npm as an ES module only, and their documentation
 site:
 
@@ -13,6 +13,8 @@ site:
   has no dependencies.
 - `@lynstack/class-recipe`, in `packages/class-recipe`, builds class names
   on that engine.
+- `@lynstack/native-recipe`, in `packages/native-recipe`, builds React
+  Native style objects on that engine.
 
 `@lynstack/class-recipe` exports:
 
@@ -25,6 +27,14 @@ site:
   custom join function, such as `twMerge`, or with the cache turned off.
 
 The docs lead with the short names, `cva` and `sva`.
+
+`@lynstack/native-recipe` exports `createStyleRecipe`, which maps variants
+to the style of one element, and `createSlotStyleRecipe`, which maps
+variants to the styles of several elements (slots), and
+`createThemedRecipes`, which returns both for recipes whose styles are
+built from the tokens of a theme, such as a light and a dark theme. A
+recipe returns the same frozen style for the same variants, so that React
+Native's `style` prop keeps its identity between renders.
 
 ## Layout
 
@@ -59,6 +69,19 @@ The docs lead with the short names, `cva` and `sva`.
   `@lynstack/recipe`;
   `join-classes.ts` joins the classes of a selection; and
   `build-options.ts` holds the join and cache settings of a recipe.
+- In `@lynstack/native-recipe`, `style-recipe.ts`, `slot-style-recipe.ts`,
+  `themed-recipes.ts`, and `types.ts` hold the public API and its types;
+  `types.ts` checks styles against the `ViewStyle`, `TextStyle`, and
+  `ImageStyle` types of React Native and re-exports the shared types of
+  `@lynstack/recipe`. The
+  other modules are internal: `compile-style-recipe.ts` and
+  `compile-slot-style-recipe.ts` build the recipe functions with
+  `createRecipeKind` and `createSlotRecipeKind`, using only the public API
+  of `@lynstack/recipe`, on one kind that merges loose styles in place;
+  and `compile-themed-recipe.ts` keeps the recipe of each theme object in
+  a `WeakMap`, with the recipe of the last theme apart.
+  The package imports only types from React Native, which is its peer
+  dependency and a development dependency for those types.
 - Tests sit next to the code as `*.test.ts`, and benchmarks as
   `*.bench.ts`. A benchmark imports its package by its name, so it runs
   against the built bundle, never against the sources directly. The
@@ -67,10 +90,17 @@ The docs lead with the short names, `cva` and `sva`.
   `class-variance-authority`, `tailwind-variants`), which are development
   dependencies of that package only; the docs report their results.
 - `fixtures/consumer` in each package uses the built package; compiling it
-  checks the published declarations.
+  checks the published declarations. The fixture of
+  `@lynstack/native-recipe` compiles with the settings of
+  `@react-native/typescript-config`, which React Native apps extend,
+  including `skipLibCheck`, since React Native's own declarations do not
+  compile without it.
 - `packages/class-recipe/skills/class-recipe/SKILL.md` is an agent skill
   that ships with `@lynstack/class-recipe`. It teaches agents in consuming
   projects to write recipes whose classes never conflict.
+  `packages/native-recipe/skills/native-recipe/SKILL.md` ships with
+  `@lynstack/native-recipe`. It teaches agents to keep styles stable and
+  to build styles from theme tokens.
 - `scripts` holds Node.js programs for maintainers, written in TypeScript
   that Node.js runs directly. `scripts/measure` runs the benchmarks of
   each package and saves the raw results, never formatted text, in
@@ -102,7 +132,8 @@ typechecks them, lints them, checks their formatting, and builds them. A
 package's `check` builds it
 (which runs publint and Are the Types Wrong), typechecks it, compiles its
 fixture, lints it, checks its formatting, and runs its tests.
-`@lynstack/class-recipe` needs `@lynstack/recipe` built first.
+`@lynstack/class-recipe` and `@lynstack/native-recipe` need
+`@lynstack/recipe` built first.
 
 Run a package's scripts with `pnpm --filter <name> <script>`, such as
 `pnpm --filter @lynstack/recipe test`, or from its folder.
@@ -126,14 +157,15 @@ Run a package's scripts with `pnpm --filter <name> <script>`, such as
 
 Each package is released on its own, by publishing a GitHub release whose
 tag names the package and its version: `recipe@1.0.0` for
-`@lynstack/recipe`, `class-recipe@1.2.0` for `@lynstack/class-recipe`. The
+`@lynstack/recipe`, `class-recipe@1.2.0` for `@lynstack/class-recipe`,
+`native-recipe@1.0.0` for `@lynstack/native-recipe`. The
 package's release workflow checks that the tag matches the version in its
 `package.json`, runs its `check`, packs it with `pnpm pack`, which writes
-the exact version of `@lynstack/recipe` into `@lynstack/class-recipe`, and
+the exact version of `@lynstack/recipe` into the packages built on it, and
 publishes it to npm, unless that version is already there, so that a
 release of a version published by hand, or a rerun, publishes nothing.
-Release `@lynstack/recipe` first when
-`@lynstack/class-recipe` needs a new version of it.
+Release `@lynstack/recipe` first when a
+package built on it needs a new version of it.
 
 ## Rules
 
@@ -149,9 +181,9 @@ package's `src/index.ts`, including types, follows semantic versioning,
 and each package has its own version. Do not rename, remove, or change the
 behavior of an export without a major version. Keep internals out of
 `src/index.ts`; export a type only when users need to name it.
-`@lynstack/class-recipe` uses only the public API of `@lynstack/recipe`;
-when it needs more, extend that API instead of reaching into its
-internals.
+`@lynstack/class-recipe` and `@lynstack/native-recipe` use only the public
+API of `@lynstack/recipe`; when they need more, extend that API instead of
+reaching into its internals.
 
 **Document every public export with TSDoc.** Describe what it does, its
 parameters (`@param`), its type parameters (`@typeParam`), and its return
@@ -159,19 +191,22 @@ value (`@returns`), with an `@example` for each function. Keep the docs
 and the TSDoc in agreement, and check that every example produces the
 output it shows.
 
-**Keep the docs, the READMEs, the TSDoc, and the skill in agreement.** The
+**Keep the docs, the READMEs, the TSDoc, and the skills in agreement.** The
 docs of each package describe the same API as its TSDoc, the docs of
-`@lynstack/class-recipe` and its skill give the same advice, and each
+`@lynstack/class-recipe` and of `@lynstack/native-recipe` give the same
+advice as their skills, and each
 README agrees with the docs it links to. When a change affects what one
 of them says, update the others in the same commit, and check that every
-example in the docs, the READMEs, and the skill produces the output it
+example in the docs, the READMEs, and the skills produces the output it
 shows. Never write a measured number by hand: the docs read every number
 from `docs/src/measurements/<package>.json`, which only `pnpm measure`
 writes.
 
 **Add no other runtime dependencies.** `@lynstack/recipe` ships with
-none, and `@lynstack/class-recipe` depends only on `@lynstack/recipe`,
-through `workspace:*`, which publishing turns into its exact version. A
+none, and `@lynstack/class-recipe` and `@lynstack/native-recipe` depend
+only on `@lynstack/recipe`, through `workspace:*`, which publishing turns
+into its exact version. `@lynstack/native-recipe` also has React Native as
+a peer dependency, for its types only. A
 development dependency is added only when its value clearly outweighs its
 cost.
 
@@ -183,9 +218,10 @@ public type has a type test (`expectTypeOf`, or `@ts-expect-error` for
 input that must be rejected). A test that only exercises the types still
 asserts the runtime outcome.
 
-**Performance comes first.** A recipe and a slot recipe of any kind, and
-a class name recipe and slot recipe, must be faster with the cache than
-without it. The benchmarks assert this; never merge a change that makes them fail. Back
+**Performance comes first.** A recipe and a slot recipe of any kind, a
+class name recipe and slot recipe, and a style recipe and slot style
+recipe must be faster with the cache than without it. The benchmarks
+assert this; never merge a change that makes them fail. Back
 every optimization with a benchmark showing that it matters, and keep the
 hot paths (`cx`, and a cached call of a recipe) free of allocations. A
 difference of a few percent is within the noise of one run; to compare

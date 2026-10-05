@@ -13,8 +13,11 @@ result.
 **[Read the documentation](https://lynstack.github.io/recipe/recipe/)**
 
 [`@lynstack/class-recipe`](https://www.npmjs.com/package/@lynstack/class-recipe)
-is built on it. Use `@lynstack/class-recipe` to style components with class
-names; use this package to create recipes for other values.
+and
+[`@lynstack/native-recipe`](https://www.npmjs.com/package/@lynstack/native-recipe)
+are built on it. Use `@lynstack/class-recipe` to style components with class
+names, `@lynstack/native-recipe` to style React Native components, and this
+package to create recipes for other values.
 
 ## Installation
 

@@ -1,5 +1,6 @@
 import type { PackageIconName } from "./package-icons.ts";
 import classRecipePackage from "../../packages/class-recipe/package.json";
+import nativeRecipePackage from "../../packages/native-recipe/package.json";
 import recipePackage from "../../packages/recipe/package.json";
 import { speedup } from "./measurements/class-recipe.ts";
 
@@ -49,6 +50,15 @@ const landingPackages: readonly LandingPackage[] = [
     label: "Class names",
     name: classRecipePackage.name,
     version: classRecipePackage.version,
+  },
+  {
+    description:
+      "Style recipes and slot style recipes for React Native, built from theme tokens when you need them, which return the same frozen style for the same variants.",
+    href: "/recipe/native-recipe/",
+    icon: "native-recipe",
+    label: "React Native styles",
+    name: nativeRecipePackage.name,
+    version: nativeRecipePackage.version,
   },
   {
     description:

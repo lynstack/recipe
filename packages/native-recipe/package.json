@@ -1,0 +1,61 @@
+{
+  "name": "@lynstack/native-recipe",
+  "version": "1.0.0",
+  "description": "Fast, type-safe React Native style recipes with variants, compound variants, and slots.",
+  "keywords": [
+    "react-native",
+    "recipe",
+    "slots",
+    "styles",
+    "stylesheet",
+    "variants"
+  ],
+  "homepage": "https://lynstack.github.io/recipe/native-recipe/",
+  "bugs": "https://github.com/lynstack/recipe/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynstack/recipe.git",
+    "directory": "packages/native-recipe"
+  },
+  "license": "MIT",
+  "author": "Tim Phan",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "dependencies": {
+    "@lynstack/recipe": "workspace:*"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.80.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit",
+    "lint": "oxlint",
+    "format:check": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:consumer": "tsc -p fixtures/consumer/tsconfig.json",
+    "bench": "pnpm build && vitest bench --run",
+    "check": "pnpm build && pnpm typecheck && pnpm test:consumer && pnpm lint && pnpm format:check && pnpm test",
+    "prepack": "pnpm build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "react-native": "0.87.1"
+  }
+}

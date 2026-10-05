@@ -5,6 +5,12 @@
 const packageIcons = {
   /** `code`: class names go on the elements of markup. */
   "class-recipe": ["M7 8l-4 4l4 4", "M17 8l4 4l-4 4", "M14 4l-4 16"],
+  /** `device-mobile`: the styles go on React Native components. */
+  "native-recipe": [
+    "M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14",
+    "M11 4h2",
+    "M12 17v.01",
+  ],
   /** `braces`: the engine reduces values of any type, such as objects. */
   recipe: [
     "M7 4a2 2 0 0 0 -2 2v3a2 3 0 0 1 -2 3a2 3 0 0 1 2 3v3a2 2 0 0 0 2 2",

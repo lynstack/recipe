@@ -1,7 +1,7 @@
 {
   "name": "lynstack-recipe",
   "private": true,
-  "description": "The @lynstack/recipe and @lynstack/class-recipe packages, and their docs.",
+  "description": "The @lynstack/recipe, @lynstack/class-recipe, and @lynstack/native-recipe packages, and their docs.",
   "license": "MIT",
   "author": "Tim Phan",
   "type": "module",

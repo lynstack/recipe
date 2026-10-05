@@ -9,6 +9,7 @@ import path from "node:path";
 import { writeFileSync } from "node:fs";
 
 import { measureClassRecipe } from "./class-recipe.ts";
+import { measureNativeRecipe } from "./native-recipe.ts";
 import { measureRecipe } from "./recipe.ts";
 
 /** Measures the package in a folder, given that folder's path. */
@@ -26,6 +27,7 @@ const FIRST_ARGUMENT = 2;
 const measures: ReadonlyMap<string, Measure> = new Map<string, Measure>([
   ["recipe", measureRecipe],
   ["class-recipe", measureClassRecipe],
+  ["native-recipe", measureNativeRecipe],
 ]);
 
 const packages = fileURLToPath(new URL("../../packages/", import.meta.url));

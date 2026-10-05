@@ -138,6 +138,46 @@ export default defineConfig({
             link: "/class-recipe/",
           },
           {
+            icon: "native-recipe",
+            id: "native-recipe",
+            items: [
+              {
+                items: [
+                  { label: "Overview", link: "/native-recipe/" },
+                  "native-recipe/installation",
+                  "native-recipe/quick-start",
+                ],
+                label: "Get started",
+              },
+              {
+                items: ["native-recipe/how-it-works"],
+                label: "Concepts",
+              },
+              {
+                items: [
+                  "native-recipe/create-style-recipe",
+                  "native-recipe/create-slot-style-recipe",
+                  "native-recipe/create-themed-recipes",
+                ],
+                label: "API",
+              },
+              {
+                items: [
+                  "native-recipe/themes",
+                  "native-recipe/building-components",
+                  "native-recipe/typescript",
+                ],
+                label: "Guides",
+              },
+              {
+                items: ["native-recipe/exports", "native-recipe/performance"],
+                label: "Reference",
+              },
+            ],
+            label: "native-recipe",
+            link: "/native-recipe/",
+          },
+          {
             icon: "recipe",
             id: "recipe",
             items: [

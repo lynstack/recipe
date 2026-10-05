@@ -1,0 +1,37 @@
+---
+title: Installing native-recipe
+description: "Install @lynstack/native-recipe with your package manager. It needs React Native for its types and ships as an ES module only."
+sidebar:
+  label: Installation
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+<Tabs syncKey="package-manager">
+  <TabItem label="npm">
+
+```sh
+npm install @lynstack/native-recipe
+```
+
+  </TabItem>
+  <TabItem label="pnpm">
+
+```sh
+pnpm add @lynstack/native-recipe
+```
+
+  </TabItem>
+  <TabItem label="yarn">
+
+```sh
+yarn add @lynstack/native-recipe
+```
+
+  </TabItem>
+</Tabs>
+
+The package ships as an ES module only. Its one dependency is
+[`@lynstack/recipe`](/recipe/recipe/), and React Native, version 0.80 or
+later, is a peer dependency: the package checks styles against its types,
+and imports nothing from it at runtime.

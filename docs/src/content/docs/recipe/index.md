@@ -6,7 +6,8 @@ description: "A typed engine for values driven by variants: define a kind once b
 `@lynstack/recipe` is an engine for values driven by variants. It maps a
 component's variants to a result of any type: class names, style objects,
 or anything else that can be built from parts.
-[`@lynstack/class-recipe`](/recipe/class-recipe/) is built on it.
+[`@lynstack/class-recipe`](/recipe/class-recipe/) and
+[`@lynstack/native-recipe`](/recipe/native-recipe/) are built on it.
 
 ## The engine and the kind
 
@@ -77,8 +78,11 @@ text.variantKeys; // => ["size", "muted"]
 - To style components with class names, use
   [`@lynstack/class-recipe`](/recipe/class-recipe/), which is this engine
   with a class name kind, plus `cx` and joins such as `twMerge`.
-- To create recipes for other values, such as the style objects of React
-  Native or the tokens of a design system, use this package.
+- To style React Native components, use
+  [`@lynstack/native-recipe`](/recipe/native-recipe/), which is this
+  engine with a kind for React Native styles.
+- To create recipes for other values, such as the tokens of a design
+  system, use this package.
 - To build a styling library, define its kinds with this package and keep
   its own API around them; see
   [Building a library](/recipe/recipe/building-a-library/).
