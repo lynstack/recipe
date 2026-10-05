@@ -17,6 +17,9 @@ compound variants, slots, and a pluggable join function such as
 npm install @lynstack/class-recipe
 ```
 
+Requires TypeScript 5.4 or newer for its types, and an ES2022 runtime. It
+ships as an ES module only.
+
 ## Usage
 
 ```ts

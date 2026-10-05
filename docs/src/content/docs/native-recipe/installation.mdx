@@ -1,11 +1,12 @@
 ---
 title: Installing native-recipe
-description: "Install @lynstack/native-recipe with your package manager. It needs React Native for its types and ships as an ES module only."
+description: "Install @lynstack/native-recipe and check its requirements: React Native 0.80 or newer, TypeScript 5.4 or newer, ES2022, and ES modules."
 sidebar:
   label: Installation
 ---
 
 import { Aside, TabItem, Tabs } from "@astrojs/starlight/components";
+import Requirements from "../../../components/Requirements.astro";
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
@@ -31,10 +32,13 @@ yarn add @lynstack/native-recipe
   </TabItem>
 </Tabs>
 
-The package ships as an ES module only. Its one dependency is
-[`@lynstack/recipe`](/recipe/recipe/), and React Native, version 0.80 or
-later, is a peer dependency: the package checks styles against its types,
-and imports nothing from it at runtime.
+Its one dependency is [`@lynstack/recipe`](/recipe/recipe/). React Native is
+a peer dependency: the package checks styles against its types, and imports
+nothing from it at runtime.
+
+## Requirements
+
+<Requirements folder="native-recipe" />
 
 <Aside type="tip" title="Using a coding agent?">
   Install the [agent skill](/recipe/native-recipe/agent-skill/) too. It teaches

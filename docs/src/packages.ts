@@ -22,6 +22,8 @@ interface PackageInfo {
   readonly changelog: string;
   /** An example of the package that runs in the browser, to edit and try. */
   readonly playground: string;
+  /** The requirements of the package, on its installation page. */
+  readonly requirements: string;
 }
 
 /** Opens the example in `examples/<folder>` on StackBlitz. */
@@ -52,6 +54,7 @@ function packageInfo(
     name: manifest.name,
     npm: `https://www.npmjs.com/package/${manifest.name}`,
     playground,
+    requirements: `/recipe/${folder}/installation/#requirements`,
     source: `${repository}/tree/main/packages/${folder}`,
     version: manifest.version,
   };

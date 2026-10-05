@@ -18,7 +18,9 @@ renders.
 npm install @lynstack/native-recipe
 ```
 
-React Native 0.80 or later is a peer dependency.
+Requires React Native 0.80 or newer (Expo SDK 54 or newer), which is a peer
+dependency, and TypeScript 5.4 or newer for its types. It ships as an ES
+module only.
 
 ## Usage
 

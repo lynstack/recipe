@@ -1,11 +1,12 @@
 ---
 title: Installing recipe
-description: "Install @lynstack/recipe with your package manager. The package has no dependencies and ships as an ES module only."
+description: "Install @lynstack/recipe, which has no dependencies, and check its requirements: TypeScript 5.4 or newer, ES2022, and ES modules."
 sidebar:
   label: Installation
 ---
 
 import { TabItem, Tabs } from "@astrojs/starlight/components";
+import Requirements from "../../../components/Requirements.astro";
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
@@ -31,4 +32,8 @@ yarn add @lynstack/recipe
   </TabItem>
 </Tabs>
 
-The package has no dependencies and ships as an ES module only.
+The package has no dependencies.
+
+## Requirements
+
+<Requirements folder="recipe" />

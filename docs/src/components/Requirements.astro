@@ -1,0 +1,36 @@
+---
+import { Aside } from "@astrojs/starlight/components";
+
+import { requirementsOf, typeScriptVersion } from "../requirements.ts";
+import type { PackageIconName } from "../package-icons.ts";
+
+interface Props {
+  readonly folder: PackageIconName;
+}
+
+const requirements = requirementsOf(Astro.props.folder);
+---
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Needs</th>
+      <th scope="col">Supported</th>
+    </tr>
+  </thead>
+  <tbody>
+    {requirements.map(({ name, supported }) => (
+      <tr>
+        <th scope="row">{name}</th>
+        <td>{supported}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<Aside type="caution" title={`TypeScript ${typeScriptVersion} or newer`}>
+  Older versions cannot read the types: before 5.0 they fail to parse them, and
+  from 5.0 to 5.3 they report <code>Cannot find name 'NoInfer'</code>. With
+  <code>skipLibCheck</code>, that error is hidden, but the options of compound
+  variants are no longer checked.
+</Aside>

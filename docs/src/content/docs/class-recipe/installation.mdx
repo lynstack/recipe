@@ -1,11 +1,12 @@
 ---
 title: Installing class-recipe
-description: "Install @lynstack/class-recipe with npm, pnpm, or Yarn. The package ships as an ES module only, with types for TypeScript."
+description: "Install @lynstack/class-recipe with npm, pnpm, or Yarn, and check its requirements: TypeScript 5.4 or newer, ES2022, and ES modules."
 sidebar:
   label: Installation
 ---
 
 import { Aside, TabItem, Tabs } from "@astrojs/starlight/components";
+import Requirements from "../../../components/Requirements.astro";
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
@@ -31,8 +32,11 @@ yarn add @lynstack/class-recipe
   </TabItem>
 </Tabs>
 
-The package is ESM only and targets ES2022. Its types require TypeScript
-5.4 or newer.
+Its one dependency is [`@lynstack/recipe`](/recipe/recipe/).
+
+## Requirements
+
+<Requirements folder="class-recipe" />
 
 <Aside type="tip" title="Using a coding agent?">
   Install the [agent skill](/recipe/class-recipe/agent-skill/) too. It teaches
