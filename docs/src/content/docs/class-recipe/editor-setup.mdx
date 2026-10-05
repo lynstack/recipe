@@ -1,0 +1,110 @@
+---
+title: Setting up your editor for class-recipe
+description: "Get Tailwind CSS completions, hover previews, and class sorting inside cva, sva, and cx, with Tailwind CSS IntelliSense and prettier-plugin-tailwindcss."
+sidebar:
+  label: Editor setup
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+If you use Tailwind CSS, your editor can complete, preview, and lint the
+classes inside a recipe, as it does in a `className` attribute, and
+Prettier can sort them. Both need the names of the functions whose
+arguments hold classes.
+
+## Completions and hover previews
+
+Tailwind CSS IntelliSense reads the `classFunctions` setting, a list of
+function names. Every string in a call to one of them, including the
+strings nested in a recipe's config, gets completions, hover previews,
+and linting.
+
+<Tabs syncKey="editor">
+  <TabItem label="VS Code">
+
+Install the
+[Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
+extension, and add to `.vscode/settings.json`:
+
+```json
+{
+  "tailwindCSS.classFunctions": ["cva", "sva", "cx"]
+}
+```
+
+  </TabItem>
+  <TabItem label="Zed">
+
+Add to `.zed/settings.json`:
+
+```json
+{
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classFunctions": ["cva", "sva", "cx"]
+      }
+    }
+  }
+}
+```
+
+  </TabItem>
+  <TabItem label="Neovim">
+
+With Neovim 0.11 or newer and
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig):
+
+```lua
+vim.lsp.config("tailwindcss", {
+  settings = {
+    tailwindCSS = {
+      classFunctions = { "cva", "sva", "cx" },
+    },
+  },
+})
+vim.lsp.enable("tailwindcss")
+```
+
+  </TabItem>
+  <TabItem label="JetBrains">
+
+Open **Settings | Languages & Frameworks | Style Sheets | Tailwind CSS**,
+and add to the configuration:
+
+```json
+{
+  "classFunctions": ["cva", "sva", "cx"]
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Sorting classes
+
+[prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss)
+sorts the classes in the calls of the functions listed in its
+`tailwindFunctions` option, including the strings nested in a recipe's
+config:
+
+```json title=".prettierrc"
+{
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindStylesheet": "./src/app.css",
+  "tailwindFunctions": ["cva", "sva", "cx"]
+}
+```
+
+`tailwindStylesheet` is the CSS file that imports Tailwind CSS v4. With
+Tailwind CSS v3, set `tailwindConfig` to your `tailwind.config.js`
+instead.
+
+## Other names
+
+List every name you call the functions by:
+
+- `createRecipe` and `createSlotRecipe`, if you import the long names.
+- The names you give the functions of
+  [`createRecipes`](/recipe/class-recipe/create-recipes/), such as
+  `tv` in `export const { cva: tv } = createRecipes({ join: twMerge })`.

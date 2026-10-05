@@ -78,6 +78,7 @@ export default defineConfig({
                 items: [
                   { label: "Overview", link: "/class-recipe/" },
                   "class-recipe/installation",
+                  "class-recipe/editor-setup",
                   "class-recipe/quick-start",
                   "class-recipe/agent-skill",
                   "class-recipe/why-class-recipe",
