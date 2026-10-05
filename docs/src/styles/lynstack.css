@@ -111,15 +111,60 @@ h1#_top,
   letter-spacing: -0.02em;
 }
 
+/* Site title: the mark and "lynstack", which lead home, then the current package. */
+
 .site-title {
-  color: var(--lyn-foreground);
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  align-items: center;
+  min-width: 0;
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
 }
 
-.site-title img {
-  height: 1.5rem;
+.site-title a {
+  text-decoration: none;
+  transition: color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.site-title-home {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.625rem;
+  align-items: center;
+}
+
+.site-logo {
+  flex-shrink: 0;
+  height: 1.25rem;
   width: auto;
+}
+
+.site-title-org {
+  font-weight: 500;
+  color: var(--lyn-muted-foreground);
+  transition: color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.site-title-home:hover .site-title-org {
+  color: var(--lyn-foreground);
+}
+
+.site-title-slash {
+  margin-inline: 0.45em;
+  font-size: 1.15em;
+  font-weight: 300;
+  color: color-mix(in oklab, var(--lyn-brand) 70%, transparent);
+}
+
+.site-title-product {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: var(--lyn-foreground);
+}
+
+a.site-title-product:hover {
+  color: var(--lyn-muted-foreground);
 }
 
 /* Links are ink and underlined: the underline marks them. */
@@ -735,7 +780,9 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   .sidebar-content a,
   .topic,
   .package,
-  .package-meta a {
+  .package-meta a,
+  .site-title a,
+  .site-title-org {
     transition: none;
   }
 

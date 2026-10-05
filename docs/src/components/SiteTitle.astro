@@ -1,0 +1,36 @@
+---
+import LogoDark from "../assets/logo-dark.svg";
+import LogoLight from "../assets/logo-light.svg";
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+const { topics } = Astro.locals.starlightSidebarTopics;
+const topic = topics.find((candidate) => candidate.isCurrent);
+---
+
+<div class="site-title sl-flex">
+  <a href={siteTitleHref} class="site-title-home" aria-label={siteTitle}>
+    <LogoDark
+      class="site-logo light:sl-hidden print:hidden"
+      aria-hidden="true"
+    />
+    <LogoLight
+      class="site-logo dark:sl-hidden print:block"
+      aria-hidden="true"
+    />
+    <span class="site-title-org" translate="no">
+      lynstack
+    </span>
+  </a>
+  <span class="site-title-slash" aria-hidden="true">
+    /
+  </span>
+  {topic ? (
+    <a href={topic.link} class="site-title-product" translate="no">
+      {topic.label}
+    </a>
+  ) : (
+    <span class="site-title-product" translate="no">
+      recipe
+    </span>
+  )}
+</div>

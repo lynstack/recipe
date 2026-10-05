@@ -15,6 +15,7 @@ export default defineConfig({
       components: {
         Hero: "./src/components/Hero.astro",
         Sidebar: "./src/components/Sidebar.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
       },
       customCss: ["./src/styles/lynstack.css"],
       description:
@@ -87,10 +88,6 @@ export default defineConfig({
           tag: "link",
         },
       ],
-      logo: {
-        dark: "./src/assets/logo-dark.svg",
-        light: "./src/assets/logo-light.svg",
-      },
       plugins: [
         starlightSidebarTopics([
           {
