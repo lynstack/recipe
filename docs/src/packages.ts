@@ -27,7 +27,7 @@ interface PackageInfo {
 /** Opens the example in `examples/<folder>` on StackBlitz. */
 function stackBlitzUrl(folder: PackageIconName, file: string): string {
   const query = new URLSearchParams({ file, title: `${folder} example` });
-  return `https://stackblitz.com/fork/github/lynstack/recipe/tree/main/examples/${folder}?${query}`;
+  return `https://stackblitz.com/github/lynstack/recipe/tree/main/examples/${folder}?${query}`;
 }
 
 /** Opens `code` as the app of an Expo Snack that installs `dependency`. */
