@@ -9,7 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@lynstack/class-recipe": "1.1.4",
+    "@lynstack/class-recipe": "1.2.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
