@@ -1,6 +1,8 @@
 ---
-title: Building components
-description: "Use recipes and slot recipes in React components: type their props with VariantsOf, split props with variantKeys, forward className and classNames, and keep results stable."
+title: Building components with class-recipe
+description: "Use recipes in React components: type their props with VariantsOf, split props with variantKeys, forward className and classNames, and keep results stable."
+sidebar:
+  label: Building components
 ---
 
 The examples on this page use React; the same patterns apply to any

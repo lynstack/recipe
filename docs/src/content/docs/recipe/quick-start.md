@@ -1,6 +1,8 @@
 ---
-title: Quick start
+title: Quick start with recipe
 description: "Build a kind of style recipe step by step: define the kind, create a recipe and a slot recipe of it, call them, and type a component's props."
+sidebar:
+  label: Quick start
 ---
 
 This page builds recipes of style objects, as a component library for

@@ -1,6 +1,8 @@
 ---
-title: Quick start
+title: Quick start with native-recipe
 description: "Style a badge with createStyleRecipe and a button with createSlotStyleRecipe, use them in React Native components, and type their props with VariantsOf."
+sidebar:
+  label: Quick start
 ---
 
 This page styles a badge and a button. Install the package first (see

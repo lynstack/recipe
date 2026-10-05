@@ -1,6 +1,9 @@
 ---
 title: createStyleRecipe
 description: "Create a style recipe that maps variants, compound variants, and default variants to the style of one React Native element, with types inferred from its config."
+head:
+  - tag: title
+    content: "createStyleRecipe: React Native style recipes | lynstack recipe"
 ---
 
 `createStyleRecipe` creates a style recipe, which returns the style of one

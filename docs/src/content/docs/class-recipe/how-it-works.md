@@ -1,6 +1,8 @@
 ---
-title: How it works
-description: "How a class-recipe recipe builds and caches class names: compiled once, the order of the classes, when the join function runs, overrides, and the stable results of slot recipes."
+title: How class-recipe works
+description: "How class-recipe builds and caches class names: compiled once, the order of the classes, when the join function runs, overrides, and stable slot results."
+sidebar:
+  label: How it works
 ---
 
 `cva` and `sva` create recipes and slot recipes of a class name kind on

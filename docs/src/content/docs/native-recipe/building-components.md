@@ -1,6 +1,8 @@
 ---
-title: Building components
-description: "Use style recipes in React Native components: type their props with VariantsOf, split props with variantKeys, let users override styles without losing stable styles, and pass styles to memoized children."
+title: Building components with native-recipe
+description: "Use style recipes in React Native components: type props with VariantsOf, split props with variantKeys, let users override styles, and keep styles stable."
+sidebar:
+  label: Building components
 ---
 
 ## Type the props from the recipe

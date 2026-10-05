@@ -1,6 +1,6 @@
 ---
 title: Themes and design tokens
-description: "Build React Native styles from the tokens of a design system: define a light and a dark theme, provide them with a theme provider, follow the color scheme, and keep every style cached."
+description: "Build React Native styles from design tokens: define a light and a dark theme, provide them with a provider, follow the color scheme, and keep styles cached."
 ---
 
 There are two ways to make styles depend on a theme:

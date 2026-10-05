@@ -1,6 +1,6 @@
 ---
 title: Variants
-description: "The config of a recipe and how a selection resolves against it: required and default variants, boolean variants, option names that are numbers, compound variants, undeclared options, and variantKeys."
+description: "How a recipe's config resolves a selection: required and default variants, boolean variants, numeric option names, compound variants, and variantKeys."
 ---
 
 A recipe's config declares its variants and the values they add. The

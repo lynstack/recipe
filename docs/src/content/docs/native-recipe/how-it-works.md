@@ -1,6 +1,8 @@
 ---
-title: How it works
-description: "How a native-recipe recipe builds and caches React Native styles: compiled once, the order of styles, frozen styles that keep the style prop stable, and one recipe for each theme."
+title: How native-recipe works
+description: "How native-recipe builds and caches React Native styles: compiled once, the order of styles, frozen styles that keep the style prop stable, a recipe per theme."
+sidebar:
+  label: How it works
 ---
 
 `createStyleRecipe` and `createSlotStyleRecipe` create recipes and slot

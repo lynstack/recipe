@@ -1,6 +1,6 @@
 ---
 title: class-recipe with TypeScript
-description: "How recipes infer their props from a config, which variants are required, how to type component props with VariantsOf, and which prop names class-recipe reserves."
+description: "How recipes infer their props from a config, which variants are required, typing component props with VariantsOf, and the prop names class-recipe reserves."
 sidebar:
   label: TypeScript
 ---

@@ -1,6 +1,6 @@
 ---
 title: Designing a kind
-description: "Patterns for writing a recipe kind: immutable values, an accumulator changed in place, a string accumulator, and collecting values for finish, with what each one costs and how to test a kind."
+description: "Patterns for writing a recipe kind: immutable values, an accumulator changed in place, a string accumulator, collecting values for finish, and testing a kind."
 ---
 
 A kind decides what every uncached call costs, and whether its results are

@@ -1,6 +1,8 @@
 ---
-title: How it works
-description: "What the engine does when it creates a recipe and when it calls one: compiling the config, turning a selection into an integer key, the cache, and the order in which a kind reduces values."
+title: How the recipe engine works
+description: "What the engine does when it creates and calls a recipe: compiling the config, turning a selection into an integer key, the cache, and the order of reduction."
+sidebar:
+  label: How it works
 ---
 
 A recipe does its work in two phases: once when it is created, and on each

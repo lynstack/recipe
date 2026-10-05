@@ -1,6 +1,9 @@
 ---
 title: createSlotStyleRecipe
 description: "Create a slot style recipe that maps variants to the styles of several React Native elements of a component, such as a card's container, title, and body."
+head:
+  - tag: title
+    content: "createSlotStyleRecipe: React Native slot styles | lynstack recipe"
 ---
 
 `createSlotStyleRecipe` creates a slot style recipe, which returns the

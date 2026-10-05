@@ -1,6 +1,9 @@
 ---
 title: createRecipes
 description: "Create cx, cva, and sva with a join function such as twMerge, or with the cache turned off, once in a module of your own."
+head:
+  - tag: title
+    content: "createRecipes: recipes with tailwind-merge | lynstack recipe"
 ---
 
 `createRecipes` returns `cx`, `cva`, and `sva` that combine their classes

@@ -1,6 +1,6 @@
 ---
 title: Recipe kinds
-description: "The contract of a recipe kind: what initial, reduce, finish, and cache do, when the engine calls them, what they may change, and how they set the types of a kind's recipes."
+description: "The contract of a recipe kind: what initial, reduce, finish, and cache do, when the engine calls them, and how they set the types of the kind's recipes."
 ---
 
 A kind is how a recipe turns the values of a selection into its result.

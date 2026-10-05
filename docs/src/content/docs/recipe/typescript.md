@@ -1,6 +1,6 @@
 ---
 title: recipe with TypeScript
-description: "How recipes infer their selection and result from a kind and a config, which variants are required, how to type component props with VariantsOf, and the types for library authors."
+description: "How recipes infer their selection and result from a kind and a config, which variants are required, typing props with VariantsOf, and types for library authors."
 sidebar:
   label: TypeScript
 ---

@@ -1,6 +1,8 @@
 ---
-title: TypeScript
-description: "How native-recipe checks React Native styles as StyleSheet.create does, infers the style a recipe returns, types themed recipes, and types component props with VariantsOf."
+title: native-recipe with TypeScript
+description: "How native-recipe checks React Native styles like StyleSheet.create, infers the style a recipe returns, types themed recipes, and types props with VariantsOf."
+sidebar:
+  label: TypeScript
 ---
 
 The types are inferred from the config: write the config inline, or

@@ -1,6 +1,6 @@
 ---
 title: Slot recipes
-description: "Create slot recipes with createSlotRecipeKind, which map a selection of variants to the result of each element of a component, such as a card's root and title, with the same kind as a recipe."
+description: "Create slot recipes with createSlotRecipeKind, which map variants to the result of each element of a component, such as a card's root and title."
 ---
 
 A component often has several elements, its slots, each with its own

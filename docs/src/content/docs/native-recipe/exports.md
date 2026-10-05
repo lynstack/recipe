@@ -1,6 +1,6 @@
 ---
 title: native-recipe exports
-description: "Every function and type that @lynstack/native-recipe exports: createStyleRecipe, createSlotStyleRecipe, createThemedRecipes, and the types of style recipes, slot style recipes, themed recipes, and their configs."
+description: "Every function and type that @lynstack/native-recipe exports: createStyleRecipe, createSlotStyleRecipe, createThemedRecipes, and the types of their configs."
 sidebar:
   label: Exports
 ---

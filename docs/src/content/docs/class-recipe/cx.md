@@ -1,6 +1,9 @@
 ---
 title: cx
 description: "Join class names with cx, a drop-in replacement for clsx that accepts strings, numbers, arrays, and objects, and skips falsy values."
+head:
+  - tag: title
+    content: "cx: a drop-in replacement for clsx | lynstack recipe"
 ---
 
 `cx` joins class names and skips falsy values. It accepts the same inputs

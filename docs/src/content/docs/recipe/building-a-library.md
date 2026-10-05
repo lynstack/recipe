@@ -1,6 +1,6 @@
 ---
 title: Building a library on it
-description: "Build a styling library on @lynstack/recipe: define its kinds once, type its own config with the engine's types, handle override props around the recipe, and split props with variantKeys."
+description: "Build a styling library on @lynstack/recipe: define its kinds once, type its config with the engine's types, handle override props, and split props."
 sidebar:
   label: Building a library
 ---

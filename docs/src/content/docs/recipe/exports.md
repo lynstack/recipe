@@ -1,6 +1,6 @@
 ---
 title: recipe exports
-description: "Every function and type that @lynstack/recipe exports: createRecipeKind, createSlotRecipeKind, and the types of recipe kinds, recipes, slot recipes, configs, and selections."
+description: "Every function and type that @lynstack/recipe exports: createRecipeKind, createSlotRecipeKind, and the types of kinds, recipes, slot recipes, and configs."
 sidebar:
   label: Exports
 ---

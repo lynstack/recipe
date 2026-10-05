@@ -1,6 +1,8 @@
 ---
-title: Best practices
-description: "A checklist for kinds, recipes, and libraries built on @lynstack/recipe: pure kinds, frozen results, recipes created once, overrides around the recipe, and values where they apply."
+title: recipe best practices
+description: "A checklist for code built on @lynstack/recipe: pure kinds, frozen results, recipes created once, overrides around the recipe, and values where they apply."
+sidebar:
+  label: Best practices
 ---
 
 Each practice links to the page that explains it.

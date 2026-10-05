@@ -1,6 +1,8 @@
 ---
-title: API
+title: recipe API
 description: "The reference of createRecipeKind and createSlotRecipeKind: their parameters, the functions they return, the config those take, and the recipes they create."
+sidebar:
+  label: API
 ---
 
 ## `createRecipeKind`
