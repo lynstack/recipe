@@ -119,12 +119,18 @@ Native's `style` prop keeps its identity between renders.
   the modules next to them in `docs/src/measurements`, which format them, and show them with the
   components in `docs/src/components`. Keep logic in `.ts` files, which
   are typechecked, and keep `.astro` files to markup.
-- The docs of `@lynstack/class-recipe` have playgrounds, in which a
-  reader chooses variants and sees the class name that a recipe returns.
-  `docs/src/playground` holds them: each recipe is a module of
-  `docs/src/playground/recipes`, which the page shows as it is written and
-  the playground runs, built from `@lynstack/class-recipe` in the
-  workspace, so the docs build it first.
+- The docs show a recipe with `RecipeExample`, which writes the calls a
+  page gives it and what the recipe returns for each, or with
+  `RecipePlayground`, in which a reader chooses the variants. Both run
+  the recipe while the docs build, and show its code above, unless the
+  page shows it already. Use a playground where a reader should explore
+  a recipe, as in the overview of each package and the first example of
+  each API page, and calls where a rule needs particular ones, as in the
+  quick starts; never show both for the same recipe in one place. Each
+  recipe is a module of `docs/src/examples/recipes/<package>/<page>`,
+  listed with its options in `docs/src/examples/registry`, and built from
+  the packages in the workspace, so the docs build them first. A call
+  that chooses an option the recipe does not declare fails the build.
 - `examples` holds an example of each package that readers open in the
   browser, from the Playground link of its overview page: `recipe` and
   `class-recipe` are React apps, built with Vite, that StackBlitz opens
@@ -228,9 +234,10 @@ advice as their skills, and each
 README agrees with the docs it links to. When a change affects what one
 of them says, update the others in the same commit, and check that every
 example in the docs, the READMEs, and the skills produces the output it
-shows. Never write a measured number by hand: the docs read every number
-from `docs/src/measurements/<package>.json`, which only `pnpm measure`
-writes.
+shows. Never write by hand in the docs what a recipe returns: show the
+call with `RecipeExample`. Never write a measured number by hand: the
+docs read every number from `docs/src/measurements/<package>.json`, which
+only `pnpm measure` writes.
 
 **Add no other runtime dependencies.** `@lynstack/recipe` ships with
 none, and `@lynstack/class-recipe` and `@lynstack/native-recipe` depend

@@ -537,10 +537,9 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   background: var(--lyn-chart-5);
 }
 
-/* Playgrounds: a panel with a brand eyebrow, segmented options, and highlighted code. */
+/* Playgrounds: a panel with a brand eyebrow and segmented options. */
 
 .playground {
-  margin-top: 1.5rem;
   border: 1px solid var(--lyn-border);
   border-radius: var(--lyn-radius-lg);
   overflow: hidden;
@@ -666,13 +665,30 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   pointer-events: none;
 }
 
-.playground-output {
+/* Examples: a recipe's code, then each call of it and what it returns. */
+
+.recipe-example > * + * {
+  margin-top: 0.75rem;
+}
+
+.recipe-example > .example-output {
+  border: 1px solid var(--lyn-border);
+  border-left: 2px solid var(--lyn-brand);
+  border-radius: var(--lyn-radius-md);
+  overflow: hidden;
+  background-color: var(--lyn-background);
+}
+
+.example-output {
   display: block;
-  border-top: 1px solid var(--lyn-border);
   background-color: var(--lyn-muted);
 }
 
-.playground-output pre {
+.playground .example-output {
+  border-top: 1px solid var(--lyn-border);
+}
+
+.example-output pre {
   margin: 0;
   padding: 1rem 1.25rem;
   font-family: var(--lyn-font-mono);
@@ -682,44 +698,71 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   color: var(--lyn-foreground);
 }
 
-.playground-comment,
-.playground-punctuation {
+.example-call {
+  display: block;
+}
+
+.example-call + .example-call {
+  margin-top: 1rem;
+}
+
+.example-line {
+  display: block;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+}
+
+.example-arrow,
+.example-punctuation {
   color: var(--lyn-muted-foreground);
 }
 
-.playground-keyword {
-  color: var(--lyn-code-keyword);
-}
-
-.playground-function {
+.example-function {
   color: var(--lyn-code-function);
 }
 
-.playground-string {
+.example-string {
   color: var(--lyn-code-string);
 }
 
-.playground-constant {
+.example-constant {
   color: var(--lyn-code-constant);
 }
 
-.playground-class {
+.example-class {
   white-space: nowrap;
 }
 
-mark.playground-class {
-  border-radius: var(--lyn-radius-sm);
+mark.example-line {
   background-color: var(--lyn-brand-subtle);
-  color: var(--lyn-brand-text);
-  box-shadow: 0 0 0 2px var(--lyn-brand-subtle);
-  animation: playground-added 600ms var(--lyn-motion-easing);
+  box-shadow: inset 2px 0 0 var(--lyn-brand);
+  color: inherit;
+  animation: example-line-added 600ms var(--lyn-motion-easing);
 }
 
-@keyframes playground-added {
+@keyframes example-line-added {
+  from {
+    background-color: transparent;
+  }
+}
+
+mark.example-part {
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-brand-subtle);
+  box-shadow: 0 0 0 2px var(--lyn-brand-subtle);
+  white-space: nowrap;
+  animation: example-part-added 600ms var(--lyn-motion-easing);
+}
+
+mark.example-part,
+mark.example-part * {
+  color: var(--lyn-brand-text);
+}
+
+@keyframes example-part-added {
   from {
     background-color: var(--lyn-brand);
     box-shadow: 0 0 0 2px var(--lyn-brand);
-    color: var(--lyn-primary-foreground);
   }
 }
 
@@ -987,7 +1030,8 @@ mark.playground-class {
     scale: none;
   }
 
-  mark.playground-class {
+  mark.example-part,
+  mark.example-line {
     animation: none;
   }
 }

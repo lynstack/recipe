@@ -6,31 +6,14 @@ head:
     content: "sva: slot recipes for class names | lynstack recipe"
 ---
 
-import { Code } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
-import cardSource from "../../../playground/recipes/card.ts?raw";
 
 `sva` creates a slot recipe, which styles a component made of several
 elements, its slots, and returns an object with the class name of every
 slot. It is also exported as `createSlotRecipe`.
 
-<Code code={cardSource} lang="ts" />
-
-```ts
-const elevated = card({ elevated: true });
-elevated.root; // => "rounded-lg border p-5 shadow-md"
-elevated.header; // => "font-semibold text-base border-b"
-elevated.body; // => "text-gray-600"
-
-const small = card({ size: "sm", classNames: { body: "italic" } });
-small.root; // => "rounded-lg border p-3"
-small.header; // => "font-semibold text-sm"
-small.body; // => "text-gray-600 italic"
-```
-
-## Try it
-
-<RecipePlayground name="card" />
+<RecipePlayground name="class-recipe/sva/card" />
 
 ## The config
 
@@ -71,26 +54,19 @@ A variant listed in `defaultVariants` may be left out or passed as
 required. When every variant has a default, the argument itself is
 optional, as for `card`, whose `elevated` is boolean:
 
-```ts
-card().root; // => "rounded-lg border p-5"
-card({ size: undefined }).header; // => "font-semibold text-base"
+<RecipeExample
+  name="class-recipe/sva/card"
+  source={false}
+  calls={[{}, { size: undefined }]}
+/>
 
-const alert = sva({
-  slots: ["root", "title"],
-  base: { root: "rounded-md p-4", title: "font-semibold" },
-  variants: {
-    tone: {
-      info: { root: "bg-blue-50", title: "text-blue-900" },
-      danger: { root: "bg-red-50", title: "text-red-900" },
-    },
-    size: { sm: { root: "text-sm" }, md: { root: "text-base" } },
-  },
-  defaultVariants: { size: "md" },
-});
+`alert` has no default for `tone`, so a call cannot leave it out:
 
-// tone has no default, so it is required.
-alert({ tone: "danger" }).root; // => "rounded-md p-4 bg-red-50 text-base"
-```
+<RecipeExample
+  name="class-recipe/sva/alert"
+  slotName="root"
+  calls={[{ tone: "danger" }]}
+/>
 
 ## Boolean variants
 
@@ -99,28 +75,23 @@ booleans `true` and `false`, and declares the missing one of those two
 options without classes. A variant whose only options are `"true"` and
 `"false"` is optional and defaults to `false`, as `elevated` does:
 
-```ts
-card({ elevated: false }).root; // => "rounded-lg border p-5"
-card({ elevated: true }).root; // => "rounded-lg border p-5 shadow-md"
-```
+<RecipeExample
+  name="class-recipe/sva/card"
+  source={false}
+  slotName="root"
+  calls={[{ elevated: false }, { elevated: true }]}
+/>
 
 ## Option names that are numbers
 
 An option whose name is a number accepts that number as well as the
 string:
 
-```ts
-const heading = sva({
-  slots: ["root", "anchor"],
-  base: { anchor: "opacity-0" },
-  variants: {
-    level: { 1: { root: "text-3xl" }, 2: { root: "text-2xl" } },
-  },
-});
-
-heading({ level: 1 }).root; // => "text-3xl"
-heading({ level: "2" }).root; // => "text-2xl"
-```
+<RecipeExample
+  name="class-recipe/sva/heading"
+  slotName="root"
+  calls={[{ level: 1 }, { level: "2" }]}
+/>
 
 ## Compound variants
 
@@ -130,10 +101,12 @@ names, it gives one option or a list of options; a variant it leaves out
 matches any option. In `card`, the header gets a border only when the
 card is both `md` and elevated:
 
-```ts
-card({ elevated: true }).header; // => "font-semibold text-base border-b"
-card({ size: "sm", elevated: true }).header; // => "font-semibold text-sm"
-```
+<RecipeExample
+  name="class-recipe/sva/card"
+  source={false}
+  slotName="header"
+  calls={[{ elevated: true }, { size: "sm", elevated: true }]}
+/>
 
 Conditions are checked after defaults are applied, which is why the first
 call matches `size: "md"` without passing it. Matching compound variants
@@ -143,7 +116,15 @@ undeclared variant or option never matches; its config is a type error.
 ## Overriding classes
 
 Pass `classNames`, an object of classes keyed by slot name, to add classes
-after every class of those slots. Passing it with at least one class
+after every class of those slots:
+
+<RecipeExample
+  name="class-recipe/sva/card"
+  source={false}
+  calls={[{ size: "sm", classNames: { body: "italic" } }]}
+/>
+
+Passing it with at least one class
 returns a new object and leaves the cached one unchanged. With the default
 join they are added, not substituted: one that sets the same CSS property
 as a class of the slot leaves both in its class name. Design the recipe so

@@ -46,13 +46,20 @@
     },
     {
       // The docs show these recipes as they are written. The order of
-      // variants and options decides the order of the classes, and a
-      // recipe is a named export, as the docs recommend.
-      "files": ["src/playground/recipes/*.ts"],
+      // variants and options decides the order of the classes and the
+      // styles, and a recipe is a named export, as the docs recommend.
+      "files": ["src/examples/recipes/**/*.ts"],
       "rules": {
         "eslint/sort-keys": "off",
         "import/prefer-default-export": "off"
       }
+    },
+    {
+      // These modules export one object or function, named as every
+      // module of the docs exports; examples.ts reads each registry by the
+      // name of its export.
+      "files": ["src/examples/playground.ts", "src/examples/registry/**/*.ts"],
+      "rules": { "import/prefer-default-export": "off" }
     }
   ]
 }

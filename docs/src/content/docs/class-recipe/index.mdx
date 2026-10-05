@@ -5,6 +5,7 @@ description: "Fast, type-safe class name recipes with variants, compound variant
 
 import PackageMeta from "../../../components/PackageMeta.astro";
 import { speedup } from "../../../measurements/class-recipe.ts";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 <PackageMeta folder="class-recipe" />
 
@@ -21,27 +22,7 @@ them:
 - [`createRecipes`](/recipe/class-recipe/create-recipes/) returns them with
   a join function such as `twMerge`, or with the cache turned off.
 
-```ts
-import { cva } from "@lynstack/class-recipe";
-
-const button = cva({
-  base: "inline-flex items-center rounded-md font-medium",
-  variants: {
-    tone: {
-      neutral: "bg-gray-100 text-gray-900",
-      danger: "bg-red-600 text-white",
-    },
-    size: {
-      sm: "h-8 px-3 text-sm",
-      md: "h-10 px-4",
-    },
-  },
-  defaultVariants: { size: "md" },
-});
-
-button({ tone: "danger" });
-// => "inline-flex items-center rounded-md font-medium bg-red-600 text-white h-10 px-4"
-```
+<RecipePlayground name="class-recipe/index/button" />
 
 ## What it gives you
 

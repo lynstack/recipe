@@ -1,69 +1,76 @@
 ---
-import { initialSelection, playgrounds } from "../playground/playgrounds.ts";
-import type { PlaygroundName } from "../playground/playgrounds.ts";
-import { renderCode } from "../playground/render.ts";
+import { formatCalls, sourceOf } from "../examples/sources.ts";
+import { Code } from "@astrojs/starlight/components";
+import { exampleOf } from "../examples/examples.ts";
+import { initialSelection } from "../examples/example.ts";
 
 interface Props {
-  readonly name: PlaygroundName;
+  readonly name: string;
+  /** Whether to show the recipe's code, which a page may show above. */
+  readonly source?: boolean;
 }
 
-const { name } = Astro.props;
-const playground = playgrounds[name];
-const code = renderCode({
-  playground,
-  selection: initialSelection(playground),
-});
+const { name, source = true } = Astro.props;
+const example = exampleOf(name);
+const output = formatCalls(name, [initialSelection(example)]);
+const highlight =
+  example.kind === "className"
+    ? "The classes a choice adds light up."
+    : "The properties a choice adds or changes light up.";
 ---
 
-<section
-  class="playground not-content"
-  data-playground={name}
-  aria-label={`${name} playground`}
->
-  <form class="playground-form">
-    <div class="playground-header">
-      <p class="playground-title">
-        <span class="playground-eyebrow">Playground</span>
-        Choose the variants. The classes a choice adds light up.
-      </p>
-      <button type="reset" class="playground-reset">
-        Reset
-      </button>
-    </div>
-    <div class="playground-controls">
-      {playground.controls.map((control) => (
-        <fieldset class="playground-variant">
-          <legend>{control.name}</legend>
-          <div class="playground-options">
-            {control.initial === "" && (
-              <label>
-                <input type="radio" name={control.name} value="" checked />
-                unset
-              </label>
-            )}
-            {control.options.map((option) => (
-              <label>
-                <input
-                  type="radio"
-                  name={control.name}
-                  value={option}
-                  checked={option === control.initial}
-                />
-                {option}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      ))}
-    </div>
-  </form>
-  <output class="playground-output" aria-live="polite">
-    <pre><code data-playground-output set:html={code} /></pre>
-  </output>
-</section>
+<div class="recipe-example">
+  {source && <Code code={sourceOf(name)} lang="ts" />}
+  <section
+    class="playground not-content"
+    data-playground={name}
+    aria-label={`${example.name} playground`}
+  >
+    <form class="playground-form">
+      <div class="playground-header">
+        <p class="playground-title">
+          <span class="playground-eyebrow">Playground</span>
+          Choose the variants. {highlight}
+        </p>
+        <button type="reset" class="playground-reset">
+          Reset
+        </button>
+      </div>
+      <div class="playground-controls">
+        {example.controls.map((control) => (
+          <fieldset class="playground-variant">
+            <legend>{control.name}</legend>
+            <div class="playground-options">
+              {control.initial === "" && (
+                <label>
+                  <input type="radio" name={control.name} value="" checked />
+                  unset
+                </label>
+              )}
+              {control.options.map((option) => (
+                <label>
+                  <input
+                    type="radio"
+                    name={control.name}
+                    value={option}
+                    checked={option === control.initial}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+    </form>
+    <output class="example-output" aria-live="polite">
+      <pre><code data-playground-output set:html={output} /></pre>
+    </output>
+  </section>
+</div>
 
 <script>
-  import { mountPlaygrounds } from "../playground/render.ts";
+  import { mountPlaygrounds } from "../examples/playground.ts";
 
   mountPlaygrounds();
 </script>

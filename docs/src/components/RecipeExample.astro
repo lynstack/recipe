@@ -1,0 +1,27 @@
+---
+import { formatCalls, sourceOf } from "../examples/sources.ts";
+import type { Call } from "../examples/example.ts";
+import { Code } from "@astrojs/starlight/components";
+
+interface Props {
+  readonly name: string;
+  /** The calls of the recipe to show, each with what it returns. */
+  readonly calls?: readonly Call[];
+  /** The slot of a slot recipe whose value each call reads. */
+  readonly slotName?: string;
+  /** Whether to show the recipe's code, which a page may show above. */
+  readonly source?: boolean;
+}
+
+const { name, calls = [], slotName, source = true } = Astro.props;
+const output = formatCalls(name, calls, slotName);
+---
+
+<div class="recipe-example">
+  {source && <Code code={sourceOf(name)} lang="ts" />}
+  {calls.length > 0 && (
+    <div class="example-output not-content">
+      <pre><code set:html={output} /></pre>
+    </div>
+  )}
+</div>

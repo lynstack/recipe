@@ -5,9 +5,7 @@ sidebar:
   label: Quick start
 ---
 
-import { Code } from "@astrojs/starlight/components";
-import RecipePlayground from "../../../components/RecipePlayground.astro";
-import buttonSource from "../../../playground/recipes/button.ts?raw";
+import RecipeExample from "../../../components/RecipeExample.astro";
 
 This page styles a button and a card with Tailwind CSS classes. The same
 steps apply to any CSS approach. Install the package first (see
@@ -19,22 +17,17 @@ steps apply to any CSS approach. Install the package first (see
 those of each option of each variant. Create it once, at the top level of
 a module:
 
-<Code code={buttonSource} lang="ts" />
+<RecipeExample name="class-recipe/quick-start/button" />
 
 ## 2. Call it
 
 A recipe takes a selection of variants and returns the class name:
 
-```ts
-button();
-// => "inline-flex items-center rounded-md font-medium bg-blue-600 text-white h-10 px-4 hover:bg-blue-700"
-
-button({ tone: "neutral", size: "sm" });
-// => "inline-flex items-center rounded-md font-medium bg-gray-100 text-gray-900 h-8 px-3 text-sm"
-
-button({ loading: true });
-// => "inline-flex items-center rounded-md font-medium bg-blue-600 text-white h-10 px-4 cursor-wait opacity-75"
-```
+<RecipeExample
+  name="class-recipe/quick-start/button"
+  source={false}
+  calls={[{}, { tone: "neutral", size: "sm" }, { loading: true }]}
+/>
 
 - `tone` and `size` have defaults, so a selection may leave them out.
 - `loading` declares only `true`, so it is a boolean variant: optional,
@@ -42,10 +35,6 @@ button({ loading: true });
 - The compound variant adds its classes when `tone` is `primary` and
   `loading` is `false`, which the first call matches through the
   defaults.
-
-Choose the variants to see the call and the class name it returns:
-
-<RecipePlayground name="button" />
 
 ## 3. Use it in a component
 
@@ -79,30 +68,7 @@ passing all props at once with `variantKeys`.
 A component with several elements, its slots, uses one slot recipe, which
 returns the class name of every slot:
 
-```ts
-import { sva } from "@lynstack/class-recipe";
-
-export const card = sva({
-  slots: ["root", "header", "body"],
-  base: {
-    root: "rounded-lg border",
-    header: "font-semibold",
-    body: "text-gray-600",
-  },
-  variants: {
-    size: {
-      sm: { root: "p-3", header: "text-sm" },
-      md: { root: "p-5", header: "text-base" },
-    },
-  },
-  defaultVariants: { size: "md" },
-});
-
-const classes = card({ size: "sm" });
-classes.root; // => "rounded-lg border p-3"
-classes.header; // => "font-semibold text-sm"
-classes.body; // => "text-gray-600"
-```
+<RecipeExample name="class-recipe/quick-start/card" calls={[{ size: "sm" }]} />
 
 See [sva](/recipe/class-recipe/sva/).
 
