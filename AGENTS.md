@@ -193,17 +193,17 @@ that entry as the notes of the GitHub release. After the version is on npm, set
 it in the package's example in `examples`, and update its
 `package-lock.json` with `npm install`. The
 package's release workflow checks that the tag matches the version in its
-`package.json`, runs its `check`, packs it with `pnpm pack`, which writes
-the exact version of `@lynstack/recipe` into the packages built on it, and
+`package.json`, runs its `check`, packs it with `pnpm pack`, which turns
+each `workspace:^` dependency into a range, such as `^1.1.2`, and
 publishes it to npm, unless that version is already there, so that a
 release of a version published by hand, or a rerun, publishes nothing.
-Release `@lynstack/recipe` first when a
-package built on it needs a new version of it.
+Release a package first when a package built on it needs a new version of
+it, since the range starts at the version in the workspace.
 
 npm sets up trusted publishing only for a package that exists, so the
 first version of a new package is published by hand, before its GitHub
 release. Publish the tarball that `pnpm pack` writes, never the package
-folder with `npm publish`, which keeps `workspace:*` and publishes a
+folder with `npm publish`, which keeps `workspace:^` and publishes a
 version that no package manager can install.
 
 ## Rules
@@ -244,9 +244,9 @@ only `pnpm measure` writes.
 
 **Add no other runtime dependencies.** `@lynstack/recipe` ships with
 none, and `@lynstack/class-recipe` and `@lynstack/native-recipe` depend
-only on `@lynstack/recipe`, through `workspace:*`, which publishing turns
-into its exact version. `@lynstack/native-recipe` also has React Native as
-a peer dependency, for its types only. A
+only on `@lynstack/recipe`, through a range, as the rule on pinning
+dependencies describes. `@lynstack/native-recipe` also has React Native
+as a peer dependency, for its types only. A
 development dependency is added only when its value clearly outweighs its
 cost.
 
@@ -272,7 +272,12 @@ between them, and compare the medians.
 before timing it, rotate between several inputs in each iteration, and
 measure only the library's work.
 
-**Pin dependencies to exact versions.** Do not use version ranges. Pin
+**Pin dependencies to exact versions.** Do not use version ranges, except
+between the packages of this workspace: a package that depends on another
+does so through `workspace:^`, which publishing turns into a range from
+the version in the workspace, such as `^1.1.2`. An app that installs
+several of them then shares one copy of each, and a fix to one reaches
+the users of the packages built on it without a release of theirs. Pin
 GitHub Actions to a commit SHA, with the version in a comment.
 
 **Use the latest stable release.** Add languages, runtimes, tools, and

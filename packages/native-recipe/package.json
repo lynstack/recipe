@@ -35,7 +35,7 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@lynstack/recipe": "workspace:*"
+    "@lynstack/recipe": "workspace:^"
   },
   "peerDependencies": {
     "react-native": ">=0.80.0"

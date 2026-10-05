@@ -37,7 +37,7 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@lynstack/recipe": "workspace:*"
+    "@lynstack/recipe": "workspace:^"
   },
   "scripts": {
     "build": "tsdown",

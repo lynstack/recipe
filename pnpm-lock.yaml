@@ -233,7 +233,7 @@ importers:
   packages/class-recipe:
     dependencies:
       '@lynstack/recipe':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../recipe
     devDependencies:
       class-variance-authority:
@@ -255,7 +255,7 @@ importers:
   packages/native-recipe:
     dependencies:
       '@lynstack/recipe':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../recipe
     devDependencies:
       '@types/react':
