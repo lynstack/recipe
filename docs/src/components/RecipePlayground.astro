@@ -1,0 +1,69 @@
+---
+import { initialSelection, playgrounds } from "../playground/playgrounds.ts";
+import type { PlaygroundName } from "../playground/playgrounds.ts";
+import { renderCode } from "../playground/render.ts";
+
+interface Props {
+  readonly name: PlaygroundName;
+}
+
+const { name } = Astro.props;
+const playground = playgrounds[name];
+const code = renderCode({
+  playground,
+  selection: initialSelection(playground),
+});
+---
+
+<section
+  class="playground not-content"
+  data-playground={name}
+  aria-label={`${name} playground`}
+>
+  <form class="playground-form">
+    <div class="playground-header">
+      <p class="playground-title">
+        <span class="playground-eyebrow">Playground</span>
+        Choose the variants. The classes a choice adds light up.
+      </p>
+      <button type="reset" class="playground-reset">
+        Reset
+      </button>
+    </div>
+    <div class="playground-controls">
+      {playground.controls.map((control) => (
+        <fieldset class="playground-variant">
+          <legend>{control.name}</legend>
+          <div class="playground-options">
+            {control.initial === "" && (
+              <label>
+                <input type="radio" name={control.name} value="" checked />
+                unset
+              </label>
+            )}
+            {control.options.map((option) => (
+              <label>
+                <input
+                  type="radio"
+                  name={control.name}
+                  value={option}
+                  checked={option === control.initial}
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+    </div>
+  </form>
+  <output class="playground-output" aria-live="polite">
+    <pre><code data-playground-output set:html={code} /></pre>
+  </output>
+</section>
+
+<script>
+  import { mountPlaygrounds } from "../playground/render.ts";
+
+  mountPlaygrounds();
+</script>

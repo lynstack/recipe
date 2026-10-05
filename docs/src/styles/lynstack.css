@@ -22,6 +22,11 @@
   --lyn-sidebar-accent: #1f1f23;
   --lyn-popover: #1b1b1e;
   --lyn-chart-5: #a1a1aa;
+  /* The syntax colors of src/code-themes.ts, for code that the docs render. */
+  --lyn-code-keyword: #ae95f5;
+  --lyn-code-string: #3fc2af;
+  --lyn-code-function: #6f9ff2;
+  --lyn-code-constant: #f2b33d;
 
   --lyn-radius-sm: 0.25rem;
   --lyn-radius-md: 0.375rem;
@@ -83,6 +88,10 @@
   --lyn-sidebar-accent: #ececee;
   --lyn-popover: #fff;
   --lyn-chart-5: #52525b;
+  --lyn-code-keyword: #7a52d1;
+  --lyn-code-string: #0b7466;
+  --lyn-code-function: #2c6bd2;
+  --lyn-code-constant: #8f5a00;
 
   --sl-color-white: var(--lyn-foreground);
   --sl-color-gray-1: var(--lyn-foreground);
@@ -528,6 +537,192 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   background: var(--lyn-chart-5);
 }
 
+/* Playgrounds: a panel with a brand eyebrow, segmented options, and highlighted code. */
+
+.playground {
+  margin-top: 1.5rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
+  overflow: hidden;
+  background-color: var(--lyn-background);
+  box-shadow: inset 0 2px 0 var(--lyn-brand);
+}
+
+.playground-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem 0;
+}
+
+.playground-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  font-size: var(--sl-text-sm);
+  color: var(--lyn-muted-foreground);
+}
+
+.playground-eyebrow {
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-brand-subtle);
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-brand-text);
+}
+
+.playground-reset {
+  flex-shrink: 0;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  background: none;
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+  color: var(--lyn-muted-foreground);
+  cursor: pointer;
+  transition:
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.playground-reset:hover {
+  background-color: var(--lyn-accent);
+  color: var(--lyn-foreground);
+}
+
+.playground-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.playground-variant {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.playground-variant legend {
+  margin-bottom: 0.375rem;
+  padding: 0;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.playground-options {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  padding: 0.1875rem;
+  border-radius: var(--lyn-radius-md);
+  background-color: var(--lyn-muted);
+}
+
+.playground-options label {
+  position: relative;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--lyn-radius-sm);
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+  color: var(--lyn-muted-foreground);
+  cursor: pointer;
+  transition:
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.playground-options label:hover {
+  color: var(--lyn-foreground);
+}
+
+.playground-options label:has(:checked) {
+  background-color: var(--lyn-primary);
+  color: var(--lyn-primary-foreground);
+}
+
+.playground-options label:has(:focus-visible) {
+  outline: 2px solid var(--lyn-brand);
+  outline-offset: 2px;
+}
+
+.playground-options input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.playground-output {
+  display: block;
+  border-top: 1px solid var(--lyn-border);
+  background-color: var(--lyn-muted);
+}
+
+.playground-output pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5385;
+  white-space: pre-wrap;
+  color: var(--lyn-foreground);
+}
+
+.playground-comment,
+.playground-punctuation {
+  color: var(--lyn-muted-foreground);
+}
+
+.playground-keyword {
+  color: var(--lyn-code-keyword);
+}
+
+.playground-function {
+  color: var(--lyn-code-function);
+}
+
+.playground-string {
+  color: var(--lyn-code-string);
+}
+
+.playground-constant {
+  color: var(--lyn-code-constant);
+}
+
+.playground-class {
+  white-space: nowrap;
+}
+
+mark.playground-class {
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-brand-subtle);
+  color: var(--lyn-brand-text);
+  box-shadow: 0 0 0 2px var(--lyn-brand-subtle);
+  animation: playground-added 600ms var(--lyn-motion-easing);
+}
+
+@keyframes playground-added {
+  from {
+    background-color: var(--lyn-brand);
+    box-shadow: 0 0 0 2px var(--lyn-brand);
+    color: var(--lyn-primary-foreground);
+  }
+}
+
 /* Landing page. */
 
 .landing-hero {
@@ -782,12 +977,18 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   .package,
   .package-meta a,
   .site-title a,
-  .site-title-org {
+  .site-title-org,
+  .playground-reset,
+  .playground-options label {
     transition: none;
   }
 
   .sl-link-button:active {
     scale: none;
+  }
+
+  mark.playground-class {
+    animation: none;
   }
 }
 

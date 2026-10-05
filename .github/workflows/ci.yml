@@ -27,4 +27,6 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm format:check
+      - name: Build the packages that the docs import
+        run: pnpm --filter "docs^..." build
       - run: pnpm --filter docs check

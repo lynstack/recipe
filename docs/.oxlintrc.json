@@ -4,19 +4,46 @@
   "rules": {
     // Components import the modules that format the measurements, which
     // sit next to them in src.
-    "import/no-relative-parent-imports": "off"
+    "import/no-relative-parent-imports": "off",
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestContext"] },
+          // TypeScript has no readonly typed arrays, and ReadonlyMap is
+          // read-only although it has methods.
+          { "from": "lib", "name": ["Int32Array", "ReadonlyMap"] },
+          // The DOM has no readonly types for the elements of a page.
+          { "from": "lib", "name": ["HTMLElement", "HTMLFormElement"] }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
-      // Astro components are named in PascalCase, as Starlight names the
-      // components they override.
       "files": ["**/*.astro"],
-      "rules": { "unicorn/filename-case": "off" }
+      "rules": {
+        // Astro components are named in PascalCase, as Starlight names the
+        // components they override.
+        "unicorn/filename-case": "off",
+        // The scripts of components run on the page, not in tests.
+        "vitest/require-hook": "off"
+      }
     },
     {
       // Astro loads the collections from a named export.
       "files": ["src/content.config.ts"],
       "rules": { "import/prefer-default-export": "off" }
+    },
+    {
+      // The docs show these recipes as they are written. The order of
+      // variants and options decides the order of the classes, and a
+      // recipe is a named export, as the docs recommend.
+      "files": ["src/playground/recipes/*.ts"],
+      "rules": {
+        "eslint/sort-keys": "off",
+        "import/prefer-default-export": "off"
+      }
     }
   ]
 }

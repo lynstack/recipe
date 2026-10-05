@@ -1,5 +1,6 @@
 import type { PackageIconName } from "./package-icons.ts";
 import classRecipePackage from "../../packages/class-recipe/package.json";
+import nativeRecipeExample from "../../examples/native-recipe/App.tsx?raw";
 import nativeRecipePackage from "../../packages/native-recipe/package.json";
 import recipePackage from "../../packages/recipe/package.json";
 
@@ -19,18 +20,38 @@ interface PackageInfo {
   readonly source: string;
   /** The package's changelog on GitHub. */
   readonly changelog: string;
+  /** An example of the package that runs in the browser, to edit and try. */
+  readonly playground: string;
+}
+
+/** Opens the example in `examples/<folder>` on StackBlitz. */
+function stackBlitzUrl(folder: PackageIconName, file: string): string {
+  const query = new URLSearchParams({ file, title: `${folder} example` });
+  return `https://stackblitz.com/fork/github/lynstack/recipe/tree/main/examples/${folder}?${query}`;
+}
+
+/** Opens `code` as the app of an Expo Snack that installs `dependency`. */
+function snackUrl(dependency: string, code: string): string {
+  const query = new URLSearchParams({
+    dependencies: dependency,
+    files: JSON.stringify({ "App.tsx": { contents: code, type: "CODE" } }),
+    name: "native-recipe example",
+    platform: "web",
+  });
+  return `https://snack.expo.dev/?${query}`;
 }
 
 function packageInfo(
   folder: PackageIconName,
   manifest: { readonly name: string; readonly version: string },
-  label: string,
+  { label, playground }: Pick<PackageInfo, "label" | "playground">,
 ): PackageInfo {
   return {
     changelog: `${repository}/blob/main/packages/${folder}/CHANGELOG.md`,
     label,
     name: manifest.name,
     npm: `https://www.npmjs.com/package/${manifest.name}`,
+    playground,
     source: `${repository}/tree/main/packages/${folder}`,
     version: manifest.version,
   };
@@ -38,17 +59,21 @@ function packageInfo(
 
 /** Each package, by the name of its folder, which is also its sidebar topic. */
 const packages = {
-  "class-recipe": packageInfo(
-    "class-recipe",
-    classRecipePackage,
-    "Class names",
-  ),
-  "native-recipe": packageInfo(
-    "native-recipe",
-    nativeRecipePackage,
-    "React Native styles",
-  ),
-  recipe: packageInfo("recipe", recipePackage, "Core engine"),
+  "class-recipe": packageInfo("class-recipe", classRecipePackage, {
+    label: "Class names",
+    playground: stackBlitzUrl("class-recipe", "src/recipes.ts"),
+  }),
+  "native-recipe": packageInfo("native-recipe", nativeRecipePackage, {
+    label: "React Native styles",
+    playground: snackUrl(
+      `${nativeRecipePackage.name}@${nativeRecipePackage.version}`,
+      nativeRecipeExample,
+    ),
+  }),
+  recipe: packageInfo("recipe", recipePackage, {
+    label: "Core engine",
+    playground: stackBlitzUrl("recipe", "src/recipes.ts"),
+  }),
 } as const satisfies Readonly<Record<PackageIconName, PackageInfo>>;
 
 const packagesByFolder: ReadonlyMap<string, PackageInfo> = new Map(

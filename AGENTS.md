@@ -119,6 +119,19 @@ Native's `style` prop keeps its identity between renders.
   the modules next to them in `docs/src/measurements`, which format them, and show them with the
   components in `docs/src/components`. Keep logic in `.ts` files, which
   are typechecked, and keep `.astro` files to markup.
+- The docs of `@lynstack/class-recipe` have playgrounds, in which a
+  reader chooses variants and sees the class name that a recipe returns.
+  `docs/src/playground` holds them: each recipe is a module of
+  `docs/src/playground/recipes`, which the page shows as it is written and
+  the playground runs, built from `@lynstack/class-recipe` in the
+  workspace, so the docs build it first.
+- `examples` holds an example of each package that readers open in the
+  browser, from the Playground link of its overview page: `recipe` and
+  `class-recipe` are React apps, built with Vite, that StackBlitz opens
+  from the `main` branch, and `native-recipe/App.tsx` is the app of an
+  Expo Snack, whose link `docs/src/packages.ts` builds. The examples are not in the
+  workspace: they install the published packages, at the exact version of
+  their last release, with npm.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each
@@ -167,7 +180,9 @@ tag names the package and its version: `recipe@1.0.0` for
 `@lynstack/recipe`, `class-recipe@1.2.0` for `@lynstack/class-recipe`,
 `native-recipe@1.0.0` for `@lynstack/native-recipe`. Before a release,
 add the version to the package's `CHANGELOG.md`, with its date, and use
-that entry as the notes of the GitHub release. The
+that entry as the notes of the GitHub release. After the version is on npm, set
+it in the package's example in `examples`, and update its
+`package-lock.json` with `npm install`. The
 package's release workflow checks that the tag matches the version in its
 `package.json`, runs its `check`, packs it with `pnpm pack`, which writes
 the exact version of `@lynstack/recipe` into the packages built on it, and

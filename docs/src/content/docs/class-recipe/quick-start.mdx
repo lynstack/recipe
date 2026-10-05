@@ -3,6 +3,10 @@ title: Quick start
 description: "Style a button with cva and a card with sva, use them in React components, and type their props with VariantsOf."
 ---
 
+import { Code } from "@astrojs/starlight/components";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+import buttonSource from "../../../playground/recipes/button.ts?raw";
+
 This page styles a button and a card with Tailwind CSS classes. The same
 steps apply to any CSS approach. Install the package first (see
 [Installation](/recipe/class-recipe/installation/)).
@@ -13,33 +17,7 @@ steps apply to any CSS approach. Install the package first (see
 those of each option of each variant. Create it once, at the top level of
 a module:
 
-```ts
-import { cva } from "@lynstack/class-recipe";
-
-export const button = cva({
-  base: "inline-flex items-center rounded-md font-medium",
-  variants: {
-    tone: {
-      primary: "bg-blue-600 text-white",
-      neutral: "bg-gray-100 text-gray-900",
-    },
-    size: {
-      sm: "h-8 px-3 text-sm",
-      md: "h-10 px-4",
-    },
-    loading: {
-      true: "cursor-wait opacity-75",
-    },
-  },
-  compoundVariants: [
-    {
-      variants: { tone: "primary", loading: false },
-      className: "hover:bg-blue-700",
-    },
-  ],
-  defaultVariants: { tone: "primary", size: "md" },
-});
-```
+<Code code={buttonSource} lang="ts" />
 
 ## 2. Call it
 
@@ -62,6 +40,10 @@ button({ loading: true });
 - The compound variant adds its classes when `tone` is `primary` and
   `loading` is `false`, which the first call matches through the
   defaults.
+
+Choose the variants to see the call and the class name it returns:
+
+<RecipePlayground name="button" />
 
 ## 3. Use it in a component
 

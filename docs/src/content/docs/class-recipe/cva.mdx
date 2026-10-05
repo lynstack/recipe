@@ -3,34 +3,26 @@ title: cva
 description: "Create a recipe with cva that maps variants, compound variants, and default variants to the class name of one element, with types inferred from its config."
 ---
 
+import { Code } from "@astrojs/starlight/components";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+import badgeSource from "../../../playground/recipes/badge.ts?raw";
+
 `cva` creates a recipe, which returns the class name of one element for a
 selection of variants. It is also exported as `createRecipe`.
 
+<Code code={badgeSource} lang="ts" />
+
 ```ts
-import { cva } from "@lynstack/class-recipe";
-
-const badge = cva({
-  // Applied whatever the variants.
-  base: "inline-flex rounded-full px-2 text-xs",
-  // For each variant, the classes of each option.
-  variants: {
-    tone: {
-      neutral: "bg-gray-100 text-gray-700",
-      success: "bg-green-100 text-green-800",
-      danger: "bg-red-100 text-red-800",
-    },
-    outlined: {
-      true: "ring-1 ring-inset ring-current",
-    },
-  },
-});
-
 badge({ tone: "success" });
 // => "inline-flex rounded-full px-2 text-xs bg-green-100 text-green-800"
 
 badge({ tone: "danger", outlined: true, className: "uppercase" });
 // => "inline-flex rounded-full px-2 text-xs bg-red-100 text-red-800 ring-1 ring-inset ring-current uppercase"
 ```
+
+## Try it
+
+<RecipePlayground name="badge" />
 
 ## The config
 
@@ -41,9 +33,14 @@ badge({ tone: "danger", outlined: true, className: "uppercase" });
 | `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.           |
 | `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                      |
 
-Classes are added in this order: `base`, then each variant in the order
-the config declares it, then the matching compound variants, then
-`className` (see [How it works](/recipe/class-recipe/how-it-works/)).
+## The result
+
+A recipe returns the class name as a string. Classes are added in this
+order: `base`, then each variant in the order the config declares it, then
+the matching compound variants, then `className` (see
+[How it works](/recipe/class-recipe/how-it-works/)). The class name of
+each selection is built once and cached, so calling the recipe again with
+the same variants only looks it up.
 
 ## Required and default variants
 
@@ -169,7 +166,7 @@ A recipe lists the names of its variants, in the order of `variants`, in
 `variantKeys`, a frozen array typed with those names:
 
 ```ts
-button.variantKeys; // => ["tone", "size", "outlined"]
+badge.variantKeys; // => ["tone", "outlined"]
 ```
 
 Use it to split a component's props into the recipe's variants and the
