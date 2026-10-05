@@ -161,6 +161,22 @@ describe(createRecipeKind, () => {
     expect(builds()).toBe(2);
   });
 
+  it("caches an undefined result", () => {
+    let builds = 0;
+    const lastValue = createRecipeKind({
+      initial: (base: string | undefined): string | undefined => {
+        builds += 1;
+        return base;
+      },
+      reduce: (_last: string | undefined, value: string) => value,
+    });
+    const label = lastValue({ variants: { muted: { true: "muted" } } });
+
+    expect(label()).toBeUndefined();
+    expect(label({ muted: false })).toBeUndefined();
+    expect(builds).toBe(1);
+  });
+
   it("builds the result on every call without the cache", () => {
     const { builds, recipe } = countingListRecipe({ cache: false });
     const sizes = recipe({ variants: { size: { sm: "a" } } });

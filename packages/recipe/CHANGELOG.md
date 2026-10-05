@@ -4,6 +4,11 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.1.1 — 2026-10-05
+
+- A recipe whose kind returns `undefined` caches that result, as it
+  caches any other, instead of building it again on every call.
+
 ## 1.1.0 — 2026-10-05
 
 `@lynstack/recipe` now creates slot recipes, which map a selection of

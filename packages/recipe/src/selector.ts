@@ -7,6 +7,15 @@ interface SelectorOptions {
   readonly cache: boolean;
 }
 
+/** Whether `results` holds `result`, read at `key`, even if it is undefined. */
+function isCached<Result>(
+  results: ReadonlyMap<number, Result>,
+  key: number,
+  result: Result | undefined,
+): result is Result {
+  return result !== undefined || results.has(key);
+}
+
 /**
  * Returns a function that builds the result of a selection from the option
  * index of each variant, and treats a missing selection as an empty one.
@@ -26,9 +35,11 @@ function createSelector<Result>(
 
   return (selected) => {
     const key = select(compiled, selected ?? noProps, indexes);
-    const cachedResult = key === undeclared ? undefined : results?.get(key);
-    if (cachedResult !== undefined) {
-      return cachedResult;
+    if (key !== undeclared && results !== undefined) {
+      const cachedResult = results.get(key);
+      if (isCached(results, key, cachedResult)) {
+        return cachedResult;
+      }
     }
     const result = build(indexes);
     if (key !== undeclared) {
