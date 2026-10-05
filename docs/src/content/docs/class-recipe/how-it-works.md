@@ -17,7 +17,9 @@ each variant, so a selection becomes one integer. The first call for a
 selection builds its class name and caches it under that integer; every
 later call with the same variants reads the option of each variant and
 returns the cached class name. Create each recipe once, at the top level
-of a module, so that its cache lasts.
+of a module, so that its cache lasts. The cache grows with the selections
+the recipe is called with, up to one entry per combination of declared
+options.
 
 ## The order of the classes
 
@@ -74,5 +76,6 @@ string, which is the same value for the same variants.
 
 `createRecipes({ cache: false })` returns recipes that build their class
 names on every call. They return the same class names, but a slot recipe
-returns a new object on every call. See
-[createRecipes](/recipe/class-recipe/create-recipes/).
+returns a new object on every call. `cache: false` in the config of a
+recipe turns the cache off for that recipe only. See
+[createRecipes](/recipe/class-recipe/create-recipes/#turning-off-the-cache).

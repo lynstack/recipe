@@ -16,12 +16,13 @@ selection of variants. It is also exported as `createRecipe`.
 
 ## The config
 
-| Property           | Description                                                                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `base`             | Optional. The classes the element always has.                                                               |
-| `variants`         | For each variant name, the classes of each of its options. `className` and `classNames` are reserved names. |
-| `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.           |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                      |
+| Property           | Description                                                                                                                                                      |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`             | Optional. The classes the element always has.                                                                                                                    |
+| `variants`         | For each variant name, the classes of each of its options. `className` and `classNames` are reserved names.                                                      |
+| `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.                                                                |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                                                           |
+| `cache`            | Optional. Whether the recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`. |
 
 ## The result
 

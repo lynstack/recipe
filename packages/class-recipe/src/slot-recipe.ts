@@ -106,6 +106,11 @@ interface SlotRecipeConfig<
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
     DefaultVariants<Variants, DefaultedName> | undefined;
+  /**
+   * Whether the recipe caches the class names of each declared selection.
+   * Defaults to the `cache` option of `createRecipes`, which is `true`.
+   */
+  readonly cache?: boolean | undefined;
 }
 
 /**
@@ -214,7 +219,9 @@ function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
  * object, so calling a slot recipe again with the same variants returns the
  * same object. Passing `classNames` with classes for at least one slot
  * returns a new frozen object, with each override joined after the cached
- * classes of its slot.
+ * classes of its slot. The cache keeps up to one object for each
+ * combination of declared options; set `cache: false` in the config of a
+ * slot recipe whose variants come from untrusted input.
  *
  * Every declared slot is present in the result, as `""` when it has no
  * classes. A variant without a default is required, except a boolean

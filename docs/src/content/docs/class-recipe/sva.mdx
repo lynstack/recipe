@@ -21,13 +21,14 @@ A slot recipe takes the config of a [recipe](/recipe/class-recipe/cva/),
 with `slots`, and with an object of classes keyed by slot name wherever a
 recipe takes a string:
 
-| Property           | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| `slots`            | The names of the slots, in the order of the result.                                     |
-| `base`             | Optional. The classes each slot always has.                                             |
-| `variants`         | For each variant name, the classes of each slot for each of its options.                |
-| `compoundVariants` | Optional. Classes added to some slots, under `classNames`, when several variants match. |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                  |
+| Property           | Description                                                                                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slots`            | The names of the slots, in the order of the result.                                                                                                                   |
+| `base`             | Optional. The classes each slot always has.                                                                                                                           |
+| `variants`         | For each variant name, the classes of each slot for each of its options.                                                                                              |
+| `compoundVariants` | Optional. Classes added to some slots, under `classNames`, when several variants match.                                                                               |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                                                                |
+| `cache`            | Optional. Whether the slot recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`. |
 
 An option or compound variant gives classes only to the slots it names. A
 slot that `slots` does not name is a type error, and its classes are

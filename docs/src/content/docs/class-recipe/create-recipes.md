@@ -61,3 +61,30 @@ Without the cache, a slot recipe returns a new object on every call, even
 for the same variants. Keep the cache unless you have measured that a
 recipe is called with so many different selections, each only once, that
 storing them costs more than building them.
+
+To turn the cache off for one recipe only, pass `cache: false` in its
+config instead (see [cva](/recipe/class-recipe/cva/)). The `cache` of a
+recipe's config overrides the option of `createRecipes`, so a recipe whose
+config sets `cache: true` caches its class names even when the option
+turns the cache off.
+
+## Variants from untrusted input
+
+A recipe's cache keeps every class name it builds for as long as the
+recipe exists, up to one for each combination of declared options. On a
+server, a recipe whose variants come from requests lets clients choose
+those combinations, and a recipe that declares many of them grows its
+cache with each new one. Pass `cache: false` in the config of such a
+recipe, and keep the cache for the others:
+
+```ts
+const badge = cva({
+  cache: false,
+  base: "rounded-full px-2 text-xs",
+  variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-100" } },
+});
+```
+
+A recipe with few combinations, or whose variants the program chooses
+itself, needs no change (see
+[Caching](/recipe/recipe/caching/#variants-from-untrusted-input)).

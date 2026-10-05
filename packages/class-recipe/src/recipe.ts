@@ -64,6 +64,11 @@ interface RecipeConfig<
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
     DefaultVariants<Variants, DefaultedName> | undefined;
+  /**
+   * Whether the recipe caches the class names of each declared selection.
+   * Defaults to the `cache` option of `createRecipes`, which is `true`.
+   */
+  readonly cache?: boolean | undefined;
 }
 
 /**
@@ -144,7 +149,9 @@ function makeCreateRecipe(options: BuildOptions): CreateRecipe {
  * The class name of each selection is built once and cached, so calling a
  * recipe again with the same variants costs one lookup per variant and one
  * for the cache. A `className` passed to the recipe is joined after the
- * cached classes.
+ * cached classes. The cache keeps up to one class name for each combination
+ * of declared options; set `cache: false` in the config of a recipe whose
+ * variants come from untrusted input.
  *
  * A variant without a default is required, except a boolean variant, whose
  * only options are `"true"` and `"false"` and which defaults to `false`. An

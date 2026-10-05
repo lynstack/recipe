@@ -17,8 +17,8 @@ interface RecipesOptions {
   /**
    * Whether recipes cache the class names of each declared selection of
    * variants. Without the cache, a recipe builds its class names on every
-   * call, and a slot recipe returns a new object each time. Defaults to
-   * `true`.
+   * call, and a slot recipe returns a new object each time. The `cache` of
+   * a recipe's config overrides it. Defaults to `true`.
    */
   readonly cache?: boolean | undefined;
 }

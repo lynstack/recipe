@@ -17,6 +17,7 @@ interface LooseRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: LooseSelection | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 interface LooseRecipeProps extends LooseSelection {
@@ -44,6 +45,7 @@ function createRecipeBuilder(
   return (config) => {
     const classesOf = classRecipe({
       base: config.base,
+      cache: config.cache,
       compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
         value: compound.className,
         variants: compound.variants,

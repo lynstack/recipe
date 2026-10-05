@@ -26,6 +26,7 @@ interface LooseSlotRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: LooseSelection | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 interface LooseSlotRecipeProps extends LooseSelection {
@@ -125,6 +126,7 @@ function withStringClasses(
     readonly value: LooseSlotClassNames;
   }[];
   readonly defaultVariants: LooseSelection | undefined;
+  readonly cache: boolean | undefined;
 } {
   const variants = Object.fromEntries(
     Object.entries(config.variants).map(
@@ -146,6 +148,7 @@ function withStringClasses(
   );
   return {
     base: stringClasses(slots, config.base ?? {}),
+    cache: config.cache,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
       value: stringClasses(slots, compound.classNames),
       variants: compound.variants,
