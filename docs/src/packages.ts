@@ -32,11 +32,15 @@ function stackBlitzUrl(folder: PackageIconName, file: string): string {
   return `https://stackblitz.com/github/lynstack/recipe/tree/main/examples/${folder}?${query}`;
 }
 
-/** Opens `code` as the app of an Expo Snack that installs `dependency`. */
+/**
+ * Opens `code` as the `App.js` of an Expo Snack that installs `dependency`.
+ * The editor of Snack checks TypeScript with a version too old to read the
+ * types of the packages, so the example runs as JavaScript.
+ */
 function snackUrl(dependency: string, code: string): string {
   const query = new URLSearchParams({
     dependencies: dependency,
-    files: JSON.stringify({ "App.tsx": { contents: code, type: "CODE" } }),
+    files: JSON.stringify({ "App.js": { contents: code, type: "CODE" } }),
     name: "native-recipe example",
     platform: "web",
   });

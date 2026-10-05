@@ -67,7 +67,7 @@ export default function App() {
   return (
     <View style={styles.screen}>
       <View style={badge({ tone: "success" })}>
-        <Text>Edit App.tsx</Text>
+        <Text>Edit the recipes</Text>
       </View>
       <View style={badge({ tone: "danger", outlined: true })}>
         <Text>Danger</Text>
