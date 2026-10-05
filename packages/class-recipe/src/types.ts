@@ -34,9 +34,18 @@ type VariantKey<Props> = KindVariantKey<Omit<Props, OverrideName>>;
  * // => { readonly size: "sm" | "md" }
  * ```
  */
-type VariantsOf<Recipe extends (props: never) => unknown> = Simplify<
+type VariantsOf<Recipe extends (props: never) => unknown> = OptionsOnly<
   Omit<KindVariantsOf<Recipe>, OverrideName>
 >;
+
+/**
+ * Removes the classes by slot that the props of a slot recipe with variant
+ * names unknown at compile time allow next to options; an option is never
+ * an object.
+ */
+type OptionsOnly<Variants> = {
+  [Name in keyof Variants]: Exclude<Variants[Name], object>;
+};
 
 export type {
   CompoundCondition,

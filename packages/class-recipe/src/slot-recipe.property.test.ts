@@ -210,7 +210,6 @@ function returnsWhatEachSlotReturns(
       (slot) => [slot, cvaOfSlot(of, slot, options)] as const,
     );
     for (const call of [...of.calls, ...of.calls]) {
-      // @ts-expect-error A slot recipe of unknown variant names rejects classNames.
       const result = recipe({ ...call.props, classNames: call.classNames });
       expect(Object.isFrozen(result)).toBe(true);
       expect(Object.getPrototypeOf(result)).toBe(Object.prototype);

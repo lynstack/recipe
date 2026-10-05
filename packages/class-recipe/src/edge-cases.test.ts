@@ -1,9 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { createRecipe, makeCreateRecipe } from "./recipe.js";
 import { createSlotRecipe, makeCreateSlotRecipe } from "./slot-recipe.js";
 import type { ClassJoin } from "./join.js";
 import type { RecipeVariants } from "./recipe.js";
+import type { SlotRecipeVariants } from "./slot-recipe.js";
+import type { VariantsOf } from "./types.js";
 import { createRecipes } from "./create-recipes.js";
 
 function recordingJoin(): {
@@ -109,5 +111,41 @@ describe("edge cases", () => {
 
     expect(recipe({ size: "sm" })).toBe("p-2");
     expect(slotRecipe({ size: "md" })).toStrictEqual({ root: "p-4" });
+  });
+
+  describe("with variant names not known at compile time", () => {
+    const variants: SlotRecipeVariants = {
+      size: { sm: { root: "p-2" }, md: { root: "p-4" } },
+    };
+    const recipe = createSlotRecipe({ slots: ["root", "title"], variants });
+
+    it("accepts any variant name, an option name, and classNames", () => {
+      expect(
+        recipe({ size: "sm", classNames: { title: "font-bold" } }),
+      ).toStrictEqual({ root: "p-2", title: "font-bold" });
+      expectTypeOf<VariantsOf<typeof recipe>>().toEqualTypeOf<
+        Readonly<Record<string, string | undefined>>
+      >();
+    });
+
+    it("rejects an option that is not a string", () => {
+      // @ts-expect-error an option is named by a string
+      expect(recipe({ size: 1 })).toStrictEqual({ root: "", title: "" });
+    });
+
+    it("rejects classNames for undeclared slots", () => {
+      // @ts-expect-error tilte is not a slot
+      expect(recipe({ classNames: { tilte: "x" } })).toStrictEqual({
+        root: "",
+        title: "",
+      });
+    });
+
+    it("accepts classes by slot as an option and ignores them", () => {
+      expect(recipe({ size: { root: "x" } })).toStrictEqual({
+        root: "",
+        title: "",
+      });
+    });
   });
 });

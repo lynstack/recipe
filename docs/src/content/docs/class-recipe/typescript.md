@@ -1,6 +1,6 @@
 ---
 title: class-recipe with TypeScript
-description: "How recipes infer their props from a config, which variants are required, typing component props with VariantsOf, and the prop names class-recipe reserves."
+description: "How recipes infer their props from a config, which variants are required, typing component props with VariantsOf, typing variants from a CMS or an API, and the prop names class-recipe reserves."
 sidebar:
   label: TypeScript
 ---
@@ -56,6 +56,76 @@ using it in a component.
 
 `className` and `classNames` are the names of the overrides, so they
 cannot be variant names: a config that declares either is a type error.
+
+## Variants from a CMS or an API
+
+When the classes of a recipe come from outside the code, such as a CMS or
+a theme file, type the data with the names of its variants and options.
+The recipe then checks every call as above. Write the type with `type`,
+not `interface`, since an interface does not satisfy the type of
+`variants`:
+
+```ts
+import { sva } from "@lynstack/class-recipe";
+import type { SlotClasses } from "@lynstack/class-recipe";
+
+type CardClasses = SlotClasses<"root" | "title">;
+
+type CardTheme = {
+  readonly size: Readonly<Record<"sm" | "md", CardClasses>>;
+  readonly tone: Readonly<Record<"neutral" | "danger", CardClasses>>;
+};
+
+const theme: CardTheme = await fetchCardTheme();
+
+const card = sva({
+  slots: ["root", "title"],
+  variants: theme,
+  defaultVariants: { size: "md", tone: "neutral" },
+});
+
+card({ size: "sm" });
+
+// @ts-expect-error: "lg" is not a size.
+card({ size: "lg" });
+```
+
+If the data is not checked where it arrives, parse it with a schema
+library whose result has these types, so that a CMS that renames an
+option fails there instead of adding no classes.
+
+## Variant names not known in advance
+
+When the names cannot be known, as in a function that passes on a config
+it received, type the variants as `RecipeVariants` or
+`SlotRecipeVariants`. A recipe then accepts any variant name, with its
+option named by a string, and `classNames` for the declared slots:
+
+```ts
+import { sva } from "@lynstack/class-recipe";
+import type { SlotRecipeVariants } from "@lynstack/class-recipe";
+
+function createCard(variants: SlotRecipeVariants) {
+  return sva({ slots: ["root", "title"], variants });
+}
+
+const card = createCard(theme);
+
+card({ size: "sm", classNames: { title: "font-bold" } });
+
+// @ts-expect-error: an option is named by a string.
+card({ size: 1 });
+```
+
+Such a recipe checks less:
+
+- Every variant is optional, and an undeclared variant or option is not a
+  type error. It adds no classes.
+- A slot recipe also accepts classes by slot as an option, such as
+  `size: { root: "p-2" }`, because TypeScript cannot leave `classNames`
+  out of the names that variants may take. Such a value names no option,
+  so the variant uses its default, if it has one.
+- `VariantsOf` returns `Readonly<Record<string, string | undefined>>`.
 
 ## Other types
 
