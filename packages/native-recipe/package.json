@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@types/react": "19.3.0",
+    "fast-check": "4.10.2",
     "react-native": "0.87.1"
   }
 }

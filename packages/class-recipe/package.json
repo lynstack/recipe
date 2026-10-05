@@ -56,6 +56,7 @@
     "class-variance-authority": "0.7.1",
     "classnames": "2.5.1",
     "clsx": "2.1.1",
+    "fast-check": "4.10.2",
     "tailwind-merge": "3.7.0",
     "tailwind-variants": "3.3.1"
   },

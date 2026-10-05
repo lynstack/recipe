@@ -83,7 +83,11 @@ Native's `style` prop keeps its identity between renders.
   The package imports only types from React Native, which is its peer
   dependency and a development dependency for those types.
 - Tests sit next to the code as `*.test.ts`, and benchmarks as
-  `*.bench.ts`. A benchmark imports its package by its name, so it runs
+  `*.bench.ts`. The `*.property.test.ts` tests generate configs and calls
+  with fast-check and compare the results with a reference: `cx` with
+  `clsx`, `cva` with `class-variance-authority`, a recipe kind with a
+  model of its documented behavior, and a slot recipe with a recipe for
+  each slot. A benchmark imports its package by its name, so it runs
   against the built bundle, never against the sources directly. The
   `*.compare.bench.ts` benchmarks of `@lynstack/class-recipe` measure the
   same work in other libraries (`clsx`, `classnames`,
