@@ -9,7 +9,8 @@ recipes of that kind: functions that map a component's variants to its
 result.
 
 [`@lynstack/class-recipe`](/recipe/class-recipe/)
-is built on it: its `cva` and `sva` create recipes of a class name kind.
+is built on it: its `cva` creates recipes, and its `sva` slot recipes, of a
+class name kind.
 Use `@lynstack/class-recipe` to style components with class names; use this
 package to create recipes for other values.
 

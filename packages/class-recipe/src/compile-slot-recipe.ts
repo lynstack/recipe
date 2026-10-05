@@ -1,5 +1,5 @@
-import type { CreateKindRecipe, KindVariants } from "@lynstack/recipe";
-import { createRecipeKind } from "@lynstack/recipe";
+import type { CreateKindSlotRecipe, KindVariants } from "@lynstack/recipe";
+import { createSlotRecipeKind } from "@lynstack/recipe";
 
 import {
   appendClasses,
@@ -14,18 +14,6 @@ type LooseSelection = Readonly<Record<string, unknown>>;
 type LooseSlotClasses = Readonly<Record<string, string | undefined>>;
 
 type LooseSlotClassNames = Readonly<Record<string, string>>;
-
-/** The classes of each slot, in the order of the declared slots. */
-type ClassesBySlot = readonly string[];
-
-/**
- * The classes of each slot while a selection is reduced, which
- * {@link appendBySlot} extends in place.
- */
-interface SlotAccumulator {
-  readonly length: number;
-  [index: number]: string;
-}
 
 interface LooseSlotRecipeConfig {
   readonly slots: readonly string[];
@@ -56,17 +44,6 @@ interface Slots {
   readonly joinClasses: JoinClasses;
 }
 
-/** A slot recipe's config, with the classes of each value by slot. */
-interface ClassesBySlotConfig {
-  readonly base: ClassesBySlot;
-  readonly variants: KindVariants<ClassesBySlot>;
-  readonly compoundVariants: readonly {
-    readonly variants: LooseSelection;
-    readonly value: ClassesBySlot;
-  }[];
-  readonly defaultVariants: LooseSelection | undefined;
-}
-
 /**
  * Returns the slot recipe function for `config`, whose classes are combined
  * with `options.join` and cached unless `options.cache` is false.
@@ -81,9 +58,9 @@ function buildSlotRecipe(
   };
   const classRecipe =
     slots.joinClasses === concatClasses
-      ? concatKind(slots, options)
-      : joinKind(slots, options);
-  const classNamesOf = classRecipe(toClassesBySlot(config, slots.names));
+      ? concatKind(options)
+      : joinKind(slots.joinClasses, options);
+  const classNamesOf = classRecipe(withStringClasses(config, slots.names));
 
   const slotRecipe = (
     props?: LooseSlotRecipeProps | null,
@@ -99,105 +76,86 @@ function buildSlotRecipe(
 
 /** Slot recipes whose classes are concatenated by slot. */
 function concatKind(
-  slots: Slots,
   options: BuildOptions,
-): CreateKindRecipe<ClassesBySlot, LooseSlotClassNames> {
-  return createRecipeKind({
+): CreateKindSlotRecipe<string, string> {
+  return createSlotRecipeKind({
     cache: options.cache,
-    finish: (classes: SlotAccumulator) => namedBySlot(slots, classes),
-    initial: (base: ClassesBySlot | undefined): SlotAccumulator => [
-      ...(base ?? []),
-    ],
-    reduce: appendBySlot,
+    initial: (base: string | undefined): string => base ?? "",
+    reduce: appendClasses,
   });
-}
-
-/** Appends the classes of each slot in `added` to `classes`. */
-function appendBySlot(
-  classes: SlotAccumulator,
-  added: ClassesBySlot,
-): SlotAccumulator {
-  for (let index = 0; index < classes.length; index += 1) {
-    classes[index] = appendClasses(classes[index] ?? "", added[index] ?? "");
-  }
-  return classes;
 }
 
 /** Slot recipes whose classes are passed to `joinClasses` by slot. */
 function joinKind(
-  slots: Slots,
+  joinClasses: JoinClasses,
   options: BuildOptions,
-): CreateKindRecipe<ClassesBySlot, LooseSlotClassNames> {
-  return createRecipeKind({
+): CreateKindSlotRecipe<string, string> {
+  return createSlotRecipeKind({
     cache: options.cache,
-    finish: (collected: readonly ClassesBySlot[]) =>
-      joinBySlot(slots, collected),
-    initial: (base: ClassesBySlot | undefined): readonly ClassesBySlot[] =>
+    finish: joinClasses,
+    initial: (base: string | undefined): readonly string[] =>
       base === undefined ? [] : [base],
-    reduce: (collected: readonly ClassesBySlot[], added: ClassesBySlot) => [
-      ...collected,
-      added,
+    reduce: (classNames: readonly string[], classes: string) => [
+      ...classNames,
+      classes,
     ],
   });
 }
 
-function toClassesBySlot(
+/**
+ * Returns `config` as a slot recipe of a kind takes it: the classes of each
+ * compound variant under `value`, and of each value only the declared
+ * slots whose classes are a string that is not empty.
+ */
+function withStringClasses(
   config: LooseSlotRecipeConfig,
   slots: readonly string[],
-): ClassesBySlotConfig {
-  const variants: Record<string, Record<string, ClassesBySlot>> = {};
+): {
+  readonly slots: readonly string[];
+  readonly base: LooseSlotClassNames;
+  readonly variants: KindVariants<LooseSlotClassNames>;
+  readonly compoundVariants: readonly {
+    readonly variants: LooseSelection;
+    readonly value: LooseSlotClassNames;
+  }[];
+  readonly defaultVariants: LooseSelection | undefined;
+} {
+  const variants: Record<string, Record<string, LooseSlotClassNames>> = {};
   for (const [name, options] of Object.entries(config.variants)) {
     variants[name] = Object.fromEntries(
       Object.entries(options).map(
         ([option, classes]: readonly [string, LooseSlotClasses]) => [
           option,
-          bySlot(slots, classes),
+          stringClasses(slots, classes),
         ],
       ),
     );
   }
   return {
-    base: bySlot(slots, config.base ?? {}),
+    base: stringClasses(slots, config.base ?? {}),
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
-      value: bySlot(slots, compound.classNames),
+      value: stringClasses(slots, compound.classNames),
       variants: compound.variants,
     })),
     defaultVariants: config.defaultVariants,
+    slots,
     variants,
   };
 }
 
-function bySlot(
+/** Returns the classes in `classes` of each slot that has some. */
+function stringClasses(
   slots: readonly string[],
   classes: LooseSlotClasses,
-): ClassesBySlot {
-  return slots.map((slot) => classOfSlot(classes, slot));
-}
-
-function namedBySlot(
-  slots: Slots,
-  classes: ArrayLike<string>,
 ): LooseSlotClassNames {
-  const classNames: Record<string, string> = {};
-  const { names } = slots;
-  for (let index = 0; index < names.length; index += 1) {
-    classNames[names[index] ?? ""] = classes[index] ?? "";
+  const classesBySlot: Record<string, string> = {};
+  for (const slot of slots) {
+    const classesOfSlot = classOfSlot(classes, slot);
+    if (classesOfSlot !== "") {
+      classesBySlot[slot] = classesOfSlot;
+    }
   }
-  return Object.freeze(classNames);
-}
-
-function joinBySlot(
-  slots: Slots,
-  collected: readonly ClassesBySlot[],
-): LooseSlotClassNames {
-  const classNames: Record<string, string> = {};
-  const { names } = slots;
-  for (let index = 0; index < names.length; index += 1) {
-    classNames[names[index] ?? ""] = slots.joinClasses(
-      collected.map((classes) => classes[index] ?? ""),
-    );
-  }
-  return Object.freeze(classNames);
+  return classesBySlot;
 }
 
 function withOverrides(

@@ -52,9 +52,11 @@ The docs lead with the short names, `cva` and `sva`.
 - In `@lynstack/class-recipe`, `cx.ts`, `recipe.ts`, `slot-recipe.ts`,
   `create-recipes.ts`, `join.ts`, and `types.ts` hold the public API and
   its types. `types.ts` re-exports the shared types of `@lynstack/recipe`.
-  The other modules are internal: `compile-recipe.ts` and
-  `compile-slot-recipe.ts` build the recipe functions on recipe kinds of
-  `createRecipeKind`, using only the public API of `@lynstack/recipe`;
+  The other modules are internal: `compile-recipe.ts` builds the recipe
+  functions on recipe kinds of `createRecipeKind`, and
+  `compile-slot-recipe.ts` the slot recipe functions on slot recipe kinds
+  of `createSlotRecipeKind`, using only the public API of
+  `@lynstack/recipe`;
   `join-classes.ts` joins the classes of a selection; and
   `build-options.ts` holds the join and cache settings of a recipe.
 - Tests sit next to the code as `*.test.ts`, and benchmarks as
