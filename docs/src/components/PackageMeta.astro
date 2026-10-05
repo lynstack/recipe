@@ -24,6 +24,6 @@ const pkg = packages[Astro.props.folder];
     <a href={pkg.source}>Source</a>
   </li>
   <li>
-    <a href={pkg.playground}>Playground</a>
+    <a href={pkg.exampleApp.url}>Open in {pkg.exampleApp.host}</a>
   </li>
 </ul>

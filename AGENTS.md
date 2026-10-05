@@ -134,7 +134,8 @@ Native's `style` prop keeps its identity between renders.
   docs depend on React Native and its React types only to typecheck the
   recipes of `@lynstack/native-recipe`.
 - `examples` holds an example of each package that readers open in the
-  browser, from the Playground link of its overview page: `recipe` and
+  browser, from the Open in StackBlitz or Open in Snack link of its
+  overview page: `recipe` and
   `class-recipe` are React apps, built with Vite, that StackBlitz opens
   from the `main` branch, and `native-recipe/App.tsx` is the app of an
   Expo Snack, whose link `docs/src/packages.ts` builds. The examples are not in the

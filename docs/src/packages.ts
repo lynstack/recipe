@@ -6,6 +6,12 @@ import recipePackage from "../../packages/recipe/package.json";
 
 const repository = "https://github.com/lynstack/recipe";
 
+/** An app that runs an example of a package, and the site that hosts it. */
+interface ExampleApp {
+  readonly host: "Snack" | "StackBlitz";
+  readonly url: string;
+}
+
 /** A package of the repository, as the docs present it. */
 interface PackageInfo {
   /** The npm name of the package. */
@@ -25,15 +31,18 @@ interface PackageInfo {
   /** The package's changelog on GitHub. */
   readonly changelog: string;
   /** An example of the package that runs in the browser, to edit and try. */
-  readonly playground: string;
+  readonly exampleApp: ExampleApp;
   /** The requirements of the package, on its installation page. */
   readonly requirements: string;
 }
 
 /** Opens the example in `examples/<folder>` on StackBlitz. */
-function stackBlitzUrl(folder: PackageIconName, file: string): string {
+function stackBlitzApp(folder: PackageIconName, file: string): ExampleApp {
   const query = new URLSearchParams({ file, title: `${folder} example` });
-  return `https://stackblitz.com/github/lynstack/recipe/tree/main/examples/${folder}?${query}`;
+  return {
+    host: "StackBlitz",
+    url: `https://stackblitz.com/github/lynstack/recipe/tree/main/examples/${folder}?${query}`,
+  };
 }
 
 /**
@@ -41,14 +50,14 @@ function stackBlitzUrl(folder: PackageIconName, file: string): string {
  * The editor of Snack checks TypeScript with a version too old to read the
  * types of the packages, so the example runs as JavaScript.
  */
-function snackUrl(dependency: string, code: string): string {
+function snackApp(dependency: string, code: string): ExampleApp {
   const query = new URLSearchParams({
     dependencies: dependency,
     files: JSON.stringify({ "App.js": { contents: code, type: "CODE" } }),
     name: "native-recipe example",
     platform: "web",
   });
-  return `https://snack.expo.dev/?${query}`;
+  return { host: "Snack", url: `https://snack.expo.dev/?${query}` };
 }
 
 function packageInfo(
@@ -59,15 +68,15 @@ function packageInfo(
     readonly description: string;
     readonly license: string;
   },
-  { label, playground }: Pick<PackageInfo, "label" | "playground">,
+  { label, exampleApp }: Pick<PackageInfo, "exampleApp" | "label">,
 ): PackageInfo {
   return {
     changelog: `${repository}/blob/main/packages/${folder}/CHANGELOG.md`,
+    exampleApp,
     label,
     license: manifest.license,
     name: manifest.name,
     npm: `https://www.npmjs.com/package/${manifest.name}`,
-    playground,
     requirements: `/recipe/${folder}/installation/#requirements`,
     source: `${repository}/tree/main/packages/${folder}`,
     summary: manifest.description,
@@ -78,19 +87,19 @@ function packageInfo(
 /** Each package, by the name of its folder, which is also its sidebar topic. */
 const packages = {
   "class-recipe": packageInfo("class-recipe", classRecipePackage, {
+    exampleApp: stackBlitzApp("class-recipe", "src/recipes.ts"),
     label: "Class names",
-    playground: stackBlitzUrl("class-recipe", "src/recipes.ts"),
   }),
   "native-recipe": packageInfo("native-recipe", nativeRecipePackage, {
-    label: "React Native styles",
-    playground: snackUrl(
+    exampleApp: snackApp(
       `${nativeRecipePackage.name}@${nativeRecipePackage.version}`,
       nativeRecipeExample,
     ),
+    label: "React Native styles",
   }),
   recipe: packageInfo("recipe", recipePackage, {
+    exampleApp: stackBlitzApp("recipe", "src/recipes.ts"),
     label: "Core engine",
-    playground: stackBlitzUrl("recipe", "src/recipes.ts"),
   }),
 } as const satisfies Readonly<Record<PackageIconName, PackageInfo>>;
 

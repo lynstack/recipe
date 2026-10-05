@@ -58,8 +58,9 @@ button({ tone: "danger" });
 
 The [Quick start](https://lynstack.github.io/recipe/class-recipe/quick-start/)
 styles a component step by step, and each package's README shows its own
-example. To try a package in the browser, open the Playground link on the
-overview page of its docs.
+example. To try a package in the browser, choose its variants in the
+playground on the overview page of its docs, or open its example app from
+the Open in StackBlitz or Open in Snack link there.
 
 ## Why recipe
 
