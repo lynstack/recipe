@@ -31,6 +31,15 @@
       }
     },
     {
+      // Starlight loads the route middleware from a named export, which
+      // adds to the route data in the context it is given.
+      "files": ["src/route-data.ts"],
+      "rules": {
+        "import/prefer-default-export": "off",
+        "typescript/prefer-readonly-parameter-types": "off"
+      }
+    },
+    {
       // Astro loads the collections from a named export.
       "files": ["src/content.config.ts"],
       "rules": { "import/prefer-default-export": "off" }

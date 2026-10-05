@@ -12,6 +12,10 @@ interface PackageInfo {
   readonly name: string;
   /** The version in the repository, which is the one on npm after a release. */
   readonly version: string;
+  /** The description of the package on npm. */
+  readonly summary: string;
+  /** The SPDX identifier of the package's license. */
+  readonly license: string;
   /** What the package makes recipes for, in a word or two. */
   readonly label: string;
   /** The package's page on npm. */
@@ -49,17 +53,24 @@ function snackUrl(dependency: string, code: string): string {
 
 function packageInfo(
   folder: PackageIconName,
-  manifest: { readonly name: string; readonly version: string },
+  manifest: {
+    readonly name: string;
+    readonly version: string;
+    readonly description: string;
+    readonly license: string;
+  },
   { label, playground }: Pick<PackageInfo, "label" | "playground">,
 ): PackageInfo {
   return {
     changelog: `${repository}/blob/main/packages/${folder}/CHANGELOG.md`,
     label,
+    license: manifest.license,
     name: manifest.name,
     npm: `https://www.npmjs.com/package/${manifest.name}`,
     playground,
     requirements: `/recipe/${folder}/installation/#requirements`,
     source: `${repository}/tree/main/packages/${folder}`,
+    summary: manifest.description,
     version: manifest.version,
   };
 }
