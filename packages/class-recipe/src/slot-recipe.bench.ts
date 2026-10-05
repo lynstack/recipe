@@ -126,3 +126,70 @@ describe("slot recipe", () => {
     expect(result.get("cached")).toBeFasterThan(result.get("uncached"));
   });
 });
+
+type Selection = (typeof selections)[number];
+
+type ClassNames = Readonly<Partial<Record<"root" | "icon" | "label", string>>>;
+
+function withClassNames(
+  selection: Selection,
+  classNames: ClassNames,
+): Selection & { readonly classNames: ClassNames } {
+  return { ...selection, classNames };
+}
+
+describe("slot recipe with classNames", () => {
+  const recipe = createSlotRecipe(config);
+  const variantSelections = selections.slice(0, 4);
+  const oneSlot = { root: "w-full" };
+  const twoSlots = { root: "w-full", label: "uppercase" };
+  const cases: Readonly<Record<string, readonly Selection[]>> = {
+    "variants only": variantSelections,
+    "classNames without classes": variantSelections.map((selection) =>
+      withClassNames(selection, {}),
+    ),
+    "classNames of one slot": variantSelections.map((selection) =>
+      withClassNames(selection, oneSlot),
+    ),
+    "classNames of two slots": variantSelections.map((selection) =>
+      withClassNames(selection, twoSlots),
+    ),
+  };
+
+  it("returns the expected classes", () => {
+    for (const [index, selection] of variantSelections.entries()) {
+      const classNames = recipe(selection);
+
+      expect(classNames).toStrictEqual(expected[index]);
+      expect(recipe(withClassNames(selection, {}))).toBe(classNames);
+      expect(recipe(withClassNames(selection, oneSlot))).toStrictEqual({
+        ...classNames,
+        root: `${classNames.root} w-full`,
+      });
+      expect(recipe(withClassNames(selection, twoSlots))).toStrictEqual({
+        ...classNames,
+        root: `${classNames.root} w-full`,
+        label: `${classNames.label} uppercase`,
+      });
+    }
+  });
+
+  it("benchmark", async ({ bench }: TestContext) => {
+    expect.hasAssertions();
+
+    let length = 0;
+    await bench.compare(
+      ...Object.entries(cases).map(
+        ([name, caseSelections]: readonly [string, readonly Selection[]]) =>
+          bench(name, () => {
+            for (const selection of caseSelections) {
+              const { root, icon, label } = recipe(selection);
+              length += root.length + icon.length + label.length;
+            }
+          }),
+      ),
+    );
+
+    expect(length).toBeGreaterThan(0);
+  });
+});
