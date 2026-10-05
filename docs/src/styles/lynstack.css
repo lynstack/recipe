@@ -518,6 +518,10 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   letter-spacing: -0.03em;
 }
 
+.landing-hero-accent {
+  color: var(--lyn-brand);
+}
+
 .landing-hero .hero .tagline {
   color: var(--lyn-muted-foreground);
   font-size: var(--sl-text-lg);
