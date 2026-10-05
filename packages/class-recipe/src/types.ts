@@ -1,23 +1,23 @@
+import type {
+  VariantKey as KindVariantKey,
+  VariantsOf as KindVariantsOf,
+} from "@lynstack/recipe";
+
 /**
  * Turns a type's intersections into a single object type, so editors show
  * its properties instead of the types it was built from.
  */
 type Simplify<Type> = { [Key in keyof Type]: Type[Key] };
 
-type KeyName<Key> = Key extends string
-  ? Key
-  : Key extends number
-    ? `${Key}`
-    : never;
+/** The props of a recipe that override its classes, which are not variants. */
+type OverrideName = "className" | "classNames";
 
 /**
  * The name of each variant in a recipe's props, as a string.
  *
  * @typeParam Props - The properties the recipe accepts.
  */
-type VariantKey<Props> = KeyName<
-  Exclude<keyof Props, "className" | "classNames">
->;
+type VariantKey<Props> = KindVariantKey<Omit<Props, OverrideName>>;
 
 /**
  * The variants a recipe accepts, without its `className` or `classNames`
@@ -35,7 +35,7 @@ type VariantKey<Props> = KeyName<
  * ```
  */
 type VariantsOf<Recipe extends (props: never) => unknown> = Simplify<
-  Omit<NonNullable<Parameters<Recipe>[0]>, "className" | "classNames">
+  Omit<KindVariantsOf<Recipe>, OverrideName>
 >;
 
 export type {
