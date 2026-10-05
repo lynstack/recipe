@@ -176,6 +176,12 @@ release of a version published by hand, or a rerun, publishes nothing.
 Release `@lynstack/recipe` first when a
 package built on it needs a new version of it.
 
+npm sets up trusted publishing only for a package that exists, so the
+first version of a new package is published by hand, before its GitHub
+release. Publish the tarball that `pnpm pack` writes, never the package
+folder with `npm publish`, which keeps `workspace:*` and publishes a
+version that no package manager can install.
+
 ## Rules
 
 ### General
