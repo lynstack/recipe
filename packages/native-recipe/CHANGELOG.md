@@ -5,7 +5,16 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.0.1 — 2026-10-05
+
+- Depends on `@lynstack/recipe` 1.1.0. Version 1.0.0 was published with
+  the dependency `workspace:*`, so no package manager could install it.
+  The code is unchanged.
+
 ## 1.0.0 — 2026-10-05
+
+Deprecated: it cannot be installed. Use 1.0.1.
+
 
 The first release of `@lynstack/native-recipe`, which maps a component's
 variants to its React Native styles.
