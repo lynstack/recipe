@@ -67,7 +67,7 @@ or use a join that resolves conflicts (see
 A slot recipe returns a frozen object with the class name of every slot,
 and the same object for the same variants, which keeps props stable for
 memoized components. Passing `classNames` with at least one class returns
-a new object, and leaves the cached one unchanged. A recipe returns a
+a new frozen object, and leaves the cached one unchanged. A recipe returns a
 string, which is the same value for the same variants.
 
 ## Without the cache

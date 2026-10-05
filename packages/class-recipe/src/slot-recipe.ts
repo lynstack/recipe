@@ -191,8 +191,8 @@ function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
  * The class names of each selection are built once and cached in a frozen
  * object, so calling a slot recipe again with the same variants returns the
  * same object. Passing `classNames` with classes for at least one slot
- * returns a new object, with each override joined after the cached classes
- * of its slot.
+ * returns a new frozen object, with each override joined after the cached
+ * classes of its slot.
  *
  * Every declared slot is present in the result, as `""` when it has no
  * classes. A variant without a default is required, except a boolean

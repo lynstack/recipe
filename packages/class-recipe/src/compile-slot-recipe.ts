@@ -166,7 +166,7 @@ function stringClasses(
 
 /**
  * Returns `classNames` with the classes of `overrides` added to each slot,
- * or `classNames` itself when `overrides` adds no classes.
+ * frozen, or `classNames` itself when `overrides` adds no classes.
  */
 function withOverrides(
   slots: Slots,
@@ -181,7 +181,7 @@ function withOverrides(
       result[slot] = slots.addClasses(classOfSlot(classNames, slot), classes);
     }
   }
-  return result ?? classNames;
+  return result === undefined ? classNames : Object.freeze(result);
 }
 
 function classOfSlot(classes: LooseSlotClasses, slot: string): string {

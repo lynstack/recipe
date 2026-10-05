@@ -100,6 +100,19 @@ describe(createSlotRecipe, () => {
     );
   });
 
+  it("freezes the classes of a selection with classNames", () => {
+    const classNames = card({
+      tone: "neutral",
+      classNames: { root: "w-full" },
+    });
+
+    expect(classNames).toStrictEqual({
+      root: "rounded-md bg-surface p-4 w-full",
+      title: "text-label",
+    });
+    expect(Object.isFrozen(classNames)).toBe(true);
+  });
+
   it("does not change the cached object when classNames is passed", () => {
     card({ tone: "neutral", classNames: { root: "w-full" } });
 
