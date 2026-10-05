@@ -426,40 +426,105 @@ starlight-toc a[aria-current="true"]::before {
   background-color: var(--lyn-brand);
 }
 
-/* Package meta: the version and the links of a package, under its overview's title. */
+/* Package meta: under an overview's title, the facts of a package, its links, and its example app. */
 
 .package-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.375rem 1rem;
+  gap: 0.75rem 1.25rem;
   align-items: center;
   margin: 0 0 1.5rem;
-  padding: 0;
-  list-style: none;
+}
+
+.package-meta-facts {
+  display: inline-flex;
+  margin: 0;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  overflow: hidden;
   font-family: var(--lyn-font-mono);
   font-size: var(--sl-text-xs);
+  font-variant-numeric: tabular-nums;
 }
 
-.package-meta-version {
-  padding: 0.125rem 0.5rem;
-  border: 1px solid var(--lyn-border);
-  border-radius: var(--lyn-radius-sm);
-  font-variant-numeric: tabular-nums;
+.package-meta-facts > * {
+  padding: 0.25rem 0.625rem;
   color: var(--lyn-foreground);
 }
 
-.package-meta a {
+.package-meta-facts > * + * {
+  border-inline-start: 1px solid var(--lyn-border);
+}
+
+.package-meta-facts a {
   color: var(--lyn-muted-foreground);
   text-decoration: none;
-  transition: color var(--lyn-motion-duration) var(--lyn-motion-easing);
+  transition:
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    color var(--lyn-motion-duration) var(--lyn-motion-easing);
 }
 
-.package-meta a:hover {
+.package-meta-facts a:hover {
+  background-color: var(--lyn-accent);
   color: var(--lyn-foreground);
-  text-decoration: underline;
 }
 
-.package-icon-svg {
+.package-meta-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.package-meta-links a,
+.package-meta-run {
+  display: inline-flex;
+  gap: 0.375rem;
+  align-items: center;
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.package-meta-links a {
+  color: var(--lyn-muted-foreground);
+}
+
+.package-meta-links a:hover {
+  color: var(--lyn-foreground);
+}
+
+.package-meta-run {
+  padding: 0.25rem 0.625rem;
+  font-size: var(--sl-text-xs);
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  background-color: var(--lyn-background);
+  color: var(--lyn-foreground);
+}
+
+.package-meta-run:hover {
+  background-color: var(--lyn-accent);
+}
+
+.package-meta-run .icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+@media (min-width: 50rem) {
+  .package-meta-run {
+    margin-inline-start: auto;
+  }
+}
+
+.icon {
+  flex-shrink: 0;
   stroke-width: 1.75;
 }
 

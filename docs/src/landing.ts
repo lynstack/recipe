@@ -1,4 +1,4 @@
-import type { PackageIconName } from "./package-icons.ts";
+import type { PackageIconName } from "./icons.ts";
 import type { PackageInfo } from "./packages.ts";
 import { packages } from "./packages.ts";
 import { speedup } from "./measurements/class-recipe.ts";

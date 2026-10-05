@@ -1,4 +1,4 @@
-import type { PackageIconName } from "./package-icons.ts";
+import type { PackageIconName } from "./icons.ts";
 import nativeRecipePackage from "../../packages/native-recipe/package.json";
 
 /** A tool or platform that a package needs, and the versions it supports. */

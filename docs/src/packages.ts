@@ -1,4 +1,4 @@
-import type { PackageIconName } from "./package-icons.ts";
+import type { PackageIconName } from "./icons.ts";
 import classRecipePackage from "../../packages/class-recipe/package.json";
 import nativeRecipeExample from "../../examples/native-recipe/App.tsx?raw";
 import nativeRecipePackage from "../../packages/native-recipe/package.json";

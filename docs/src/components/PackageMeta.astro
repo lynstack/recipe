@@ -1,4 +1,6 @@
 ---
+import Icon from "./Icon.astro";
+import { linkIcons } from "../icons.ts";
 import { packages } from "../packages.ts";
 import { typeScriptVersion } from "../requirements.ts";
 
@@ -7,23 +9,30 @@ interface Props {
 }
 
 const pkg = packages[Astro.props.folder];
+const links = [
+  { href: pkg.npm, icon: linkIcons.npm, label: "npm" },
+  { href: pkg.changelog, icon: linkIcons.changelog, label: "Changelog" },
+  { href: pkg.source, icon: linkIcons.source, label: "Source" },
+];
 ---
 
-<ul class="package-meta not-content" aria-label={`${pkg.name} links`}>
-  <li class="package-meta-version">v{pkg.version}</li>
-  <li class="package-meta-version">
+<div class="package-meta not-content">
+  <p class="package-meta-facts">
+    <span>v{pkg.version}</span>
     <a href={pkg.requirements}>TypeScript {typeScriptVersion}+</a>
-  </li>
-  <li>
-    <a href={pkg.npm}>npm</a>
-  </li>
-  <li>
-    <a href={pkg.changelog}>Changelog</a>
-  </li>
-  <li>
-    <a href={pkg.source}>Source</a>
-  </li>
-  <li>
-    <a href={pkg.exampleApp.url}>Open in {pkg.exampleApp.host}</a>
-  </li>
-</ul>
+  </p>
+  <ul class="package-meta-links" aria-label={`${pkg.name} links`}>
+    {links.map((link) => (
+      <li>
+        <a href={link.href}>
+          <Icon paths={link.icon} />
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a class="package-meta-run" href={pkg.exampleApp.url}>
+    <Icon paths={linkIcons.run} />
+    Open in {pkg.exampleApp.host}
+  </a>
+</div>
