@@ -371,6 +371,32 @@ a.site-title-product:hover {
 }
 
 /*
+ * Page layout: the title and the content form one column, which starts a
+ * fixed gutter after the sidebar and grows up to a reading width, rather
+ * than sitting against the table of contents.
+ */
+
+[data-has-sidebar] .content-panel:first-of-type {
+  padding-bottom: 0.5rem;
+}
+
+[data-has-sidebar] .content-panel + .content-panel {
+  padding-top: 0.5rem;
+  border-top: 0;
+}
+
+@media (min-width: 72rem) {
+  [data-has-sidebar] .main-pane .content-panel {
+    padding-inline: 3rem 2rem;
+  }
+
+  [data-has-sidebar] .main-pane .sl-container {
+    max-width: 48rem;
+    margin-inline: 0 auto;
+  }
+}
+
+/*
  * Table of contents: an eyebrow over a hairline rail, the items muted, the
  * current one ink with a brand mark on the rail.
  */
