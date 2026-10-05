@@ -5,6 +5,15 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.0.2 — 2026-10-05
+
+The public API and behavior are unchanged.
+
+- `package.json` declares `main` as well as `exports`, for bundlers that
+  read only `main`, such as the one of Expo Snack, which can now install
+  it.
+- Depends on `@lynstack/recipe` 1.1.2.
+
 ## 1.0.1 — 2026-10-05
 
 - Depends on `@lynstack/recipe` 1.1.0. Version 1.0.0 was published with

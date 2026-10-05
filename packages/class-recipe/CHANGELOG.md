@@ -4,6 +4,14 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.1.3 — 2026-10-05
+
+The public API and behavior are unchanged.
+
+- `package.json` declares `main` as well as `exports`, for bundlers that
+  read only `main`, such as the one of Expo Snack.
+- Depends on `@lynstack/recipe` 1.1.2.
+
 ## 1.1.2 — 2026-10-05
 
 The public API and behavior are unchanged.

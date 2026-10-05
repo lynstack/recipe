@@ -4,6 +4,13 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.1.2 — 2026-10-05
+
+The public API and behavior are unchanged.
+
+- `package.json` declares `main` as well as `exports`, for bundlers that
+  read only `main`, such as the one of Expo Snack.
+
 ## 1.1.1 — 2026-10-05
 
 - A recipe whose kind returns `undefined` caches that result, as it
