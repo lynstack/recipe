@@ -17,6 +17,7 @@ interface LooseSlotStyleRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: LooseSelection | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 type LooseSlotStyleRecipe = KindRecipe<
@@ -32,6 +33,7 @@ function buildSlotStyleRecipe(
 ): LooseSlotStyleRecipe {
   return slotStyleRecipe({
     base: config.base,
+    cache: config.cache,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
       value: compound.styles,
       variants: compound.variants,

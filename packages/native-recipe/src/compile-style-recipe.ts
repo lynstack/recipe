@@ -16,6 +16,7 @@ interface LooseStyleRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: LooseSelection | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 type LooseStyleRecipe = KindRecipe<LooseSelection, LooseStyle>;
@@ -45,6 +46,7 @@ const styleRecipe = createRecipeKind(styleKind);
 function buildStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
   return styleRecipe({
     base: config.base,
+    cache: config.cache,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
       value: compound.style,
       variants: compound.variants,

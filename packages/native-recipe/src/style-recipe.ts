@@ -79,6 +79,11 @@ interface StyleRecipeConfig<
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
     DefaultVariants<Variants, DefaultedName> | undefined;
+  /**
+   * Whether the recipe caches the style of each declared selection.
+   * Defaults to `true`.
+   */
+  readonly cache?: boolean | undefined;
 }
 
 /** Every style that a recipe's config declares, as a union. */
@@ -125,7 +130,8 @@ type StyleRecipe<Props, Style> = KindRecipe<Props, Style>;
  * so calling a recipe again with the same variants returns the same object.
  * Passing it to the `style` prop of a component keeps the prop unchanged
  * between renders, which lets React skip the style and a memoized child
- * skip rendering.
+ * skip rendering. With `cache: false`, the recipe builds a new object on
+ * every call instead.
  *
  * A variant without a default is required, except a boolean variant, whose
  * only options are `"true"` and `"false"` and which defaults to `false`. An

@@ -122,6 +122,9 @@ function Badge({ tone }: BadgeProps) {
 ```
 
 The same holds for `createThemedRecipes`: call it once, in one module.
+Leave the `cache` of a recipe's config unset: with `cache: false`, the
+recipe returns a new object on every call, like a recipe created inside a
+component.
 
 ### Put every choice a component offers in a variant
 

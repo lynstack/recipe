@@ -124,6 +124,11 @@ interface SlotStyleRecipeConfig<
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
     DefaultVariants<Variants, DefaultedName> | undefined;
+  /**
+   * Whether the recipe caches the styles of each declared selection.
+   * Defaults to `true`.
+   */
+  readonly cache?: boolean | undefined;
 }
 
 /**
@@ -184,6 +189,8 @@ type RecipeSlotStyles<Slot extends string, Variants, Base, Compounds> = {
  * object, so calling a slot recipe again with the same variants returns the
  * same object, with the same style for each slot. Passing them to the
  * `style` prop of each element keeps the props unchanged between renders.
+ * With `cache: false`, the recipe builds a new object on every call
+ * instead.
  *
  * Every declared slot is present in the result, as an empty style when it
  * has none. A variant without a default is required, except a boolean

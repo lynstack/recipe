@@ -19,12 +19,13 @@ style={badge({ tone })} />`.
 
 ## The config
 
-| Property           | Description                                                                                      |
-| ------------------ | ------------------------------------------------------------------------------------------------ |
-| `base`             | Optional. The style the element always has.                                                      |
-| `variants`         | For each variant name, the style of each of its options.                                         |
-| `compoundVariants` | Optional. Styles added when several variants have particular options at the same time, in order. |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                           |
+| Property           | Description                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `base`             | Optional. The style the element always has.                                                                            |
+| `variants`         | For each variant name, the style of each of its options.                                                               |
+| `compoundVariants` | Optional. Styles added when several variants have particular options at the same time, in order.                       |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                 |
+| `cache`            | Optional. Whether the recipe caches its style. Defaults to `true`. Without the cache, every call returns a new object. |
 
 Every style is checked against the styles of React Native, as in
 `StyleSheet.create` (see [TypeScript](/recipe/native-recipe/typescript/)).

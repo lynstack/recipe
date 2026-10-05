@@ -19,7 +19,9 @@ selection merges its style and caches it under that integer; every later
 call with the same variants reads the option of each variant and returns
 the cached style. Create each recipe once, at the top level of a module,
 so that its cache lasts. The cache grows with the selections the recipe is
-called with, up to one entry per combination of declared options.
+called with, up to one entry per combination of declared options. A recipe
+whose config sets `cache: false` builds a new style on every call, which
+changes the `style` prop on every render, so leave the cache on.
 
 ## The order of styles
 

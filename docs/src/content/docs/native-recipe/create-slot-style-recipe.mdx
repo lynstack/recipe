@@ -30,13 +30,14 @@ A slot recipe takes the config of a
 and with an object of styles keyed by slot name wherever a style recipe
 takes a style:
 
-| Property           | Description                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| `slots`            | The names of the slots, in the order of the result.                                |
-| `base`             | Optional. The style each slot always has.                                          |
-| `variants`         | For each variant name, the style of each slot for each of its options.             |
-| `compoundVariants` | Optional. Styles added to some slots, under `styles`, when several variants match. |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.             |
+| Property           | Description                                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `slots`            | The names of the slots, in the order of the result.                                                                          |
+| `base`             | Optional. The style each slot always has.                                                                                    |
+| `variants`         | For each variant name, the style of each slot for each of its options.                                                       |
+| `compoundVariants` | Optional. Styles added to some slots, under `styles`, when several variants match.                                           |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                       |
+| `cache`            | Optional. Whether the slot recipe caches its styles. Defaults to `true`. Without the cache, every call returns a new object. |
 
 An option or compound variant gives styles only to the slots it names.
 Each slot's style is merged in the order of a style recipe: its base
