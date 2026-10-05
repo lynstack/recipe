@@ -1,4 +1,4 @@
-/** The iterations per second of one task of a benchmark. */
+/** The calls per second of one task of a benchmark. */
 interface Speed {
   readonly name: string;
   readonly hz: number;
@@ -34,17 +34,17 @@ const longDate = new Intl.DateTimeFormat("en-US", {
 
 const VOWEL = /^[aeiou]/iu;
 
-/** Formats iterations per second, such as `2,247,777`. */
+/** Formats calls per second, such as `2,247,777`. */
 function formatHz(hz: number): string {
   return integer.format(hz);
 }
 
-/** Formats iterations per second in millions, such as `17.8`. */
+/** Formats calls per second in millions, such as `17.8`. */
 function formatMillions(hz: number): string {
   return oneDecimal.format(hz / MILLION);
 }
 
-/** Formats iterations per second for prose, such as `2.2 million`. */
+/** Formats calls per second for prose, such as `2.2 million`. */
 function formatRoughHz(hz: number): string {
   return hz >= MILLION
     ? `${formatMillions(hz)} million`

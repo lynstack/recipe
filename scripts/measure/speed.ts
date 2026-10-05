@@ -5,13 +5,16 @@ import { tmpdir } from "node:os";
 
 import { listField, numberField, readJson, stringField } from "./json.ts";
 
-/** The iterations per second of one task of a benchmark. */
+/** The calls per second of one task of a benchmark. */
 interface Speed {
   readonly name: string;
   readonly hz: number;
 }
 
-/** The speed of each task, fastest first, keyed by the benchmark's full name. */
+/**
+ * The iterations per second of each task, fastest first, keyed by the
+ * benchmark's full name.
+ */
 type Speeds = Readonly<Record<string, readonly Speed[]>>;
 
 const MILLISECONDS_PER_SECOND = 1000;
@@ -60,13 +63,20 @@ function measureSpeeds(directory: string): Speeds {
   }
 }
 
-/** Returns the speeds of a benchmark's tasks, which must have run. */
-function speedsNamed(speeds: Speeds, benchmark: string): readonly Speed[] {
+/**
+ * Returns the calls per second of a benchmark's tasks, which must have run,
+ * given how many calls each of its iterations makes.
+ */
+function speedsNamed(
+  speeds: Speeds,
+  benchmark: string,
+  callsPerIteration: number,
+): readonly Speed[] {
   const tasks = speeds[benchmark];
   if (tasks === undefined) {
     throw new Error(`No benchmark is named "${benchmark}".`);
   }
-  return tasks;
+  return tasks.map(({ hz, name }) => ({ hz: hz * callsPerIteration, name }));
 }
 
 export { measureSpeeds, speedsNamed };

@@ -5,6 +5,9 @@ import type { Versions } from "./versions.ts";
 import { readEnvironment } from "./environment.ts";
 import { readVersions } from "./versions.ts";
 
+/** The selections that an iteration of a benchmark calls. */
+const SELECTION_CALLS = 5;
+
 /** What the docs of `@lynstack/recipe` report. */
 interface RecipeMeasurements extends Environment {
   readonly versions: Versions;
@@ -17,10 +20,15 @@ function measureRecipe(directory: string): RecipeMeasurements {
   const speeds = measureSpeeds(directory);
   return {
     ...readEnvironment(),
-    cache: speedsNamed(speeds, "recipe kind > is faster with the cache"),
+    cache: speedsNamed(
+      speeds,
+      "recipe kind > is faster with the cache",
+      SELECTION_CALLS,
+    ),
     slotCache: speedsNamed(
       speeds,
       "slot recipe kind > is faster with the cache",
+      SELECTION_CALLS,
     ),
     versions: readVersions(directory, "recipe"),
   };

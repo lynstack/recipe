@@ -29,6 +29,11 @@ interface ClassRecipeMeasurements extends Environment {
 
 const CX_PREFIX = "cx compared with other libraries > with ";
 
+/** The selections that an iteration of a recipe benchmark calls. */
+const RECIPE_CALLS = 6;
+/** An iteration of a `cx` benchmark calls `cx` once. */
+const CX_CALLS = 1;
+
 const comparedLibraries = [
   "class-variance-authority",
   "classnames",
@@ -39,8 +44,16 @@ const comparedLibraries = [
 
 function comparisonOf(speeds: Speeds, suite: string): Comparison {
   return {
-    merged: speedsNamed(speeds, `${suite} > with tailwind-merge > benchmark`),
-    plain: speedsNamed(speeds, `${suite} > without tailwind-merge > benchmark`),
+    merged: speedsNamed(
+      speeds,
+      `${suite} > with tailwind-merge > benchmark`,
+      RECIPE_CALLS,
+    ),
+    plain: speedsNamed(
+      speeds,
+      `${suite} > without tailwind-merge > benchmark`,
+      RECIPE_CALLS,
+    ),
   };
 }
 
@@ -49,7 +62,7 @@ function cxInputsOf(speeds: Speeds): readonly CxInput[] {
     .filter((benchmark) => benchmark.startsWith(CX_PREFIX))
     .map((benchmark) => ({
       name: benchmark.slice(CX_PREFIX.length),
-      speeds: speedsNamed(speeds, benchmark),
+      speeds: speedsNamed(speeds, benchmark, CX_CALLS),
     }));
 }
 
@@ -60,7 +73,11 @@ function measureClassRecipe(directory: string): ClassRecipeMeasurements {
     ...readEnvironment(),
     cx: cxInputsOf(speeds),
     recipe: comparisonOf(speeds, "recipe compared with other libraries"),
-    recipeCache: speedsNamed(speeds, "recipe > is faster with the cache"),
+    recipeCache: speedsNamed(
+      speeds,
+      "recipe > is faster with the cache",
+      RECIPE_CALLS,
+    ),
     slotRecipe: comparisonOf(
       speeds,
       "slot recipe compared with other libraries",
@@ -68,6 +85,7 @@ function measureClassRecipe(directory: string): ClassRecipeMeasurements {
     slotRecipeCache: speedsNamed(
       speeds,
       "slot recipe > is faster with the cache",
+      RECIPE_CALLS,
     ),
     versions: readVersions(directory, "class-recipe", comparedLibraries),
   };
