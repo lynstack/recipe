@@ -104,11 +104,34 @@ type KeyName<Key> = Key extends string
     : never;
 
 /**
- * The name of each variant in a selection, as a string.
+ * The name of each variant in a selection, as a string, as a recipe lists
+ * it in `variantKeys`.
  *
- * @typeParam Selection - The variants a selector accepts.
+ * @typeParam Selection - The variants a recipe accepts.
  */
 type VariantKey<Selection> = KeyName<keyof Selection>;
+
+/**
+ * The variants a recipe accepts. Use it to type the props of a component
+ * built on a recipe.
+ *
+ * @typeParam Recipe - The type of a recipe, such as one created by the
+ *   function that `createRecipeKind` returns.
+ *
+ * @example
+ * ```ts
+ * const box = styleRecipe({
+ *   variants: { size: { sm: { padding: 4 }, md: { padding: 8 } } },
+ *   defaultVariants: { size: "md" },
+ * });
+ *
+ * type BoxVariants = VariantsOf<typeof box>;
+ * // => { readonly size?: "sm" | "md" | undefined }
+ * ```
+ */
+type VariantsOf<Recipe extends (props: never) => unknown> = Simplify<
+  NonNullable<Parameters<Recipe>[0]>
+>;
 
 export type {
   CompoundCondition,
@@ -118,4 +141,5 @@ export type {
   VariantOption,
   VariantKey,
   VariantSelection,
+  VariantsOf,
 };

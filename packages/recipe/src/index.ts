@@ -20,6 +20,8 @@ export type {
   CompoundCondition,
   DefaultVariants,
   RecipeFunction,
+  VariantKey,
   VariantOption,
   VariantSelection,
+  VariantsOf,
 } from "./types.js";

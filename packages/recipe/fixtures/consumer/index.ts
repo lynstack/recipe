@@ -2,6 +2,8 @@ import type {
   CreateKindRecipe,
   KindRecipe,
   RecipeKind,
+  VariantKey,
+  VariantsOf,
 } from "@lynstack/recipe";
 import { createRecipeKind } from "@lynstack/recipe";
 
@@ -25,5 +27,7 @@ const text = styleRecipe({
 const style: Style = text({ size: "lg" });
 const textKeys: readonly "size"[] = text.variantKeys;
 const recipe: KindRecipe<{ readonly size?: "sm" | "lg" }, Style> = text;
+const variants: VariantsOf<typeof text> = { size: "lg" };
+const textKey: VariantKey<VariantsOf<typeof text>> = "size";
 
-export { recipe, style, styleRecipe, text, textKeys };
+export { recipe, style, styleRecipe, text, textKey, textKeys, variants };

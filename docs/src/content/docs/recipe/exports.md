@@ -14,6 +14,8 @@ sidebar:
 | `KindRecipe`          | A recipe of a kind, with the names of its variants in `variantKeys`.                        |
 | `KindVariants`        | The variants of a recipe's config: for each variant name, the value of each of its options. |
 | `KindCompoundVariant` | A value added when several variants have particular options at the same time.               |
+| `VariantsOf`          | The variants a recipe accepts, to type the props of a component built on it.                |
+| `VariantKey`          | The name of each variant in a selection, as a string, as `variantKeys` lists it.            |
 | `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                     |
 | `VariantOption`       | The values accepted for one variant.                                                        |
 | `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                      |
