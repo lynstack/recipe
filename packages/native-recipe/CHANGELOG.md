@@ -5,6 +5,23 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.1.0 — 2026-10-06
+
+- `createStyleRecipe` and `createSlotStyleRecipe` take `cache` in their
+  config, also through `createThemedRecipes`. Without the cache, a recipe
+  returns a new style on every call, which changes the `style` prop on
+  every render, so leave it on unless a recipe's variants come from
+  untrusted input.
+- A slot style recipe whose variants are typed as
+  `SlotStyleRecipeVariants`, such as variants from a CMS, accepts literal
+  slots.
+- A slot style recipe keeps a slot named `__proto__` in its result.
+- The README states the requirements: React Native 0.80 or newer (Expo
+  SDK 54 or newer), and TypeScript 5.4 or newer for the types.
+- Depends on `@lynstack/recipe` through the range `^1.2.0` instead of an
+  exact version, so an app that installs several of the packages shares
+  one copy of it.
+
 ## 1.0.2 — 2026-10-05
 
 The public API and behavior are unchanged.
