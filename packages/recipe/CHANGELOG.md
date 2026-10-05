@@ -4,6 +4,18 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.2.0 — 2026-10-06
+
+- A recipe and a slot recipe take `cache` in their config, which
+  overrides the `cache` of their kind. A recipe whose variants come from
+  untrusted input, such as the requests of a server, can turn its cache
+  off while the other recipes of its kind keep theirs, since a cache keeps
+  up to one result for each combination of declared options.
+- A slot recipe keeps a slot named `__proto__` in its result. It set the
+  prototype of the result before, and the slot was missing.
+- The README states the requirements: TypeScript 5.4 or newer for the
+  types, and an ES2022 runtime.
+
 ## 1.1.2 — 2026-10-05
 
 The public API and behavior are unchanged.
