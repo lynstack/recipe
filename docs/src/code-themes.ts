@@ -99,14 +99,14 @@ const lynstackDark = codeTheme({
 });
 
 const lynstackLight = codeTheme({
-  background: "#f4f4f5",
-  constant: "#8f5a00",
-  foreground: "#18181b",
-  function: "#2c6bd2",
-  keyword: "#7a52d1",
-  mutedForeground: "#5f5f68",
+  background: "#f6f6f7",
+  constant: "#a3480a",
+  foreground: "#111113",
+  function: "#1d4ed8",
+  keyword: "#6d28d9",
+  mutedForeground: "#55555e",
   name: "lynstack-light",
-  string: "#0b7466",
+  string: "#047857",
   type: "light",
 });
 

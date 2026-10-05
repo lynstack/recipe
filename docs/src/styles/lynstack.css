@@ -69,33 +69,38 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * The light theme departs from lyn-ui for reading: nearly white chrome, a
+ * lighter fill for code, ink body text, and darker secondary text, so that
+ * long pages read crisp rather than gray.
+ */
 :root[data-theme="light"] {
   --lyn-background: #fff;
-  --lyn-foreground: #18181b;
-  --lyn-muted: #f4f4f5;
-  --lyn-muted-foreground: #5f5f68;
-  --lyn-accent: #efeff1;
-  --lyn-active: #e7e7ea;
-  --lyn-border: #dedee2;
+  --lyn-foreground: #111113;
+  --lyn-muted: #f6f6f7;
+  --lyn-muted-foreground: #55555e;
+  --lyn-accent: #f0f0f2;
+  --lyn-active: #e9e9ec;
+  --lyn-border: #e6e6ea;
   --lyn-input: #7c7c85;
-  --lyn-primary: #18181b;
+  --lyn-primary: #111113;
   --lyn-primary-hover: #2e2e33;
   --lyn-primary-foreground: #fafafa;
   --lyn-brand: #d9480f;
   --lyn-brand-subtle: #fdede6;
   --lyn-brand-text: #b23b0f;
-  --lyn-sidebar: #f4f4f5;
-  --lyn-sidebar-accent: #ececee;
+  --lyn-sidebar: #fcfcfd;
+  --lyn-sidebar-accent: #f0f0f2;
   --lyn-popover: #fff;
   --lyn-chart-5: #52525b;
-  --lyn-code-keyword: #7a52d1;
-  --lyn-code-string: #0b7466;
-  --lyn-code-function: #2c6bd2;
-  --lyn-code-constant: #8f5a00;
+  --lyn-code-keyword: #6d28d9;
+  --lyn-code-string: #047857;
+  --lyn-code-function: #1d4ed8;
+  --lyn-code-constant: #a3480a;
 
   --sl-color-white: var(--lyn-foreground);
   --sl-color-gray-1: var(--lyn-foreground);
-  --sl-color-gray-2: #27272a;
+  --sl-color-gray-2: var(--lyn-foreground);
   --sl-color-gray-3: var(--lyn-muted-foreground);
   --sl-color-gray-4: var(--lyn-input);
   --sl-color-gray-5: var(--lyn-border);
@@ -106,7 +111,10 @@
   --sl-color-text-invert: var(--lyn-background);
   --sl-color-bg-nav: var(--lyn-sidebar);
   --sl-color-bg-sidebar: var(--lyn-sidebar);
+}
 
+/* Grayscale smoothing thins dark text on light grounds, so it is dark only. */
+:root[data-theme="light"] body {
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
 }
