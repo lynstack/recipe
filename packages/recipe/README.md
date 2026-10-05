@@ -67,6 +67,10 @@ slot recipes, and
 [Practices](https://lynstack.github.io/recipe/recipe/practices/) for how to
 write kinds that stay fast.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)

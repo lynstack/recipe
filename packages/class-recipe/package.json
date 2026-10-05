@@ -32,7 +32,8 @@
   },
   "files": [
     "dist",
-    "skills"
+    "skills",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "@lynstack/recipe": "workspace:*"

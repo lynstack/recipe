@@ -66,6 +66,10 @@ npx skills add lynstack/recipe --skill class-recipe
 See [Writing conflict-free recipes](https://lynstack.github.io/recipe/class-recipe/conflict-free-recipes/)
 for other ways to use it.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)

@@ -47,8 +47,8 @@ Native's `style` prop keeps its identity between renders.
   with its scripts and development dependencies, `tsconfig.json`,
   `tsconfig.build.json` (the sources that tsdown builds),
   `vitest.config.ts`, `tsdown.config.ts`, `.oxlintrc.json`, README,
-  LICENSE, and fixture. A package's `.oxlintrc.json` extends the shared
-  one and holds the rules of that package only.
+  CHANGELOG, LICENSE, and fixture. A package's `.oxlintrc.json` extends
+  the shared one and holds the rules of that package only.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
   `dist/index.d.ts`.
@@ -118,6 +118,10 @@ Native's `style` prop keeps its identity between renders.
   are typechecked, and keep `.astro` files to markup.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
+- A package's `CHANGELOG.md` lists its versions, the newest first, each
+  with its date and what changed for its users. It ships in the package.
+  When it grows long, move the entries of earlier major versions to a
+  file of their own, such as `CHANGELOG-1.x.md`, and link to it.
 - `.github/workflows` holds a CI and a release workflow for each package,
   named after it, `ci.yml`, which checks what the packages share and the
   docs, and `docs.yml`, which builds the docs and deploys them to GitHub
@@ -158,7 +162,9 @@ Run a package's scripts with `pnpm --filter <name> <script>`, such as
 Each package is released on its own, by publishing a GitHub release whose
 tag names the package and its version: `recipe@1.0.0` for
 `@lynstack/recipe`, `class-recipe@1.2.0` for `@lynstack/class-recipe`,
-`native-recipe@1.0.0` for `@lynstack/native-recipe`. The
+`native-recipe@1.0.0` for `@lynstack/native-recipe`. Before a release,
+add the version to the package's `CHANGELOG.md`, with its date, and use
+that entry as the notes of the GitHub release. The
 package's release workflow checks that the tag matches the version in its
 `package.json`, runs its `check`, packs it with `pnpm pack`, which writes
 the exact version of `@lynstack/recipe` into the packages built on it, and

@@ -66,6 +66,10 @@ npx skills add lynstack/recipe --skill native-recipe
 See [Building components](https://lynstack.github.io/recipe/native-recipe/building-components/#agent-skill)
 for other ways to use it.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)
