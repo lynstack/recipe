@@ -1,6 +1,6 @@
 ---
 title: Caching
-description: "How a recipe caches the result of each declared selection, which selections it builds on every call, why results must be frozen, and when to turn the cache off."
+description: "How a recipe caches the result of each declared selection, how large its cache grows, which selections it builds on every call, why results must be frozen, and when to turn the cache off."
 ---
 
 A recipe builds the result of each declared selection once, and returns the
@@ -27,6 +27,11 @@ The two calls select the same options, so they have the same key (see
 - **Only the selections that are called.** A recipe stores a result the
   first time a selection is called, so its cache holds at most one result
   for each selection a program uses.
+- **Every result, for as long as the recipe exists.** A cache never drops
+  a result, so it grows up to one result for each combination of declared
+  options: a recipe with three variants of four options each can store 125
+  (each variant counts five, with no option), and one with eight variants
+  of nine options each, 10⁸.
 - **Not when there are too many selections to key.** When the number of
   possible selections is larger than `Number.MAX_SAFE_INTEGER`, which takes
   dozens of variants, a recipe builds every result on every call.
@@ -59,11 +64,24 @@ overrides it, belongs in a new object, built around the recipe; see
 
 ## Turning the cache off
 
-Pass `cache: false` with the kind to build the result on every call:
+Pass `cache: false` in the config of a recipe to build its result on every
+call. Other recipes of the same kind keep their cache:
+
+```ts
+const badge = styleRecipe({
+  cache: false,
+  variants: { tone: { neutral: { color: "gray" }, danger: { color: "red" } } },
+});
+```
+
+Pass it with the kind instead to turn the cache off for every recipe of
+that kind:
 
 ```ts
 const uncachedStyleRecipe = createRecipeKind({ ...styleKind, cache: false });
 ```
+
+A recipe whose config sets `cache: true` caches its results even so.
 
 Keep the cache unless the kind cannot be pure, or a recipe is called with
 so many different selections, each only once, that storing them costs more
@@ -73,3 +91,14 @@ reduces into a string or changes the accumulator from `initial` in place.
 
 The package's benchmarks assert that a recipe and a slot recipe are faster
 with the cache than without it.
+
+## Variants from untrusted input
+
+A program that runs for a long time, such as a server, and passes variants
+from requests to a recipe lets its clients choose the selections it caches.
+Only declared options are cached, but when a recipe declares many
+combinations, a client that sends a new one with each request makes the
+cache grow until the recipe holds a result for each of them. Pass
+`cache: false` in the config of such a recipe, and keep the cache for the
+others. A recipe with few combinations, or whose variants the program
+chooses itself, needs no change.

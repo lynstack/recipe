@@ -11,12 +11,13 @@ examples on this page use `styleRecipe` from the
 
 ## The config
 
-| Property           | Description                                                                                                   |
-| ------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `base`             | Optional. The value every selection starts from, passed to the kind's `initial`.                              |
-| `variants`         | For each variant name, the value of each of its options.                                                      |
-| `compoundVariants` | Optional. Values that apply when several variants have particular options at the same time, applied in order. |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                        |
+| Property           | Description                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `base`             | Optional. The value every selection starts from, passed to the kind's `initial`.                                         |
+| `variants`         | For each variant name, the value of each of its options.                                                                 |
+| `compoundVariants` | Optional. Values that apply when several variants have particular options at the same time, applied in order.            |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                   |
+| `cache`            | Optional. Whether the recipe caches its results. Defaults to the kind's `cache`; see [Caching](/recipe/recipe/caching/). |
 
 ## Required and default variants
 

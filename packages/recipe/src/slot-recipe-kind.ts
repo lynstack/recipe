@@ -99,6 +99,8 @@ interface KindSlotRecipeConfig<
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
     KindDefaultVariants<Variants, DefaultedName> | undefined;
+  /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
+  readonly cache?: boolean | undefined;
 }
 
 /**
@@ -108,7 +110,7 @@ interface KindSlotRecipeConfig<
  * @typeParam Value - The value of a slot.
  * @typeParam Result - What a recipe of this kind returns for each slot.
  * @param config - The slots, base values, variants, compound variants, and
- *   default variants of the slot recipe.
+ *   default variants of the slot recipe, and whether it caches its results.
  * @returns The slot recipe.
  */
 type CreateKindSlotRecipe<Value, Result> = <
@@ -137,6 +139,7 @@ interface LooseSlotRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: SelectedVariants | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 type LooseSlotRecipe = WithVariantKeys<
@@ -163,7 +166,8 @@ type LooseSlotRecipe = WithVariantKeys<
  * The result is a frozen object of each slot's result, keyed by slot name
  * in the order of `slots`. With the cache, a slot recipe builds it once for
  * each declared selection and returns the same object for the same
- * variants. Variants, default variants, boolean variants, and undeclared
+ * variants. The `cache` of a slot recipe's config overrides the kind's.
+ * Variants, default variants, boolean variants, and undeclared
  * options behave as in {@link createRecipeKind}, and the recipe's
  * `variantKeys` property lists the names of its variants.
  *
@@ -224,7 +228,7 @@ function createSlotRecipeKind<Value, Accumulator, Result = Accumulator>(
 ): CreateKindSlotRecipe<Value, Result>;
 
 function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
-  const options = { cache: kind.cache ?? true };
+  const kindCache = kind.cache ?? true;
 
   return (config: LooseSlotRecipeConfig): LooseSlotRecipe => {
     const compiled = compileVariants<LooseSlotValues | undefined>({
@@ -234,6 +238,7 @@ function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
       variants: config.variants,
     });
     const build = createSlotsBuilder(kind, compiled, config);
+    const options = { cache: config.cache ?? kindCache };
     return withVariantKeys(createSelector(compiled, build, options), compiled);
   };
 }

@@ -46,7 +46,8 @@ interface RecipeKind<Value, Accumulator, Result> {
   readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
   /**
    * Whether a recipe builds the result of each declared selection once and
-   * returns it again for the same selection. Defaults to `true`.
+   * returns it again for the same selection, unless its config sets
+   * `cache`. Defaults to `true`.
    */
   readonly cache?: boolean | undefined;
 }
@@ -128,6 +129,8 @@ interface KindRecipeConfig<
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
     KindDefaultVariants<Variants, DefaultedName> | undefined;
+  /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
+  readonly cache?: boolean | undefined;
 }
 
 /**
@@ -153,7 +156,7 @@ type KindRecipe<Selection, Result> = RecipeFunction<Selection, Result> & {
  * @typeParam Value - The value of an option.
  * @typeParam Result - What a recipe of this kind returns.
  * @param config - The base value, variants, compound variants, and default
- *   variants of the recipe.
+ *   variants of the recipe, and whether it caches its results.
  * @returns The recipe.
  */
 type CreateKindRecipe<Value, Result> = <
@@ -180,6 +183,7 @@ interface LooseKindRecipeConfig {
       }[]
     | undefined;
   readonly defaultVariants?: SelectedVariants | undefined;
+  readonly cache?: boolean | undefined;
 }
 
 type LooseKindRecipe = WithVariantKeys<
@@ -207,7 +211,9 @@ type LooseKindRecipe = WithVariantKeys<
  * once, and calling it again with the same variants returns the same
  * result. Freeze an object result in `kind.finish` so that callers cannot
  * change a result that later calls share. A selection with an undeclared
- * option is built on every call.
+ * option is built on every call. A recipe keeps up to one result for each
+ * combination of declared options; set `cache: false` in the config of a
+ * recipe whose variants come from untrusted input, which overrides the kind.
  *
  * When the variant names are not known at compile time, as in a library
  * that passes on a config it received, a recipe accepts any selection.
@@ -258,7 +264,7 @@ function createRecipeKind<Value, Accumulator, Result = Accumulator>(
 
 function createRecipeKind(kind: LooseRecipeKind): unknown {
   const { initial, reduce, finish } = kind;
-  const options = { cache: kind.cache ?? true };
+  const kindCache = kind.cache ?? true;
 
   return (config: LooseKindRecipeConfig): LooseKindRecipe => {
     const { base } = config;
@@ -275,6 +281,7 @@ function createRecipeKind(kind: LooseRecipeKind): unknown {
             reduceValues(compiled, indexes, reducer)
         : (indexes: Int32Array): unknown =>
             finish(reduceValues(compiled, indexes, reducer));
+    const options = { cache: config.cache ?? kindCache };
     return withVariantKeys(createSelector(compiled, build, options), compiled);
   };
 }

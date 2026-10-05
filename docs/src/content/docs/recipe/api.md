@@ -16,12 +16,12 @@ function createRecipeKind<Value, Accumulator, Result = Accumulator>(
 Creates a kind of recipe and returns the function that creates recipes of
 that kind.
 
-| Parameter      | Description                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------- |
-| `kind.initial` | `(base: Value \| undefined) => Accumulator`. Returns the accumulator a result starts from.  |
-| `kind.reduce`  | `(accumulator: Accumulator, value: Value) => Accumulator`. Adds a value to the accumulator. |
-| `kind.finish`  | Optional. `(accumulator: Accumulator) => Result`. Turns the accumulator into the result.    |
-| `kind.cache`   | Optional. Whether recipes cache the result of each declared selection. Defaults to `true`.  |
+| Parameter      | Description                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `kind.initial` | `(base: Value \| undefined) => Accumulator`. Returns the accumulator a result starts from.                                   |
+| `kind.reduce`  | `(accumulator: Accumulator, value: Value) => Accumulator`. Adds a value to the accumulator.                                  |
+| `kind.finish`  | Optional. `(accumulator: Accumulator) => Result`. Turns the accumulator into the result.                                     |
+| `kind.cache`   | Optional. Whether recipes cache the result of each declared selection, unless their config sets `cache`. Defaults to `true`. |
 
 See [Recipe kinds](/recipe/recipe/recipe-kinds/) for when each function is
 called and what it may change.
@@ -43,6 +43,7 @@ Takes a config and returns a recipe. It infers `Variants` and
 | `variants`         | For each variant name, the value of each of its options.                                           |
 | `compoundVariants` | Optional. A list of `{ variants, value }`: `value` applies when every variant has a listed option. |
 | `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                             |
+| `cache`            | Optional. Whether the recipe caches its results. Defaults to the kind's `cache`.                   |
 
 See [Variants](/recipe/recipe/variants/).
 
@@ -89,6 +90,7 @@ and `Variants`, `DefaultedName`, and `Selection` as for a recipe.
 | `variants`         | For each variant name, the values of each slot for each of its options, keyed by slot name. |
 | `compoundVariants` | Optional. A list of `{ variants, value }`, where `value` is keyed by slot name.             |
 | `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                      |
+| `cache`            | Optional. Whether the recipe caches its results. Defaults to the kind's `cache`.            |
 
 ### The slot recipe
 

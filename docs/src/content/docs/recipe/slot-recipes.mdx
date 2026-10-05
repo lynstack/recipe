@@ -25,13 +25,14 @@ kind.
 A slot recipe takes the config of a recipe, with `slots`, and with an
 object of values keyed by slot name wherever a recipe takes one value:
 
-| Property           | Description                                                                         |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| `slots`            | The names of the slots, in the order of the result.                                 |
-| `base`             | Optional. The base value of each slot.                                              |
-| `variants`         | For each variant name, the values of each slot for each of its options.             |
-| `compoundVariants` | Optional. Values added to some slots when several variants have particular options. |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.              |
+| Property           | Description                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| `slots`            | The names of the slots, in the order of the result.                                   |
+| `base`             | Optional. The base value of each slot.                                                |
+| `variants`         | For each variant name, the values of each slot for each of its options.               |
+| `compoundVariants` | Optional. Values added to some slots when several variants have particular options.   |
+| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                |
+| `cache`            | Optional. Whether the slot recipe caches its results. Defaults to the kind's `cache`. |
 
 An option or compound variant gives values only to the slots it names.
 Variants, default variants, boolean variants, compound conditions, and
