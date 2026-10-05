@@ -5,7 +5,7 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
-## 1.0.0 — Unreleased
+## 1.0.0 — 2026-10-05
 
 The first release of `@lynstack/native-recipe`, which maps a component's
 variants to its React Native styles.

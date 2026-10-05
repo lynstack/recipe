@@ -3,18 +3,18 @@
   "date": "2026-10-05",
   "node": "24.21.0",
   "slotStyleRecipeCache": [
-    { "hz": 3186371.8215630413, "name": "cached" },
-    { "hz": 287268.387543841, "name": "uncached" }
+    { "hz": 3050327.484494503, "name": "cached" },
+    { "hz": 279644.91135264514, "name": "uncached" }
   ],
   "styleRecipeCache": [
-    { "hz": 3020201.121121281, "name": "cached" },
-    { "hz": 658504.54233924, "name": "uncached" }
+    { "hz": 2982347.17389053, "name": "cached" },
+    { "hz": 654788.1219292529, "name": "uncached" }
   ],
   "themedStyleRecipe": [
-    { "hz": 1562170.2517201868, "name": "plain" },
-    { "hz": 1481884.6799132307, "name": "themed, one theme" },
-    { "hz": 1450574.048423577, "name": "themed, two themes" },
-    { "hz": 358740.3313079403, "name": "uncached" }
+    { "hz": 1615506.2504054066, "name": "plain" },
+    { "hz": 1525478.766601521, "name": "themed, one theme" },
+    { "hz": 1487735.5447527596, "name": "themed, two themes" },
+    { "hz": 344559.73365528963, "name": "uncached" }
   ],
   "versions": { "native-recipe": "1.0.0" }
 }
