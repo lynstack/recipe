@@ -4,6 +4,14 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.1.4 — 2026-10-05
+
+- `sva` freezes the object it returns when `classNames` adds classes to a
+  slot, as the docs promise. It returned a mutable object before.
+- `sva` called with `classNames` is about 9% faster when `classNames` adds
+  no classes, and about 10% faster when it adds classes to one or two
+  slots.
+
 ## 1.1.3 — 2026-10-05
 
 The public API and behavior are unchanged.
