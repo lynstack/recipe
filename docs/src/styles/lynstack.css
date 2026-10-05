@@ -188,28 +188,62 @@ h1#_top,
   background-color: var(--lyn-brand);
 }
 
-:root .starlight-sidebar-topics a.starlight-sidebar-topics-current,
-:root .starlight-sidebar-topics a:is(:hover, :focus-visible) {
-  color: var(--lyn-foreground);
+/* Topics: one per package, the current one ink on the active fill, its icon brand. */
+
+.topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0 0 1rem;
+  padding: 0 0 1rem;
+  list-style: none;
+  border-block-end: 1px solid var(--lyn-border);
 }
 
-.starlight-sidebar-topics a .starlight-sidebar-topics-icon {
-  border-color: var(--lyn-border);
+.topic {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--lyn-radius-md);
   color: var(--lyn-muted-foreground);
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing);
 }
 
-.starlight-sidebar-topics
-  a:is(.starlight-sidebar-topics-current, :hover, :focus-visible)
-  .starlight-sidebar-topics-icon {
-  background-color: var(--lyn-active);
-  border-color: var(--lyn-border);
+.topic:hover {
+  background-color: var(--lyn-sidebar-accent);
   color: var(--lyn-foreground);
 }
 
-.starlight-sidebar-topics
-  a.starlight-sidebar-topics-current
-  .starlight-sidebar-topics-icon {
+.topic[aria-current="true"] {
+  background-color: var(--lyn-active);
+  color: var(--lyn-foreground);
+}
+
+.topic-icon {
+  display: flex;
+  padding: 0.3125rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  background-color: var(--lyn-background);
+}
+
+.topic[aria-current="true"] .topic-icon {
   color: var(--lyn-brand);
+}
+
+.topic-label {
+  font-family: var(--lyn-font-mono);
+  overflow-wrap: anywhere;
+}
+
+.package-icon-svg {
+  stroke-width: 1.75;
 }
 
 /* Tabs: the current tab is ink with a 2px brand bar. */
@@ -634,6 +668,7 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   .sl-link-button,
   .sl-link-card,
   .sidebar-content a,
+  .topic,
   .package {
     transition: none;
   }

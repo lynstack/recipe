@@ -1,5 +1,6 @@
 ---
 import { Icon } from "@astrojs/starlight/components";
+import PackageIcon from "./PackageIcon.astro";
 import { landingPackages } from "../landing.ts";
 ---
 
@@ -8,7 +9,7 @@ import { landingPackages } from "../landing.ts";
     <li>
       <a class="package" href={pkg.href}>
         <span class="package-icon" aria-hidden="true">
-          <Icon name={pkg.icon} />
+          <PackageIcon name={pkg.icon} />
         </span>
         <span class="package-body">
           <span class="package-head">

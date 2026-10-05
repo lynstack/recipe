@@ -1,3 +1,4 @@
+import type { PackageIconName } from "./package-icons.ts";
 import classRecipePackage from "../../packages/class-recipe/package.json";
 import recipePackage from "../../packages/recipe/package.json";
 import { speedup } from "./measurements/class-recipe.ts";
@@ -14,8 +15,8 @@ interface LandingPackage {
   readonly description: string;
   /** The link to the package's section of the docs. */
   readonly href: string;
-  /** The Starlight icon of the package's sidebar topic. */
-  readonly icon: "puzzle" | "seti:css";
+  /** The icon of the package, as in its sidebar topic. */
+  readonly icon: PackageIconName;
 }
 
 /** A section of the landing page. */
@@ -44,7 +45,7 @@ const landingPackages: readonly LandingPackage[] = [
     description:
       "cva for one element, sva for several, and cx, a drop-in replacement for clsx. Joins with twMerge when you need it.",
     href: "/recipe/class-recipe/",
-    icon: "seti:css",
+    icon: "class-recipe",
     label: "Class names",
     name: classRecipePackage.name,
     version: classRecipePackage.version,
@@ -53,7 +54,7 @@ const landingPackages: readonly LandingPackage[] = [
     description:
       "The engine: define how a kind of value combines, and get recipes and slot recipes that select, cache, and type it.",
     href: "/recipe/recipe/",
-    icon: "puzzle",
+    icon: "recipe",
     label: "Any value",
     name: recipePackage.name,
     version: recipePackage.version,

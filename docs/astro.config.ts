@@ -12,7 +12,10 @@ export default defineConfig({
   base,
   integrations: [
     starlight({
-      components: { Hero: "./src/components/Hero.astro" },
+      components: {
+        Hero: "./src/components/Hero.astro",
+        Sidebar: "./src/components/Sidebar.astro",
+      },
       customCss: ["./src/styles/lynstack.css"],
       description:
         "Fast, type-safe recipes that map a component's variants to its styles.",
@@ -91,7 +94,7 @@ export default defineConfig({
       plugins: [
         starlightSidebarTopics([
           {
-            icon: "seti:css",
+            icon: "class-recipe",
             id: "class-recipe",
             items: [
               {
@@ -128,7 +131,7 @@ export default defineConfig({
             link: "/class-recipe/",
           },
           {
-            icon: "puzzle",
+            icon: "recipe",
             id: "recipe",
             items: [
               {
