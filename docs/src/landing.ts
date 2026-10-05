@@ -1,17 +1,13 @@
 import type { PackageIconName } from "./package-icons.ts";
-import classRecipePackage from "../../packages/class-recipe/package.json";
-import nativeRecipePackage from "../../packages/native-recipe/package.json";
-import recipePackage from "../../packages/recipe/package.json";
+import type { PackageInfo } from "./packages.ts";
+import { packages } from "./packages.ts";
 import { speedup } from "./measurements/class-recipe.ts";
 
 /** A package that the landing page lists. */
-interface LandingPackage {
-  /** The npm name of the package. */
-  readonly name: string;
-  /** The version in the repository, which is the one on npm after a release. */
-  readonly version: string;
-  /** What the package makes recipes for, in a word or two. */
-  readonly label: string;
+interface LandingPackage extends Pick<
+  PackageInfo,
+  "name" | "version" | "label"
+> {
   /** What the package does, in one sentence. */
   readonly description: string;
   /** The link to the package's section of the docs. */
@@ -47,27 +43,21 @@ const landingPackages: readonly LandingPackage[] = [
       "cva for one element, sva for several, and cx, a drop-in replacement for clsx. Joins with twMerge when you need it.",
     href: "/recipe/class-recipe/",
     icon: "class-recipe",
-    label: "Class names",
-    name: classRecipePackage.name,
-    version: classRecipePackage.version,
+    ...packages["class-recipe"],
   },
   {
     description:
       "Style recipes and slot style recipes for React Native, built from theme tokens when you need them, which return the same frozen style for the same variants.",
     href: "/recipe/native-recipe/",
     icon: "native-recipe",
-    label: "React Native styles",
-    name: nativeRecipePackage.name,
-    version: nativeRecipePackage.version,
+    ...packages["native-recipe"],
   },
   {
     description:
       "The engine: define how a kind of value combines, and get recipes and slot recipes that select, cache, and type it.",
     href: "/recipe/recipe/",
     icon: "recipe",
-    label: "Any value",
-    name: recipePackage.name,
-    version: recipePackage.version,
+    ...packages.recipe,
   },
 ];
 

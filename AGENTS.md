@@ -110,7 +110,10 @@ Native's `style` prop keeps its identity between renders.
   served by GitHub Pages at `https://lynstack.github.io/recipe/`. Each
   package has its own section, in `docs/src/content/docs/<package>`, and
   its own sidebar topic in `docs/astro.config.ts`; the landing page,
-  `docs/src/content/docs/index.mdx`, lists the packages. The theme maps
+  `docs/src/content/docs/index.mdx`, lists the packages.
+  `docs/src/packages.ts` holds what the docs show of each package: its
+  version, read from its `package.json`, and the links to its npm page,
+  source, and changelog. The theme maps
   the lynstack design system onto Starlight in
   `docs/src/styles/lynstack.css`. The docs read the measurements through
   the modules next to them in `docs/src/measurements`, which format them, and show them with the

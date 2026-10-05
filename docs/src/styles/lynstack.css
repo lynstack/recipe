@@ -237,9 +237,70 @@ h1#_top,
   color: var(--lyn-brand);
 }
 
+.topic-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topic-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 .topic-label {
   font-family: var(--lyn-font-mono);
   overflow-wrap: anywhere;
+}
+
+.topic-version {
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-muted-foreground);
+}
+
+.topic-kind {
+  font-size: var(--sl-text-xs);
+  font-weight: 400;
+  color: var(--lyn-muted-foreground);
+}
+
+/* Package meta: the version and the links of a package, under its overview's title. */
+
+.package-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  align-items: center;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+}
+
+.package-meta-version {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-foreground);
+}
+
+.package-meta a {
+  color: var(--lyn-muted-foreground);
+  text-decoration: none;
+  transition: color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.package-meta a:hover {
+  color: var(--lyn-foreground);
+  text-decoration: underline;
 }
 
 .package-icon-svg {
@@ -669,7 +730,8 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   .sl-link-card,
   .sidebar-content a,
   .topic,
-  .package {
+  .package,
+  .package-meta a {
     transition: none;
   }
 

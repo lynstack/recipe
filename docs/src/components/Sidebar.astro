@@ -1,6 +1,7 @@
 ---
 import Default from "@astrojs/starlight/components/Sidebar.astro";
 import PackageIcon from "./PackageIcon.astro";
+import { findPackage } from "../packages.ts";
 
 const { hasSidebar } = Astro.locals.starlightRoute;
 const { isPageWithTopic, topics } = Astro.locals.starlightSidebarTopics;
@@ -8,20 +9,29 @@ const { isPageWithTopic, topics } = Astro.locals.starlightSidebarTopics;
 
 {hasSidebar && isPageWithTopic && (
   <ul class="topic-list">
-    {topics.map((topic) => (
-      <li>
-        <a
-          class="topic"
-          href={topic.link}
-          aria-current={topic.isCurrent ? "true" : undefined}
-        >
-          <span class="topic-icon">
-            <PackageIcon name={topic.icon} />
-          </span>
-          <span class="topic-label">{topic.label}</span>
-        </a>
-      </li>
-    ))}
+    {topics.map((topic) => {
+      const pkg = findPackage(topic.icon);
+      return (
+        <li>
+          <a
+            class="topic"
+            href={topic.link}
+            aria-current={topic.isCurrent ? "true" : undefined}
+          >
+            <span class="topic-icon">
+              <PackageIcon name={topic.icon} />
+            </span>
+            <span class="topic-body">
+              <span class="topic-head">
+                <span class="topic-label">{topic.label}</span>
+                {pkg && <span class="topic-version">{pkg.version}</span>}
+              </span>
+              {pkg && <span class="topic-kind">{pkg.label}</span>}
+            </span>
+          </a>
+        </li>
+      );
+    })}
   </ul>
 )}
 <Default>

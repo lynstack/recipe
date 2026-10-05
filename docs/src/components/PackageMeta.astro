@@ -1,0 +1,22 @@
+---
+import { packages } from "../packages.ts";
+
+interface Props {
+  readonly folder: keyof typeof packages;
+}
+
+const pkg = packages[Astro.props.folder];
+---
+
+<ul class="package-meta not-content" aria-label={`${pkg.name} links`}>
+  <li class="package-meta-version">v{pkg.version}</li>
+  <li>
+    <a href={pkg.npm}>npm</a>
+  </li>
+  <li>
+    <a href={pkg.changelog}>Changelog</a>
+  </li>
+  <li>
+    <a href={pkg.source}>Source</a>
+  </li>
+</ul>
