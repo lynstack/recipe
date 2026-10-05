@@ -695,9 +695,21 @@ starlight-tabs [role="tab"][aria-selected="true"] {
 .measurement-versions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1rem;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
   padding: 0;
   list-style: none;
+}
+
+.sl-markdown-content .measurement-versions li {
+  margin: 0;
+}
+
+.sl-markdown-content .measurement-versions code {
+  border: 1px solid var(--lyn-border);
+  background-color: var(--lyn-accent);
+  font-weight: 500;
+  color: var(--lyn-foreground);
 }
 
 .bars-wrap {
@@ -707,10 +719,20 @@ starlight-tabs [role="tab"][aria-selected="true"] {
 .sl-markdown-content table.bars {
   display: table;
   width: 100%;
+  min-width: 34rem;
+  table-layout: fixed;
+}
+
+.sl-markdown-content .bars th:first-child {
+  width: 34%;
 }
 
 .sl-markdown-content .bars .bar-cell {
-  width: 40%;
+  width: 36%;
+}
+
+.sl-markdown-content .bars .relative {
+  color: var(--lyn-muted-foreground);
 }
 
 .bar {
@@ -723,11 +745,56 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   display: block;
   height: 100%;
   border-radius: inherit;
+  background: var(--lyn-chart-5);
+}
+
+.bar-subject .bar > span {
   background: var(--lyn-brand);
 }
 
-.bar-muted > span {
-  background: var(--lyn-chart-5);
+/* Stats: the headline numbers of a page, in a bordered grid. */
+
+.stat-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
+  background: var(--lyn-border);
+  list-style: none;
+}
+
+.stat {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: var(--lyn-background);
+}
+
+.stat-value {
+  display: block;
+  font-family: var(--lyn-font-mono);
+  font-size: 1.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: var(--lyn-foreground);
+}
+
+.stat-label {
+  display: block;
+  margin-block-start: 0.25rem;
+  font-size: var(--sl-text-sm);
+  line-height: 1.4;
+  color: var(--lyn-muted-foreground);
+}
+
+@media (min-width: 50rem) {
+  .stat-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* Playgrounds: a panel with a brand eyebrow and segmented options. */

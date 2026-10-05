@@ -1,11 +1,14 @@
 import type { BarGroup, BarRow } from "./bars.ts";
-import { librariesOf, speedNamed, versionOf } from "./format.ts";
+import { librariesOf, speedNamed } from "./format.ts";
 import type { Speed } from "./format.ts";
+import type { Stat } from "./stats.ts";
 import { cacheRows } from "./bars.ts";
+import { formatTimes } from "./stats.ts";
 import measurements from "./class-recipe.json";
 
 const PERCENT = 100;
-const SPREAD_STEP = 5;
+const SHARE_STEP = 5;
+const SUBJECT = "class-recipe";
 
 /** The libraries whose versions the measurements name. */
 const libraries = librariesOf(measurements, [
@@ -22,11 +25,17 @@ const cxLibraries = ["class-recipe", "clsx", "classnames"] as const;
 
 function libraryRows(speeds: readonly Speed[]): readonly BarRow[] {
   return speeds.map(({ hz, name }) => ({
-    emphasis: name === "class-recipe" ? "strong" : "none",
     hz,
     label: name,
-    version: versionOf(measurements, name),
+    subject: name === SUBJECT,
   }));
+}
+
+/** Returns the speed of the fastest library other than class-recipe. */
+function fastestOther(speeds: readonly Speed[]): number {
+  return Math.max(
+    ...speeds.filter(({ name }) => name !== SUBJECT).map(({ hz }) => hz),
+  );
 }
 
 function comparisonGroups(comparison: {
@@ -46,8 +55,40 @@ function recipeSpeedOf(name: string): number {
 
 /** How many times as fast class-recipe is as class-variance-authority. */
 const speedup = Math.round(
-  recipeSpeedOf("class-recipe") / recipeSpeedOf("class-variance-authority"),
+  recipeSpeedOf(SUBJECT) / recipeSpeedOf("class-variance-authority"),
 );
+
+/** The headline numbers of the performance page. */
+const stats: readonly Stat[] = [
+  {
+    label: "as fast as class-variance-authority",
+    value: formatTimes(
+      recipeSpeedOf(SUBJECT),
+      recipeSpeedOf("class-variance-authority"),
+    ),
+  },
+  {
+    label: "as fast as tailwind-variants",
+    value: formatTimes(
+      recipeSpeedOf(SUBJECT),
+      recipeSpeedOf("tailwind-variants"),
+    ),
+  },
+  {
+    label: "as fast as either, with tailwind-merge",
+    value: formatTimes(
+      speedNamed(measurements.recipe.merged, SUBJECT),
+      fastestOther(measurements.recipe.merged),
+    ),
+  },
+  {
+    label: "as fast as tailwind-variants, for slot recipes",
+    value: formatTimes(
+      speedNamed(measurements.slotRecipe.plain, SUBJECT),
+      fastestOther(measurements.slotRecipe.plain),
+    ),
+  },
+];
 
 /** The speed of each library on each input of `cx`. */
 const cxSpeeds: readonly {
@@ -64,47 +105,39 @@ const cxRows: readonly {
   speeds: cxLibraries.map((library) => speedNamed(speeds, library)),
 }));
 
-/**
- * The largest gap between the fastest and the slowest library on any input
- * of `cx`, in percent, rounded up to a multiple of 5.
- */
-const cxSpread =
-  Math.ceil(
-    (Math.max(
-      ...cxRows.map(({ speeds }) => Math.max(...speeds) / Math.min(...speeds)),
-    ) -
-      1) *
-      (PERCENT / SPREAD_STEP),
-  ) * SPREAD_STEP;
+/** The share of the speed of clsx that `cx` reaches on each input. */
+const cxShares = cxSpeeds.map(
+  ({ speeds }) => speedNamed(speeds, SUBJECT) / speedNamed(speeds, "clsx"),
+);
 
-/** The library fastest on every input of `cx`, if there is one. */
-const cxFastest = ((): string | undefined => {
-  const fastest = new Set(cxSpeeds.map(({ speeds }) => speeds[0]?.name));
-  const [name] = fastest;
-  return fastest.size === 1 ? name : undefined;
-})();
+/**
+ * The least share of the speed of clsx that `cx` reaches on any input, in
+ * percent, rounded down to a multiple of 5.
+ */
+const cxShareOfClsx =
+  Math.floor((Math.min(...cxShares) * PERCENT) / SHARE_STEP) * SHARE_STEP;
+
+/** On how many inputs `cx` is faster than clsx. */
+const cxFasterInputs = cxShares.filter((share) => share > 1).length;
 
 const recipeGroups = comparisonGroups(measurements.recipe);
 const slotRecipeGroups = comparisonGroups(measurements.slotRecipe);
 const cacheGroups: readonly BarGroup[] = [
-  {
-    rows: [
-      ...cacheRows("Recipe", measurements.recipeCache),
-      ...cacheRows("Slot recipe", measurements.slotRecipeCache),
-    ],
-  },
+  { rows: cacheRows("Recipe", measurements.recipeCache) },
+  { rows: cacheRows("Slot recipe", measurements.slotRecipeCache) },
 ];
 
 export {
   cacheGroups,
-  cxFastest,
   cxLibraries,
+  cxFasterInputs,
   cxRows,
-  cxSpread,
+  cxShareOfClsx,
   libraries,
   recipeGroups,
   recipeSpeedOf,
   slotRecipeGroups,
   speedup,
+  stats,
 };
 export { default as measurements } from "./class-recipe.json";

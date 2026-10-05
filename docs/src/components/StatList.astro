@@ -1,0 +1,18 @@
+---
+import type { Stat } from "../measurements/stats.ts";
+
+interface Props {
+  readonly stats: readonly Stat[];
+}
+
+const { stats } = Astro.props;
+---
+
+<ul class="stat-list not-content">
+  {stats.map((stat) => (
+    <li class="stat">
+      <span class="stat-value">{stat.value}</span>
+      <span class="stat-label">{stat.label}</span>
+    </li>
+  ))}
+</ul>

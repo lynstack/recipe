@@ -20,12 +20,15 @@ interface Library {
 
 const MILLION = 1_000_000;
 const THOUSAND = 1000;
-const PERCENT = 100;
 
 const integer = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const oneDecimal = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
   minimumFractionDigits: 1,
+});
+const compact = new Intl.NumberFormat("en-US", {
+  maximumSignificantDigits: 3,
+  notation: "compact",
 });
 const longDate = new Intl.DateTimeFormat("en-US", {
   dateStyle: "long",
@@ -34,9 +37,9 @@ const longDate = new Intl.DateTimeFormat("en-US", {
 
 const VOWEL = /^[aeiou]/iu;
 
-/** Formats calls per second, such as `2,247,777`. */
-function formatHz(hz: number): string {
-  return integer.format(hz);
+/** Formats calls per second, such as `2.25M` or `156K`. */
+function formatCompactHz(hz: number): string {
+  return compact.format(hz);
 }
 
 /** Formats calls per second in millions, such as `17.8`. */
@@ -56,9 +59,17 @@ function formatDate(isoDate: string): string {
   return longDate.format(new Date(isoDate));
 }
 
-/** Returns the share of the fastest speed that `hz` reaches, from 0 to 100. */
-function percentOf(hz: number, fastest: number): number {
-  return (hz / fastest) * PERCENT;
+/**
+ * Compares a speed with that of a subject, such as `9.2× slower`,
+ * `1.7× faster`, or `on par` when they round to the same.
+ */
+function formatRelative(hz: number, subjectHz: number): string {
+  const slower = hz <= subjectHz;
+  const times = oneDecimal.format(slower ? subjectHz / hz : hz / subjectHz);
+  if (times === oneDecimal.format(1)) {
+    return "on par";
+  }
+  return `${times}× ${slower ? "slower" : "faster"}`;
 }
 
 /** Returns the speed named `name`, which must have been measured. */
@@ -94,13 +105,13 @@ function librariesOf(
 }
 
 export {
+  formatCompactHz,
   formatDate,
-  formatHz,
   formatMillions,
+  formatRelative,
   formatRoughHz,
   librariesOf,
   machineOf,
-  percentOf,
   speedNamed,
   versionOf,
 };

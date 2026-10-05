@@ -1,6 +1,6 @@
 ---
-import { formatHz, percentOf } from "../measurements/format.ts";
 import type { BarGroup } from "../measurements/bars.ts";
+import { barSectionOf } from "../measurements/bars.ts";
 
 interface Props {
   readonly title: string;
@@ -8,9 +8,7 @@ interface Props {
 }
 
 const { title, groups } = Astro.props;
-const fastest = Math.max(
-  ...groups.flatMap((group) => group.rows.map((row) => row.hz)),
-);
+const sections = groups.map((group) => barSectionOf(group));
 ---
 
 <div
@@ -24,56 +22,42 @@ const fastest = Math.max(
     <thead>
       <tr>
         <th scope="col">{title}</th>
+        <th scope="col" class="bar-cell">
+          <span class="sr-only">Relative to the fastest of its group</span>
+        </th>
         <th scope="col" class="number">
           Calls/s
         </th>
-        <th scope="col" class="bar-cell">
-          <span class="sr-only">Relative to the fastest</span>
+        <th scope="col" class="number">
+          Compared
         </th>
       </tr>
     </thead>
-    {groups.map((group) => (
+    {sections.map((section) => (
       <tbody>
-        {group.heading !== undefined && (
+        {section.heading !== undefined && (
           <tr>
-            <th class="group-head" scope="rowgroup" colspan="3">
-              {group.heading}
+            <th class="group-head" scope="rowgroup" colspan="4">
+              {section.heading}
             </th>
           </tr>
         )}
-        {group.rows.map((row) => {
-          const percent = percentOf(row.hz, fastest);
-          return (
-            <tr>
-              <td>
-                {row.emphasis === "strong" ? (
-                  <strong>{row.label}</strong>
-                ) : (
-                  row.label
-                )}
-                {row.version !== undefined && (
-                  <>
-                    {" "}
-                    <code>{row.version}</code>
-                  </>
-                )}
-              </td>
-              <td class="number">{formatHz(row.hz)}</td>
-              <td class="bar-cell">
-                <div
-                  class:list={[
-                    "bar",
-                    { "bar-muted": row.emphasis !== "strong" },
-                  ]}
-                  role="img"
-                  aria-label={`${Math.round(percent)}% of the fastest`}
-                >
-                  <span style={`width: ${percent.toFixed(1)}%`} />
-                </div>
-              </td>
-            </tr>
-          );
-        })}
+        {section.lines.map((line) => (
+          <tr class:list={{ "bar-subject": line.subject }}>
+            <td>{line.subject ? <strong>{line.label}</strong> : line.label}</td>
+            <td class="bar-cell">
+              <div
+                class="bar"
+                role="img"
+                aria-label={`${Math.round(line.percent)}% of the fastest`}
+              >
+                <span style={`width: ${line.percent.toFixed(1)}%`} />
+              </div>
+            </td>
+            <td class="number">{line.speed}</td>
+            <td class="number relative">{line.relative ?? "—"}</td>
+          </tr>
+        ))}
       </tbody>
     ))}
   </table>

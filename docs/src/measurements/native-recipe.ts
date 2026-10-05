@@ -25,9 +25,9 @@ const themedLabels: Readonly<Record<string, string>> = {
 
 const themedRows: readonly BarRow[] = measurements.themedStyleRecipe.map(
   ({ hz, name }: Speed): BarRow => ({
-    emphasis: name === "uncached" ? "muted" : "none",
     hz,
     label: themedLabels[name] ?? name,
+    subject: name === "themed, one theme",
   }),
 );
 
