@@ -5,7 +5,7 @@ sidebar:
   label: Installation
 ---
 
-import { TabItem, Tabs } from "@astrojs/starlight/components";
+import { Aside, TabItem, Tabs } from "@astrojs/starlight/components";
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
@@ -35,3 +35,9 @@ The package ships as an ES module only. Its one dependency is
 [`@lynstack/recipe`](/recipe/recipe/), and React Native, version 0.80 or
 later, is a peer dependency: the package checks styles against its types,
 and imports nothing from it at runtime.
+
+<Aside type="tip" title="Using a coding agent?">
+  Install the [agent skill](/recipe/native-recipe/agent-skill/) too. It teaches
+  Claude Code, Codex, Cursor, and other agents to keep styles stable and to
+  build them from theme tokens.
+</Aside>

@@ -132,23 +132,7 @@ styles, which makes new objects.
 ## Agent skill
 
 These practices, with those of
-[Themes and design tokens](/recipe/native-recipe/themes/), are available
-as an agent skill, which teaches coding agents to keep styles stable and
-to build them from theme tokens. Install it in your project with the
-[skills](https://skills.sh) CLI:
-
-```sh
-npx skills add lynstack/recipe --skill native-recipe
-```
-
-Or give your coding agent this prompt to use it in the current session
-without installing it:
-
-```text
-Run `npx skills use lynstack/recipe@native-recipe` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary.
-```
-
-The skill also ships in the package, so you can point your agent to
-`node_modules/@lynstack/native-recipe/skills/native-recipe/SKILL.md`, or
-copy the `skills/native-recipe` folder into your agent's skills folder,
-such as `.claude/skills`.
+[Themes and design tokens](/recipe/native-recipe/themes/), ship with the
+package as an [agent skill](/recipe/native-recipe/agent-skill/), which
+teaches coding agents to keep styles stable and to build them from theme
+tokens.

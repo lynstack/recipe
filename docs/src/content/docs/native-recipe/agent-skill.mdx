@@ -1,0 +1,89 @@
+---
+title: Agent skill for native-recipe
+description: "Teach Claude Code, Cursor, and other coding agents to write React Native styles with native-recipe that stay stable between renders and come from theme tokens."
+sidebar:
+  label: Agent skill
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+`@lynstack/native-recipe` ships an agent skill: instructions that coding
+agents, such as Claude Code, Codex, or Cursor, load when they write React
+Native components with the package. It teaches them to keep styles stable
+between renders and to build them from the tokens of a theme.
+
+A recipe returns the same frozen style for the same variants, and that
+identity is what makes its styles cheap: React skips comparing a `style`
+prop that has not changed, and a memoized child skips rendering. An agent
+that builds a style inline, spreads a recipe's style, or creates a recipe
+inside a component breaks that identity, and nothing in the code shows it.
+The skill gives the agent the practices of
+[Building components](/recipe/native-recipe/building-components/) and
+[Themes and design tokens](/recipe/native-recipe/themes/).
+
+## Install it
+
+Install the skill in your project with the [skills](https://skills.sh)
+CLI, which asks which of your agents to install it for:
+
+```sh
+npx skills add lynstack/recipe --skill native-recipe
+```
+
+Your agent then loads it whenever it creates or changes a component whose
+styles depend on its props, its state, the color scheme, or a theme, even
+when you do not mention the package.
+
+## Other ways to use it
+
+<Tabs>
+  <TabItem label="One session">
+
+Give your coding agent this prompt to use the skill in the current session
+without installing it:
+
+```text
+Run `npx skills use lynstack/recipe@native-recipe` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary.
+```
+
+  </TabItem>
+  <TabItem label="From the package">
+
+The skill ships in the package, at the version you installed. Point your
+agent to it:
+
+```text
+node_modules/@lynstack/native-recipe/skills/native-recipe/SKILL.md
+```
+
+Or copy the `skills/native-recipe` folder into your agent's skills folder,
+such as `.claude/skills`.
+
+  </TabItem>
+</Tabs>
+
+## What it teaches
+
+The skill first checks how the project sets up its recipes: when it calls
+`createThemedRecipes`, the agent takes colors, spacing, and sizes from the
+theme. Then it teaches the agent to:
+
+- Create every recipe once, at the top level of a module.
+- Put every choice a component offers in a variant.
+- Give a component of several elements one slot recipe.
+- Take colors, spacing, and sizes from the theme, and pass the theme
+  object itself.
+- Add a style to a recipe's style only when the component is given one,
+  so that the `style` prop keeps the recipe's object otherwise.
+- Add dark mode or a theme with the smaller tool that fits: a variant for
+  a few colors, theme tokens for anything larger.
+
+And not to:
+
+- Copy, spread, or change a recipe's style.
+- Create a theme object during a render.
+- Make a variant of a value that varies continuously.
+- Pass a recipe's style through `StyleSheet.create`.
+- Make a recipe of a style that never changes.
+
+It ends with a checklist that the agent runs before it finishes.

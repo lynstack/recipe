@@ -63,8 +63,8 @@ recipes whose classes never conflict. Install it with the
 npx skills add lynstack/recipe --skill class-recipe
 ```
 
-See [Writing conflict-free recipes](https://lynstack.github.io/recipe/class-recipe/conflict-free-recipes/)
-for other ways to use it.
+See [Agent skill](https://lynstack.github.io/recipe/class-recipe/agent-skill/)
+for what it teaches and other ways to use it.
 
 ## Changelog
 

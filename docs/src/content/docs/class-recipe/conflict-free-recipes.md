@@ -42,21 +42,6 @@ const input = cva({
 input({ invalid: true }); // => "rounded-md border border-red-600"
 ```
 
-These rules, with more examples, are available as an agent skill. Install
-it in your project with the [skills](https://skills.sh) CLI:
-
-```sh
-npx skills add lynstack/recipe --skill class-recipe
-```
-
-Or give your coding agent this prompt to use it in the current session
-without installing it:
-
-```text
-Run `npx skills use lynstack/recipe@class-recipe` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary.
-```
-
-The skill also ships in the package, so you can point your agent to
-`node_modules/@lynstack/class-recipe/skills/class-recipe/SKILL.md`, or copy
-the `skills/class-recipe` folder into your agent's skills folder, such as
-`.claude/skills`.
+These rules, with more examples, ship with the package as an
+[agent skill](/recipe/class-recipe/agent-skill/), which teaches coding
+agents to follow them.

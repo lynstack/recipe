@@ -1,0 +1,85 @@
+---
+title: Agent skill for class-recipe
+description: "Teach Claude Code, Cursor, and other coding agents to write class-recipe recipes whose classes never conflict, with an agent skill that ships in the package."
+sidebar:
+  label: Agent skill
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+`@lynstack/class-recipe` ships an agent skill: instructions that coding
+agents, such as Claude Code, Codex, or Cursor, load when they write
+components with the package. It teaches them to write recipes whose
+classes never conflict, so a project gets correct styles without
+`tailwind-merge`.
+
+Agents tend to write recipes as if their classes were joined with
+`twMerge`, which resolves a `className` override or a class set twice. With the default join, `cx`, both classes stay, and the one that
+wins depends on the stylesheet. The skill gives the agent the rules of
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/),
+so that every CSS property of an element is set in one place.
+
+## Install it
+
+Install the skill in your project with the [skills](https://skills.sh)
+CLI, which asks which of your agents to install it for:
+
+```sh
+npx skills add lynstack/recipe --skill class-recipe
+```
+
+Your agent then loads it whenever it creates or changes a component whose
+class names depend on its props or state, even when you do not mention the
+package.
+
+## Other ways to use it
+
+<Tabs>
+  <TabItem label="One session">
+
+Give your coding agent this prompt to use the skill in the current session
+without installing it:
+
+```text
+Run `npx skills use lynstack/recipe@class-recipe` and follow the generated skill instructions now. Read its complete output, redirecting it to a temporary file first if necessary.
+```
+
+  </TabItem>
+  <TabItem label="From the package">
+
+The skill ships in the package, at the version you installed. Point your
+agent to it:
+
+```text
+node_modules/@lynstack/class-recipe/skills/class-recipe/SKILL.md
+```
+
+Or copy the `skills/class-recipe` folder into your agent's skills folder,
+such as `.claude/skills`.
+
+  </TabItem>
+</Tabs>
+
+## What it teaches
+
+The skill first checks how the project creates its recipes: with a
+merging join such as `twMerge`, its rules are good practice; with the
+default join, they are required. Then it teaches the agent to:
+
+- Set each CSS property of an element in one place: `base`, one variant,
+  or compound variants, never two of them.
+- Put shared classes in `base`, and the differences in variants.
+- Derive one variant when several props set the same property, and let a
+  property that depends on two variants live only in compound variants.
+- Declare an option even when it adds no classes.
+- Style a component of several elements with one slot recipe, and type
+  its props from the recipe.
+- Use `cx` only to add classes that set new properties.
+
+And not to:
+
+- Override a recipe with `className` or `classNames`.
+- Use compound variants to override a variant.
+- Pick classes with lookup objects or conditionals.
+
+It ends with a checklist that the agent runs before it finishes.

@@ -15,6 +15,7 @@ hero:
       variant: secondary
 ---
 
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import FeatureList from "../../components/FeatureList.astro";
 import LandingSection from "../../components/LandingSection.astro";
 import PackageList from "../../components/PackageList.astro";
@@ -26,6 +27,33 @@ import PackageList from "../../components/PackageList.astro";
   lead="Each package makes recipes for one kind of value. They are all built on the same engine, so their variants, cache, and types work the same way."
 >
   <PackageList />
+</LandingSection>
+
+<LandingSection
+  id="agents"
+  eyebrow="Agent skills"
+  title="Teach your coding agent the recipes"
+  lead="class-recipe and native-recipe ship agent skills that teach Claude Code, Codex, Cursor, and other agents to write recipes the way these docs recommend."
+>
+
+```sh
+npx skills add lynstack/recipe --skill class-recipe
+npx skills add lynstack/recipe --skill native-recipe
+```
+
+<CardGrid>
+  <LinkCard
+    title="class-recipe"
+    description="Recipes whose classes never conflict, with no tailwind-merge."
+    href="/recipe/class-recipe/agent-skill/"
+  />
+  <LinkCard
+    title="native-recipe"
+    description="Styles that stay stable between renders and come from theme tokens."
+    href="/recipe/native-recipe/agent-skill/"
+  />
+</CardGrid>
+
 </LandingSection>
 
 <LandingSection

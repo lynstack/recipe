@@ -63,8 +63,8 @@ styles stable and to build them from theme tokens. Install it with the
 npx skills add lynstack/recipe --skill native-recipe
 ```
 
-See [Building components](https://lynstack.github.io/recipe/native-recipe/building-components/#agent-skill)
-for other ways to use it.
+See [Agent skill](https://lynstack.github.io/recipe/native-recipe/agent-skill/)
+for what it teaches and other ways to use it.
 
 ## Changelog
 
