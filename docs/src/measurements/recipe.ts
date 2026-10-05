@@ -8,6 +8,7 @@ const libraries = librariesOf(measurements, ["recipe"]);
 
 const cacheGroups: readonly BarGroup[] = [
   { rows: cacheRows("Recipe", measurements.cache) },
+  { rows: cacheRows("Slot recipe", measurements.slotCache) },
 ];
 
 export { cacheGroups, libraries };

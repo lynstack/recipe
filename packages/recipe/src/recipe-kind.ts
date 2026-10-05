@@ -282,9 +282,12 @@ function createRecipeKind(kind: LooseRecipeKind): unknown {
 export { createRecipeKind };
 export type {
   CreateKindRecipe,
+  KindCompoundCondition,
   KindCompoundVariant,
+  KindDefaultVariants,
   KindRecipe,
   KindRecipeConfig,
+  KindSelection,
   KindVariants,
   RecipeKind,
 };

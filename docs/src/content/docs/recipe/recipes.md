@@ -37,4 +37,5 @@ allocation. To keep the uncached calls fast too, reduce into a value that
 `reduce` can extend without copying, such as a string.
 
 See [Performance](/recipe/recipe/performance/) for how much faster
-a cached call is.
+a cached call is. A [slot recipe](/recipe/recipe/slot-recipes/) caches its
+results in the same way.

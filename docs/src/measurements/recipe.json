@@ -1,10 +1,14 @@
 {
   "cpu": "Apple M1 Pro",
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "node": "24.21.0",
   "cache": [
-    { "hz": 3031030.4392593605, "name": "cached" },
-    { "hz": 360928.0724685965, "name": "uncached" }
+    { "hz": 3099001.1415761653, "name": "cached" },
+    { "hz": 362681.0454234417, "name": "uncached" }
+  ],
+  "slotCache": [
+    { "hz": 3144443.195022655, "name": "cached" },
+    { "hz": 282209.76887021604, "name": "uncached" }
   ],
   "versions": { "recipe": "1.0.0" }
 }

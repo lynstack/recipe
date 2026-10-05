@@ -7,8 +7,10 @@ site:
 - `@lynstack/recipe`, in `packages/recipe`, creates recipes for values
   of any type. It exports `createRecipeKind`, which defines a kind of
   recipe by how it reduces values, such as class names or style objects,
-  and returns the function that creates recipes of that kind. It has no
-  dependencies.
+  and returns the function that creates recipes of that kind, and
+  `createSlotRecipeKind`, which returns the function that creates slot
+  recipes of a kind, which reduce the values of each of several slots. It
+  has no dependencies.
 - `@lynstack/class-recipe`, in `packages/class-recipe`, builds class names
   on that engine.
 
@@ -40,11 +42,13 @@ The docs lead with the short names, `cva` and `sva`.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
   `dist/index.d.ts`.
-- In `@lynstack/recipe`, `recipe-kind.ts` and `types.ts` hold the
-  public API and its types. The other modules are internal:
-  `variants.ts` compiles variants into numbered options, so a selection
-  becomes an integer key; `selector.ts` caches results by that key; and
-  `reduce-values.ts` reduces the values of a selection.
+- In `@lynstack/recipe`, `recipe-kind.ts`, `slot-recipe-kind.ts`, and
+  `types.ts` hold the public API and its types. The other modules are
+  internal: `variants.ts` compiles variants into numbered options, so a
+  selection becomes an integer key; `selector.ts` caches results by that
+  key; `reduce-values.ts` reduces the values of a selection; and
+  `slots.ts` turns the values of a slot recipe into entries by slot and
+  builds the result of each slot.
 - In `@lynstack/class-recipe`, `cx.ts`, `recipe.ts`, `slot-recipe.ts`,
   `create-recipes.ts`, `join.ts`, and `types.ts` hold the public API and
   its types. `types.ts` re-exports the shared types of `@lynstack/recipe`.
@@ -177,9 +181,9 @@ public type has a type test (`expectTypeOf`, or `@ts-expect-error` for
 input that must be rejected). A test that only exercises the types still
 asserts the runtime outcome.
 
-**Performance comes first.** A recipe of any kind, a class name recipe,
-and a slot recipe must be faster with the cache than without it. The
-benchmarks assert this; never merge a change that makes them fail. Back
+**Performance comes first.** A recipe and a slot recipe of any kind, and
+a class name recipe and slot recipe, must be faster with the cache than
+without it. The benchmarks assert this; never merge a change that makes them fail. Back
 every optimization with a benchmark showing that it matters, and keep the
 hot paths (`cx`, and a cached call of a recipe) free of allocations. A
 difference of a few percent is within the noise of one run; to compare

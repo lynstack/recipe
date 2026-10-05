@@ -33,6 +33,6 @@ function sv(config: StyleVariantConfig) {
 ```
 
 When the variant names are not known at compile time, as here, a recipe
-accepts any selection, compound condition, and default variants. A slot
-recipe needs no other kind: make each value an object of values per slot,
-and let `reduce` add them slot by slot.
+accepts any selection, compound condition, and default variants. For slot
+recipes, pass the same kind to `createSlotRecipeKind` (see [Slot
+recipes](/recipe/recipe/slot-recipes/)).

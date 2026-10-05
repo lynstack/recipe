@@ -112,7 +112,11 @@ export default defineConfig({
                 label: "Get started",
               },
               {
-                items: ["recipe/recipe-kinds", "recipe/recipes"],
+                items: [
+                  "recipe/recipe-kinds",
+                  "recipe/recipes",
+                  "recipe/slot-recipes",
+                ],
                 label: "API",
               },
               {

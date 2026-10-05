@@ -43,3 +43,7 @@ text({ size: "lg", muted: true });
 
 text.variantKeys; // => ["size", "muted"]
 ```
+
+To map variants to the results of several elements, such as a card's root
+and title, create [slot recipes](/recipe/recipe/slot-recipes/) of the same
+kind with `createSlotRecipeKind`.

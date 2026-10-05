@@ -1,5 +1,25 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  // The shared rules of the repository; this package adds none.
-  "extends": ["../../.oxlintrc.json"]
+  "extends": ["../../.oxlintrc.json"],
+  "rules": {
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestContext"] },
+          // TypeScript has no readonly typed arrays, and ReadonlyMap is
+          // read-only although it has methods.
+          { "from": "lib", "name": ["Int32Array", "ReadonlyMap"] },
+          // A slot recipe updates the accumulator of each slot in place while
+          // it reduces a selection, so that building it allocates one array;
+          // returning a new array for each value is measurably slower.
+          {
+            "from": "file",
+            "name": ["SlotAccumulators"],
+            "path": "src/slots.ts"
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -1,7 +1,8 @@
 /**
  * Recipes for values of any type: create a kind of recipe from how it
  * combines values, such as class names or style objects, then create
- * recipes of that kind, which map a selection of variants to a result.
+ * recipes of that kind, which map a selection of variants to a result, or
+ * slot recipes, which map it to the result of each of several slots.
  * `@lynstack/class-recipe` builds its class name recipes on it.
  *
  * @packageDocumentation
@@ -16,6 +17,14 @@ export type {
   KindVariants,
   RecipeKind,
 } from "./recipe-kind.js";
+export { createSlotRecipeKind } from "./slot-recipe-kind.js";
+export type {
+  CreateKindSlotRecipe,
+  KindSlotCompoundVariant,
+  KindSlotRecipeConfig,
+  KindSlotVariants,
+  SlotValues,
+} from "./slot-recipe-kind.js";
 export type {
   CompoundCondition,
   DefaultVariants,

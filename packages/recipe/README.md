@@ -53,8 +53,14 @@ text({ size: "lg", muted: true });
 // => { color: "black", fontSize: 24, opacity: 0.6, fontWeight: 300 }
 ```
 
+Pass the same kind to `createSlotRecipeKind` to create slot recipes, which
+map variants to the results of several elements, such as a card's root and
+title.
+
 See [Recipe kinds](https://lynstack.github.io/recipe/recipe/recipe-kinds/)
-for what each function of a kind does, and
+for what each function of a kind does,
+[Slot recipes](https://lynstack.github.io/recipe/recipe/slot-recipes/) for
+slot recipes, and
 [Practices](https://lynstack.github.io/recipe/recipe/practices/) for how to
 write kinds that stay fast.
 

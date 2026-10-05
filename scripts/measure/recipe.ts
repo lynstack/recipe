@@ -9,6 +9,7 @@ import { readVersions } from "./versions.ts";
 interface RecipeMeasurements extends Environment {
   readonly versions: Versions;
   readonly cache: readonly Speed[];
+  readonly slotCache: readonly Speed[];
 }
 
 /** Runs the benchmarks of the package in `directory`. */
@@ -17,6 +18,10 @@ function measureRecipe(directory: string): RecipeMeasurements {
   return {
     ...readEnvironment(),
     cache: speedsNamed(speeds, "recipe kind > is faster with the cache"),
+    slotCache: speedsNamed(
+      speeds,
+      "slot recipe kind > is faster with the cache",
+    ),
     versions: readVersions(directory, "recipe"),
   };
 }

@@ -1,6 +1,6 @@
 ---
 title: recipe performance
-description: "How a recipe turns a selection into an integer key, and benchmarks of a recipe of style objects with and without its cache."
+description: "How a recipe turns a selection into an integer key, and benchmarks of a recipe and a slot recipe of style objects with and without their cache."
 sidebar:
   label: Performance
 ---
@@ -19,14 +19,14 @@ A recipe numbers the options of each variant when it is created, so a
 selection of variants becomes one integer, under which the recipe caches
 its result (see [Cache](/recipe/recipe/recipes/#cache)).
 
-The benchmark calls a recipe of style objects with five selections in each
-iteration, which cover default variants, compound variants, and boolean
-variants. It first checks that the recipe returns the expected values,
-then compares a recipe of a kind with the cache and one without it. Higher
-is better.
+The benchmarks call a recipe of style objects, and a slot recipe of style
+objects with three slots, with five selections in each iteration, which
+cover default variants, compound variants, and boolean variants. They
+first check that the recipe returns the expected values, then compare a
+recipe of a kind with the cache and one without it. Higher is better.
 
 <BarTable title="Cache" groups={cacheGroups} />
 
-The benchmark asserts that the recipe is faster with the cache than
+The benchmarks assert that each recipe is faster with the cache than
 without it. Run it with `pnpm bench`, which builds the package first, or
 with `pnpm measure`, which also saves the results shown here.
