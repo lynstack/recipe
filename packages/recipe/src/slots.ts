@@ -1,5 +1,6 @@
 import type { CompiledVariants, Compound } from "./variants.js";
-import { reduceValues } from "./reduce-values.js";
+import { matches } from "./reduce-values.js";
+import { noOption } from "./variants.js";
 
 /** Values for some slots, keyed by slot name, as the runtime takes them. */
 type LooseSlotValues = Readonly<Record<string, unknown>>;
@@ -19,13 +20,13 @@ interface SlotsConfig {
 
 /**
  * The values that one option or compound variant adds to its slots: the
- * index of each slot it gives a value, followed by that value. Slots
- * without a value are left out, so reducing skips them.
+ * index of each slot it gives a value, and that value at the same position.
+ * Slots without a value are left out, so reducing skips them.
  */
-type SlotEntries = readonly unknown[];
-
-/** The length of one entry: a slot index and its value. */
-const ENTRY_LENGTH = 2;
+interface SlotEntries {
+  readonly slots: readonly number[];
+  readonly values: readonly unknown[];
+}
 
 /**
  * The accumulator of each slot while a selection is reduced, which
@@ -50,14 +51,18 @@ function entriesOf(
   slots: readonly string[],
   values: LooseSlotValues | undefined,
 ): SlotEntries | undefined {
-  const entries: unknown[] = [];
+  const slotIndexes: number[] = [];
+  const slotValues: unknown[] = [];
   for (const [index, slot] of slots.entries()) {
     const value = valueOfSlot(values, slot);
     if (value !== undefined) {
-      entries.push(index, value);
+      slotIndexes.push(index);
+      slotValues.push(value);
     }
   }
-  return entries.length === 0 ? undefined : entries;
+  return slotIndexes.length === 0
+    ? undefined
+    : { slots: slotIndexes, values: slotValues };
 }
 
 /** Turns the slot values of each option and compound variant into entries. */
@@ -79,52 +84,67 @@ function compileEntries(
   };
 }
 
+/** Reduces the values of `added` into the accumulators of their slots. */
+function addEntries(
+  accumulators: SlotAccumulators,
+  added: SlotEntries,
+  reduce: SlotsKind["reduce"],
+): void {
+  const { slots, values } = added;
+  for (let entry = 0; entry < slots.length; entry += 1) {
+    const slot = slots[entry] ?? 0;
+    accumulators[slot] = reduce(accumulators[slot], values[entry]);
+  }
+}
+
+/** Returns the frozen result of each slot, keyed by slot name. */
+function resultsBySlot(
+  names: readonly string[],
+  accumulators: SlotAccumulators,
+  finish: (accumulator: unknown) => unknown,
+): Readonly<Record<string, unknown>> {
+  const results: Record<string, unknown> = {};
+  for (let slot = 0; slot < names.length; slot += 1) {
+    results[names[slot] ?? ""] = finish(accumulators[slot]);
+  }
+  return Object.freeze(results);
+}
+
+const asResult = (accumulator: unknown): unknown => accumulator;
+
 /**
  * Returns the function that builds the result of a selection for each slot
  * of a slot recipe: each slot reduces its own values with `kind`, and the
  * results are frozen in an object keyed by slot name.
+ *
+ * It reduces the values in a loop of its own instead of through
+ * `reduceValues`, which recipes share, so that its calls to `kind.reduce`
+ * see only the reducers of slot recipes and can be inlined.
  */
 function createSlotsBuilder(
   kind: SlotsKind,
   compiled: CompiledVariants<LooseSlotValues | undefined>,
   config: SlotsConfig,
 ): (indexes: Int32Array) => Readonly<Record<string, unknown>> {
-  const { initial, reduce, finish } = kind;
+  const { initial, reduce, finish = asResult } = kind;
   const names = [...config.slots];
   const bases = names.map((slot) => valueOfSlot(config.base, slot));
-  const entries = compileEntries(compiled, names);
+  const { valuesByIndex, compounds } = compileEntries(compiled, names);
 
-  const addEntries = (
-    accumulators: SlotAccumulators,
-    added: SlotEntries,
-  ): SlotAccumulators => {
-    for (let entry = 0; entry < added.length; entry += ENTRY_LENGTH) {
-      const slot = Number(added[entry]);
-      accumulators[slot] = reduce(accumulators[slot], added[entry + 1]);
-    }
-    return accumulators;
-  };
-  const reducer = {
-    initial: (): SlotAccumulators => bases.map((base) => initial(base)),
-    reduce: addEntries,
-  };
-  if (finish === undefined) {
-    return (indexes) => {
-      const accumulators = reduceValues(entries, indexes, reducer);
-      const results: Record<string, unknown> = {};
-      for (let slot = 0; slot < names.length; slot += 1) {
-        results[names[slot] ?? ""] = accumulators[slot];
-      }
-      return Object.freeze(results);
-    };
-  }
   return (indexes) => {
-    const accumulators = reduceValues(entries, indexes, reducer);
-    const results: Record<string, unknown> = {};
-    for (let slot = 0; slot < names.length; slot += 1) {
-      results[names[slot] ?? ""] = finish(accumulators[slot]);
+    const accumulators = bases.map((base) => initial(base));
+    for (let variant = 0; variant < valuesByIndex.length; variant += 1) {
+      const added = valuesByIndex[variant]?.[indexes[variant] ?? noOption];
+      if (added !== undefined) {
+        addEntries(accumulators, added, reduce);
+      }
     }
-    return Object.freeze(results);
+    for (const compound of compounds) {
+      if (compound.value !== undefined && matches(compound, indexes)) {
+        addEntries(accumulators, compound.value, reduce);
+      }
+    }
+    return resultsBySlot(names, accumulators, finish);
   };
 }
 

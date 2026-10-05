@@ -46,5 +46,5 @@ function reduceValues<Value, Accumulator>(
   return accumulator;
 }
 
-export { reduceValues };
+export { matches, reduceValues };
 export type { Reducer };
