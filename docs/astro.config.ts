@@ -2,6 +2,8 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 
+import { lynstackDark, lynstackLight } from "./src/code-themes.ts";
+
 const repository = "https://github.com/lynstack/recipe";
 const site = "https://lynstack.github.io";
 const base = "/recipe";
@@ -15,6 +17,31 @@ export default defineConfig({
       description:
         "Fast, type-safe recipes that map a component's variants to its styles.",
       editLink: { baseUrl: `${repository}/edit/main/docs/` },
+      expressiveCode: {
+        styleOverrides: {
+          borderColor: "var(--lyn-border)",
+          borderRadius: "var(--lyn-radius-lg)",
+          codeFontFamily: "var(--lyn-font-mono)",
+          codeFontSize: "0.8125rem",
+          codeLineHeight: "1.5385",
+          frames: {
+            editorActiveTabBackground: "var(--lyn-muted)",
+            editorActiveTabBorderColor: "transparent",
+            editorActiveTabForeground: "var(--lyn-foreground)",
+            editorActiveTabIndicatorBottomColor: "transparent",
+            editorActiveTabIndicatorTopColor: "transparent",
+            editorTabBarBackground: "var(--lyn-muted)",
+            editorTabBarBorderBottomColor: "var(--lyn-border)",
+            frameBoxShadowCssValue: "none",
+            terminalBackground: "var(--lyn-muted)",
+            terminalTitlebarBackground: "var(--lyn-muted)",
+            terminalTitlebarBorderBottomColor: "var(--lyn-border)",
+            terminalTitlebarDotsOpacity: "0",
+          },
+          uiFontFamily: "var(--lyn-font-mono)",
+        },
+        themes: [lynstackDark, lynstackLight],
+      },
       favicon: "/favicon.svg",
       head: [
         {

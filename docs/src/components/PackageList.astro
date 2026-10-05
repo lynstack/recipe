@@ -1,0 +1,27 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import { landingPackages } from "../landing.ts";
+---
+
+<ul class="package-list not-content">
+  {landingPackages.map((pkg) => (
+    <li>
+      <a class="package" href={pkg.href}>
+        <span class="package-icon" aria-hidden="true">
+          <Icon name={pkg.icon} />
+        </span>
+        <span class="package-body">
+          <span class="package-head">
+            <span class="package-name">{pkg.name}</span>
+            <span class="package-version">{pkg.version}</span>
+            <span class="package-label">{pkg.label}</span>
+          </span>
+          <span class="package-description">{pkg.description}</span>
+        </span>
+        <span class="package-arrow" aria-hidden="true">
+          <Icon name="right-arrow" />
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>

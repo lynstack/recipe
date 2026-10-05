@@ -1,0 +1,14 @@
+---
+import type { LandingSectionProps } from "../landing.ts";
+
+type Props = LandingSectionProps;
+
+const { id, eyebrow, title, lead } = Astro.props;
+---
+
+<section class="landing-section" aria-labelledby={id}>
+  <p class="landing-eyebrow">{eyebrow}</p>
+  <h2 {id}>{title}</h2>
+  {lead !== undefined && <p class="landing-lead">{lead}</p>}
+  <slot />
+</section>

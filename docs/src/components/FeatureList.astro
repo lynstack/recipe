@@ -1,0 +1,17 @@
+---
+import { landingFeatures } from "../landing.ts";
+---
+
+<ul class="feature-list not-content">
+  {landingFeatures.map((feature) => (
+    <li class="feature">
+      <h3 class="feature-title">{feature.title}</h3>
+      <p class="feature-description">
+        {feature.stat !== undefined && (
+          <span class="feature-stat">{feature.stat}</span>
+        )}{" "}
+        {feature.description}
+      </p>
+    </li>
+  ))}
+</ul>

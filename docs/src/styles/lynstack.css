@@ -1,48 +1,353 @@
-/* The lynstack design tokens, mapped onto Starlight's. */
+/*
+ * The lyn-ui design system, mapped onto Starlight. The --lyn-* properties
+ * hold the values of the lyn-ui tokens of the same name; Starlight's
+ * :root is its dark theme.
+ */
 :root {
-  --sl-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --sl-font-mono:
+  --lyn-background: #121214;
+  --lyn-foreground: #ededef;
+  --lyn-muted: #19191c;
+  --lyn-muted-foreground: #a1a1aa;
+  --lyn-accent: #1f1f23;
+  --lyn-active: #28282d;
+  --lyn-border: #2a2a2f;
+  --lyn-input: #75757e;
+  --lyn-primary: #ededef;
+  --lyn-primary-hover: #d4d4d8;
+  --lyn-primary-foreground: #141416;
+  --lyn-brand: #ff6b35;
+  --lyn-brand-subtle: #2b1509;
+  --lyn-brand-text: #ff9368;
+  --lyn-sidebar: #0b0b0d;
+  --lyn-sidebar-accent: #1f1f23;
+  --lyn-popover: #1b1b1e;
+  --lyn-chart-5: #a1a1aa;
+
+  --lyn-radius-sm: 0.25rem;
+  --lyn-radius-md: 0.375rem;
+  --lyn-radius-lg: 0.5rem;
+  --lyn-motion-duration: 150ms;
+  --lyn-motion-easing: cubic-bezier(0.16, 1, 0.3, 1);
+  --lyn-font-sans:
+    Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --lyn-font-mono:
     "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --sl-color-accent-low: #3b1d10;
-  --sl-color-accent: #ff6b35;
-  --sl-color-accent-high: #ff9368;
-  --sl-color-white: #fafafa;
-  --sl-color-gray-1: #ededef;
+  --sl-font: var(--lyn-font-sans);
+  --sl-font-mono: var(--lyn-font-mono);
+
+  --sl-color-white: var(--lyn-foreground);
+  --sl-color-gray-1: var(--lyn-foreground);
   --sl-color-gray-2: #d4d4d8;
-  --sl-color-gray-3: #a1a1aa;
-  --sl-color-gray-4: #75757e;
-  --sl-color-gray-5: #2a2a2f;
-  --sl-color-gray-6: #1f1f23;
-  --sl-color-black: #121214;
+  --sl-color-gray-3: var(--lyn-muted-foreground);
+  --sl-color-gray-4: var(--lyn-input);
+  --sl-color-gray-5: var(--lyn-border);
+  --sl-color-gray-6: var(--lyn-accent);
+  --sl-color-black: var(--lyn-background);
+
+  /* The accent is the brand: Starlight uses it for focus and search. */
+  --sl-color-accent-low: var(--lyn-brand-subtle);
+  --sl-color-accent: var(--lyn-brand);
+  --sl-color-accent-high: var(--lyn-brand-text);
+  /* Links and current items are ink, never colored. */
+  --sl-color-text-accent: var(--lyn-foreground);
+  --sl-color-text-invert: var(--lyn-background);
+
+  --sl-color-bg-nav: var(--lyn-sidebar);
+  --sl-color-bg-sidebar: var(--lyn-sidebar);
+  --sl-color-bg-inline-code: var(--lyn-muted);
+  --sl-color-hairline-light: var(--lyn-border);
+  --sl-color-hairline: var(--lyn-border);
+  --sl-color-hairline-shade: var(--lyn-border);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :root[data-theme="light"] {
-  --sl-color-accent-low: #fbe3d6;
-  --sl-color-accent: #d9480f;
-  --sl-color-accent-high: #b23b0f;
-  --sl-color-white: #18181b;
-  --sl-color-gray-1: #2e2e33;
-  --sl-color-gray-2: #3f3f46;
-  --sl-color-gray-3: #5f5f68;
-  --sl-color-gray-4: #7c7c85;
-  --sl-color-gray-5: #dedee2;
-  --sl-color-gray-6: #efeff1;
-  --sl-color-gray-7: #f4f4f5;
-  --sl-color-black: #ffffff;
-  --sl-color-text-accent: var(--sl-color-accent-high);
+  --lyn-background: #fff;
+  --lyn-foreground: #18181b;
+  --lyn-muted: #f4f4f5;
+  --lyn-muted-foreground: #5f5f68;
+  --lyn-accent: #efeff1;
+  --lyn-active: #e7e7ea;
+  --lyn-border: #dedee2;
+  --lyn-input: #7c7c85;
+  --lyn-primary: #18181b;
+  --lyn-primary-hover: #2e2e33;
+  --lyn-primary-foreground: #fafafa;
+  --lyn-brand: #d9480f;
+  --lyn-brand-subtle: #fdede6;
+  --lyn-brand-text: #b23b0f;
+  --lyn-sidebar: #f4f4f5;
+  --lyn-sidebar-accent: #ececee;
+  --lyn-popover: #fff;
+  --lyn-chart-5: #52525b;
+
+  --sl-color-white: var(--lyn-foreground);
+  --sl-color-gray-1: var(--lyn-foreground);
+  --sl-color-gray-2: #27272a;
+  --sl-color-gray-3: var(--lyn-muted-foreground);
+  --sl-color-gray-4: var(--lyn-input);
+  --sl-color-gray-5: var(--lyn-border);
+  --sl-color-gray-6: var(--lyn-accent);
+  --sl-color-gray-7: var(--lyn-muted);
+  --sl-color-black: var(--lyn-background);
+  --sl-color-text-accent: var(--lyn-foreground);
+  --sl-color-text-invert: var(--lyn-background);
+  --sl-color-bg-nav: var(--lyn-sidebar);
+  --sl-color-bg-sidebar: var(--lyn-sidebar);
+
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
 }
 
+/* Type: hierarchy from weight and ink, with negative tracking. */
+
+.sl-markdown-content :is(h1, h2, h3, h4, h5),
+h1#_top,
+.hero h1 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.site-title {
+  color: var(--lyn-foreground);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.site-title img {
+  height: 1.5rem;
+  width: auto;
+}
+
+/* Links are ink and underlined: the underline marks them. */
+
+.sl-markdown-content a:not(.sl-link-button, .sl-link-card, .not-content *) {
+  color: var(--lyn-foreground);
+  font-weight: 500;
+  text-decoration-line: underline;
+  text-decoration-color: var(--lyn-input);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.sl-markdown-content
+  a:not(.sl-link-button, .sl-link-card, .not-content *):hover {
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+}
+
+/* Focus is the brand ring. */
+
+:focus-visible {
+  outline: 2px solid var(--lyn-brand);
+  outline-offset: 2px;
+}
+
+/* Sidebar: muted items, the current one on the active fill with a brand mark. */
+
+.sidebar-content .group-label .large {
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.sidebar-content a {
+  position: relative;
+  border-radius: var(--lyn-radius-md);
+  color: var(--lyn-muted-foreground);
+  transition:
+    color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.sidebar-content a:hover {
+  background-color: var(--lyn-sidebar-accent);
+  color: var(--lyn-foreground);
+}
+
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover,
+.sidebar-content a[aria-current="page"]:focus {
+  background-color: var(--lyn-active);
+  color: var(--lyn-foreground);
+}
+
+.sidebar-content a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.375rem;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 1px;
+  background-color: var(--lyn-brand);
+}
+
+:root .starlight-sidebar-topics a.starlight-sidebar-topics-current,
+:root .starlight-sidebar-topics a:is(:hover, :focus-visible) {
+  color: var(--lyn-foreground);
+}
+
+.starlight-sidebar-topics a .starlight-sidebar-topics-icon {
+  border-color: var(--lyn-border);
+  color: var(--lyn-muted-foreground);
+}
+
+.starlight-sidebar-topics
+  a:is(.starlight-sidebar-topics-current, :hover, :focus-visible)
+  .starlight-sidebar-topics-icon {
+  background-color: var(--lyn-active);
+  border-color: var(--lyn-border);
+  color: var(--lyn-foreground);
+}
+
+.starlight-sidebar-topics
+  a.starlight-sidebar-topics-current
+  .starlight-sidebar-topics-icon {
+  color: var(--lyn-brand);
+}
+
+/* Tabs: the current tab is ink with a 2px brand bar. */
+
+starlight-tabs [role="tab"] {
+  color: var(--lyn-muted-foreground);
+}
+
+starlight-tabs [role="tab"][aria-selected="true"] {
+  color: var(--lyn-foreground);
+  border-color: var(--lyn-brand);
+}
+
+/* Buttons: one primary in ink, no pills. */
+
+.sl-link-button {
+  border-radius: var(--lyn-radius-md);
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition:
+    background-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    border-color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    color var(--lyn-motion-duration) var(--lyn-motion-easing),
+    scale var(--lyn-motion-duration) var(--lyn-motion-easing);
+}
+
+.sl-link-button:active {
+  scale: 0.98;
+}
+
+.sl-link-button.primary {
+  background-color: var(--lyn-primary);
+  border-color: var(--lyn-primary);
+  color: var(--lyn-primary-foreground);
+}
+
+.sl-link-button.primary:hover {
+  background-color: var(--lyn-primary-hover);
+  border-color: var(--lyn-primary-hover);
+}
+
+.sl-link-button.secondary {
+  background-color: var(--lyn-background);
+  border-color: var(--lyn-input);
+  color: var(--lyn-foreground);
+}
+
+.sl-link-button.secondary:hover {
+  background-color: var(--lyn-accent);
+}
+
+.sl-link-button.minimal {
+  color: var(--lyn-foreground);
+}
+
+.sl-link-button.minimal:hover {
+  background-color: var(--lyn-accent);
+}
+
+/* Panels: a 1px border, no lifted fill, no shadow. */
+
+.card {
+  --sl-card-border: var(--lyn-border);
+  --sl-card-bg: transparent;
+  border-radius: var(--lyn-radius-lg);
+}
+
+.card .icon {
+  color: var(--lyn-foreground);
+}
+
+.sl-link-card {
+  border-radius: var(--lyn-radius-lg);
+  border-color: var(--lyn-border);
+  box-shadow: none;
+  transition: background-color var(--lyn-motion-duration)
+    var(--lyn-motion-easing);
+}
+
+.sl-link-card:hover {
+  background-color: var(--lyn-accent);
+  border-color: var(--lyn-border);
+}
+
+.pagination-links a {
+  border-radius: var(--lyn-radius-lg);
+  border-color: var(--lyn-border);
+  box-shadow: none;
+}
+
+.pagination-links a:hover {
+  background-color: var(--lyn-accent);
+  border-color: var(--lyn-border);
+}
+
+/* Code: inline code on the muted fill, blocks in a bordered panel. */
+
+.sl-markdown-content :not(pre) > code {
+  border-radius: var(--lyn-radius-sm);
+  padding: 0.125em 0.3em;
+}
+
+/* Tables: eyebrow headers, hairline rows, numbers in mono. */
+
+.sl-markdown-content :is(th, .group-head) {
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.sl-markdown-content :is(th, td) {
+  border-color: var(--lyn-border);
+}
+
+.sl-markdown-content .number {
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  white-space: nowrap;
+}
+
+/* Measurements. */
+
 .measurement {
-  border: 1px solid var(--sl-color-gray-5);
-  border-radius: 0.5rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
   padding: 1rem 1.25rem;
   font-size: var(--sl-text-sm);
 }
 
 .measurement-date {
   font-weight: 600;
-  color: var(--sl-color-white);
+  color: var(--lyn-foreground);
 }
 
 .measurement-versions {
@@ -62,121 +367,288 @@
   width: 100%;
 }
 
-.sl-markdown-content .number {
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  white-space: nowrap;
-}
-
 .sl-markdown-content .bars .bar-cell {
   width: 40%;
 }
 
 .bar {
   height: 0.5rem;
-  border-radius: 999px;
-  background: var(--sl-color-gray-6);
+  border-radius: var(--lyn-radius-sm);
+  background: var(--lyn-muted);
 }
 
 .bar > span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--sl-color-accent);
+  background: var(--lyn-brand);
 }
 
 .bar-muted > span {
-  background: var(--sl-color-gray-4);
+  background: var(--lyn-chart-5);
 }
 
-.sl-markdown-content .bars .group-head {
-  color: var(--sl-color-gray-3);
-  font-size: var(--sl-text-xs);
+/* Landing page. */
+
+.landing-hero {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  padding-block: 1rem 2rem;
+}
+
+.landing-hero-copy,
+.landing-hero-example {
+  min-width: 0;
+}
+
+.landing-hero .hero {
+  grid-template-columns: minmax(0, 1fr);
+  padding-block: 0.75rem 1.5rem;
+}
+
+.landing-hero .hero .stack {
+  align-items: flex-start;
+  text-align: start;
+}
+
+.landing-hero .hero .copy {
+  align-items: flex-start;
+}
+
+.landing-hero .hero h1 {
+  color: var(--lyn-foreground);
+  font-size: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.landing-hero .hero .tagline {
+  color: var(--lyn-muted-foreground);
+  font-size: var(--sl-text-lg);
+  max-width: 34rem;
+}
+
+.landing-hero .hero .actions {
+  justify-content: flex-start;
+}
+
+.landing-eyebrow {
+  margin: 0;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  color: var(--lyn-muted-foreground);
 }
 
-.hero-accent {
-  background: linear-gradient(
-    100deg,
-    var(--sl-color-accent),
-    var(--sl-color-accent-high)
-  );
-  background-clip: text;
-  color: transparent;
+.landing-install {
+  max-width: 26rem;
 }
 
-.site-title img {
-  height: 1.5rem;
-  width: auto;
+@media (min-width: 72rem) {
+  .landing-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 32rem);
+    gap: 4rem;
+  }
 }
 
-.card-grid > .card {
-  --sl-card-border: var(--sl-color-accent);
-  --sl-card-bg: var(--sl-color-accent-low);
+.landing-section {
+  margin-block-start: 3rem;
 }
 
-.sl-link-button {
-  transition:
-    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+.sl-markdown-content .landing-section h2 {
+  margin-block-start: 0.5rem;
+  font-size: var(--sl-text-2xl);
 }
 
-.sl-link-button.primary:hover {
-  background: var(--sl-color-white);
-  border-color: var(--sl-color-white);
+.sl-markdown-content .landing-lead {
+  max-width: 40rem;
+  color: var(--lyn-muted-foreground);
 }
 
-.sl-link-button.secondary:hover {
-  border-color: var(--sl-color-text-accent);
-  color: var(--sl-color-text-accent);
+.package-list,
+.feature-list {
+  margin-block-start: 1.5rem;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
+  overflow: hidden;
 }
 
-.sl-link-button.minimal:hover {
-  color: var(--sl-color-text-accent);
+.package-list > li + li {
+  border-block-start: 1px solid var(--lyn-border);
 }
 
-.sl-link-button svg {
-  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+.package {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  color: var(--lyn-foreground);
+  text-decoration: none;
+  transition: background-color var(--lyn-motion-duration)
+    var(--lyn-motion-easing);
 }
 
-.sl-link-button:hover svg {
-  transform: translateX(0.125rem);
+.package:hover {
+  background-color: var(--lyn-accent);
 }
 
-.sl-link-card {
-  transition:
-    background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+.package:focus-visible {
+  outline-offset: -2px;
 }
 
-.sl-link-card:hover {
-  border-color: var(--sl-color-text-accent);
+.package-icon {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0.375rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  color: var(--lyn-foreground);
+  font-size: 1rem;
 }
 
-.sl-markdown-content a:not(.sl-link-button, .sl-link-card *):hover {
-  text-decoration-thickness: 2px;
+.package-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
-:focus-visible {
-  outline: 2px solid var(--sl-color-text-accent);
-  outline-offset: 2px;
+.package-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: baseline;
+}
+
+.package-name {
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.package-version {
+  font-family: var(--lyn-font-mono);
+  font-size: var(--sl-text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-muted-foreground);
+}
+
+.package-label {
+  padding: 0 0.375rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-sm);
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.package-description {
+  font-size: var(--sl-text-sm);
+  line-height: 1.5;
+  color: var(--lyn-muted-foreground);
+}
+
+.package-arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--lyn-muted-foreground);
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.feature {
+  padding: 1.25rem;
+  border-block-start: 1px solid var(--lyn-border);
+}
+
+.feature:first-child {
+  border-block-start: 0;
+}
+
+.feature-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--lyn-foreground);
+}
+
+.feature-description {
+  margin: 0.375rem 0 0;
+  font-size: var(--sl-text-sm);
+  line-height: 1.5;
+  color: var(--lyn-muted-foreground);
+}
+
+.feature-stat {
+  font-family: var(--lyn-font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-foreground);
+}
+
+@media (min-width: 42rem) {
+  .feature-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .feature:nth-child(2) {
+    border-block-start: 0;
+  }
+
+  .feature:nth-child(even) {
+    border-inline-start: 1px solid var(--lyn-border);
+  }
+}
+
+@media (min-width: 72rem) {
+  .feature-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .feature {
+    border-block-start: 0;
+  }
+
+  .feature + .feature {
+    border-inline-start: 1px solid var(--lyn-border);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sl-link-button,
-  .sl-link-button svg,
-  .sl-link-card {
+  .sl-link-card,
+  .sidebar-content a,
+  .package {
     transition: none;
   }
 
-  .sl-link-button:hover svg {
-    transform: none;
+  .sl-link-button:active {
+    scale: none;
   }
 }
 
-:root[data-theme="light"] li > a.starlight-sidebar-topics-current {
-  color: var(--sl-color-text-accent);
+/* Keywords use the heaviest JetBrains Mono the docs load, never a synthesized bold. */
+.expressive-code pre {
+  font-synthesis-weight: none;
+}
+
+/* Code shows the characters it is written with, never ligatures such as ⇒ for =>. */
+:is(code, kbd, pre, .expressive-code pre) {
+  font-variant-ligatures: none;
 }
