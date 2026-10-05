@@ -17,8 +17,11 @@
   "devDependencies": {
     "@astrojs/starlight": "0.42.5",
     "@lynstack/class-recipe": "workspace:*",
+    "@lynstack/native-recipe": "workspace:*",
     "@lynstack/recipe": "workspace:*",
+    "@types/react": "19.3.0",
     "astro": "7.3.5",
+    "react-native": "0.87.1",
     "starlight-sidebar-topics": "0.9.0"
   }
 }

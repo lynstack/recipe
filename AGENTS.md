@@ -130,7 +130,9 @@ Native's `style` prop keeps its identity between renders.
   recipe is a module of `docs/src/examples/recipes/<package>/<page>`,
   listed with its options in `docs/src/examples/registry`, and built from
   the packages in the workspace, so the docs build them first. A call
-  that chooses an option the recipe does not declare fails the build.
+  that chooses an option the recipe does not declare fails the build. The
+  docs depend on React Native and its React types only to typecheck the
+  recipes of `@lynstack/native-recipe`.
 - `examples` holds an example of each package that readers open in the
   browser, from the Playground link of its overview page: `recipe` and
   `class-recipe` are React apps, built with Vite, that StackBlitz opens

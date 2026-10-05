@@ -5,6 +5,7 @@ description: "Fast, type-safe React Native style recipes with variants, compound
 
 import PackageMeta from "../../../components/PackageMeta.astro";
 import { styleRecipeSpeedup } from "../../../measurements/native-recipe.ts";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 <PackageMeta folder="native-recipe" />
 
@@ -20,24 +21,9 @@ styles. It has three functions:
   returns both, for recipes whose styles are built from the tokens of a
   theme.
 
+<RecipePlayground name="native-recipe/index/badge" />
+
 ```ts
-import { createStyleRecipe } from "@lynstack/native-recipe";
-
-const badge = createStyleRecipe({
-  base: { alignSelf: "flex-start", borderRadius: 999, paddingHorizontal: 8 },
-  variants: {
-    tone: {
-      neutral: { backgroundColor: "#f3f4f6" },
-      danger: { backgroundColor: "#fee2e2" },
-    },
-    size: { sm: { height: 20 }, md: { height: 24 } },
-  },
-  defaultVariants: { size: "md" },
-});
-
-badge({ tone: "danger" });
-// => { alignSelf: "flex-start", borderRadius: 999, paddingHorizontal: 8, backgroundColor: "#fee2e2", height: 24 }
-
 badge({ tone: "danger" }) === badge({ tone: "danger" }); // => true
 ```
 
