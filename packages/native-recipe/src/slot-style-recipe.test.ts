@@ -1,6 +1,7 @@
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import type { SlotStyleRecipeVariants } from "./slot-style-recipe.js";
 import type { VariantsOf } from "./types.js";
 import { createSlotStyleRecipe } from "./slot-style-recipe.js";
 
@@ -249,6 +250,21 @@ describe(createSlotStyleRecipe, () => {
 
     expect(recipe({ size: "sm" })).toStrictEqual({
       root: { flex: 1, height: 32 },
+    });
+  });
+
+  it("accepts variants whose slot names are not known", () => {
+    const variants: SlotStyleRecipeVariants = {
+      size: { sm: { root: { height: 32 } } },
+    };
+    const recipe = createSlotStyleRecipe({
+      slots: ["root", "label"],
+      variants,
+    });
+
+    expect(recipe({ size: "sm" })).toStrictEqual({
+      root: { height: 32 },
+      label: {},
     });
   });
 });

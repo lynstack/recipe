@@ -31,11 +31,21 @@ type SlotStyles<Slot extends string> = Readonly<
  */
 type SlotStyleRecipeVariants = KindVariants<SlotStyles<string>>;
 
-type NoUnknownSlotStyles<Styles, Slot extends string> = {
-  readonly [Name in keyof Styles]: Name extends Slot
-    ? NoUnknownProperties<NonNullable<Styles[Name]>>
-    : never;
-};
+/**
+ * Rejects the slots and style properties of an option's styles that the
+ * slot recipe does not have, unless the option's slot names are not known
+ * at compile time.
+ */
+type NoUnknownSlotStyles<
+  Styles,
+  Slot extends string,
+> = string extends keyof Styles
+  ? unknown
+  : {
+      readonly [Name in keyof Styles]: Name extends Slot
+        ? NoUnknownProperties<NonNullable<Styles[Name]>>
+        : never;
+    };
 
 type NoUnknownVariantStyles<Variants, Slot extends string> = {
   readonly [Name in keyof Variants]: {

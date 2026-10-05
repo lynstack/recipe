@@ -105,6 +105,53 @@ color in a recipe without a theme gives its literal type. `VariantsOf`
 returns the variants of a themed recipe, and a themed recipe takes only
 the theme type that `createThemedRecipes` was given.
 
+## Variants from a CMS or an API
+
+When the styles of a recipe come from outside the code, such as a CMS or
+a theme file, type the data with the names of its variants, options, and
+slots, so that the recipe checks every call. Write the type with `type`,
+not `interface`, since an interface does not satisfy the type of
+`variants`:
+
+```ts
+import type { ViewStyle } from "react-native";
+import { createSlotStyleRecipe } from "@lynstack/native-recipe";
+
+type CardStyles = { readonly root?: ViewStyle; readonly title?: ViewStyle };
+
+type CardTheme = {
+  readonly size: Readonly<Record<"sm" | "md", CardStyles>>;
+};
+
+const theme: CardTheme = await fetchCardTheme();
+
+const card = createSlotStyleRecipe({
+  slots: ["root", "title"],
+  variants: theme,
+  defaultVariants: { size: "md" },
+});
+
+card({ size: "sm" });
+
+// @ts-expect-error: "lg" is not a size.
+card({ size: "lg" });
+```
+
+When the names cannot be known, as in a function that passes on a config
+it received, type the variants as `StyleRecipeVariants` or
+`SlotStyleRecipeVariants`. A recipe then accepts any variant name, with
+its option named by a string, and does not check the slots or style
+properties of the variants' styles:
+
+```ts
+import { createSlotStyleRecipe } from "@lynstack/native-recipe";
+import type { SlotStyleRecipeVariants } from "@lynstack/native-recipe";
+
+function createCard(variants: SlotStyleRecipeVariants) {
+  return createSlotStyleRecipe({ slots: ["root", "title"], variants });
+}
+```
+
 ## Any style
 
 `NativeStyle` is the style of any React Native element: a view, a text, or
