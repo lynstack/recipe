@@ -1,7 +1,9 @@
 import type { BarGroup, BarRow } from "./bars.ts";
 import { librariesOf, speedNamed } from "./format.ts";
 import type { Speed } from "./format.ts";
+import type { Stat } from "./stats.ts";
 import { cacheRows } from "./bars.ts";
+import { formatTimes } from "./stats.ts";
 import measurements from "./native-recipe.json";
 
 const PERCENT = 100;
@@ -44,22 +46,35 @@ const themedShare =
       (PERCENT / SHARE_STEP),
   ) * SHARE_STEP;
 
-/** How many times as fast a recipe is with its cache as without it. */
-function cacheSpeedup(speeds: readonly Speed[]): number {
-  return Math.round(
-    speedNamed(speeds, "cached") / speedNamed(speeds, "uncached"),
+/** How many times as fast a style recipe is with its cache as without it. */
+const styleRecipeSpeedup = Math.round(
+  speedNamed(measurements.styleRecipeCache, "cached") /
+    speedNamed(measurements.styleRecipeCache, "uncached"),
+);
+
+/** Formats how many times as fast a recipe is with its cache. */
+function cacheTimes(speeds: readonly Speed[]): string {
+  return formatTimes(
+    speedNamed(speeds, "cached"),
+    speedNamed(speeds, "uncached"),
   );
 }
 
-const styleRecipeSpeedup = cacheSpeedup(measurements.styleRecipeCache);
-const slotStyleRecipeSpeedup = cacheSpeedup(measurements.slotStyleRecipeCache);
+/** The headline numbers of the performance page. */
+const stats: readonly Stat[] = [
+  {
+    label: "as fast with the cache, for a style recipe",
+    value: cacheTimes(measurements.styleRecipeCache),
+  },
+  {
+    label: "as fast with the cache, for a slot style recipe",
+    value: cacheTimes(measurements.slotStyleRecipeCache),
+  },
+  {
+    label: "of the speed of a style recipe, for a themed one",
+    value: `${themedShare}%`,
+  },
+];
 
-export {
-  cacheGroups,
-  libraries,
-  slotStyleRecipeSpeedup,
-  styleRecipeSpeedup,
-  themedGroups,
-  themedShare,
-};
+export { cacheGroups, libraries, stats, styleRecipeSpeedup, themedGroups };
 export { default as measurements } from "./native-recipe.json";

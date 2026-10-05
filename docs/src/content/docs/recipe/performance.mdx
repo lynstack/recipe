@@ -5,15 +5,18 @@ sidebar:
   label: Performance
 ---
 
+import { Aside } from "@astrojs/starlight/components";
 import BarTable from "../../../components/BarTable.astro";
 import Measurement from "../../../components/Measurement.astro";
+import StatList from "../../../components/StatList.astro";
 import {
   cacheGroups,
   libraries,
   measurements,
+  stats,
 } from "../../../measurements/recipe.ts";
 
-<Measurement environment={measurements} libraries={libraries} />
+<StatList stats={stats} />
 
 A recipe numbers the options of each variant when it is created, so a
 selection of variants becomes one integer, under which the recipe caches
@@ -22,14 +25,30 @@ costs one lookup per variant and one for the cache, and allocates nothing;
 an uncached call also costs the work of the kind (see
 [Designing a kind](/recipe/recipe/designing-a-kind/#what-each-design-costs)).
 
+## The cache
+
 The benchmarks call a recipe of style objects, and a slot recipe of style
-objects with three slots, with five selections in each iteration, which
-cover default variants, compound variants, and boolean variants. They
-first check that the recipe returns the expected values, then compare a
-recipe of a kind with the cache and one without it. Higher is better.
+objects with three slots, with five selections in turn, which cover
+default variants, compound variants, and boolean variants. Each compares
+a recipe of a kind with the cache and one without it.
 
 <BarTable title="Cache" groups={cacheGroups} />
 
-The benchmarks assert that each recipe is faster with the cache than
-without it. Run it with `pnpm bench`, which builds the package first, or
-with `pnpm measure`, which also saves the results shown here.
+<Aside type="tip" title="Create each recipe once">
+  The cache belongs to the recipe, so create each recipe at the top level of a
+  module, not inside a component. It grows with the selections the recipe is
+  called with, up to one entry per combination of declared options.
+</Aside>
+
+## Method
+
+<Measurement environment={measurements} libraries={libraries} />
+
+- The benchmarks first check that each recipe returns the expected values.
+- They import the package by its name, so they run the built bundle, not
+  the sources.
+- The benchmarks assert that a recipe and a slot recipe are faster with
+  their cache than without it.
+
+Run them with `pnpm bench`, which builds the package first, or with
+`pnpm measure`, which also saves the results shown here.

@@ -5,65 +5,57 @@ sidebar:
   label: Performance
 ---
 
+import { Aside } from "@astrojs/starlight/components";
 import BarTable from "../../../components/BarTable.astro";
 import Measurement from "../../../components/Measurement.astro";
+import StatList from "../../../components/StatList.astro";
 import {
   cacheGroups,
   libraries,
   measurements,
-  slotStyleRecipeSpeedup,
-  styleRecipeSpeedup,
+  stats,
   themedGroups,
-  themedShare,
 } from "../../../measurements/native-recipe.ts";
 
-<Measurement environment={measurements} libraries={libraries} />
-
-## Stable styles
+<StatList stats={stats} />
 
 What makes a style cheap for React Native is its identity, not
 `StyleSheet.create`, which returns the styles it is given and only checks
 their types. A recipe returns the same frozen object for the same
-variants, so the `style` prop keeps its identity between renders (see
+variants, so the `style` prop keeps its identity between renders, and
+caches it under one integer per selection, so most calls are a lookup (see
 [How it works](/recipe/native-recipe/how-it-works/#stable-styles)).
 
-## Cache
+## The cache
 
-A recipe numbers the options of each variant when it is created, so a
-selection of variants becomes one integer, under which the recipe caches
-its style. Calling it again reads each variant's option and looks up the
-style. The cache belongs to the recipe, so create each recipe once, at the
-top level of a module. It grows with the selections the recipe is called
-with, up to one entry per combination of declared options.
-
-The benchmarks call a recipe with five selections in each iteration, which
-cover default variants, compound variants, and boolean variants. They
-first check that the recipe returns the expected styles, then compare the
-recipe with the same recipe built on every call. Higher is better.
+The benchmarks call a style recipe, and a slot style recipe, which builds
+a style for each slot, with five selections in turn, which cover default
+variants, compound variants, and boolean variants. Each compares the
+recipe with the same recipe built on every call.
 
 <BarTable title="Cache" groups={cacheGroups} />
 
-A style recipe is about {styleRecipeSpeedup} times as fast with its cache,
-and a slot style recipe, which builds a style for each slot, about
-{slotStyleRecipeSpeedup} times.
+<Aside type="tip" title="Create each recipe once">
+  The cache belongs to the recipe, so create each recipe at the top level of a
+  module, not inside a component. It grows with the selections the recipe is
+  called with, up to one entry per combination of declared options.
+</Aside>
 
 ## Themed recipes
 
-A themed recipe finds the recipe of its theme, then calls it. It keeps the
-recipe of the last theme apart, so calling it again with the same theme
-skips the lookup; another theme is found in a `WeakMap`. The benchmark
-calls a themed recipe with the five selections, twice in each iteration:
-with one theme both times, or with a light theme, then a dark one. It
-compares it with the same recipe without a theme, and with the recipe of
-each theme built on every call.
+A themed recipe finds the recipe of its theme, then calls it, still
+without allocations. It keeps the recipe of the last theme apart, so
+calling it again with the same theme skips the lookup; another theme is
+found in a `WeakMap`. The benchmark calls a themed recipe with the five
+selections, twice in each iteration: with one theme both times, or with a
+light theme, then a dark one. It compares it with the same recipe without
+a theme, and with the recipe of each theme built on every call.
 
 <BarTable title="Themed recipe" groups={themedGroups} />
 
-A themed recipe called with one theme runs about {themedShare}% as fast as
-a recipe without a theme, and still without allocations: the difference
-is the lookup of the theme's recipe.
-
 ## Method
+
+<Measurement environment={measurements} libraries={libraries} />
 
 - The benchmarks first check that each recipe returns the expected
   styles, for each theme.
