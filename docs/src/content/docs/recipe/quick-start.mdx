@@ -5,6 +5,10 @@ sidebar:
   label: Quick start
 ---
 
+import { Code } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+import styleKindSource from "../../../examples/recipes/recipe/quick-start/style-kind.ts?raw";
+
 This page builds recipes of style objects, as a component library for
 React Native or inline styles would. The same steps apply to any type of
 value.
@@ -13,16 +17,7 @@ value.
 
 A kind says how the values of a selection become a result:
 
-```ts
-type Style = Readonly<Record<string, string | number>>;
-type MutableStyle = Record<string, string | number>;
-
-const styleKind = {
-  initial: (base?: Style): MutableStyle => ({ ...base }),
-  reduce: (style: MutableStyle, value: Style) => Object.assign(style, value),
-  finish: (style: MutableStyle): Style => Object.freeze(style),
-};
-```
+<Code code={styleKindSource} lang="ts" />
 
 - `initial` starts each result from a copy of the recipe's base.
 - `reduce` adds one value to that copy. It changes the copy in place, which
@@ -38,35 +33,7 @@ The annotation of `value` sets the type of every value of the kind: a
 `createRecipeKind` returns the function that creates recipes of the kind.
 Create it once, then create each recipe once, at the top level of a module:
 
-```ts
-import { createRecipeKind } from "@lynstack/recipe";
-
-const styleRecipe = createRecipeKind(styleKind);
-
-const button = styleRecipe({
-  base: { borderRadius: 6, paddingInline: 16 },
-  variants: {
-    tone: {
-      primary: { backgroundColor: "#2563eb", color: "#fff" },
-      neutral: { backgroundColor: "#f3f4f6", color: "#111827" },
-    },
-    size: {
-      sm: { height: 32 },
-      md: { height: 40 },
-    },
-    disabled: {
-      true: { opacity: 0.5 },
-    },
-  },
-  compoundVariants: [
-    {
-      variants: { tone: "primary", disabled: true },
-      value: { backgroundColor: "#93c5fd" },
-    },
-  ],
-  defaultVariants: { tone: "primary", size: "md" },
-});
-```
+<RecipeExample name="recipe/quick-start/button" />
 
 The config has four parts, described in [Variants](/recipe/recipe/variants/):
 
@@ -81,19 +48,13 @@ The config has four parts, described in [Variants](/recipe/recipe/variants/):
 
 A recipe takes a selection of variants and returns its result:
 
+<RecipeExample
+  name="recipe/quick-start/button"
+  source={false}
+  calls={[{}, { tone: "neutral", size: "sm" }, { disabled: true }]}
+/>
+
 ```ts
-button();
-// => { borderRadius: 6, paddingInline: 16,
-//      backgroundColor: "#2563eb", color: "#fff", height: 40 }
-
-button({ tone: "neutral", size: "sm" });
-// => { borderRadius: 6, paddingInline: 16,
-//      backgroundColor: "#f3f4f6", color: "#111827", height: 32 }
-
-button({ disabled: true });
-// => { borderRadius: 6, paddingInline: 16,
-//      backgroundColor: "#93c5fd", color: "#fff", height: 40, opacity: 0.5 }
-
 button() === button({ tone: "primary" }); // => true
 ```
 
@@ -108,27 +69,7 @@ A component with several elements, such as a button with an icon and a
 label, needs a result for each. Pass the same kind to
 `createSlotRecipeKind`:
 
-```ts
-import { createSlotRecipeKind } from "@lynstack/recipe";
-
-const slotStyleRecipe = createSlotRecipeKind(styleKind);
-
-const iconButton = slotStyleRecipe({
-  slots: ["root", "icon"],
-  base: { root: { flexDirection: "row", gap: 8 }, icon: { width: 20 } },
-  variants: {
-    size: {
-      sm: { root: { height: 32 }, icon: { width: 16 } },
-      md: { root: { height: 40 } },
-    },
-  },
-  defaultVariants: { size: "md" },
-});
-
-iconButton({ size: "sm" });
-// => { root: { flexDirection: "row", gap: 8, height: 32 },
-//      icon: { width: 16 } }
-```
+<RecipeExample name="recipe/quick-start/icon-button" calls={[{ size: "sm" }]} />
 
 See [Slot recipes](/recipe/recipe/slot-recipes/).
 

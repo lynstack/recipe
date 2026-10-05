@@ -3,6 +3,8 @@ title: Recipe kinds
 description: "The contract of a recipe kind: what initial, reduce, finish, and cache do, when the engine calls them, and how they set the types of the kind's recipes."
 ---
 
+import RecipeExample from "../../../components/RecipeExample.astro";
+
 A kind is how a recipe turns the values of a selection into its result.
 `createRecipeKind` and `createSlotRecipeKind` take the same kind:
 
@@ -103,22 +105,7 @@ option, or compound value of another type is a type error.
 
 Class names, concatenated as they are added:
 
-```ts
-import { createRecipeKind } from "@lynstack/recipe";
-
-const classRecipe = createRecipeKind({
-  initial: (base?: string): string => base ?? "",
-  reduce: (className, classes: string) =>
-    className === "" ? classes : `${className} ${classes}`,
-});
-
-const badge = classRecipe({
-  base: "badge",
-  variants: { tone: { info: "badge-info", danger: "badge-danger" } },
-});
-
-badge({ tone: "danger" }); // => "badge badge-danger"
-```
+<RecipeExample name="recipe/recipe-kinds/badge" calls={[{ tone: "danger" }]} />
 
 Style objects, copied once and frozen, as in the
 [Quick start](/recipe/recipe/quick-start/):

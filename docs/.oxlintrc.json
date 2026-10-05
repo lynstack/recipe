@@ -60,6 +60,11 @@
       // name of its export.
       "files": ["src/examples/playground.ts", "src/examples/registry/**/*.ts"],
       "rules": { "import/prefer-default-export": "off" }
+    },
+    {
+      // This kind changes its accumulator in place, as the docs teach.
+      "files": ["src/examples/recipes/recipe/quick-start/style-kind.ts"],
+      "rules": { "typescript/prefer-readonly-parameter-types": "off" }
     }
   ]
 }

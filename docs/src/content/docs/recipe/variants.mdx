@@ -3,6 +3,8 @@ title: Variants
 description: "How a recipe's config resolves a selection: required and default variants, boolean variants, numeric option names, compound variants, and variantKeys."
 ---
 
+import RecipeExample from "../../../components/RecipeExample.astro";
+
 A recipe's config declares its variants and the values they add. The
 examples on this page use `styleRecipe` from the
 [Quick start](/recipe/recipe/quick-start/).
@@ -22,18 +24,10 @@ A variant without a default is required: leaving it out of a selection is
 a type error, and at runtime it adds no value. A variant with a default may
 be left out or passed as `undefined`, and uses its default:
 
-```ts
-const text = styleRecipe({
-  variants: {
-    size: { sm: { fontSize: 12 }, lg: { fontSize: 24 } },
-    tone: { neutral: { color: "gray" }, danger: { color: "red" } },
-  },
-  defaultVariants: { size: "sm" },
-});
-
-text({ tone: "danger" }); // => { fontSize: 12, color: "red" }
-text({ tone: "danger", size: undefined }); // => { fontSize: 12, color: "red" }
-```
+<RecipeExample
+  name="recipe/variants/text"
+  calls={[{ tone: "danger" }, { tone: "danger", size: undefined }]}
+/>
 
 ## Boolean variants
 
@@ -42,31 +36,20 @@ variant. It is optional and defaults to `false`. A variant that declares
 one of the two also declares the other, without a value, and accepts
 `true` and `false` as well as the strings:
 
-```ts
-const field = styleRecipe({
-  variants: {
-    invalid: { true: { borderColor: "red" } },
-  },
-});
-
-field(); // => {}
-field({ invalid: true }); // => { borderColor: "red" }
-field({ invalid: "true" }); // => { borderColor: "red" }
-```
+<RecipeExample
+  name="recipe/variants/field"
+  calls={[{}, { invalid: true }, { invalid: "true" }]}
+/>
 
 ## Option names that are numbers
 
 An option whose name is a number accepts that number as well as the
 string:
 
-```ts
-const heading = styleRecipe({
-  variants: { level: { 1: { fontSize: 32 }, 2: { fontSize: 24 } } },
-});
-
-heading({ level: 1 }); // => { fontSize: 32 }
-heading({ level: "2" }); // => { fontSize: 24 }
-```
+<RecipeExample
+  name="recipe/variants/heading"
+  calls={[{ level: 1 }, { level: "2" }]}
+/>
 
 ## Compound variants
 
@@ -74,29 +57,13 @@ A compound variant adds its `value` when every variant it names has one of
 the options it lists. A variant it leaves out matches any option, and a
 list matches any of its options:
 
-```ts
-const button = styleRecipe({
-  variants: {
-    tone: {
-      primary: { color: "white" },
-      neutral: { color: "black" },
-      ghost: { color: "gray" },
-    },
-    size: { sm: { height: 32 }, lg: { height: 48 } },
-  },
-  compoundVariants: [
-    {
-      variants: { tone: ["primary", "neutral"], size: "lg" },
-      value: { fontWeight: 600 },
-    },
-  ],
-  defaultVariants: { size: "sm" },
-});
-
-button({ tone: "neutral", size: "lg" });
-// => { color: "black", height: 48, fontWeight: 600 }
-button({ tone: "ghost", size: "lg" }); // => { color: "gray", height: 48 }
-```
+<RecipeExample
+  name="recipe/variants/button"
+  calls={[
+    { tone: "neutral", size: "lg" },
+    { tone: "ghost", size: "lg" },
+  ]}
+/>
 
 A compound condition matches against the selected options after defaults
 are applied, so it can match a default variant, including the `false` of a

@@ -4,6 +4,9 @@ description: "A typed engine for values driven by variants: define a kind once b
 ---
 
 import PackageMeta from "../../../components/PackageMeta.astro";
+import { Code } from "@astrojs/starlight/components";
+import styleKindSource from "../../../examples/recipes/recipe/quick-start/style-kind.ts?raw";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 <PackageMeta folder="recipe" />
 
@@ -31,16 +34,7 @@ values are, and the engine does it once for every kind of value:
 The rest is how values combine into a result, and that is what you give
 it: a **kind**, three small functions.
 
-```ts
-type Style = Readonly<Record<string, string | number>>;
-type MutableStyle = Record<string, string | number>;
-
-const styleKind = {
-  initial: (base?: Style): MutableStyle => ({ ...base }),
-  reduce: (style: MutableStyle, value: Style) => Object.assign(style, value),
-  finish: (style: MutableStyle): Style => Object.freeze(style),
-};
-```
+<Code code={styleKindSource} lang="ts" />
 
 ## From a kind to a result
 
@@ -52,28 +46,9 @@ A kind goes through three steps:
 2. That function takes a config and returns a recipe.
 3. The recipe takes a selection of variants and returns its result.
 
+<RecipePlayground name="recipe/index/text" />
+
 ```ts
-import { createRecipeKind } from "@lynstack/recipe";
-
-const styleRecipe = createRecipeKind(styleKind);
-
-const text = styleRecipe({
-  base: { color: "black" },
-  variants: {
-    size: { sm: { fontSize: 12 }, lg: { fontSize: 24 } },
-    muted: { true: { opacity: 0.6 } },
-  },
-  compoundVariants: [
-    { variants: { size: "lg", muted: true }, value: { fontWeight: 300 } },
-  ],
-  defaultVariants: { size: "sm" },
-});
-
-text(); // => { color: "black", fontSize: 12 }
-
-text({ size: "lg", muted: true });
-// => { color: "black", fontSize: 24, opacity: 0.6, fontWeight: 300 }
-
 text.variantKeys; // => ["size", "muted"]
 ```
 

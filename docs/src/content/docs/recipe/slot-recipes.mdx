@@ -3,39 +3,16 @@ title: Slot recipes
 description: "Create slot recipes with createSlotRecipeKind, which map variants to the result of each element of a component, such as a card's root and title."
 ---
 
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+
 A component often has several elements, its slots, each with its own
 result, such as a card's root and title. `createSlotRecipeKind` takes the
 same kind as `createRecipeKind` and returns the function that creates slot
 recipes of that kind:
 
+<RecipePlayground name="recipe/slot-recipes/card" />
+
 ```ts
-import { createSlotRecipeKind } from "@lynstack/recipe";
-
-const slotStyleRecipe = createSlotRecipeKind(styleKind);
-
-const card = slotStyleRecipe({
-  slots: ["root", "title"],
-  base: { root: { padding: 16 }, title: { fontSize: 18 } },
-  variants: {
-    tone: {
-      light: { root: { backgroundColor: "white" } },
-      dark: { root: { backgroundColor: "black" }, title: { color: "white" } },
-    },
-  },
-  compoundVariants: [
-    { variants: { tone: "dark" }, value: { title: { fontWeight: 600 } } },
-  ],
-  defaultVariants: { tone: "light" },
-});
-
-card();
-// => { root: { padding: 16, backgroundColor: "white" },
-//      title: { fontSize: 18 } }
-
-card({ tone: "dark" });
-// => { root: { padding: 16, backgroundColor: "black" },
-//      title: { fontSize: 18, color: "white", fontWeight: 600 } }
-
 card.variantKeys; // => ["tone"]
 ```
 
