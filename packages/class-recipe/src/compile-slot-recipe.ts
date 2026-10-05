@@ -126,17 +126,24 @@ function withStringClasses(
   }[];
   readonly defaultVariants: LooseSelection | undefined;
 } {
-  const variants: Record<string, Record<string, LooseSlotClassNames>> = {};
-  for (const [name, options] of Object.entries(config.variants)) {
-    variants[name] = Object.fromEntries(
-      Object.entries(options).map(
-        ([option, classes]: readonly [string, LooseSlotClasses]) => [
-          option,
-          stringClasses(slots, classes),
-        ],
-      ),
-    );
-  }
+  const variants = Object.fromEntries(
+    Object.entries(config.variants).map(
+      ([name, options]: readonly [
+        string,
+        Readonly<Record<string, LooseSlotClasses>>,
+      ]) => [
+        name,
+        Object.fromEntries(
+          Object.entries(options).map(
+            ([option, classes]: readonly [string, LooseSlotClasses]) => [
+              option,
+              stringClasses(slots, classes),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
   return {
     base: stringClasses(slots, config.base ?? {}),
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
@@ -154,14 +161,11 @@ function stringClasses(
   slots: readonly string[],
   classes: LooseSlotClasses,
 ): LooseSlotClassNames {
-  const classesBySlot: Record<string, string> = {};
-  for (const slot of slots) {
-    const classesOfSlot = classOfSlot(classes, slot);
-    if (classesOfSlot !== "") {
-      classesBySlot[slot] = classesOfSlot;
-    }
-  }
-  return classesBySlot;
+  return Object.fromEntries(
+    slots
+      .map((slot) => [slot, classOfSlot(classes, slot)] as const)
+      .filter(([, classesOfSlot]) => classesOfSlot !== ""),
+  );
 }
 
 /**

@@ -87,18 +87,25 @@ function configOf(
 }
 
 const optionSets = [
-  ["sm", "md", "valueOf"],
+  ["sm", "md", "valueOf", "__proto__"],
   ["true", "false"],
   ["0", "1"],
 ];
 
 const slotsOfConfig = uniqueArray(
-  constantFrom("root", "icon", "constructor", "toString", "hasOwnProperty"),
+  constantFrom(
+    "root",
+    "icon",
+    "constructor",
+    "toString",
+    "hasOwnProperty",
+    "__proto__",
+  ),
   { minLength: 1 },
 );
 
 const variantsOfConfig = uniqueArray(
-  constantFrom("size", "tone", "0", "valueOf"),
+  constantFrom("size", "tone", "0", "valueOf", "__proto__"),
   { maxLength: 4 },
 ).chain((names: readonly string[]) =>
   tuple(
@@ -136,20 +143,28 @@ function kindOf(
   };
 }
 
+/** Maps each value of `byKey`, keeping its keys, `__proto__` included. */
+function mapValues<Value, Mapped>(
+  byKey: ByName<Value>,
+  map: (value: Value) => Mapped,
+): ByName<Mapped> {
+  return Object.fromEntries(
+    Object.entries(byKey).map(([key, value]: readonly [string, Value]) => [
+      key,
+      map(value),
+    ]),
+  );
+}
+
 /** The recipe of `of` that holds only the values of `slot`. */
 function recipeOfSlot(
   of: Config,
   slot: string,
   cache: boolean,
 ): (selection?: ByName<unknown>) => unknown {
-  const variants: Record<string, ByName<unknown>> = {};
-  for (const [name, byOption] of Object.entries(of.variants)) {
-    const valueByOption: Record<string, unknown> = {};
-    for (const [optionName, values] of Object.entries(byOption)) {
-      valueByOption[optionName] = own(values, slot);
-    }
-    variants[name] = valueByOption;
-  }
+  const variants = mapValues(of.variants, (byOption) =>
+    mapValues(byOption, (values) => own(values, slot)),
+  );
   return createRecipeKind(kindOf(cache))({
     base: own(of.base, slot),
     compoundVariants: of.compoundVariants.map((compound) => ({

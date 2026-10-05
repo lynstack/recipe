@@ -97,13 +97,24 @@ function addEntries(
   }
 }
 
+/**
+ * The names of a slot recipe's slots, and an object with a property for
+ * each, which results copy so that assigning a slot named `__proto__` sets
+ * that property instead of the prototype.
+ */
+interface SlotNames {
+  readonly names: readonly string[];
+  readonly template: Readonly<Record<string, unknown>>;
+}
+
 /** Returns the frozen result of each slot, keyed by slot name. */
 function resultsBySlot(
-  names: readonly string[],
+  slots: SlotNames,
   accumulators: SlotAccumulators,
   finish: (accumulator: unknown) => unknown,
 ): Readonly<Record<string, unknown>> {
-  const results: Record<string, unknown> = {};
+  const { names } = slots;
+  const results: Record<string, unknown> = { ...slots.template };
   for (let slot = 0; slot < names.length; slot += 1) {
     results[names[slot] ?? ""] = finish(accumulators[slot]);
   }
@@ -128,6 +139,10 @@ function createSlotsBuilder(
 ): (indexes: Int32Array) => Readonly<Record<string, unknown>> {
   const { initial, reduce, finish = asResult } = kind;
   const names = [...config.slots];
+  const slotNames: SlotNames = {
+    names,
+    template: Object.fromEntries(names.map((slot) => [slot, undefined])),
+  };
   const bases = names.map((slot) => valueOfSlot(config.base, slot));
   const { valuesByIndex, compounds } = compileEntries(compiled, names);
 
@@ -144,7 +159,7 @@ function createSlotsBuilder(
         addEntries(accumulators, compound.value, reduce);
       }
     }
-    return resultsBySlot(names, accumulators, finish);
+    return resultsBySlot(slotNames, accumulators, finish);
   };
 }
 

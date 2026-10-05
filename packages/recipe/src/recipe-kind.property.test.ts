@@ -122,7 +122,7 @@ function configsOf(
 }
 
 const narrowConfig = uniqueArray(
-  constantFrom("size", "tone", "0", "2", "valueOf", "hasOwnProperty"),
+  constantFrom("size", "tone", "0", "valueOf", "hasOwnProperty", "__proto__"),
   { maxLength: 5 },
 ).chain((variants: readonly string[]) =>
   configsOf(variants, { maxLength: 4, minLength: 0 }),

@@ -45,7 +45,7 @@ interface Model {
 }
 
 const optionSets = [
-  ["sm", "valueOf", "constructor"],
+  ["sm", "valueOf", "constructor", "__proto__"],
   ["true", "false"],
   ["0", "1", "10"],
 ];
@@ -133,14 +133,20 @@ function modelOf(
 }
 
 const variantsOfModel = uniqueArray(
-  constantFrom("size", "constructor", "toString", "hasOwnProperty"),
+  constantFrom(
+    "size",
+    "constructor",
+    "toString",
+    "hasOwnProperty",
+    "__proto__",
+  ),
   { maxLength: 4 },
 ).chain((names: readonly string[]) =>
   tuple(...names.map((name) => variantNamed(name))),
 );
 
 const slotsOfModel = uniqueArray(
-  constantFrom("root", "constructor", "toString"),
+  constantFrom("root", "constructor", "toString", "__proto__"),
   {
     minLength: 1,
   },
@@ -155,19 +161,27 @@ function classOf(classesBySlot: Classes, slot: string): string {
   return Object.hasOwn(classesBySlot, slot) ? (classesBySlot[slot] ?? "") : "";
 }
 
+/** Maps each value of `byKey`, keeping its keys, `__proto__` included. */
+function mapValues<Value, Mapped>(
+  byKey: ByName<Value>,
+  map: (value: Value) => Mapped,
+): ByName<Mapped> {
+  return Object.fromEntries(
+    Object.entries(byKey).map(([key, value]: readonly [string, Value]) => [
+      key,
+      map(value),
+    ]),
+  );
+}
+
 function cvaOfSlot(
   of: Model,
   slot: string,
   options: RecipesOptions,
 ): (call: Call) => string {
-  const variants: Record<string, ByName<string>> = {};
-  for (const [name, byOption] of Object.entries(of.variants)) {
-    const classesByOption: Record<string, string> = {};
-    for (const [optionName, classesBySlot] of Object.entries(byOption)) {
-      classesByOption[optionName] = classOf(classesBySlot, slot);
-    }
-    variants[name] = classesByOption;
-  }
+  const variants = mapValues(of.variants, (byOption) =>
+    mapValues(byOption, (values) => classOf(values, slot)),
+  );
   const recipe = createRecipes(options).cva({
     base: classOf(of.base, slot),
     compoundVariants: of.compounds.map((compound) => ({

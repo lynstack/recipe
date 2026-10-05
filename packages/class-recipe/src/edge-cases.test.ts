@@ -77,6 +77,24 @@ describe("edge cases", () => {
     });
   });
 
+  it("keeps a slot and a variant named __proto__", () => {
+    // A computed key defines a property instead of setting the prototype.
+    const slotRecipe = createSlotRecipe({
+      slots: ["__proto__", "root"],
+      base: { ["__proto__"]: "p-2" },
+      variants: { ["__proto__"]: { sm: { root: "text-sm" } } },
+      defaultVariants: { ["__proto__"]: "sm" },
+    });
+
+    const classNames = slotRecipe({ classNames: { ["__proto__"]: "w-full" } });
+
+    expect(Object.getPrototypeOf(classNames)).toBe(Object.prototype);
+    expect(Object.entries(classNames)).toStrictEqual([
+      ["__proto__", "p-2 w-full"],
+      ["root", "text-sm"],
+    ]);
+  });
+
   it("ignores changes to the config after the recipe is created", () => {
     const options: Record<string, string> = { md: "p-4", sm: "p-2" };
     const slots = ["root"];
