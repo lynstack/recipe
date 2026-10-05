@@ -1,89 +1,89 @@
 {
   "cpu": "Apple M1 Pro",
-  "date": "2026-10-05",
+  "date": "2026-10-06",
   "node": "24.21.0",
   "cx": [
     {
       "name": "strings",
       "speeds": [
-        { "hz": 15994290.744106092, "name": "class-recipe" },
-        { "hz": 14940857.849579673, "name": "classnames" },
-        { "hz": 14857099.628576411, "name": "clsx" }
+        { "hz": 16882716.290936053, "name": "class-recipe" },
+        { "hz": 16272725.463043183, "name": "clsx" },
+        { "hz": 15823889.541103076, "name": "classnames" }
       ]
     },
     {
       "name": "an object",
       "speeds": [
-        { "hz": 14849201.762403777, "name": "clsx" },
-        { "hz": 14767600.630806314, "name": "class-recipe" },
-        { "hz": 14571544.60641899, "name": "classnames" }
+        { "hz": 14889882.255462786, "name": "class-recipe" },
+        { "hz": 14830611.866531946, "name": "clsx" },
+        { "hz": 14030813.228253456, "name": "classnames" }
       ]
     },
     {
       "name": "an array",
       "speeds": [
-        { "hz": 15613358.531593066, "name": "class-recipe" },
-        { "hz": 13442591.892448468, "name": "clsx" },
-        { "hz": 13240294.946988324, "name": "classnames" }
+        { "hz": 15953363.73266068, "name": "class-recipe" },
+        { "hz": 14756218.616231035, "name": "clsx" },
+        { "hz": 13734049.917629447, "name": "classnames" }
       ]
     },
     {
       "name": "nested arrays",
       "speeds": [
-        { "hz": 9479768.725013226, "name": "class-recipe" },
-        { "hz": 8893803.07504805, "name": "clsx" },
-        { "hz": 7985429.497089114, "name": "classnames" }
+        { "hz": 9723915.144291075, "name": "class-recipe" },
+        { "hz": 9121484.397914264, "name": "clsx" },
+        { "hz": 8381552.22039762, "name": "classnames" }
       ]
     },
     {
       "name": "mixed values",
       "speeds": [
-        { "hz": 7764973.875711336, "name": "class-recipe" },
-        { "hz": 7369706.218679288, "name": "clsx" },
-        { "hz": 6832144.255347176, "name": "classnames" }
+        { "hz": 7902934.794528225, "name": "class-recipe" },
+        { "hz": 7510054.5871630795, "name": "clsx" },
+        { "hz": 6940284.444700907, "name": "classnames" }
       ]
     },
     {
       "name": "a component's classes",
       "speeds": [
-        { "hz": 15989971.688884003, "name": "class-recipe" },
-        { "hz": 14611036.962911457, "name": "classnames" },
-        { "hz": 13841637.570675137, "name": "clsx" }
+        { "hz": 16090556.822802564, "name": "class-recipe" },
+        { "hz": 15057075.71391185, "name": "classnames" },
+        { "hz": 14184756.787311452, "name": "clsx" }
       ]
     }
   ],
   "recipe": {
     "merged": [
-      { "hz": 3934474.788181373, "name": "class-recipe" },
-      { "hz": 1013828.3613693978, "name": "tailwind-variants" },
-      { "hz": 920699.88030911, "name": "class-variance-authority" }
+      { "hz": 4054604.8779537915, "name": "class-recipe" },
+      { "hz": 1034125.7373336654, "name": "tailwind-variants" },
+      { "hz": 952983.6709078818, "name": "class-variance-authority" }
     ],
     "plain": [
-      { "hz": 13527963.91669444, "name": "class-recipe" },
-      { "hz": 1466015.269924472, "name": "class-variance-authority" },
-      { "hz": 1013124.4186976377, "name": "tailwind-variants" }
+      { "hz": 13597394.668638676, "name": "class-recipe" },
+      { "hz": 1487759.263559198, "name": "class-variance-authority" },
+      { "hz": 1030085.5828152825, "name": "tailwind-variants" }
     ]
   },
   "recipeCache": [
-    { "hz": 9403390.45784688, "name": "cached" },
-    { "hz": 7663823.156980088, "name": "uncached" }
+    { "hz": 13319016.339418806, "name": "cached" },
+    { "hz": 7870750.307786651, "name": "uncached" }
   ],
   "slotRecipe": {
     "merged": [
-      { "hz": 5145418.651901441, "name": "class-recipe" },
-      { "hz": 840311.1017073956, "name": "tailwind-variants" }
+      { "hz": 5212779.701163705, "name": "class-recipe" },
+      { "hz": 855227.3850914084, "name": "tailwind-variants" }
     ],
     "plain": [
-      { "hz": 8274007.432747869, "name": "class-recipe" },
-      { "hz": 833498.0833925379, "name": "tailwind-variants" }
+      { "hz": 8551796.758869456, "name": "class-recipe" },
+      { "hz": 863979.2810572215, "name": "tailwind-variants" }
     ]
   },
   "slotRecipeCache": [
-    { "hz": 9604381.994973974, "name": "cached" },
-    { "hz": 3386037.287784874, "name": "uncached" }
+    { "hz": 9573580.315049324, "name": "cached" },
+    { "hz": 3442362.3407571022, "name": "uncached" }
   ],
   "versions": {
-    "class-recipe": "1.1.4",
+    "class-recipe": "1.2.0",
     "class-variance-authority": "0.7.1",
     "classnames": "2.5.1",
     "clsx": "2.1.1",

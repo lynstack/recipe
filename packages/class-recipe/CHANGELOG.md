@@ -4,6 +4,22 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.2.0 — 2026-10-06
+
+- `cva` and `sva` take `cache` in their config, which overrides the
+  `cache` option of `createRecipes`. A recipe whose variants come from
+  untrusted input, such as the requests of a server, can turn its cache
+  off while the other recipes keep theirs, since a cache keeps up to one
+  class name for each combination of declared options.
+- `sva` keeps a slot or a variant named `__proto__`. It lost them before.
+- A slot recipe whose variants are typed as `SlotRecipeVariants`, such as
+  variants from a CMS, accepts literal slots and `classNames`. Its props
+  take an option name or classes by slot for any property, since
+  TypeScript cannot leave `classNames` out of an index signature.
+- Depends on `@lynstack/recipe` through the range `^1.2.0` instead of an
+  exact version, so an app that installs several of the packages shares
+  one copy of it.
+
 ## 1.1.4 — 2026-10-05
 
 - `sva` freezes the object it returns when `classNames` adds classes to a
