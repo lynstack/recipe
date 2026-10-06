@@ -8,19 +8,19 @@ import CodeComparison from "../../../components/CodeComparison.astro";
 The concepts are the same, so most recipes move over with a few
 mechanical changes:
 
-| class-variance-authority              | class-recipe                                                                                                             |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `cva(base, config)`                   | `cva({ base, ...config })`                                                                                               |
-| `cva(base)`, without variants         | `cva({ base, variants: {} })`, since `variants` [is required](#a-recipe-needs-variants)                                  |
-| Arrays or objects of classes          | One string wherever the config takes classes; `cx(...)` turns an array or an object into one                             |
-| An option whose classes are `null`    | An option whose classes are `""`                                                                                         |
-| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }`                                                                  |
-| `class` or `className` prop           | `className` prop                                                                                                         |
-| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
-| `twMerge(button(props))`              | `cva` from `createRecipes({ join: twMerge })`                                                                            |
-| A `cn` helper, `twMerge(clsx(...))`   | `cx` from `createRecipes({ join: twMerge })`                                                                             |
-| `cn`, imported from `"cn"`            | `cx` from `createRecipes({ join: cn })`                                                                                  |
-| `cx`, which is `clsx`                 | `cx`                                                                                                                     |
+| class-variance-authority                              | class-recipe                                                                                                                                            |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cva(base, config)`                                   | `cva({ base, ...config })`                                                                                                                              |
+| `cva(base)`, without variants                         | `cva({ base, variants: {} })`, since `variants` [is required](#a-recipe-needs-variants)                                                                 |
+| Arrays or objects of classes                          | One string wherever the config takes classes; `cx(...)` turns an array or an object into one                                                            |
+| An option whose classes are `null`                    | An option whose classes are `""`                                                                                                                        |
+| `{ intent: "primary", class: "..." }`, or `className` | `{ variants: { intent: "primary" }, className: "..." }`                                                                                                 |
+| `class` or `className` prop                           | `className` prop, which takes one string and ignores any other value; `cx(...)` turns an array or an object into one                                    |
+| `VariantProps<typeof button>`                         | `VariantsOf<typeof button>`, from `@lynstack/class-recipe`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
+| `twMerge(button(props))`                              | `cva` from `createRecipes({ join: twMerge })`                                                                                                           |
+| A `cn` helper, `twMerge(clsx(...))`                   | `cx` from `createRecipes({ join: twMerge })`                                                                                                            |
+| `cn`, imported from `"cn"`                            | `cx` from `createRecipes({ join: cn })`                                                                                                                 |
+| `cx`, which is `clsx`                                 | `cx`                                                                                                                                                    |
 
 ## Recipes
 
@@ -42,20 +42,38 @@ export const { cx, cva } = createRecipes({ join: twMerge });
 ```
 
 The `cx` it returns replaces a `cn` helper: it joins its inputs as `clsx`
-does, then merges them. If you use the
-[`cn` package](/recipe/class-recipe/tailwind-merge/#using-cn), pass `cn`
-as the join instead. To keep the imports of your components, create the
-functions in the module that held your helper, such as
-`src/lib/utils.ts`, and export `cx` under its name:
-`export const { cx: cn, cva } = createRecipes({ join: twMerge })`.
+does, then merges them. To keep the imports of your components, create
+the functions in the module that held your helper, such as
+`src/lib/utils.ts`, export `cx` under its name, and import `cva` from
+there too:
 
-A component that wraps a recipe call in `cn`, such as
-`cn(buttonVariants({ variant, size, className }))` or
-`cn(buttonVariants({ variant, size }), className)`, calls the recipe alone
-instead, with `className` among its props:
-`buttonVariants({ variant, size, className })`. The recipe adds
-`className` last and merges it with the join. A call with `className`
-runs the join again, where a call without it reads the cache (see
+```ts
+// src/lib/utils.ts
+import { createRecipes } from "@lynstack/class-recipe";
+import { twMerge } from "tailwind-merge";
+
+export const { cx: cn, cva } = createRecipes({ join: twMerge });
+```
+
+If you use the
+[`cn` package](/recipe/class-recipe/tailwind-merge/#using-cn), pass it as
+the join under another name, since the module exports its own `cn`:
+`import { cn as merge } from "cn"`, then `createRecipes({ join: merge })`.
+Components that import `cn` from `"cn"` import it from that module
+instead.
+
+A recipe created with the join merges the classes of every call,
+including a call whose result was not passed to `cn` before. A component
+that passes a recipe call to `cn` passes its other classes as `className`
+instead, which the recipe adds last and merges with the join:
+
+- `cn(buttonVariants({ variant, size, className }))` becomes
+  `buttonVariants({ variant, size, className })`.
+- `cn(buttonVariants({ variant, size }), "w-full", className)` becomes
+  `buttonVariants({ variant, size, className: cn("w-full", className) })`.
+
+Keeping the `cn` call gives the same classes, but runs the join on every
+call, where a recipe call without `className` reads the cache (see
 [What it costs](/recipe/class-recipe/tailwind-merge/#what-it-costs)).
 
 ## Behaviors that change
@@ -73,12 +91,16 @@ classes:
 
 <CodeComparison name="class-variance-authority/required-variant" />
 
-The new option becomes a value that the props of a component accept.
-Give it a name that the variant does not use yet, such as `none` or
-`unset`; in a slot recipe, its classes are `{}`. If every caller already
-passes the variant, as a component does that gives the prop a default
-when it destructures it, make that value the default of the recipe
-instead, and the component needs no default of its own.
+Give the new option a name that the variant does not use yet, such as
+`none` or `unset`; it becomes a value that the props of a component
+accept. An option without classes that the variant declares already
+works too, unless a compound variant names it, since the condition would
+then match calls that omit the variant.
+
+If every caller already passes the variant, such as a component that
+destructures the prop with a default, make that value the default of the
+recipe instead. Keep the component's default as well if it reads the
+prop for anything else, such as a `data-variant` attribute.
 
 ### A boolean variant uses its `false` option
 
@@ -88,12 +110,19 @@ matches. class-variance-authority adds no classes for it:
 
 <CodeComparison name="class-variance-authority/boolean-variant" />
 
+To add no classes when a call omits it, as before, declare an option
+without classes and make it the default, such as
+`disabled: { unset: "", true: "opacity-50", false: "cursor-text" }` with
+`defaultVariants: { disabled: "unset" }`. The variant still accepts `true`
+and `false`.
+
 ### `null` is not an option
 
 class-variance-authority adds no classes for a variant passed as `null`,
 even one with a default. The types of class-recipe reject `null`, and a
 `null` from untyped data counts as an omitted prop. To let a component
-turn a variant off, declare an option without classes:
+turn a variant off, declare an option without classes, and replace a
+compound condition on `null` with one on that option:
 
 <CodeComparison name="class-variance-authority/null-variant" />
 
@@ -105,10 +134,17 @@ prop is omitted and the variant has no default:
 
 <CodeComparison name="class-variance-authority/undefined-condition" />
 
+For a variant without a default, name instead the option without classes
+that it now defaults to (see
+[above](#a-variant-without-a-default-becomes-required)). For a variant
+with a default, the condition never matched, so delete the compound
+variant.
+
 ### A recipe needs `variants`
 
 A recipe without them is a type error and throws a `TypeError` when it
-is created. Pass `variants: {}`.
+is created. Pass `variants: {}`. class-variance-authority ignores the
+compound variants of a config without `variants`, so drop them.
 
 ## Behaviors that change with untyped data
 
@@ -122,6 +158,16 @@ examples pass such values.
 class-variance-authority uses the default instead:
 
 <CodeComparison name="class-variance-authority/empty-string" />
+
+### A compound condition names only declared variants
+
+class-variance-authority matches a condition on a prop that is not a
+variant when a call passes that prop, as a component that spreads its
+props into the recipe does. class-recipe ignores such a condition.
+Declare the prop as a variant whose options add no classes, and the
+condition matches as before:
+
+<CodeComparison name="class-variance-authority/undeclared-variant" />
 
 ### A compound condition matches an option by its name
 
