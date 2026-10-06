@@ -21,6 +21,11 @@ const { before, after } = comparisonOf(Astro.props.name);
     </span>
   </figcaption>
   <Code code={before.code} lang="ts" del={[...before.changed]} />
+  {before.output !== undefined && (
+    <div class="example-output">
+      <pre><code set:html={before.output} /></pre>
+    </div>
+  )}
   <div class="comparison-arrow">
     <Icon paths={arrowDownIcon} />
   </div>
@@ -32,4 +37,9 @@ const { before, after } = comparisonOf(Astro.props.name);
     </span>
   </div>
   <Code code={after.code} lang="ts" ins={[...after.changed]} />
+  {after.output !== undefined && (
+    <div class="example-output">
+      <pre><code set:html={after.output} /></pre>
+    </div>
+  )}
 </figure>

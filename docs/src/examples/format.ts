@@ -251,5 +251,5 @@ function formatCallResult({
   return `<span class="example-call">${[formatLine(formatCall(name, call, slot).html), ...lines].join("")}</span>`;
 }
 
-export { formatCallResult, keysOf };
+export { formatCall, formatCallResult, formatLine, keysOf };
 export type { KeysBySlot };

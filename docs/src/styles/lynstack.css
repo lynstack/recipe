@@ -855,6 +855,26 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   color: var(--lyn-muted-foreground);
 }
 
+.code-comparison .example-output {
+  border-top: 1px solid var(--lyn-border);
+  background-color: var(--lyn-background);
+}
+
+.comparison-differs {
+  margin-inline-start: 0.75rem;
+  padding: 0.0625rem 0.375rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-accent);
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--lyn-foreground);
+}
+
 .comparison-arrow {
   display: flex;
   justify-content: center;
