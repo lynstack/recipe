@@ -9,23 +9,28 @@ A recipe of tailwind-variants without slots becomes a `cva` recipe, and
 one with slots becomes an `sva` recipe. Most of the config moves over
 with a few mechanical changes:
 
-| tailwind-variants                                                       | class-recipe                                                                                                             |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `tv(config)`                                                            | `cva(config)`, or `sva(config)` with slots                                                                               |
-| `tv({ base })`, without variants                                        | `cva({ base, variants: {} })`, since `variants` [is required](#a-recipe-needs-variants)                                  |
-| Arrays of classes                                                       | One string of classes for `base` and for each option                                                                     |
-| `{ size: "sm", class: "..." }`                                          | `{ variants: { size: "sm" }, className: "..." }`                                                                         |
-| `class` or `className` prop                                             | `className` prop                                                                                                         |
-| `slots: { base: "...", title: "..." }`                                  | `slots: ["root", "title"]` and `base: { root: "...", title: "..." }`                                                     |
-| In a slot recipe, an option or `class` given as a string                | The same classes under the name of the `base` slot, such as `{ root: "..." }`                                            |
-| `{ size: "sm", class: { title: "..." } }`                               | `{ variants: { size: "sm" }, classNames: { title: "..." } }`                                                             |
-| `compoundSlots`                                                         | `compoundVariants` with the same classes for each slot under `classNames`, after those of `compoundVariants`             |
-| `title({ class: "..." })`                                               | `card({ classNames: { title: "..." } })`                                                                                 |
-| `extend`                                                                | A shared config object, spread into each recipe                                                                          |
-| `VariantProps<typeof button>`                                           | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
-| `tv`, `cn`, and `cnMerge`, which merge                                  | `cva`, `sva`, and `cx` from `createRecipes({ join: twMerge })`                                                           |
-| `createTV({ twMergeConfig })`                                           | `createRecipes` with `extendTailwindMerge`, as below                                                                     |
-| `tailwind-variants/lite`, its `cn(...)()`, and `cx`, which do not merge | `cva`, `sva`, and `cx` from `@lynstack/class-recipe`                                                                     |
+| tailwind-variants                                                             | class-recipe                                                                                                             |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `tv(config)`                                                                  | `cva(config)`, or `sva(config)` with slots                                                                               |
+| `tv({ base })`, without variants                                              | `cva({ base, variants: {} })`, since `variants` [is required](#a-recipe-needs-variants)                                  |
+| Arrays of classes, including shared arrays spread into them                   | One string wherever the config takes classes; `cx(...)` turns an array into one                                          |
+| An option whose classes are `null` or `false`                                 | An option whose classes are `""`                                                                                         |
+| `{ size: "sm", class: "..." }`                                                | `{ variants: { size: "sm" }, className: "..." }`                                                                         |
+| `class` or `className` prop                                                   | `className` prop                                                                                                         |
+| `slots: { base: "...", title: "..." }`                                        | `slots: ["root", "title"]` and `base: { root: "...", title: "..." }`                                                     |
+| In a slot recipe, an option or a compound variant's `class` given as a string | The same classes under the slot that tailwind-variants names `base`, such as `{ root: "..." }`                           |
+| `{ size: "sm", class: { title: "..." } }`                                     | `{ variants: { size: "sm" }, classNames: { title: "..." } }`                                                             |
+| `compoundSlots`                                                               | A compound variant that gives the same classes to each slot in `classNames`, listed after the other compound variants    |
+| `title({ class: "..." })`                                                     | `card({ classNames: { title: "..." } })`                                                                                 |
+| `extend`                                                                      | A shared config object, spread into each recipe                                                                          |
+| `VariantProps<typeof button>`                                                 | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
+| `tv`, `cn`, and `cnMerge`, which merge                                        | `cva`, `sva`, and `cx` from `createRecipes({ join: twMerge })`                                                           |
+| `createTV({ twMergeConfig })`                                                 | `createRecipes` with `extendTailwindMerge`, as in [Merging classes](#merging-classes)                                    |
+| `tailwind-variants/lite`, its `cn(...)()`, and `cx`, which do not merge       | `cva`, `sva`, and `cx` from `@lynstack/class-recipe`                                                                     |
+
+## Recipes
+
+<CodeComparison name="tailwind-variants/button" />
 
 ## Merging classes
 
@@ -36,6 +41,12 @@ classes with the default join, and the stylesheet decides which one
 wins:
 
 <CodeComparison name="tailwind-variants/merged-classes" />
+
+If you used `tailwind-variants/lite`, or `twMerge: false` everywhere,
+nothing was merged: import `cva`, `sva`, and `cx` from
+`@lynstack/class-recipe`. You can also design your recipes so that no
+class needs merging (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)).
 
 To keep the behavior of `tv`, install `tailwind-merge` and create the
 functions with it once, in a module of your own:
@@ -48,12 +59,21 @@ import { twMerge } from "tailwind-merge";
 export const { cx, cva, sva } = createRecipes({ join: twMerge });
 ```
 
-The `cx` it returns merges as `cn` does. If you pass a `twMergeConfig`,
-pass the same object to `extendTailwindMerge`, with the names of the
-class groups it adds as its type argument, and use the function it
-returns as the join. If the config gives settings of class groups at its
-top level, such as `classGroups` or `theme`, move them under `extend`; `prefix` and
-`cacheSize` stay at the top level:
+The `cx` it returns merges as `cn` does. For a recipe that passed
+`{ twMerge: false }` or its own `twMergeConfig` to `tv`, create another
+set of functions with `createRecipes`.
+
+If you pass a `twMergeConfig`, build the join with `extendTailwindMerge`
+from the same settings:
+
+- Give the names of the class groups that the config adds, and that
+  tailwind-merge does not define, as its type argument, as `elevation`
+  below. A group that tailwind-merge defines, such as `shadow`, needs
+  none.
+- Move the settings of class groups that the config gives at its top
+  level, such as `classGroups` or `theme`, under `extend`.
+- Leave out `prefix`: tailwind-variants 3 ignores it, and tailwind-merge
+  applies it, which changes the classes it merges.
 
 ```ts
 // src/lib/recipe.ts
@@ -69,23 +89,9 @@ export const { cx, cva, sva } = createRecipes({
 });
 ```
 
-The join applies to every recipe that these functions create. For a
-recipe that passed `{ twMerge: false }` or its own `twMergeConfig` to
-`tv`, create another set of functions with `createRecipes`, or import
-`cva` and `sva` from `@lynstack/class-recipe`, which do not merge.
-
-A recipe calls the join once for each selection and caches the result;
-only a call that passes `className` or `classNames` calls it again (see
-[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/)).
-
-If you used `tailwind-variants/lite`, or `twMerge: false` everywhere,
-import `cva`, `sva`, and `cx` from `@lynstack/class-recipe` directly. You
-can also design your recipes so that no class needs merging (see
-[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)).
-
-## Recipes
-
-<CodeComparison name="tailwind-variants/button" />
+A call with `className` or `classNames` runs the join again, where a call
+without them reads the cache (see
+[What it costs](/recipe/class-recipe/tailwind-merge/#what-it-costs)).
 
 ## Slots
 
@@ -98,9 +104,15 @@ the `base` property.
 
 <CodeComparison name="tailwind-variants/card" />
 
-A slot function of tailwind-variants can also take other variants than
-the call that created it, as in `title({ size: "md" })`. Call the slot
-recipe again with those variants instead.
+A slot function of tailwind-variants can also take variants of its own,
+as in `title({ size: "md" })`, which override those of the call. Call the
+slot recipe again with those variants instead.
+
+tailwind-variants also returns a `base` slot that the config does not
+declare. Its function returns `undefined` unless an option or a compound
+variant gives classes as a string. A slot recipe returns only the slots
+that `slots` lists, so give such classes to a slot you declare, and drop
+a `base` that you read from such a recipe.
 
 A compound slot becomes a compound variant that gives the same classes to
 each of its slots. tailwind-variants adds the classes of compound slots
@@ -127,6 +139,14 @@ replaces each property it gives again, so join `base` yourself, repeat
 the classes of an option you keep, spread the shared `compoundVariants`
 into the new array, and declare the new variants first, as above.
 
+A slot recipe extends the same way. Spread its `slots` into the new list,
+and join the `base` classes of each slot that the new recipe gives again.
+`as const` also keeps the slot names: where they widen to `string`, the
+recipe accepts any slot name in `classNames`, so a misspelled one goes
+unnoticed:
+
+<CodeComparison name="tailwind-variants/extend-slots" />
+
 ## Behaviors that change
 
 Each example below calls the recipe before and after the migration, and
@@ -134,18 +154,25 @@ shows what it returns.
 
 ### A variant without a default becomes required
 
-A variant without a default must be passed, unless its only options are
-`true` and `false`: every call that omits it is a type error. Give it a
-default. To add no classes when it is omitted, as tailwind-variants does,
-default to an option without classes:
+A variant without a default must be passed, unless it is a boolean
+variant, whose only options are `true`, `false`, or both: every call that
+omits it is a type error. Give it a default. To add no classes when it is
+omitted, as tailwind-variants does, default to an option without classes:
 
 <CodeComparison name="tailwind-variants/required-variant" />
+
+The new option becomes a value that the props of a component accept.
+Give it a name that the variant does not use yet, such as `none` or
+`unset`; in a slot recipe, its classes are `{}`. If every caller already
+passes the variant, as a component does that gives the prop a default
+when it destructures it, make that value the default of the recipe
+instead, and the component needs no default of its own.
 
 ### Only a boolean variant falls back to its `false` option
 
 tailwind-variants uses the `false` option of any variant that a call
 omits and that has no default. In class-recipe, a variant with other
-options is required instead, so make `false` its default:
+options is required instead, so make `"false"` its default:
 
 <CodeComparison name="tailwind-variants/false-option" />
 
@@ -154,6 +181,16 @@ options is required instead, so make `false` its default:
 tailwind-variants returns `undefined` when a call adds no classes:
 
 <CodeComparison name="tailwind-variants/empty-result" />
+
+### A compound condition names only declared variants
+
+The types of tailwind-variants accept a compound condition on a prop
+that is not a variant, which matches when a call passes that prop, as a
+component that spreads its props into the recipe does. The types of
+class-recipe reject it. Declare the prop as a variant whose options add
+no classes, and the condition matches as before:
+
+<CodeComparison name="tailwind-variants/undeclared-variant" />
 
 ### A recipe needs `variants`
 
@@ -168,9 +205,10 @@ read it.
 
 ## Behaviors that change with untyped data
 
-The types of tailwind-variants reject the values below, so these changes reach only
-data that bypasses the types, such as the props of a JavaScript component
-or the values of a form. The calls in these examples pass such values.
+The types of tailwind-variants reject the values below, so these changes
+reach only data that bypasses the types, such as the props of a
+JavaScript component or the values of a form. The calls in these
+examples pass such values.
 
 ### `null` counts as an omitted prop
 
@@ -182,18 +220,19 @@ one with a default:
 ### A compound condition on `undefined` matches any option
 
 A condition on `undefined` matches any option, as a variant left out of
-the condition does. tailwind-variants matches it only when the variant
-resolves to no option, to `false`, or to `null`:
+the condition does. tailwind-variants matches it only when the prop is
+`null` or `false`, or when it is omitted and the variant has no default
+or a default of `false`:
 
 <CodeComparison name="tailwind-variants/undefined-condition" />
 
 ### A compound condition matches an option by its name
 
 A condition on `true` matches the prop `"true"`, and one on `2` matches
-the prop `"2"`, as the types of class-recipe allow. tailwind-variants
-compares the condition with the prop as it is, so it matches only the
-same type:
+the prop `"2"`, as the types of class-recipe allow. Calls with `true` and
+`2` match in both libraries. tailwind-variants compares the condition
+with the prop as it is, so it matches only the same type, and its cache
+stores `2` and `"2"` under one key, so a recipe that receives both can
+return the result of one for the other:
 
 <CodeComparison name="tailwind-variants/option-name" />
-
-Compound conditions on lists of options work as in tailwind-variants.
