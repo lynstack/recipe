@@ -8,32 +8,50 @@ import CodeComparison from "../../../components/CodeComparison.astro";
 The concepts are the same, so most recipes move over with a few
 mechanical changes:
 
-| class-variance-authority              | class-recipe                                            |
-| ------------------------------------- | ------------------------------------------------------- |
-| `cva(base, config)`                   | `cva({ base, ...config })`                              |
-| Arrays of classes                     | One string of classes for `base` and for each option    |
-| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }` |
-| `class` or `className` prop           | `className` prop                                        |
-| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`                             |
-| `twMerge(button(props))`              | `createRecipes({ join: twMerge })`, once                |
-| `cx` (`clsx`)                         | `cx`                                                    |
+| class-variance-authority              | class-recipe                                                            |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| `cva(base, config)`                   | `cva({ base, ...config })`                                              |
+| `cva(base)`, without variants         | `cva({ base, variants: {} })`                                           |
+| Arrays or objects of classes          | One string of classes for `base` and for each option                    |
+| An option whose classes are `null`    | An option whose classes are `""`                                        |
+| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }`                 |
+| `class` or `className` prop           | `className` prop                                                        |
+| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which a required variant stays required |
+| `twMerge(button(props))`              | `cva` from `createRecipes({ join: twMerge })`                           |
+| A `cn` helper, `twMerge(clsx(...))`   | `cx` from `createRecipes({ join: twMerge })`                            |
+| `cx` (`clsx`)                         | `cx`                                                                    |
 
 <CodeComparison name="class-variance-authority/button" />
 
-Two behaviors change for most recipes:
+To merge classes with tailwind-merge, create the functions with it once,
+in a module of your own (see
+[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/)).
+The `cx` it returns replaces a `cn` helper: it joins its inputs as `clsx`
+does, then merges them.
 
-- **A variant without a default becomes required.** Every call that omits
-  it is a type error. Add a default to keep it optional.
-- **A boolean variant without a default uses its `false` option.**
-  class-variance-authority adds no classes for it when the prop is
-  omitted.
+Three behaviors change for many recipes:
+
+- **A variant without a default becomes required,** unless its only
+  options are `true` and `false`. Every call that omits it is a type
+  error. Add a default to keep it optional.
+- **A boolean variant without a default uses its `false` option,** and a
+  compound condition on `false` matches it. When the prop is omitted,
+  class-variance-authority adds no classes for the variant, and a
+  condition on `false` does not match.
+- **`null` is not an option.** class-variance-authority adds no classes
+  for a variant passed as `null`, even one with a default. The types of
+  class-recipe reject it, and a `null` from untyped data counts as an
+  omitted prop. To let a component turn a variant off, declare an option
+  without classes, such as `none: ""`. An empty string from untyped data,
+  such as the value of an empty `<select>`, adds no classes for the
+  variant, where class-variance-authority uses the default.
 
 Two more change only compound variants that name an option in an unusual
 way:
 
 - **A compound condition on `undefined` matches any option,** as a
   variant left out of the condition does. class-variance-authority matches
-  it only when the prop is omitted.
+  it only when the prop is omitted and the variant has no default.
 - **A compound condition matches an option by its name.** A condition on
   `"true"` matches the prop `true`, and one on `"1"` matches the prop `1`.
   class-variance-authority compares the condition with the prop as it is,
