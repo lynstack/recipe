@@ -37,6 +37,25 @@ cx("p-2", isLarge && "p-4"); // => "p-4" when isLarge is true
 Now `className`, `classNames`, and compound variants can replace the
 classes they conflict with.
 
+## Using cn
+
+[cn](https://github.com/shadcn-ui/cn), from the authors of shadcn/ui,
+replaces `clsx` and `tailwind-merge` with a faster engine that merges
+classes the same way. Pass `cn` itself as the join:
+
+```ts
+// src/lib/recipe.ts
+import { createRecipes } from "@lynstack/class-recipe";
+import { cn } from "cn";
+
+export const { cx, cva, sva } = createRecipes({ join: cn });
+```
+
+The `cx` it returns replaces `cn` itself: it joins its inputs as `clsx`
+does, then merges them. cn supports Tailwind CSS v4 only; on Tailwind
+CSS v3, use tailwind-merge v2. For a custom theme, pass the function that
+`createCn` from `cn/config` returns.
+
 ## What it costs
 
 `twMerge` is slow next to concatenating strings, but a recipe calls it
@@ -45,3 +64,7 @@ passes `className` or `classNames`, or an undeclared option, calls it
 again (see [How it works](/recipe/class-recipe/how-it-works/#the-join-function)).
 The configured `cx` calls it on every call, after joining its inputs like
 the default `cx`.
+
+Since a recipe already caches its class names, a faster join, such as `cn`,
+mostly speeds up the configured `cx` and the calls that pass `className`
+or `classNames`.

@@ -2,7 +2,8 @@
  * Combines class strings into the final class name.
  *
  * The default is `cx`. Pass another function, such as `twMerge` from
- * `tailwind-merge`, to `createRecipes` to also resolve conflicting classes.
+ * `tailwind-merge` or `cn` from `cn`, to `createRecipes` to also resolve
+ * conflicting classes.
  * A recipe calls it once for each declared selection of variants and caches
  * the result. It calls it again for each call that passes a `className` or
  * `classNames` override, and for each call with an undeclared option, which

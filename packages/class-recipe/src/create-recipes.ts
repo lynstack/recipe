@@ -11,7 +11,7 @@ import { cx } from "./cx.js";
 interface RecipesOptions {
   /**
    * Combines class strings into the final class name, for example `twMerge`
-   * from `tailwind-merge`. Defaults to {@link cx}.
+   * from `tailwind-merge` or `cn` from `cn`. Defaults to {@link cx}.
    */
   readonly join?: ClassJoin | undefined;
   /**

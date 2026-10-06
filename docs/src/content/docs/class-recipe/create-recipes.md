@@ -21,10 +21,10 @@ export const { cx, cva, sva } = createRecipes({ join: twMerge });
 
 ## Options
 
-| Option  | Description                                                                                                   |
-| ------- | ------------------------------------------------------------------------------------------------------------- |
-| `join`  | Optional. Combines the class strings of a selection into its class name, such as `twMerge`. Defaults to `cx`. |
-| `cache` | Optional. Whether recipes cache the class names of each declared selection. Defaults to `true`.               |
+| Option  | Description                                                                                                                                                                              |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `join`  | Optional. Combines the class strings of a selection into its class name, such as `twMerge` from tailwind-merge or [cn](/recipe/class-recipe/tailwind-merge/#using-cn). Defaults to `cx`. |
+| `cache` | Optional. Whether recipes cache the class names of each declared selection. Defaults to `true`.                                                                                          |
 
 ## What it returns
 

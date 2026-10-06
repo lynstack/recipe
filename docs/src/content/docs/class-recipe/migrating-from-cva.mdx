@@ -19,6 +19,7 @@ mechanical changes:
 | `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
 | `twMerge(button(props))`              | `cva` from `createRecipes({ join: twMerge })`                                                                            |
 | A `cn` helper, `twMerge(clsx(...))`   | `cx` from `createRecipes({ join: twMerge })`                                                                             |
+| `cn`, imported from `"cn"`            | `cx` from `createRecipes({ join: cn })`                                                                                  |
 | `cx`, which is `clsx`                 | `cx`                                                                                                                     |
 
 <CodeComparison name="class-variance-authority/button" />
@@ -27,7 +28,9 @@ To merge classes with tailwind-merge, create the functions with it once,
 in a module of your own (see
 [Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/)).
 The `cx` it returns replaces a `cn` helper: it joins its inputs as `clsx`
-does, then merges them.
+does, then merges them. If you already use the
+[`cn` package](/recipe/class-recipe/tailwind-merge/#using-cn), pass `cn`
+as the join instead.
 
 ## Behaviors that change
 
