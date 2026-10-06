@@ -5,4 +5,5 @@ export const input = cva({
   variants: {
     disabled: { true: "opacity-50", false: "cursor-text" },
   },
+  compoundVariants: [{ variants: { disabled: false }, className: "bg-white" }],
 });

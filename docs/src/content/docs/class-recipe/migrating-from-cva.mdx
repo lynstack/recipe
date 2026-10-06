@@ -11,9 +11,9 @@ mechanical changes:
 | class-variance-authority              | class-recipe                                                                                                             |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `cva(base, config)`                   | `cva({ base, ...config })`                                                                                               |
-| `cva(base)`, without variants         | `cva({ base, variants: {} })`                                                                                            |
-| Arrays or objects of classes          | One string of classes for `base` and for each option                                                                     |
-| An option whose classes are `null`    | An option whose classes are `""`, since `null` [is not an option](#null-is-not-an-option)                                |
+| `cva(base)`, without variants         | `cva({ base, variants: {} })`, since `variants` [is required](#a-recipe-needs-variants)                                  |
+| Arrays or objects of classes          | One string wherever the config takes classes; `cx(...)` turns an array or an object into one                             |
+| An option whose classes are `null`    | An option whose classes are `""`                                                                                         |
 | `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }`                                                                  |
 | `class` or `className` prop           | `className` prop                                                                                                         |
 | `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
@@ -22,15 +22,41 @@ mechanical changes:
 | `cn`, imported from `"cn"`            | `cx` from `createRecipes({ join: cn })`                                                                                  |
 | `cx`, which is `clsx`                 | `cx`                                                                                                                     |
 
+## Recipes
+
 <CodeComparison name="class-variance-authority/button" />
 
-To merge classes with tailwind-merge, create the functions with it once,
-in a module of your own (see
-[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/)).
+## Merging classes
+
+class-variance-authority keeps every class, as class-recipe does by
+default. To merge classes with tailwind-merge, as `twMerge(button(props))`
+or a `cn` helper does, create the functions with it once, in a module of
+your own:
+
+```ts
+// src/lib/recipe.ts
+import { createRecipes } from "@lynstack/class-recipe";
+import { twMerge } from "tailwind-merge";
+
+export const { cx, cva } = createRecipes({ join: twMerge });
+```
+
 The `cx` it returns replaces a `cn` helper: it joins its inputs as `clsx`
-does, then merges them. If you already use the
+does, then merges them. If you use the
 [`cn` package](/recipe/class-recipe/tailwind-merge/#using-cn), pass `cn`
-as the join instead.
+as the join instead. To keep the imports of your components, create the
+functions in the module that held your helper, such as
+`src/lib/utils.ts`, and export `cx` under its name:
+`export const { cx: cn, cva } = createRecipes({ join: twMerge })`.
+
+A component that wraps a recipe call in `cn`, such as
+`cn(buttonVariants({ variant, size, className }))` or
+`cn(buttonVariants({ variant, size }), className)`, calls the recipe alone
+instead, with `className` among its props:
+`buttonVariants({ variant, size, className })`. The recipe adds
+`className` last and merges it with the join. A call with `className`
+runs the join again, where a call without it reads the cache (see
+[What it costs](/recipe/class-recipe/tailwind-merge/#what-it-costs)).
 
 ## Behaviors that change
 
@@ -39,12 +65,20 @@ shows what it returns.
 
 ### A variant without a default becomes required
 
-A variant without a default must be passed, unless its only options are
-`true` and `false`: every call that omits it is a type error. Give it a
-default. To add no classes when it is omitted, as class-variance-authority
-does, default to an option without classes:
+A variant without a default must be passed, unless it is a boolean
+variant, whose only options are `true`, `false`, or both: every call that
+omits it is a type error. Give it a default. To add no classes when it is
+omitted, as class-variance-authority does, default to an option without
+classes:
 
 <CodeComparison name="class-variance-authority/required-variant" />
+
+The new option becomes a value that the props of a component accept.
+Give it a name that the variant does not use yet, such as `none` or
+`unset`; in a slot recipe, its classes are `{}`. If every caller already
+passes the variant, as a component does that gives the prop a default
+when it destructures it, make that value the default of the recipe
+instead, and the component needs no default of its own.
 
 ### A boolean variant uses its `false` option
 
@@ -71,11 +105,17 @@ prop is omitted and the variant has no default:
 
 <CodeComparison name="class-variance-authority/undefined-condition" />
 
+### A recipe needs `variants`
+
+A recipe without them is a type error and throws a `TypeError` when it
+is created. Pass `variants: {}`.
+
 ## Behaviors that change with untyped data
 
-The types of class-variance-authority reject the values below, so these changes reach only
-data that bypasses the types, such as the props of a JavaScript component
-or the values of a form. The calls in these examples pass such values.
+The types of class-variance-authority reject the values below, so these
+changes reach only data that bypasses the types, such as the props of a
+JavaScript component or the values of a form. The calls in these
+examples pass such values.
 
 ### An empty string adds no classes for the variant
 
