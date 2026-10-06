@@ -661,6 +661,13 @@ starlight-tabs [role="tab"][aria-selected="true"] {
 .sl-markdown-content :not(pre) > code {
   border-radius: var(--lyn-radius-sm);
   padding: 0.125em 0.3em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Inline code in a syntax color, except in a link, which keeps its own. */
+.sl-markdown-content :not(pre, a) > code {
+  color: var(--lyn-code-keyword);
 }
 
 /* Tables: eyebrow headers, hairline rows, numbers in mono. */
