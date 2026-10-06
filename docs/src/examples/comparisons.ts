@@ -101,6 +101,40 @@ function callsOf(name: string): ComparisonCalls | undefined {
 /** The badge after a result that differs on the other side of a comparison. */
 const differsBadge = '<span class="comparison-differs">Differs</span>';
 
+/**
+ * Returns the classes in what a recipe returns: for a slot recipe of
+ * tailwind-variants, which returns a function for each slot, what each
+ * function returns without arguments.
+ */
+function classesOf(result: unknown): unknown {
+  if (typeof result !== "object" || result === null) {
+    return result;
+  }
+  return Object.fromEntries(
+    Object.entries(result).map(([slot, value]: readonly [string, unknown]) => [
+      slot,
+      typeof value === "function" ? Reflect.apply(value, undefined, []) : value,
+    ]),
+  );
+}
+
+/**
+ * Returns what a comparison compares of a result: the classes of each
+ * slot in order, for a slot recipe, whose slots a migration may rename.
+ */
+function comparable(result: unknown): unknown {
+  return typeof result === "object" && result !== null
+    ? Object.values(result)
+    : result;
+}
+
+/** Whether two results hold the same classes, in the same order. */
+function isSameResult(result: unknown, other: unknown): boolean {
+  return (
+    JSON.stringify(comparable(result)) === JSON.stringify(comparable(other))
+  );
+}
+
 /** Calls the recipe that `path` exports as `recipe` with each of `calls`. */
 function resultsOf(
   path: string,
@@ -111,8 +145,8 @@ function resultsOf(
   if (typeof exported !== "function") {
     throw new TypeError(`${path}.ts exports no function named ${recipe}`);
   }
-  return calls.map((call): unknown =>
-    Reflect.apply(exported, undefined, [call]),
+  return calls.map((call) =>
+    classesOf(Reflect.apply(exported, undefined, [call])),
   );
 }
 
@@ -139,7 +173,7 @@ function formatResults(
         formatLine(formatCall(recipe, call).html),
         formatLine(
           `${token("arrow", "→ ").html}${formatLiteral(result).html}${
-            result === otherResults[index] ? "" : differsBadge
+            isSameResult(result, otherResults[index]) ? "" : differsBadge
           }`,
         ),
       ];
