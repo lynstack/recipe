@@ -33,8 +33,12 @@ with a few mechanical changes:
 class-recipe keeps every class by default. A recipe that relies on the
 merge, such as one with `p-4` in `base` and `p-2` in an option, keeps both
 classes with the default join, and the stylesheet decides which one
-wins. To keep the behavior of `tv`, install `tailwind-merge` and create
-the functions with it once, in a module of your own:
+wins:
+
+<CodeComparison name="tailwind-variants/merged-classes" />
+
+To keep the behavior of `tv`, install `tailwind-merge` and create the
+functions with it once, in a module of your own:
 
 ```ts
 // src/lib/recipe.ts
@@ -125,35 +129,71 @@ into the new array, and declare the new variants first, as above.
 
 ## Behaviors that change
 
-- **A variant without a default becomes required,** unless its only
-  options are `true` and `false`. Every call that omits it is a type
-  error. Add a default to keep it optional.
-- **Only a boolean variant falls back to its `false` option.**
-  tailwind-variants uses the `false` option of any variant that is
-  omitted and has no default. In class-recipe, a variant with other
-  options is required instead.
-- **A recipe needs `variants`.** A recipe without them is a type error
-  and throws a `TypeError` when it is created; pass `variants: {}`.
-- **A recipe without classes returns `""`.** tailwind-variants returns
-  `undefined`.
-- **A recipe has only `variantKeys`.** tailwind-variants also exposes the
-  config of a recipe, such as `button.variants` and `button.slots`. Keep
-  the config in an object if you read it.
-- **`null` counts as an omitted prop.** tailwind-variants adds no classes
-  for a variant passed as `null`, even one with a default. The types of
-  both libraries reject `null`, so this changes only untyped data. To let
-  a component turn a variant off, declare an option without classes, such
-  as `none: ""`.
+Each example below calls the recipe before and after the migration, and
+shows what it returns.
 
-Two more change only compound variants that name an option in an unusual
-way:
+### A variant without a default becomes required
 
-- **A compound condition on `undefined` matches any option,** as a
-  variant left out of the condition does. tailwind-variants matches it
-  only when the variant resolves to no option, to `false`, or to `null`.
-- **A compound condition matches an option by its name.** A condition on
-  `"true"` matches the prop `true`, and one on `"1"` matches the prop `1`.
-  tailwind-variants compares the condition with the prop as it is, so it
-  matches only the same type.
+A variant without a default must be passed, unless its only options are
+`true` and `false`: every call that omits it is a type error. Give it a
+default. To add no classes when it is omitted, as tailwind-variants does,
+default to an option without classes:
+
+<CodeComparison name="tailwind-variants/required-variant" />
+
+### Only a boolean variant falls back to its `false` option
+
+tailwind-variants uses the `false` option of any variant that a call
+omits and that has no default. In class-recipe, a variant with other
+options is required instead, so make `false` its default:
+
+<CodeComparison name="tailwind-variants/false-option" />
+
+### A recipe without classes returns `""`
+
+tailwind-variants returns `undefined` when a call adds no classes:
+
+<CodeComparison name="tailwind-variants/empty-result" />
+
+### A recipe needs `variants`
+
+A recipe without them is a type error and throws a `TypeError` when it
+is created. Pass `variants: {}`.
+
+### A recipe has only `variantKeys`
+
+tailwind-variants also exposes the config of a recipe, such as
+`button.variants` and `button.slots`. Keep the config in an object if you
+read it.
+
+## Behaviors that change with untyped data
+
+The types of tailwind-variants reject the values below, so these changes reach only
+data that bypasses the types, such as the props of a JavaScript component
+or the values of a form. The calls in these examples pass such values.
+
+### `null` counts as an omitted prop
+
+tailwind-variants adds no classes for a variant passed as `null`, even
+one with a default:
+
+<CodeComparison name="tailwind-variants/null-variant" />
+
+### A compound condition on `undefined` matches any option
+
+A condition on `undefined` matches any option, as a variant left out of
+the condition does. tailwind-variants matches it only when the variant
+resolves to no option, to `false`, or to `null`:
+
+<CodeComparison name="tailwind-variants/undefined-condition" />
+
+### A compound condition matches an option by its name
+
+A condition on `true` matches the prop `"true"`, and one on `2` matches
+the prop `"2"`, as the types of class-recipe allow. tailwind-variants
+compares the condition with the prop as it is, so it matches only the
+same type:
+
+<CodeComparison name="tailwind-variants/option-name" />
 
 Compound conditions on lists of options work as in tailwind-variants.

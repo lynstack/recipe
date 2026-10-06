@@ -29,30 +29,62 @@ in a module of your own (see
 The `cx` it returns replaces a `cn` helper: it joins its inputs as `clsx`
 does, then merges them.
 
-Three behaviors change for many recipes:
+## Behaviors that change
 
-- **A variant without a default becomes required,** unless its only
-  options are `true` and `false`. Every call that omits it is a type
-  error. Add a default to keep it optional.
-- **A boolean variant without a default uses its `false` option,** and a
-  compound condition on `false` matches it. When the prop is omitted,
-  class-variance-authority adds no classes for the variant, and a
-  condition on `false` does not match.
-- **`null` is not an option.** class-variance-authority adds no classes
-  for a variant passed as `null`, even one with a default. The types of
-  class-recipe reject it, and a `null` from untyped data counts as an
-  omitted prop. To let a component turn a variant off, declare an option
-  without classes, such as `none: ""`. An empty string from untyped data,
-  such as the value of an empty `<select>`, adds no classes for the
-  variant, where class-variance-authority uses the default.
+Each example below calls the recipe before and after the migration, and
+shows what it returns.
 
-Two more change only compound variants that name an option in an unusual
-way:
+### A variant without a default becomes required
 
-- **A compound condition on `undefined` matches any option,** as a
-  variant left out of the condition does. class-variance-authority matches
-  it only when the prop is omitted and the variant has no default.
-- **A compound condition matches an option by its name.** A condition on
-  `"true"` matches the prop `true`, and one on `"1"` matches the prop `1`.
-  class-variance-authority compares the condition with the prop as it is,
-  so it matches only the same type.
+A variant without a default must be passed, unless its only options are
+`true` and `false`: every call that omits it is a type error. Give it a
+default. To add no classes when it is omitted, as class-variance-authority
+does, default to an option without classes:
+
+<CodeComparison name="class-variance-authority/required-variant" />
+
+### A boolean variant uses its `false` option
+
+When a call omits a boolean variant without a default, class-recipe adds
+the classes of its `false` option, and a compound condition on `false`
+matches. class-variance-authority adds no classes for it:
+
+<CodeComparison name="class-variance-authority/boolean-variant" />
+
+### `null` is not an option
+
+class-variance-authority adds no classes for a variant passed as `null`,
+even one with a default. The types of class-recipe reject `null`, and a
+`null` from untyped data counts as an omitted prop. To let a component
+turn a variant off, declare an option without classes:
+
+<CodeComparison name="class-variance-authority/null-variant" />
+
+### A compound condition on `undefined` matches any option
+
+A condition on `undefined` matches any option, as a variant left out of
+the condition does. class-variance-authority matches it only when the
+prop is omitted and the variant has no default:
+
+<CodeComparison name="class-variance-authority/undefined-condition" />
+
+## Behaviors that change with untyped data
+
+The types of class-variance-authority reject the values below, so these changes reach only
+data that bypasses the types, such as the props of a JavaScript component
+or the values of a form. The calls in these examples pass such values.
+
+### An empty string adds no classes for the variant
+
+class-variance-authority uses the default instead:
+
+<CodeComparison name="class-variance-authority/empty-string" />
+
+### A compound condition matches an option by its name
+
+A condition on `true` matches the prop `"true"`, and one on `2` matches
+the prop `"2"`, as the types of class-recipe allow. class-variance-authority
+compares the condition with the prop as it is, so it matches only the
+same type:
+
+<CodeComparison name="class-variance-authority/option-name" />
