@@ -8,18 +8,18 @@ import CodeComparison from "../../../components/CodeComparison.astro";
 The concepts are the same, so most recipes move over with a few
 mechanical changes:
 
-| class-variance-authority              | class-recipe                                                            |
-| ------------------------------------- | ----------------------------------------------------------------------- |
-| `cva(base, config)`                   | `cva({ base, ...config })`                                              |
-| `cva(base)`, without variants         | `cva({ base, variants: {} })`                                           |
-| Arrays or objects of classes          | One string of classes for `base` and for each option                    |
-| An option whose classes are `null`    | An option whose classes are `""`                                        |
-| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }`                 |
-| `class` or `className` prop           | `className` prop                                                        |
-| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which a required variant stays required |
-| `twMerge(button(props))`              | `cva` from `createRecipes({ join: twMerge })`                           |
-| A `cn` helper, `twMerge(clsx(...))`   | `cx` from `createRecipes({ join: twMerge })`                            |
-| `cx` (`clsx`)                         | `cx`                                                                    |
+| class-variance-authority              | class-recipe                                                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `cva(base, config)`                   | `cva({ base, ...config })`                                                                                               |
+| `cva(base)`, without variants         | `cva({ base, variants: {} })`                                                                                            |
+| Arrays or objects of classes          | One string of classes for `base` and for each option                                                                     |
+| An option whose classes are `null`    | An option whose classes are `""`, since `null` [is not an option](#null-is-not-an-option)                                |
+| `{ intent: "primary", class: "..." }` | `{ variants: { intent: "primary" }, className: "..." }`                                                                  |
+| `class` or `className` prop           | `className` prop                                                                                                         |
+| `VariantProps<typeof button>`         | `VariantsOf<typeof button>`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
+| `twMerge(button(props))`              | `cva` from `createRecipes({ join: twMerge })`                                                                            |
+| A `cn` helper, `twMerge(clsx(...))`   | `cx` from `createRecipes({ join: twMerge })`                                                                             |
+| `cx`, which is `clsx`                 | `cx`                                                                                                                     |
 
 <CodeComparison name="class-variance-authority/button" />
 
