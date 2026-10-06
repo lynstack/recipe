@@ -113,6 +113,7 @@ export default defineConfig({
                   "class-recipe/building-components",
                   "class-recipe/typescript",
                   "class-recipe/migrating-from-cva",
+                  "class-recipe/migrating-from-tailwind-variants",
                 ],
                 label: "Guides",
               },

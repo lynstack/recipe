@@ -9,7 +9,7 @@ const sources = import.meta.glob<string>("./migrations/**/*.ts", {
 });
 
 /** The libraries that the docs show how to migrate from. */
-const libraries = ["class-variance-authority"] as const;
+const libraries = ["class-variance-authority", "tailwind-variants"] as const;
 
 type Library = (typeof libraries)[number];
 

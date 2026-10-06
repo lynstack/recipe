@@ -23,6 +23,7 @@
     "astro": "7.3.5",
     "class-variance-authority": "0.7.1",
     "react-native": "0.87.1",
-    "starlight-sidebar-topics": "0.9.0"
+    "starlight-sidebar-topics": "0.9.0",
+    "tailwind-variants": "3.3.1"
   }
 }
