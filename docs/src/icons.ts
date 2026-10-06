@@ -55,5 +55,8 @@ const linkIcons = {
   ],
 } as const satisfies Readonly<Record<string, IconPaths>>;
 
-export { linkIcons, packageIconPaths };
+/** `arrow-down`, from Tabler Icons: the code below replaces the code above. */
+const arrowDownIcon: IconPaths = ["M12 5l0 14", "M18 13l-6 6", "M6 13l6 6"];
+
+export { arrowDownIcon, linkIcons, packageIconPaths };
 export type { IconPaths, PackageIconName };

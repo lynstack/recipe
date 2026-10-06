@@ -21,6 +21,7 @@
     "@lynstack/recipe": "workspace:*",
     "@types/react": "19.3.0",
     "astro": "7.3.5",
+    "class-variance-authority": "0.7.1",
     "react-native": "0.87.1",
     "starlight-sidebar-topics": "0.9.0"
   }

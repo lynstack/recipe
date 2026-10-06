@@ -27,6 +27,10 @@
   --lyn-code-string: #3fc2af;
   --lyn-code-function: #6f9ff2;
   --lyn-code-constant: #f2b33d;
+  --lyn-success: #5ccb91;
+  --lyn-success-subtle: #0e2318;
+  --lyn-destructive: #ff6f8c;
+  --lyn-destructive-subtle: #2c0c14;
 
   --lyn-radius-sm: 0.25rem;
   --lyn-radius-md: 0.375rem;
@@ -97,6 +101,10 @@
   --lyn-code-string: #047857;
   --lyn-code-function: #1d4ed8;
   --lyn-code-constant: #a3480a;
+  --lyn-success: #1b7a48;
+  --lyn-success-subtle: #e6f3ec;
+  --lyn-destructive: #c81e45;
+  --lyn-destructive-subtle: #fcebef;
 
   --sl-color-white: var(--lyn-foreground);
   --sl-color-gray-1: var(--lyn-foreground);
@@ -795,6 +803,64 @@ starlight-tabs [role="tab"][aria-selected="true"] {
   .stat-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+/*
+ * Code comparisons: one panel with the code before a migration, an arrow,
+ * and the code after it, the changed lines marked on each side.
+ */
+
+.code-comparison {
+  margin-inline: 0;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
+  overflow: hidden;
+  background-color: var(--lyn-background);
+}
+
+.code-comparison .expressive-code {
+  --ec-brdWd: 0px;
+  --ec-brdRad: 0px;
+}
+
+.comparison-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: baseline;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 1px solid var(--lyn-border);
+}
+
+.comparison-step {
+  min-width: 3.5rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.comparison-library {
+  font-family: var(--lyn-font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--lyn-foreground);
+}
+
+.comparison-version {
+  margin-inline-start: 0.375rem;
+  font-weight: 400;
+  color: var(--lyn-muted-foreground);
+}
+
+.comparison-arrow {
+  display: flex;
+  justify-content: center;
+  padding: 0.375rem;
+  border-block: 1px solid var(--lyn-border);
+  color: var(--lyn-muted-foreground);
 }
 
 /* Playgrounds: a panel with a brand eyebrow and segmented options. */

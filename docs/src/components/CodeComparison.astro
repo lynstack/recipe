@@ -1,0 +1,35 @@
+---
+import { Code } from "@astrojs/starlight/components";
+import Icon from "./Icon.astro";
+import { arrowDownIcon } from "../icons.ts";
+import { comparisonOf } from "../examples/comparisons.ts";
+
+interface Props {
+  /** The folder of the comparison in `examples/migrations`. */
+  readonly name: string;
+}
+
+const { before, after } = comparisonOf(Astro.props.name);
+---
+
+<figure class="code-comparison not-content">
+  <figcaption class="comparison-side">
+    <span class="comparison-step">Before</span>
+    <span class="comparison-library">
+      {before.library}
+      <span class="comparison-version">{before.version}</span>
+    </span>
+  </figcaption>
+  <Code code={before.code} lang="ts" del={[...before.changed]} />
+  <div class="comparison-arrow">
+    <Icon paths={arrowDownIcon} />
+  </div>
+  <div class="comparison-side">
+    <span class="comparison-step">After</span>
+    <span class="comparison-library">
+      {after.library}
+      <span class="comparison-version">{after.version}</span>
+    </span>
+  </div>
+  <Code code={after.code} lang="ts" ins={[...after.changed]} />
+</figure>

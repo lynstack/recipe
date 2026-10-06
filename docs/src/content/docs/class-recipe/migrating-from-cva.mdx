@@ -3,7 +3,7 @@ title: Migrating from class-variance-authority
 description: "Move recipes from class-variance-authority to class-recipe: the concepts are the same, and only a few behaviors change."
 ---
 
-import { TabItem, Tabs } from "@astrojs/starlight/components";
+import CodeComparison from "../../../components/CodeComparison.astro";
 
 The concepts are the same, so most recipes move over with a few
 mechanical changes:
@@ -18,41 +18,7 @@ mechanical changes:
 | `twMerge(button(props))`              | `createRecipes({ join: twMerge })`, once                |
 | `cx` (`clsx`)                         | `cx`                                                    |
 
-<Tabs>
-  <TabItem label="Before">
-
-```ts
-// class-variance-authority
-const button = cva("rounded-md font-medium", {
-  variants: {
-    intent: { primary: "bg-blue-600 text-white", secondary: "bg-gray-100" },
-    size: { sm: "h-8 px-3", md: "h-10 px-4" },
-  },
-  compoundVariants: [{ intent: "primary", size: "md", class: "shadow-sm" }],
-  defaultVariants: { intent: "primary", size: "md" },
-});
-```
-
-  </TabItem>
-  <TabItem label="After">
-
-```ts
-// class-recipe
-const button = cva({
-  base: "rounded-md font-medium",
-  variants: {
-    intent: { primary: "bg-blue-600 text-white", secondary: "bg-gray-100" },
-    size: { sm: "h-8 px-3", md: "h-10 px-4" },
-  },
-  compoundVariants: [
-    { variants: { intent: "primary", size: "md" }, className: "shadow-sm" },
-  ],
-  defaultVariants: { intent: "primary", size: "md" },
-});
-```
-
-  </TabItem>
-</Tabs>
+<CodeComparison name="class-variance-authority/button" />
 
 Two behaviors change for most recipes:
 
