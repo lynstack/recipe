@@ -90,8 +90,8 @@ without the cache.
 
 ## Errors
 
-- A config without `variants` throws a `TypeError` when you create the
-  recipe. Pass `variants: {}`.
+- A config without `variants` throws a `TypeError` that says so when you
+  create the recipe. Pass `variants: {}`.
 - Listing anything other than a recipe of the package in `composes` is a
   type error. It also throws a `TypeError` when you create the recipe.
 - The same `TypeError` happens when an app installs two copies of

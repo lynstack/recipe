@@ -48,13 +48,15 @@ classes keyed by slot name, such as `{ root: "p-4", title: "font-bold" }`.
 | `cache`            | Optional | Whether the slot recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`.                   |
 
 `variants` is required even when it is empty. A config without it is a
-type error, and throws a `TypeError` ("Cannot convert undefined or null to
-object") when the slot recipe is created.
+type error. In JavaScript, or in a config that bypasses the types,
+creating the slot recipe throws a `TypeError` that names what is wrong:
+no `variants`, classes given as a string where a slot recipe takes an
+object of the classes of each slot, or a compound variant without
+`variants` or `classNames`.
 
 An option or a compound variant gives classes only to the slots it names.
 A slot that `slots` does not name is a type error, and its classes are
-ignored. Classes given as a string, where a slot recipe takes an object,
-are ignored too.
+ignored.
 
 ### A compound variant
 

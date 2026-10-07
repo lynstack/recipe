@@ -24,6 +24,9 @@ The docs lead with the short names, `cva` and `sva`.
     functions on slot recipe kinds of `createSlotRecipeKind`.
   - `join-classes.ts` joins the classes of a selection.
   - `build-options.ts` holds the join and cache settings of a recipe.
+  - `check-config.ts` checks the classes of a config when a recipe is
+    created, so that a config from untyped code fails with a message
+    that names what is wrong.
 
 ## Tests and benchmarks
 

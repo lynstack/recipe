@@ -41,8 +41,10 @@ variants and options, and which variants are required. Its type is
 | `cache`            | Optional | Whether the recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`.                  |
 
 `variants` is required even when it is empty. A config without it is a
-type error, and throws a `TypeError` ("Cannot convert undefined or null to
-object") when the recipe is created.
+type error. In JavaScript, or in a config that bypasses the types,
+creating the recipe throws a `TypeError` that names what is wrong: no
+`variants`, classes that are not a string, or a compound variant without
+`variants` or `className`.
 
 ### A compound variant
 

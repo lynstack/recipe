@@ -12,6 +12,7 @@ import {
 } from "./join-classes.js";
 import type { BuildOptions } from "./build-options.js";
 import type { JoinClasses } from "./join-classes.js";
+import { checkSlotRecipeConfig } from "./check-config.js";
 
 type LooseSelection = Readonly<Record<string, unknown>>;
 
@@ -148,10 +149,13 @@ function joinKind(
 }
 
 /**
- * Returns `config` as a slot recipe of a kind takes it: the classes of each
- * compound variant under `value`, and of each value only the slots whose
- * classes are a string that is not empty. The engine ignores the slots that
- * neither the config nor a slot recipe it composes declares.
+ * Checks `config`, and returns it as a slot recipe of a kind takes it: the
+ * classes of each compound variant under `value`, and of each value only
+ * the slots whose classes are a string that is not empty. The engine
+ * ignores the slots that neither the config nor a slot recipe it composes
+ * declares.
+ *
+ * @throws {TypeError} When a part of the config has the wrong shape.
  */
 function withStringClasses(config: LooseSlotRecipeConfig): {
   readonly slots: readonly string[];
@@ -164,6 +168,7 @@ function withStringClasses(config: LooseSlotRecipeConfig): {
   readonly defaultVariants: LooseSelection | undefined;
   readonly cache: boolean | undefined;
 } {
+  checkSlotRecipeConfig(config);
   const variants = Object.fromEntries(
     Object.entries(config.variants).map(
       ([name, options]: readonly [

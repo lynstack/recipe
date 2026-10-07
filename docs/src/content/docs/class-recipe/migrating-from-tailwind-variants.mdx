@@ -204,8 +204,8 @@ calls without the prop stay valid.
 
 ### A recipe needs `variants`
 
-A recipe without them is a type error and throws a `TypeError` when it
-is created. Pass `variants: {}`.
+A recipe without them is a type error, and throws a `TypeError` that says
+so when it is created. Pass `variants: {}`.
 
 ### A recipe lists its variants, not its config
 
@@ -286,33 +286,22 @@ const grid = cva({
 A variant passed as an object, such as `{ initial: "sm" }`, names no
 option, so it adds no classes.
 
-## Configs that fail silently without types
+## Configs that throw without types
 
 TypeScript rejects the shapes of tailwind-variants below. In JavaScript,
-or in a config that bypasses the types, nothing reports them, and the
-classes come out wrong:
+or in a config that bypasses the types, creating the recipe throws a
+`TypeError` that names the part to fix:
 
-- **`base` as an array.** `base: ["a", "b"]` is joined as a JavaScript
-  array is, with a comma: the class name starts with `"a,b"`.
-- **An option as an array.** `{ x: ["X", "Y"] }` gives `"X,Y"` with a
-  comma when other classes come with it, and returns the array itself when
-  they are the only classes of the call.
-- **An option of `false` or `null`.** It adds the class `"false"` or
-  `"null"`, or returns `false` or `null` itself when it is the only
-  class of the call. Use `""`.
+- **`base` or an option as an array**, such as `base: ["a", "b"]`. Join
+  the classes into one string.
+- **An option of `false` or `null`.** Use `""`.
 - **A string in a slot recipe.** In `sva`, a `base` or an option given as
-  a string, as tailwind-variants allows for its `base` slot, is ignored.
-  Give an object keyed by slot name.
-- **A compound variant without `variants`.** In `cva`,
-  `{ size: "sm", class: "X" }` adds nothing to any call, since a recipe
-  reads only `className`. With `className` instead of `class`, it has no
-  condition and adds its classes to every call. In `sva`, a compound
-  variant with `class` instead of `classNames` throws a `TypeError`
-  ("Cannot convert undefined or null to object") when the slot recipe is
-  created.
-
-The test in [Check a migrated recipe](#check-a-migrated-recipe) catches
-each of them.
+  a string, as tailwind-variants allows for its `base` slot. Give an
+  object keyed by slot name.
+- **A compound variant without `variants`**, such as
+  `{ size: "sm", class: "X" }`. Move the condition under `variants`.
+- **A compound variant with `class`.** The error asks you to rename it to
+  `className` in `cva`, or `classNames` in `sva`.
 
 ## Migrating a large codebase
 

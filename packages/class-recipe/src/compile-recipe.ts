@@ -7,6 +7,7 @@ import { createRecipeKind } from "@lynstack/recipe";
 
 import { appendClasses, createJoinClasses } from "./join-classes.js";
 import type { BuildOptions } from "./build-options.js";
+import { checkRecipeConfig } from "./check-config.js";
 import { cx } from "./cx.js";
 
 type LooseSelection = Readonly<Record<string, unknown>>;
@@ -64,6 +65,7 @@ function createRecipeBuilder(
     options.join === cx ? concatKind(options) : joinKind(options, joinClasses);
 
   return (config) => {
+    checkRecipeConfig(config);
     const classesOf = classRecipe({
       base: config.base,
       cache: config.cache,

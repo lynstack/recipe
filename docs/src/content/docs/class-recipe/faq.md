@@ -20,16 +20,21 @@ classes, such as `none: ""`, and make it the default. A boolean variant,
 whose only options are `true` and `false`, is always optional. See
 [Variants](/recipe/class-recipe/variants/#required-and-default-variants).
 
-## Why do I get "TypeError: Cannot convert undefined or null to object"?
+## Why does creating a recipe throw a `TypeError`?
 
-The config has no `variants`. `variants` is required, even when the recipe
-has none: pass `variants: {}`. TypeScript reports a missing `variants` as
-an error too. See [cva](/recipe/class-recipe/cva/#the-config).
+The config has the wrong shape, which TypeScript reports as an error too.
+The message names the part to fix. The most common ones:
 
-In a slot recipe, the same error comes from a compound variant that gives
-its classes under `class`, as tailwind-variants does, instead of
-`classNames` (see
-[Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/#configs-that-fail-silently-without-types)).
+- The config has no `variants`. `variants` is required, even when the
+  recipe has none: pass `variants: {}`.
+- A compound variant gives its classes under `class`, as
+  class-variance-authority and tailwind-variants do. Rename it to
+  `className` in `cva`, or `classNames` in `sva`.
+- Classes are an array, `false`, or `null`, or a slot recipe gets a
+  string where it takes the classes of each slot.
+
+See [cva](/recipe/class-recipe/cva/#the-config) and
+[Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/#configs-that-throw-without-types).
 
 ## Which merge library for Tailwind CSS v3 or v4?
 

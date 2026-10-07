@@ -81,17 +81,14 @@ The error names the type `CompoundVariant`, the type of an entry of
 know. Move the condition under `variants`, and rename `class` to
 `className`.
 
-In JavaScript, or in a config that bypasses the types, nothing reports
-them:
+In JavaScript, or in a config that bypasses the types, creating the
+recipe throws a `TypeError` that names the compound variant: one without
+`variants`, or one with `class`, which it asks you to rename to
+`className`.
 
-- A compound variant without `variants` has no condition, so it matches
-  every call. With `class`, it adds nothing, since a recipe reads only
-  `className`. With `className`, it adds its classes to every call.
-- A `class` prop is ignored.
-
-The test in [Check a migrated recipe](#check-a-migrated-recipe) catches
-such compound variants. To find `class` props, search the calls of your
-recipes for `class:`.
+A `class` prop is part of a call, not of the config, so nothing reports
+it in JavaScript: the recipe ignores it. To find `class` props, search
+the calls of your recipes for `class:`.
 
 ## Behaviors that change
 
@@ -159,8 +156,8 @@ variant.
 
 ### A recipe needs `variants`
 
-A recipe without them is a type error and throws a `TypeError` when it
-is created. Pass `variants: {}`. class-variance-authority ignores the
+A recipe without them is a type error, and throws a `TypeError` that says
+so when it is created. Pass `variants: {}`. class-variance-authority ignores the
 compound variants of a config without `variants`, so drop them.
 
 ## Behaviors that change with untyped data
