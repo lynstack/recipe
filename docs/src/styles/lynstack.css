@@ -1391,6 +1391,11 @@ mark.example-part * {
   color: var(--lyn-success);
 }
 
+.flow-answer[data-answer="no"] {
+  background-color: var(--lyn-muted);
+  color: var(--lyn-foreground);
+}
+
 /* Trace: each call of the kind's functions while a result is built. */
 
 .trace-head {

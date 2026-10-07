@@ -11,8 +11,9 @@ import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipeTrace from "../../../components/RecipeTrace.astro";
 
 A recipe does its work in two phases: once when it is created, and on each
-call. The kind takes part only when a result is built. This page follows
-one recipe through both, with the style kind of the
+call. The kind takes part only when a result is built (see
+[How the engine calls a kind](/recipe/recipe/recipe-kinds/#how-the-engine-calls-a-kind)).
+This page follows one recipe through both, with the style kind of the
 [Quick start](/recipe/recipe/quick-start/):
 
 <RecipeExample name="recipe/how-it-works/button" />
@@ -24,12 +25,12 @@ recipe, once. A recipe that composes others first merges their configs
 with its own into one (see [Recipes that compose others](#recipes-that-compose-others)),
 and compiles that:
 
-1. It numbers the options of each variant from 1, in the order of
-   `Object.keys`: options whose names are integers first, in ascending
-   order, then the others in the order they are declared. A variant that
-   declares an option named `"true"` or `"false"` also declares the other
-   one, without a value, and numbers `"false"`, then `"true"`, before its
-   other options.
+1. It numbers the options of each variant from 1. A variant that declares
+   an option named `"true"` or `"false"` also declares the other one,
+   without a value. The numbers follow the order of `Object.keys`:
+   - first, the options whose names are integers, in ascending order;
+   - then `"false"` and `"true"`, when the variant has them;
+   - then the other options, in the order they are declared.
 2. It sets the default of each variant: the option in `defaultVariants`, or
    `"false"` for a boolean variant, whose only options are `"true"` and
    `"false"`.
@@ -37,9 +38,9 @@ and compiles that:
    compound variant that names an undeclared variant or option, or lists no
    option for a variant, can never match, and is dropped.
 4. It keeps the value of each option and compound variant, by reference.
-   A recipe that composes others with the kind's `combine` keeps instead
-   the new value that `combine` returns for its bases, and for each option
-   that several configs give values to.
+   A recipe that composes others may combine several values into one
+   first (see
+   [Combining values](/recipe/recipe/composing/#combining-values)).
 
 For `button`, that gives:
 
@@ -70,9 +71,10 @@ themselves, so treat them as immutable.
    adds up to the selection's key. The option numbers are the digits of
    one number, so every declared selection has its own integer.
 3. **Look up.** If the recipe has built the result of this key before, it
-   returns that result. A cached call stops here: one lookup per variant
-   and one for the cache, with no allocation.
-4. **Build.** Otherwise the kind builds the result: `initial` returns the
+   returns that result. A cached call stops here; see
+   [A cached call](/recipe/recipe/caching/#a-cached-call) for its cost. A
+   call that finds no result goes on to the next two steps.
+4. **Build.** The kind builds the result: `initial` returns the
    accumulator for the recipe's base, `reduce` adds each value that applies
    to the selection, and `finish` turns the accumulator into the result.
 5. **Store.** The recipe caches the result under the key and returns it.
