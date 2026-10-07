@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import starlightLlmsTxt from "starlight-llms-txt";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 
 import { lynstackDark, lynstackLight } from "./src/code-themes.ts";
@@ -77,6 +78,11 @@ export default defineConfig({
         },
       ],
       plugins: [
+        starlightLlmsTxt({
+          description:
+            "Fast, type-safe recipes that map a component's variants to its styles: `@lynstack/class-recipe` for class names (`cva`, `sva`, `cx`), `@lynstack/native-recipe` for React Native styles, and `@lynstack/recipe`, the engine they are built on, for values of any type.",
+          projectName: "lynstack recipe",
+        }),
         starlightSidebarTopics([
           {
             icon: "class-recipe",
