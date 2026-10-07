@@ -27,6 +27,18 @@ interface OpenGraphImage {
   readonly alt: string;
 }
 
+/**
+ * The token with which each search engine verifies that the site is ours,
+ * or none when the build was given none.
+ */
+interface SiteVerification {
+  readonly baidu: string | undefined;
+  readonly bing: string | undefined;
+  readonly google: string | undefined;
+  readonly naver: string | undefined;
+  readonly yandex: string | undefined;
+}
+
 /** A node of schema.org data. */
 type LinkedData = Readonly<Record<string, unknown>>;
 
@@ -58,6 +70,28 @@ const packageImages = {
 const imagesByFolder: ReadonlyMap<string, OpenGraphImage> = new Map(
   Object.entries(packageImages),
 );
+
+/** The name of the `<meta>` element that each search engine reads. */
+const verificationNames: ReadonlyMap<string, string> = new Map(
+  Object.entries({
+    baidu: "baidu-site-verification",
+    bing: "msvalidate.01",
+    google: "google-site-verification",
+    naver: "naver-site-verification",
+    yandex: "yandex-verification",
+  } satisfies Readonly<Record<keyof SiteVerification, string>>),
+);
+
+function verificationTags(verification: SiteVerification): HeadEntry[] {
+  return Object.entries(verification).flatMap(
+    ([engine, token]: readonly [string, string | undefined]) => {
+      const name = verificationNames.get(engine);
+      return name !== undefined && token !== undefined && token !== ""
+        ? [{ attrs: { content: token, name }, tag: "meta" } as const]
+        : [];
+    },
+  );
+}
 
 function openGraphProperty(property: string, content: string): HeadEntry {
   return { attrs: { content, property }, tag: "meta" };
@@ -141,14 +175,22 @@ function jsonLd(data: LinkedData): HeadEntry {
 }
 
 /**
- * Returns the elements that a page adds to its `<head>`: the Open Graph
- * image of its package, or of the landing page, and its structured data.
- * The 404 page gets the image only.
+ * Returns the elements that a page adds to its `<head>`: the tokens that
+ * search engines verify the site with, the Open Graph image of its package,
+ * or of the landing page, and its structured data. The 404 page gets no
+ * structured data.
  */
-function seoHead(page: PageInfo, isNotFound: boolean): HeadEntry[] {
-  const image = openGraphImageTags(page.siteUrl, page.folder);
-  return isNotFound ? image : [...image, jsonLd(structuredData(page))];
+function seoHead(
+  page: PageInfo,
+  verification: SiteVerification,
+  isNotFound: boolean,
+): HeadEntry[] {
+  const head = [
+    ...verificationTags(verification),
+    ...openGraphImageTags(page.siteUrl, page.folder),
+  ];
+  return isNotFound ? head : [...head, jsonLd(structuredData(page))];
 }
 
 export { seoHead };
-export type { PageInfo };
+export type { PageInfo, SiteVerification };

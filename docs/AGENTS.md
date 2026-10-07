@@ -16,6 +16,12 @@ GitHub Pages at `https://lynstack.github.io/recipe/`.
 - The docs read the measurements through the modules next to them in
   `src/measurements`, which format them, and show them with the components
   in `src/components`.
+- `src/route-data.ts` adds to the `<head>` of each page what `src/seo.ts`
+  builds: the tokens that search engines verify the site with, the Open
+  Graph image, and the structured data. Each token comes from an
+  environment variable that `src/env-schema.ts` declares, such as
+  `GOOGLE_SITE_VERIFICATION`; `docs.yml` reads it from the repository
+  variable of the same name, and a token that is not set adds no tag.
 - Keep logic in `.ts` files, which are typechecked, and keep `.astro`
   files to markup.
 

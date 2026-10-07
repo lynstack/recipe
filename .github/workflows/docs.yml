@@ -36,7 +36,15 @@ jobs:
           require-lockfile: true
       - name: Build the packages that the docs import
         run: pnpm --filter "docs^..." build
+      # The tokens that search engines verify the site with are public, as
+      # the pages show them, so they are repository variables.
       - run: pnpm --filter docs build
+        env:
+          BAIDU_SITE_VERIFICATION: ${{ vars.BAIDU_SITE_VERIFICATION }}
+          BING_SITE_VERIFICATION: ${{ vars.BING_SITE_VERIFICATION }}
+          GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
+          NAVER_SITE_VERIFICATION: ${{ vars.NAVER_SITE_VERIFICATION }}
+          YANDEX_SITE_VERIFICATION: ${{ vars.YANDEX_SITE_VERIFICATION }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: docs/dist

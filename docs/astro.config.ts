@@ -4,6 +4,7 @@ import starlightLlmsTxt from "starlight-llms-txt";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 
 import { lynstackDark, lynstackLight } from "./src/code-themes.ts";
+import { envSchema } from "./src/env-schema.ts";
 
 const repository = "https://github.com/lynstack/recipe";
 const site = "https://lynstack.github.io";
@@ -33,6 +34,7 @@ const changelogs = {
 
 export default defineConfig({
   base,
+  env: { schema: envSchema },
   integrations: [
     starlight({
       components: {

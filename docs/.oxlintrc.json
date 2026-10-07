@@ -45,6 +45,12 @@
       "rules": { "import/prefer-default-export": "off" }
     },
     {
+      // The config imports the schema of the environment by name, as every
+      // module of the docs exports.
+      "files": ["src/env-schema.ts"],
+      "rules": { "import/prefer-default-export": "off" }
+    },
+    {
       // The docs show these recipes as they are written. The order of
       // variants and options decides the order of the classes and the
       // styles, and a recipe is a named export, as the docs recommend.
