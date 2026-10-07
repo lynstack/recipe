@@ -30,6 +30,7 @@ export type {
 export type {
   CompoundCondition,
   DefaultVariants,
+  PropsOf,
   RecipeFunction,
   SlotClasses,
   SlotClassNames,

@@ -59,6 +59,26 @@ type VariantsOf<Recipe extends (props: never) => unknown> = OptionsOnly<
 >;
 
 /**
+ * The props a recipe accepts: its variants, and its `className` override,
+ * or `classNames` for a slot recipe. Use it to type a component that
+ * passes these props on to its recipe.
+ *
+ * @typeParam Recipe - The type of a recipe made by `createRecipe` or
+ *   `createSlotRecipe`.
+ *
+ * @example
+ * ```ts
+ * const button = createRecipe({ variants: { size: { sm: "h-8", md: "h-10" } } });
+ *
+ * type ButtonProps = PropsOf<typeof button>;
+ * // => { readonly size: "sm" | "md"; readonly className?: string | undefined }
+ * ```
+ */
+type PropsOf<Recipe extends (props: never) => unknown> = Simplify<
+  NonNullable<Parameters<Recipe>[0]>
+>;
+
+/**
  * Removes the classes by slot that the props of a slot recipe with variant
  * names unknown at compile time allow next to options; an option is never
  * an object.
@@ -142,6 +162,7 @@ export type {
 } from "@lynstack/recipe";
 export type {
   NoUnknownSlots,
+  PropsOf,
   Simplify,
   SlotClasses,
   SlotClassNames,

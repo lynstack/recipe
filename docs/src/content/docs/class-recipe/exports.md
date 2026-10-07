@@ -24,14 +24,15 @@ and of the recipe from the config you pass.
 
 ## Types for components
 
-| Export            | Type parameters | Description                                                                               | See                                                                       |
-| ----------------- | --------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `VariantsOf`      | `<Recipe>`      | The variants a recipe or slot recipe accepts, without `className` or `classNames`.        | [Typing recipes](/recipe/class-recipe/typescript/#typing-component-props) |
-| `SlotClasses`     | `<Slot>`        | Classes for some of a slot recipe's slots, keyed by slot name. Types a `classNames` prop. | [Building components](/recipe/class-recipe/building-components/)          |
-| `SlotClassNames`  | `<Slot>`        | The class name of every slot, keyed by slot name, as a slot recipe returns it.            | [sva](/recipe/class-recipe/sva/#the-result)                               |
-| `ClassValue`      | None            | A value that `cx` turns into class names.                                                 | [cx](/recipe/class-recipe/cx/)                                            |
-| `ClassArray`      | None            | A list of class values, which may be nested.                                              | [cx](/recipe/class-recipe/cx/)                                            |
-| `ClassDictionary` | None            | An object whose keys are class names, each included when its value is truthy.             | [cx](/recipe/class-recipe/cx/)                                            |
+| Export            | Type parameters | Description                                                                               | See                                                                             |
+| ----------------- | --------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `VariantsOf`      | `<Recipe>`      | The variants a recipe or slot recipe accepts, without `className` or `classNames`.        | [Typing recipes](/recipe/class-recipe/typescript/#typing-component-props)       |
+| `PropsOf`         | `<Recipe>`      | The props a recipe or slot recipe accepts: its variants, and `className` or `classNames`. | [Typing recipes](/recipe/class-recipe/typescript/#props-that-include-classname) |
+| `SlotClasses`     | `<Slot>`        | Classes for some of a slot recipe's slots, keyed by slot name. Types a `classNames` prop. | [Building components](/recipe/class-recipe/building-components/)                |
+| `SlotClassNames`  | `<Slot>`        | The class name of every slot, keyed by slot name, as a slot recipe returns it.            | [sva](/recipe/class-recipe/sva/#the-result)                                     |
+| `ClassValue`      | None            | A value that `cx` turns into class names.                                                 | [cx](/recipe/class-recipe/cx/)                                                  |
+| `ClassArray`      | None            | A list of class values, which may be nested.                                              | [cx](/recipe/class-recipe/cx/)                                                  |
+| `ClassDictionary` | None            | An object whose keys are class names, each included when its value is truthy.             | [cx](/recipe/class-recipe/cx/)                                                  |
 
 ## Types of recipes and configs
 

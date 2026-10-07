@@ -76,10 +76,10 @@ per breakpoint. See
 
 ## How do I get a props type that includes `className`?
 
-Use `Parameters<typeof button>[0]`, or
-`VariantsOf<typeof button> & { readonly className?: string | undefined }`.
-`RecipeProps<typeof button>` is a type error: `RecipeProps` takes the
-parts of a config, not a recipe. See
+Use `PropsOf<typeof button>`: the variants of the recipe and its
+`className`, or `classNames` for a slot recipe. `RecipeProps<typeof button>`
+is a type error: `RecipeProps` takes the parts of a config, not a recipe.
+See
 [Typing recipes](/recipe/class-recipe/typescript/#props-that-include-classname).
 
 ## Is the cache safe on the server?

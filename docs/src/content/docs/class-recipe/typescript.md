@@ -55,37 +55,19 @@ using it in a component.
 ## Props that include `className`
 
 `VariantsOf` leaves out `className` and `classNames`. To type everything a
-recipe accepts, overrides included, read the type of its argument with
-`Parameters`:
+recipe accepts, overrides included, use `PropsOf`:
 
 ```ts
-type ButtonProps = Parameters<typeof button>[0];
+import type { PropsOf } from "@lynstack/class-recipe";
+
+type ButtonProps = PropsOf<typeof button>;
 // => { readonly tone: "neutral" | "danger";
 //      readonly size?: "sm" | "md" | undefined;
 //      readonly className?: string | undefined }
 ```
 
-When every variant has a default, as in a `stack` recipe with a default
-`gap`, the argument is optional, so its type includes `undefined`. Remove
-it with `NonNullable`:
-
-```ts
-type StackProps = NonNullable<Parameters<typeof stack>[0]>;
-```
-
-You can also write the type yourself, from `VariantsOf`:
-
-```ts
-import type { SlotClasses, VariantsOf } from "@lynstack/class-recipe";
-
-type ButtonProps = VariantsOf<typeof button> & {
-  readonly className?: string | undefined;
-};
-
-type CardProps = VariantsOf<typeof card> & {
-  readonly classNames?: SlotClasses<"root" | "title"> | undefined;
-};
-```
+For a slot recipe, `PropsOf` includes `classNames` instead, typed with
+[`SlotClasses`](/recipe/class-recipe/exports/#types-for-components).
 
 ### `RecipeProps` takes a config, not a recipe
 
@@ -102,7 +84,7 @@ type Props = RecipeProps<typeof button>;
 
 `SlotRecipeProps<Slot, Variants, DefaultedName>` takes the slot names
 first. Use them only in code that builds on configs, such as a function
-that creates recipes. For a recipe, use `Parameters` or `VariantsOf` as
+that creates recipes. For a recipe, use `PropsOf` or `VariantsOf` as
 above.
 
 ## Reserved names

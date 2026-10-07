@@ -1,3 +1,4 @@
+import type { PropsOf, VariantsOf } from "@lynstack/class-recipe";
 import {
   createRecipe,
   createRecipes,
@@ -6,7 +7,6 @@ import {
   cx,
   sva,
 } from "@lynstack/class-recipe";
-import type { VariantsOf } from "@lynstack/class-recipe";
 
 const button = createRecipe({
   base: "inline-flex",
@@ -22,6 +22,7 @@ const button = createRecipe({
 });
 
 type ButtonVariants = VariantsOf<typeof button>;
+type ButtonProps = PropsOf<typeof button>;
 
 const card = createSlotRecipe({
   slots: ["root", "title"],
@@ -70,15 +71,22 @@ const buttonOptions: { readonly size: readonly ("lg" | "md")[] } =
 const buttonDefaults: { readonly disabled: "false" | "true" } =
   button.defaultVariants;
 const cardOptions: { readonly size: readonly "md"[] } = card.variantOptions;
+const buttonProps: ButtonProps = { className: "w-full", tone: "danger" };
+const cardProps: PropsOf<typeof card> = {
+  classNames: { title: "text-sm" },
+  size: "md",
+};
 
 export {
   button,
   buttonDefaults,
+  buttonProps,
   buttonKeys,
   buttonOptions,
   card,
   cardKeys,
   cardOptions,
+  cardProps,
   className,
   field,
   iconButton,
@@ -88,4 +96,4 @@ export {
   select,
   selectClassNames,
 };
-export type { ButtonVariants };
+export type { ButtonProps, ButtonVariants };
