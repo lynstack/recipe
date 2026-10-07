@@ -6,6 +6,9 @@ import { noOption } from "./variants.js";
 /** Values for some slots, keyed by slot name, as the runtime takes them. */
 type LooseSlotValues = Readonly<Record<string, unknown>>;
 
+/** The values of the `false` option a boolean variant of a slot recipe adds. */
+const noSlotValues: readonly LooseSlotValues[] = Object.freeze([]);
+
 /** How the values of each slot are reduced, as a recipe kind gives it. */
 interface SlotsKind {
   readonly initial: (base: unknown) => unknown;
@@ -203,5 +206,5 @@ function createSlotsBuilder(
   };
 }
 
-export { createSlotsBuilder };
+export { createSlotsBuilder, noSlotValues };
 export type { LooseSlotValues, SlotsKind };

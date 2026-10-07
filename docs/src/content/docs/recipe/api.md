@@ -203,6 +203,24 @@ composes are added to it. Its `Composition` lists the slots too.
 A value for a slot that `slots` does not name is a type error. See
 [Slot recipes](/recipe/recipe/slot-recipes/).
 
+### A config with the wrong shape
+
+The types reject a config with the wrong shape. A config from untyped
+code, such as JavaScript, is checked when the recipe is created, and the
+function throws a `TypeError` that names the part that is wrong:
+
+- A config without `variants`, or whose `variants` is not an object. Use
+  `variants: {}` for a recipe without variants.
+- A variant whose options are not an object.
+- A `compoundVariants` that is not an array, or a compound variant without
+  `variants`.
+- In a slot recipe, a config without `slots`, or a `base`, an option, or a
+  compound variant's `value` that is not an object of the value of each
+  slot.
+
+The check runs once, when the recipe is created, so it costs nothing on
+a call.
+
 ## Types for apps
 
 An app that uses recipes names their variants with these:

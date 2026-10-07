@@ -15,13 +15,12 @@ import type { LooseSlotValues, SlotsKind } from "./slots.js";
 import type { SelectedVariants, WithVariants } from "./variants.js";
 import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
+import { createSlotsBuilder, noSlotValues } from "./slots.js";
 import type { KindVariants } from "./recipe-kind.js";
+import { checkSlotRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
-import { createSlotsBuilder } from "./slots.js";
 
 const slotRecipes = createRegistry<LooseSlotValues>("slot recipe");
-
-const noSlotValues: readonly LooseSlotValues[] = Object.freeze([]);
 
 /**
  * Values for some of a slot recipe's slots, keyed by slot name.
@@ -261,7 +260,7 @@ function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
   const kindCache = kind.cache ?? true;
 
   return (config: LooseSlotRecipeConfig): LooseSlotRecipe => {
-    const own = layerOf(config, config.slots);
+    const own = layerOf(checkSlotRecipeConfig(config), config.slots);
     const layers = slotRecipes.layersOf(config.composes ?? [], own);
     const merged = mergeLayers(layers);
     const compiled = compileVariants<readonly LooseSlotValues[]>({

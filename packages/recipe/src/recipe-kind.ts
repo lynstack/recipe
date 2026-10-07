@@ -22,6 +22,7 @@ import type {
 } from "./variants.js";
 import { compileLayer, compileMergedLayers } from "./build-recipe.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
+import { checkRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
 import { withVariants } from "./variants.js";
 
@@ -263,7 +264,7 @@ function createRecipeKind(kind: LooseRecipeKind): unknown {
   const kindCache = kind.cache ?? true;
 
   return (config: LooseKindRecipeConfig): LooseKindRecipe => {
-    const own = layerOf(config, []);
+    const own = layerOf(checkRecipeConfig(config), []);
     const layers = recipes.layersOf(config.composes ?? [], own);
     const { compiled, build } =
       layers.length === 1
