@@ -1,10 +1,11 @@
 ---
 title: Why class-recipe
-description: "How class-recipe compares with class-variance-authority and tailwind-variants: slots, required variants, conflict resolution, and recipe calls per second."
+description: "How class-recipe compares with class-variance-authority and tailwind-variants: slots, required variants, conflict resolution, recipe calls per second, and when that speed matters."
 ---
 
 import {
   measurements,
+  mergedSpeedup,
   recipeSpeedOf,
 } from "../../../measurements/class-recipe.ts";
 import { formatRoughHz } from "../../../measurements/format.ts";
@@ -12,20 +13,60 @@ import { formatRoughHz } from "../../../measurements/format.ts";
 class-recipe solves the same problem as
 [class-variance-authority](https://cva.style) and
 [tailwind-variants](https://www.tailwind-variants.org): turning component
-props into class names. It differs from them in these ways:
+props into class names. Its config looks like theirs, so moving over is
+mostly mechanical. It differs in four ways:
 
-|                           | class-recipe <code>{measurements.versions["class-recipe"]}</code> | class-variance-authority <code>{measurements.versions["class-variance-authority"]}</code> | tailwind-variants <code>{measurements.versions["tailwind-variants"]}</code>, lite |
-| ------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Slots                     | Yes                                                               | No                                                                                        | Yes                                                                               |
-| Variant without a default | Required by its type                                              | Optional                                                                                  | Optional                                                                          |
-| Conflict resolution       | Any join function, cached                                         | Call `twMerge` on the result                                                              | `tailwind-merge`, built in                                                        |
-| Extending a recipe        | `composes`                                                        | No                                                                                        | `extend`                                                                          |
-| Recipe calls per second   | {formatRoughHz(recipeSpeedOf("class-recipe"))}                    | {formatRoughHz(recipeSpeedOf("class-variance-authority"))}                                | {formatRoughHz(recipeSpeedOf("tailwind-variants"))}                               |
+- It styles components of several elements with **slots**, which
+  class-variance-authority does not have.
+- A variant without a default is **required** by its type, so a component
+  cannot forget to choose it.
+- It resolves conflicting classes with **any join function**, such as
+  `twMerge`, and caches the result, so the join runs once per selection.
+- It is **faster**: it prepares each config once and caches the class
+  name of each selection, so most calls are a lookup.
 
-The calls per second come from the
-[benchmarks](/recipe/class-recipe/performance/#recipes).
+|                                          | class-recipe <code>{measurements.versions["class-recipe"]}</code> | class-variance-authority <code>{measurements.versions["class-variance-authority"]}</code> | tailwind-variants <code>{measurements.versions["tailwind-variants"]}</code> |
+| ---------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Slots                                    | Yes                                                               | No                                                                                        | Yes                                                                         |
+| Variant without a default                | Required by its type                                              | Optional                                                                                  | Optional                                                                    |
+| Conflict resolution                      | Any join function, cached                                         | Call `twMerge` on the result                                                              | `tailwind-merge`, built in                                                  |
+| Extending a recipe                       | `composes`                                                        | No                                                                                        | `extend`                                                                    |
+| Recipe calls per second, without merging | {formatRoughHz(recipeSpeedOf("class-recipe"))}                    | {formatRoughHz(recipeSpeedOf("class-variance-authority"))}                                | {formatRoughHz(recipeSpeedOf("tailwind-variants"))}                         |
 
-To move recipes over, see
-[Migrating from class-variance-authority](/recipe/class-recipe/migrating-from-cva/)
-and
-[Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/).
+tailwind-variants has two builds. Its main entry point merges classes
+with tailwind-merge. Its **lite** build, `tailwind-variants/lite`, does
+not merge classes, and does not need tailwind-merge. The calls per second
+above measure the lite build, so that every library does the same work.
+They come from the [benchmarks](/recipe/class-recipe/performance/#recipes),
+which also measure each library with tailwind-merge.
+
+## When the speed matters
+
+One recipe call is fast in every one of these libraries. For a page with
+a few buttons, you will not notice the difference. The cost adds up when a
+recipe runs many times per second:
+
+- **Large lists.** A table, a feed, or a grid with hundreds of rows calls
+  several recipes for each row, on every render.
+- **Frequent re-renders.** A component that renders on each keystroke,
+  scroll event, or animation frame calls its recipes each time.
+- **Merging classes on every call.** A `cn(button(props))` helper, which
+  passes each result to `twMerge`, runs tailwind-merge on every render.
+  tailwind-merge does much more work than joining strings. A recipe of
+  class-recipe created with `createRecipes({ join: twMerge })` runs it
+  once for each selection, then reads its cache. In the benchmarks, it
+  runs {mergedSpeedup} as many calls per second as class-variance-authority
+  with `twMerge` on every result.
+
+A faster recipe leaves more of each frame to the rest of your app. It
+cannot make a slow component fast, though: measure your app before you
+optimize it.
+
+## Next steps
+
+- [Migrating from class-variance-authority](/recipe/class-recipe/migrating-from-cva/)
+  and
+  [Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/)
+  move your recipes over.
+- [Benchmarks](/recipe/class-recipe/performance/) shows every measurement
+  and how it was made.

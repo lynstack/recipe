@@ -9,27 +9,29 @@ import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 <PackageMeta folder="class-recipe" />
 
-`@lynstack/class-recipe` maps a component's variants to its class names,
-for any CSS approach. It has three functions, and one more to configure
-them:
-
-- [`cva`](/recipe/class-recipe/cva/) creates a recipe for the class name of
-  one element.
-- [`sva`](/recipe/class-recipe/sva/) creates a slot recipe for the class
-  names of several elements, such as a card's root, header, and body.
-- [`cx`](/recipe/class-recipe/cx/) joins class names, as a drop-in
-  replacement for `clsx`.
-- [`createRecipes`](/recipe/class-recipe/create-recipes/) returns them with
-  a join function such as `twMerge`, or with the cache turned off.
+`@lynstack/class-recipe` maps a component's
+[variants](/recipe/class-recipe/glossary/#variant), such as its tone and
+size, to its class names, for any CSS approach. You write the classes of
+each option once, in a [recipe](/recipe/class-recipe/glossary/#recipe),
+and call the recipe with the component's props:
 
 <RecipePlayground name="class-recipe/index/button" />
+
+## Which function to use
+
+| You want to                                                                | Use                                                     |
+| -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Style one element, such as a button                                        | [`cva`](/recipe/class-recipe/cva/)                      |
+| Style several elements together, such as a card and its header             | [`sva`](/recipe/class-recipe/sva/)                      |
+| Join class names, as with `clsx`                                           | [`cx`](/recipe/class-recipe/cx/)                        |
+| Merge classes with a custom join, such as `twMerge`, or turn off the cache | [`createRecipes`](/recipe/class-recipe/create-recipes/) |
 
 ## What it gives you
 
 - **Fast.** A recipe compiles its config once and caches the class name of
   each selection, so most calls are a lookup. It runs about {speedup} times as
   many calls per second as `class-variance-authority` (see
-  [Performance](/recipe/class-recipe/performance/)).
+  [Benchmarks](/recipe/class-recipe/performance/)).
 - **Type-safe.** Variant names, options, and slots are inferred from the
   config. An unknown option or slot is a type error, and a variant without
   a default is required, so a component cannot forget to choose it.
@@ -40,6 +42,11 @@ them:
   [`@lynstack/recipe`](/recipe/recipe/), the engine it is built on, and
   [Bundlephobia](https://bundlephobia.com/package/@lynstack/class-recipe)
   shows its size.
+
+[Why class-recipe](/recipe/class-recipe/why-class-recipe/) compares it
+with class-variance-authority and tailwind-variants. The
+[glossary](/recipe/class-recipe/glossary/) defines the terms these docs
+use.
 
 ## When to use it
 
@@ -52,8 +59,8 @@ class-recipe is built on.
 
 - [Quick start](/recipe/class-recipe/quick-start/) styles a button and a
   card, and types their props.
-- [How it works](/recipe/class-recipe/how-it-works/) explains the cache,
-  the join, and overrides.
+- [Variants](/recipe/class-recipe/variants/) explains required, default,
+  boolean, and compound variants.
 - [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
   shows how to design recipes that need no `tailwind-merge`.
 - [Agent skill](/recipe/class-recipe/agent-skill/) teaches coding agents

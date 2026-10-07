@@ -167,6 +167,8 @@ export default defineConfig({
                   "class-recipe/editor-setup",
                   "class-recipe/agent-skill",
                   { label: "Benchmarks", slug: "class-recipe/performance" },
+                  "class-recipe/faq",
+                  "class-recipe/glossary",
                   changelogs.classRecipe,
                 ],
                 label: "Resources",

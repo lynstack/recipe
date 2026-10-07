@@ -9,19 +9,26 @@ import RecipeExample from "../../../components/RecipeExample.astro";
 
 This page styles a button and a card with Tailwind CSS classes. The same
 steps apply to any CSS approach. Install the package first (see
-[Installation](/recipe/class-recipe/installation/)).
+[Installation](/recipe/class-recipe/installation/)). The
+[glossary](/recipe/class-recipe/glossary/) defines each term.
 
 ## 1. Create a recipe
 
 `cva` takes the classes of an element: those it always has, in `base`, and
-those of each option of each variant. Create it once, at the top level of
-a module:
+those of each [option](/recipe/class-recipe/glossary/#option) of each
+[variant](/recipe/class-recipe/glossary/#variant), in `variants`. The
+recipe below also has a
+[compound variant](/recipe/class-recipe/glossary/#compound-variant): classes
+that it adds only when several variants have particular options at the
+same time. Here, the hover color applies only to a primary button that is
+not loading. Create the recipe once, at the top level of a module:
 
 <RecipeExample name="class-recipe/quick-start/button" />
 
 ## 2. Call it
 
-A recipe takes a selection of variants and returns the class name:
+A recipe takes a [selection](/recipe/class-recipe/glossary/#selection),
+the variants you choose, and returns the class name:
 
 <RecipeExample
   name="class-recipe/quick-start/button"
@@ -61,11 +68,13 @@ export function Button({
 ```
 
 See [Building components](/recipe/class-recipe/building-components/) for
-passing all props at once with `variantKeys`.
+passing all props at once with `variantKeys`, and for variant names such
+as `size` that HTML elements also use.
 
 ## 4. Style several elements with `sva`
 
-A component with several elements, its slots, uses one slot recipe, which
+A component with several elements, its
+[slots](/recipe/class-recipe/glossary/#slot), uses one slot recipe, which
 returns the class name of every slot:
 
 <RecipeExample name="class-recipe/quick-start/card" calls={[{ size: "sm" }]} />
@@ -73,6 +82,9 @@ returns the class name of every slot:
 See [sva](/recipe/class-recipe/sva/).
 
 ## 5. Resolve conflicts, if you need to
+
+Do you need tailwind-merge? No, if your recipes are conflict-free. Yes, if
+a `className` that a caller passes must replace the recipe's classes.
 
 With the default join, every class is kept, so a recipe should never set
 one CSS property twice (see
@@ -88,4 +100,13 @@ import { twMerge } from "tailwind-merge";
 export const { cx, cva, sva } = createRecipes({ join: twMerge });
 ```
 
-See [Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/).
+See [Merging classes](/recipe/class-recipe/tailwind-merge/).
+
+## Next steps
+
+- [Variants](/recipe/class-recipe/variants/) explains required, default,
+  boolean, and compound variants in depth.
+- [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
+  shows how to design recipes that need no `tailwind-merge`.
+- [Cookbook](/recipe/class-recipe/cookbook/) has recipes for common
+  components.

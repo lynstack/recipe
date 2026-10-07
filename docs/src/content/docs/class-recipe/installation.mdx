@@ -34,6 +34,11 @@ yarn add @lynstack/class-recipe
 
 Its one dependency is [`@lynstack/recipe`](/recipe/recipe/).
 
+The package is an ES module only. Bundlers and frameworks load it as it
+is. In a plain Node.js script, use `import`, and either set
+`"type": "module"` in your `package.json` or name the file `.mjs` or
+`.mts`.
+
 With Tailwind CSS, [set up your editor](/recipe/class-recipe/editor-setup/)
 to complete and sort the classes in your recipes.
 
@@ -46,3 +51,10 @@ to complete and sort the classes in your recipes.
   Claude Code, Codex, Cursor, and other agents to write recipes whose classes
   never conflict.
 </Aside>
+
+## Next steps
+
+- [Quick start](/recipe/class-recipe/quick-start/) styles a button and a
+  card.
+- [Editor setup](/recipe/class-recipe/editor-setup/) completes and sorts
+  Tailwind CSS classes in your recipes.

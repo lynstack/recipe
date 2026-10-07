@@ -58,6 +58,16 @@ const speedup = Math.round(
   recipeSpeedOf(SUBJECT) / recipeSpeedOf("class-variance-authority"),
 );
 
+/**
+ * How many times as fast a recipe of class-recipe whose join is `twMerge`
+ * is as one of class-variance-authority whose result is passed to
+ * `twMerge` on every call.
+ */
+const mergedSpeedup = formatTimes(
+  speedNamed(measurements.recipe.merged, SUBJECT),
+  speedNamed(measurements.recipe.merged, "class-variance-authority"),
+);
+
 /** The headline numbers of the performance page. */
 const stats: readonly Stat[] = [
   {
@@ -134,6 +144,7 @@ export {
   cxRows,
   cxShareOfClsx,
   libraries,
+  mergedSpeedup,
   recipeGroups,
   recipeSpeedOf,
   slotRecipeGroups,
