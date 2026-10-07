@@ -5,6 +5,7 @@ sidebar:
   label: Quick start
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import { packages } from "../../../packages.ts";
 
@@ -55,9 +56,7 @@ choose. It returns the style:
 
 Calling it again with the same variants returns the same frozen object:
 
-```ts
-badge({ tone: "success" }) === badge({ tone: "success" }); // => true
-```
+<EvaluatedCode name="native-recipe/quick-start/stable" />
 
 ## 3. Use it in a component
 

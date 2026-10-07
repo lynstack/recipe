@@ -51,18 +51,22 @@ function formatKey(key: string): Fragment {
     : token("string", JSON.stringify(key));
 }
 
-/** Writes `items` between `open` and `close` on one line. */
+/**
+ * Writes `items` between `open` and `close` on one line, with a space
+ * inside braces but not inside brackets, as Prettier does.
+ */
 function formatList(
   items: readonly Fragment[],
   open: string,
   close: string,
 ): Fragment {
+  const padding = open === "{" ? " " : "";
   return items.length === 0
     ? token("punctuation", `${open}${close}`)
     : join([
-        token("punctuation", `${open} `),
+        token("punctuation", `${open}${padding}`),
         join(items, token("punctuation", ", ")),
-        token("punctuation", ` ${close}`),
+        token("punctuation", `${padding}${close}`),
       ]);
 }
 

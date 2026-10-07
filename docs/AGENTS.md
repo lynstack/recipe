@@ -55,6 +55,12 @@ GitHub Pages at `https://lynstack.github.io/recipe/`.
   registry reject an option the recipe does not declare and a list that
   leaves one out, so a call that chooses an option the recipe does not
   declare fails the build.
+- Any other value the docs show after `// =>`, such as `variantKeys`, a
+  result of `cx`, or a comparison of two results, comes from
+  `EvaluatedCode`. It shows a module of `src/examples/evaluated/<package>/<page>`
+  without its imports of other modules of the docs, and writes the value
+  of each `export const` after its expression. Only types, which nothing
+  evaluates, are written by hand.
 
 ## Figures of the engine
 

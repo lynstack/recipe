@@ -6,6 +6,7 @@ head:
     content: "sva: slot recipes for class names | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
@@ -96,9 +97,7 @@ The object is frozen. Calling the slot recipe again with the same
 variants returns the same object, which keeps props stable for memoized
 components:
 
-```ts
-card({ elevated: true }) === card({ elevated: true }); // => true
-```
+<EvaluatedCode name="class-recipe/sva/stable" />
 
 ## Overriding classes
 
@@ -125,11 +124,7 @@ A slot recipe has the same `variantKeys`, `variantOptions`, and
 `defaultVariants` as a recipe (see
 [cva](/recipe/class-recipe/cva/#listing-the-variants)):
 
-```ts
-card.variantKeys; // => ["size", "elevated"]
-card.variantOptions; // => { size: ["sm", "md"], elevated: ["false", "true"] }
-card.defaultVariants; // => { size: "md", elevated: "false" }
-```
+<EvaluatedCode name="class-recipe/sva/listing" />
 
 Use `variantKeys` to split a component's props into the variants and the
 rest (see [Building components](/recipe/class-recipe/building-components/)).

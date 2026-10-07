@@ -6,6 +6,7 @@ head:
     content: "createStyleRecipe: React Native style recipes | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
@@ -101,10 +102,7 @@ A recipe is a function. It takes a selection and returns a style:
   calls={[{ size: "sm", muted: true }]}
 />
 
-```ts
-badge({ tone: "success" }) === badge({ tone: "success" }); // => true
-Object.isFrozen(badge({ tone: "success" })); // => true
-```
+<EvaluatedCode name="native-recipe/create-style-recipe/stable" />
 
 The argument is optional when every variant is optional. A call with no
 argument, `undefined`, or `null` is the same as a call with `{}`. Props
@@ -125,12 +123,7 @@ typed with the names of its variants and options.
 | `variantOptions`  | The options of each variant, as strings. The order: integer names first, from smallest to largest; then `"false"` and `"true"` for a boolean variant; then the other names, in the order you declare them. |
 | `defaultVariants` | The option, as a string, that each optional variant uses when a call leaves it out: its default, or `"false"` for a boolean variant.                                                                       |
 
-```ts
-badge.variantKeys; // => ["tone", "outlined"]
-badge.variantOptions;
-// => { tone: ["neutral", "success", "danger"], outlined: ["false", "true"] }
-badge.defaultVariants; // => { outlined: "false" }
-```
+<EvaluatedCode name="native-recipe/create-style-recipe/listing" />
 
 Use `variantKeys` to split a component's props (see
 [Building components](/recipe/native-recipe/building-components/#split-props-with-variantkeys)),

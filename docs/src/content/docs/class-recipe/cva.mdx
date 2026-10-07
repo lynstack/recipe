@@ -6,6 +6,7 @@ head:
     content: "cva: class name recipes with variants | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
@@ -111,12 +112,7 @@ or use a join such as `twMerge` (see
 | `variantOptions`  | An object of readonly arrays of strings | For each variant, the names of its options.                     |
 | `defaultVariants` | An object of strings                    | For each variant that may be left out, the option it uses then. |
 
-```ts
-badge.variantKeys; // => ["tone", "outlined"]
-badge.variantOptions;
-// => { tone: ["neutral", "success", "danger"], outlined: ["false", "true"] }
-badge.defaultVariants; // => { outlined: "false" }
-```
+<EvaluatedCode name="class-recipe/cva/listing" />
 
 These properties are frozen. See
 [Listing the variants](/recipe/class-recipe/variants/#listing-the-variants)

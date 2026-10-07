@@ -3,17 +3,12 @@ title: Caching
 description: "How a recipe caches the result of each declared selection, how large its cache grows, which selections it builds on every call, why results must be frozen, and when to turn the cache off."
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
+
 A recipe builds the result of each declared selection once, and returns the
 same result to every later call with the same variants:
 
-```ts
-const text = styleRecipe({
-  variants: { size: { sm: { fontSize: 12 }, lg: { fontSize: 24 } } },
-  defaultVariants: { size: "sm" },
-});
-
-text() === text({ size: "sm" }); // => true
-```
+<EvaluatedCode name="recipe/caching/same-result" />
 
 The two calls select the same options, so they have the same key (see
 [How it works](/recipe/recipe/how-it-works/)) and share one result.

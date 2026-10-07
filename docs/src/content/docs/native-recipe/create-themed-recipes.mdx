@@ -6,6 +6,7 @@ head:
     content: "createThemedRecipes: themed React Native styles | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import { Aside } from "@astrojs/starlight/components";
 import RecipeExample from "../../../components/RecipeExample.astro";
 
@@ -97,9 +98,7 @@ createStyleRecipe((theme) => ({
 A themed recipe takes the theme, then the selection. The selection is
 optional when every variant is optional:
 
-```ts
-button(light) === button(light, { tone: "primary" }); // => true
-```
+<EvaluatedCode name="native-recipe/create-themed-recipes/call" />
 
 It returns the same frozen style for the same theme object and the same
 variants.
@@ -121,11 +120,7 @@ object:
 - A theme object that nothing references anymore is released, with its
   recipe.
 
-```ts
-const surface = button(light, { tone: "surface" });
-button(dark, { tone: "surface" });
-button(light, { tone: "surface" }) === surface; // => true
-```
+<EvaluatedCode name="native-recipe/create-themed-recipes/identity" />
 
 ## `withTheme`
 
@@ -133,14 +128,7 @@ button(light, { tone: "surface" }) === surface; // => true
 it takes only a selection, and it has `variantKeys`, `variantOptions`, and
 `defaultVariants`. It returns the same recipe for the same theme object.
 
-```ts
-const lightButton = button.withTheme(light);
-
-lightButton({ tone: "surface" }) === button(light, { tone: "surface" }); // => true
-lightButton.variantKeys; // => ["tone"]
-lightButton.variantOptions; // => { tone: ["primary", "surface"] }
-lightButton.defaultVariants; // => { tone: "primary" }
-```
+<EvaluatedCode name="native-recipe/create-themed-recipes/with-theme" />
 
 Use it to:
 

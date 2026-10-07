@@ -3,6 +3,7 @@ title: native-recipe
 description: "Fast, type-safe React Native style recipes with variants, compound variants, slots, and theme tokens, which return the same frozen style for the same variants."
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import { Aside } from "@astrojs/starlight/components";
 import PackageMeta from "../../../components/PackageMeta.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
@@ -18,9 +19,7 @@ props to get the style.
 
 <RecipePlayground name="native-recipe/index/badge" />
 
-```ts
-badge({ tone: "danger" }) === badge({ tone: "danger" }); // => true
-```
+<EvaluatedCode name="native-recipe/index/stable" />
 
 <Aside title="Words used here">
   A **[variant](/recipe/native-recipe/glossary/#variant)** is a prop that

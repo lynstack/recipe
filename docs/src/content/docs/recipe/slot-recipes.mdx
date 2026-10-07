@@ -3,6 +3,7 @@ title: Slot recipes
 description: "Create slot recipes with createSlotRecipeKind, which map variants to the result of each element of a component, such as a card's root and title."
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 import SlotRecipeTrace from "../../../components/SlotRecipeTrace.astro";
@@ -14,11 +15,7 @@ recipes of that kind:
 
 <RecipePlayground name="recipe/slot-recipes/card" />
 
-```ts
-card.variantKeys; // => ["tone"]
-card.variantOptions; // => { tone: ["light", "dark"] }
-card.defaultVariants; // => { tone: "light" }
-```
+<EvaluatedCode name="recipe/slot-recipes/listing" />
 
 `styleKind` is the kind of the [Quick start](/recipe/recipe/quick-start/).
 `@lynstack/class-recipe` builds its `sva` on slot recipes of a class name

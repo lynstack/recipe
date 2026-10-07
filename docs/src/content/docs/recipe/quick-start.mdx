@@ -5,6 +5,7 @@ sidebar:
   label: Quick start
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import { Code } from "@astrojs/starlight/components";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import styleKindSource from "../../../examples/recipes/recipe/quick-start/style-kind.ts?raw";
@@ -54,9 +55,7 @@ A recipe takes a selection of variants and returns its result:
   calls={[{}, { tone: "neutral", size: "sm" }, { disabled: true }]}
 />
 
-```ts
-button() === button({ tone: "primary" }); // => true
-```
+<EvaluatedCode name="recipe/quick-start/defaults" />
 
 `disabled` declares only `true`, so it is a boolean variant: it is
 optional and defaults to `false`. The last line shows the cache: the

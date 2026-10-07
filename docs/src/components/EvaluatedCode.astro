@@ -1,0 +1,13 @@
+---
+import { Code } from "@astrojs/starlight/components";
+import { evaluatedCode } from "../examples/sources.ts";
+
+interface Props {
+  /** The module in `src/examples/evaluated`, without its extension. */
+  readonly name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<Code code={evaluatedCode(name)} lang="ts" />

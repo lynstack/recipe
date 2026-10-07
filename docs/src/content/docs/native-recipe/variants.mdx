@@ -5,6 +5,7 @@ sidebar:
   label: Variants
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
@@ -129,12 +130,7 @@ in a story for each option:
 - `variantOptions`: the options of each variant, as strings.
 - `defaultVariants`: the option each optional variant uses.
 
-```ts
-button.variantKeys; // => ["tone", "size", "outlined"]
-button.variantOptions;
-// => { tone: ["neutral", "danger"], size: ["sm", "md"], outlined: ["false", "true"] }
-button.defaultVariants; // => { size: "md", outlined: "false" }
-```
+<EvaluatedCode name="native-recipe/variants/listing" />
 
 The [reference](/recipe/native-recipe/create-style-recipe/#listing-the-variants)
 gives the exact order of the options.

@@ -6,6 +6,7 @@ head:
     content: "createSlotStyleRecipe: React Native slot styles | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
@@ -87,10 +88,7 @@ A slot recipe returns an object with the style of each slot.
 - **Every slot.** Every slot is in the result. A slot that gets no style
   is an empty style, so its element can always receive it.
 
-```ts
-card({ tone: "inverted", compact: true }) ===
-  card({ tone: "inverted", compact: true }); // => true
-```
+<EvaluatedCode name="native-recipe/create-slot-style-recipe/stable" />
 
 <RecipeExample
   name="native-recipe/create-slot-style-recipe/icon-button"

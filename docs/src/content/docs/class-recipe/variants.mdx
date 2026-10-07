@@ -6,6 +6,7 @@ head:
     content: "Variants in class-recipe | lynstack recipe"
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 
 A recipe turns the props of a component into class names. This page
@@ -164,12 +165,7 @@ They are frozen, and typed with the names of the variants and options:
 
 For the `button` recipe above:
 
-```ts
-button.variantKeys; // => ["tone", "size", "outlined"]
-button.variantOptions;
-// => { tone: ["neutral", "danger"], size: ["sm", "md"], outlined: ["false", "true"] }
-button.defaultVariants; // => { size: "md", outlined: "false" }
-```
+<EvaluatedCode name="class-recipe/variants/listing" />
 
 Use `variantKeys` to split a component's props into variants and the rest
 (see [Building components](/recipe/class-recipe/building-components/)).

@@ -3,6 +3,7 @@ title: Variants
 description: "How a recipe's config resolves a selection: required and default variants, boolean variants, numeric option names, compound variants, and how a recipe lists its variants, options, and defaults."
 ---
 
+import EvaluatedCode from "../../../components/EvaluatedCode.astro";
 import RecipeExample from "../../../components/RecipeExample.astro";
 
 A recipe's config declares its variants and the values they add. The
@@ -103,12 +104,7 @@ component or a library can read them without the config:
   it out, as a string: its default, or `"false"` for a boolean variant. A
   variant without a default is not in it.
 
-```ts
-button.variantKeys; // => ["tone", "size"]
-button.variantOptions;
-// => { tone: ["primary", "neutral", "ghost"], size: ["sm", "lg"] }
-button.defaultVariants; // => { size: "sm" }
-```
+<EvaluatedCode name="recipe/variants/listing" />
 
 Together they let a library list every selection of a recipe, as a story
 or a table of every option does, and call the recipe for each. The
