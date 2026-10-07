@@ -17,7 +17,8 @@ or on theme tokens. Do not pass a recipe's style through
 
 The config type requires it, so that every recipe declares its variants
 in one place. A recipe without variants writes `variants: {}`. Without it,
-TypeScript reports `Property 'variants' is missing` (TS2741). See
+TypeScript reports `Property 'variants' is missing` (TS2741). In
+JavaScript, creating the recipe throws a `TypeError` that says so. See
 [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-config).
 
 ## Can I pass extra styles into a recipe call?

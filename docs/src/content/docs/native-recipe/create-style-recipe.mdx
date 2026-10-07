@@ -51,6 +51,11 @@ createStyleRecipe({ base: { padding: 8 } });
 createStyleRecipe({ base: { padding: 8 }, variants: {} });
 ```
 
+In JavaScript, or in a config that bypasses the types, creating the
+recipe throws a `TypeError` that names what is wrong: no `variants`, a
+style that is not an object, or a compound variant without `variants` or
+`style`.
+
 A style that never changes does not need a recipe, though: keep it in
 `StyleSheet.create` (see
 [Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate)).

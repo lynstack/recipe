@@ -5,6 +5,8 @@ import type {
 } from "@lynstack/recipe";
 import { createRecipeKind } from "@lynstack/recipe";
 
+import { checkStyleRecipeConfig } from "./check-config.js";
+
 /** A style in the loose shape the runtime works with. */
 type LooseStyle = Readonly<Record<string, unknown>>;
 
@@ -51,8 +53,13 @@ const styleKind = {
 
 const styleRecipe = createRecipeKind(styleKind);
 
-/** Returns the style recipe function for `config`. */
+/**
+ * Returns the style recipe function for `config`.
+ *
+ * @throws {TypeError} When a part of the config has the wrong shape.
+ */
 function buildStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
+  checkStyleRecipeConfig(config);
   return styleRecipe({
     base: config.base,
     cache: config.cache,

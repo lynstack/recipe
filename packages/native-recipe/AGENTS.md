@@ -25,6 +25,9 @@ dependency and a development dependency for those types.
     on one kind that merges loose styles in place.
   - `compile-themed-recipe.ts` keeps the recipe of each theme object in a
     `WeakMap`, with the recipe of the last theme apart.
+  - `check-config.ts` checks the styles of a config when a recipe is
+    created, so that a config from untyped code fails with a message
+    that names what is wrong.
 
 ## Fixture
 

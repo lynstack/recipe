@@ -6,6 +6,7 @@ import type {
 import { createSlotRecipeKind } from "@lynstack/recipe";
 
 import type { LooseSelection, LooseStyle } from "./compile-style-recipe.js";
+import { checkSlotStyleRecipeConfig } from "./check-config.js";
 import { styleKind } from "./compile-style-recipe.js";
 
 type LooseSlotStyles = Readonly<Record<string, LooseStyle | undefined>>;
@@ -33,10 +34,15 @@ type LooseSlotStyleRecipe = KindRecipe<
 
 const slotStyleRecipe = createSlotRecipeKind(styleKind);
 
-/** Returns the slot style recipe function for `config`. */
+/**
+ * Returns the slot style recipe function for `config`.
+ *
+ * @throws {TypeError} When a part of the config has the wrong shape.
+ */
 function buildSlotStyleRecipe(
   config: LooseSlotStyleRecipeConfig,
 ): LooseSlotStyleRecipe {
+  checkSlotStyleRecipeConfig(config);
   return slotStyleRecipe({
     base: config.base,
     cache: config.cache,
