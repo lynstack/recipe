@@ -142,6 +142,21 @@ describe(createSlotStyleRecipe, () => {
     >();
   });
 
+  it("lists the options and defaults of its variants", () => {
+    expect(button.variantOptions).toStrictEqual({
+      tone: ["primary", "ghost"],
+      size: ["sm", "md"],
+    });
+    expect(button.defaultVariants).toStrictEqual({
+      tone: "primary",
+      size: "md",
+    });
+    expectTypeOf(button.variantOptions).toEqualTypeOf<{
+      readonly tone: readonly ("primary" | "ghost")[];
+      readonly size: readonly ("sm" | "md")[];
+    }>();
+  });
+
   it("infers its variants", () => {
     expect(button()).toBeDefined();
     expectTypeOf<VariantsOf<typeof button>>().toEqualTypeOf<{

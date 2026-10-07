@@ -55,6 +55,10 @@ const rootStyle: StyleProp<ViewStyle> = button({ size: "md" }).root;
 const labelStyle: StyleProp<TextStyle> = button({ size: "md" }).label;
 const anyStyle: NativeStyle = box({ tone: "neutral" });
 const boxKeys: readonly ("disabled" | "size" | "tone")[] = box.variantKeys;
+const boxOptions: { readonly size: readonly ("lg" | "md")[] } =
+  box.variantOptions;
+const boxDefaults: { readonly disabled: "false" | "true" } =
+  box.defaultVariants;
 
 interface Theme {
   readonly colors: { readonly primary: string };
@@ -85,6 +89,8 @@ const tagLabelStyle: StyleProp<TextStyle> = tag(theme, {
   tone: "primary",
 }).label;
 const chipKeys: readonly "tone"[] = chip.withTheme(theme).variantKeys;
+const chipOptions: { readonly tone: readonly "primary"[] } =
+  chip.withTheme(theme).variantOptions;
 const iconChipStyle: StyleProp<ViewStyle> = iconChip(theme, {
   tone: "primary",
 });
@@ -98,10 +104,13 @@ export {
   anyChip,
   anyStyle,
   box,
+  boxDefaults,
   boxKeys,
+  boxOptions,
   button,
   chip,
   chipKeys,
+  chipOptions,
   chipStyle,
   iconBox,
   iconBoxStyle,

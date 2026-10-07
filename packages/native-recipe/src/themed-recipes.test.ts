@@ -123,6 +123,19 @@ describe(createThemedRecipes, () => {
     expect(recipe.variantKeys).toStrictEqual(["tone", "size"]);
   });
 
+  it("lists the options and defaults of the recipe of a theme", () => {
+    const recipe = button.withTheme(light);
+
+    expect(recipe.variantOptions).toStrictEqual({
+      tone: ["primary", "surface"],
+      size: ["sm", "md"],
+    });
+    expect(recipe.defaultVariants).toStrictEqual({ size: "md" });
+    expectTypeOf(recipe.defaultVariants).toEqualTypeOf<{
+      readonly size: "sm" | "md";
+    }>();
+  });
+
   it("builds slot styles from the theme", () => {
     expect(card(dark, { raised: true })).toStrictEqual({
       root: { borderRadius: 8, backgroundColor: "#111827" },

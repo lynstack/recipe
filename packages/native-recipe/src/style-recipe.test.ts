@@ -182,6 +182,21 @@ describe(createStyleRecipe, () => {
     >();
   });
 
+  it("lists the options and defaults of its variants", () => {
+    expect(badge.variantOptions).toStrictEqual({
+      tone: ["neutral", "danger"],
+      size: ["md", "sm"],
+    });
+    expect(badge.defaultVariants).toStrictEqual({ size: "md" });
+    expectTypeOf(badge.variantOptions).toEqualTypeOf<{
+      readonly tone: readonly ("neutral" | "danger")[];
+      readonly size: readonly ("md" | "sm")[];
+    }>();
+    expectTypeOf(badge.defaultVariants).toEqualTypeOf<{
+      readonly size: "md" | "sm";
+    }>();
+  });
+
   it("infers its variants", () => {
     expect(badge({ tone: "neutral" })).toBeDefined();
     expectTypeOf<VariantsOf<typeof badge>>().toEqualTypeOf<{

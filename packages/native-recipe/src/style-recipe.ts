@@ -132,7 +132,8 @@ type RecipeStyle<Variants, Base, Compounds, Composed = readonly []> = {
 
 /**
  * A function that returns the style of one element for a selection of
- * variants, with the names of those variants in `variantKeys`.
+ * variants, with the names of those variants in `variantKeys`, their
+ * options in `variantOptions`, and their defaults in `defaultVariants`.
  *
  * @typeParam Props - The variants the recipe accepts.
  * @typeParam Style - The style the recipe returns.
@@ -186,7 +187,9 @@ type ComposedStyleRecipe<Variants, DefaultedName, Style> = StyleRecipe<
  * option that the config does not declare adds no style, and its style is
  * built on every call. Properties of the selection that are not variants
  * are ignored. The recipe's `variantKeys` property lists the names of its
- * variants.
+ * variants, `variantOptions` the names of the options of each, and
+ * `defaultVariants` the option each uses when the recipe is called without
+ * it.
  *
  * A recipe composes the recipes listed in its config's `composes` as if
  * their configs and its own were one: their base styles first, then the
@@ -237,6 +240,8 @@ type ComposedStyleRecipe<Variants, DefaultedName, Style> = StyleRecipe<
  * button({ tone: "danger" }) === button({ tone: "danger" }); // => true
  *
  * button.variantKeys; // => ["tone", "size"]
+ * button.variantOptions; // => { tone: ["neutral", "danger"], size: ["sm", "md"] }
+ * button.defaultVariants; // => { size: "md" }
  *
  * const iconButton = createStyleRecipe({
  *   composes: [button],

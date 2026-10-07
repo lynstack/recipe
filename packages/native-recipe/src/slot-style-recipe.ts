@@ -118,7 +118,8 @@ interface SlotStyleRecipeConfig<
 
 /**
  * A function that returns the style of every slot for a selection of
- * variants, with the names of those variants in `variantKeys`.
+ * variants, with the names of those variants in `variantKeys`, their
+ * options in `variantOptions`, and their defaults in `defaultVariants`.
  *
  * @typeParam Props - The variants the recipe accepts.
  * @typeParam Styles - The style of each slot, keyed by slot name.
@@ -176,8 +177,9 @@ type ComposedSlotStyleRecipe<
  * variant, whose only options are `"true"` and `"false"` and which defaults
  * to `false`. An option that the config does not declare adds no style, and
  * its styles are built on every call. Properties of the selection that are
- * not variants are ignored. The recipe's `variantKeys` property lists the
- * names of its variants.
+ * not variants are ignored. Its `variantKeys`, `variantOptions`, and
+ * `defaultVariants` properties list its variants as those of
+ * `createStyleRecipe` do.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first.
@@ -225,6 +227,7 @@ type ComposedSlotStyleRecipe<
  * button({ size: "sm" }) === styles; // => true
  *
  * button.variantKeys; // => ["tone", "size"]
+ * button.defaultVariants; // => { tone: "primary", size: "md" }
  *
  * const iconButton = createSlotStyleRecipe({
  *   composes: [button],

@@ -98,17 +98,19 @@ A theme that is no longer referenced is released with its recipe.
 ## `withTheme`
 
 `withTheme` returns the recipe of one theme: a plain recipe, the same one
-for the same theme object, with the names of its variants in
-`variantKeys`.
+for the same theme object, with its variants listed in `variantKeys`,
+`variantOptions`, and `defaultVariants`.
 
 ```ts
 const lightButton = button.withTheme(light);
 
 lightButton({ tone: "surface" }) === button(light, { tone: "surface" }); // => true
 lightButton.variantKeys; // => ["tone"]
+lightButton.variantOptions; // => { tone: ["primary", "surface"] }
+lightButton.defaultVariants; // => { tone: "primary" }
 ```
 
-Use it to read `variantKeys`, or to pass a recipe to code that takes a
+Use it to read the lists of the variants, or to pass a recipe to code that takes a
 plain recipe, such as a child component that does not know about themes.
 
 ## Composing themed recipes

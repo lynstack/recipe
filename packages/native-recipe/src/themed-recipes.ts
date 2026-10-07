@@ -51,8 +51,9 @@ type ThemedRecipe<
   : (theme: Theme, props: Props) => Result) & {
   /**
    * Returns the recipe of `theme`, the same recipe for the same theme
-   * object, with the names of its variants in `variantKeys`. A themed
-   * recipe composes it with the theme its own config is built from.
+   * object, with its variants listed in `variantKeys`, `variantOptions`,
+   * and `defaultVariants`. A themed recipe composes it with the theme its
+   * own config is built from.
    */
   readonly withTheme: (theme: Theme) => KindRecipe<Props, Result, Composition>;
 };
@@ -223,6 +224,7 @@ interface ThemedRecipeCreators<Theme extends object> {
  * button(light) === button(light, { tone: "primary" }); // => true
  *
  * button.withTheme(light).variantKeys; // => ["tone"]
+ * button.withTheme(light).defaultVariants; // => { tone: "primary" }
  *
  * const iconButton = createStyleRecipe((theme) => ({
  *   composes: [button.withTheme(theme)],

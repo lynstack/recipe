@@ -55,6 +55,7 @@ const badge = createStyleRecipe({
 });
 badge({ tone: "danger", outlined: true }); // a frozen style
 badge.variantKeys; // => ["tone", "outlined"]
+badge.variantOptions; // => { tone: ["neutral", "danger"], outlined: ["false", "true"] }
 
 // Several elements: every style is keyed by slot, and compound variants
 // take `styles`, not `style`.

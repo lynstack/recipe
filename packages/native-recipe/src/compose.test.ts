@@ -94,6 +94,7 @@ describe("a style recipe that composes recipes", () => {
 
   it("accepts the variants of every config", () => {
     expect(button.variantKeys).toStrictEqual(["size", "disabled", "tone"]);
+    expect(button.variantOptions.size).toStrictEqual(["sm", "md", "lg"]);
     expectTypeOf<VariantsOf<typeof button>>().toEqualTypeOf<{
       readonly size?: "sm" | "md" | "lg" | undefined;
       readonly disabled?: boolean | "true" | "false" | undefined;
