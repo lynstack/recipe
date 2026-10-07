@@ -1,0 +1,142 @@
+---
+title: class-recipe cookbook
+description: "Ready-to-adapt class-recipe recipes for common components, written with Tailwind CSS and free of conflicting classes: button, badge, card, alert, dialog, and form field."
+sidebar:
+  label: Cookbook
+---
+
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+
+Recipes for common components, written with Tailwind CSS. Each one is
+conflict-free: it sets each CSS property of an element in one place, so it
+works with the default join, without tailwind-merge (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)).
+Copy one, then change its classes to match your design.
+
+## Button
+
+`state` replaces separate `loading` and `disabled` variants, which would
+both set the cursor and the opacity:
+
+<RecipePlayground name="class-recipe/cookbook/button" />
+
+The component derives `state` from its props:
+
+```tsx
+import type { ComponentProps } from "react";
+import type { VariantsOf } from "@lynstack/class-recipe";
+
+type ButtonProps = ComponentProps<"button"> &
+  Omit<VariantsOf<typeof button>, "state"> & { readonly loading?: boolean };
+
+export function Button({
+  tone,
+  size,
+  loading = false,
+  disabled = false,
+  className,
+  ...props
+}: ButtonProps) {
+  const state = disabled ? "disabled" : loading ? "loading" : "idle";
+  return (
+    <button
+      className={button({ tone, size, state, className })}
+      disabled={disabled || loading}
+      aria-busy={loading}
+      {...props}
+    />
+  );
+}
+```
+
+## Badge
+
+The text color depends on both `tone` and `outlined`, so only the
+compound variants set it, one for each combination:
+
+<RecipePlayground name="class-recipe/cookbook/badge" />
+
+## Card
+
+<RecipePlayground name="class-recipe/cookbook/card" />
+
+```tsx
+const classes = card({ size: "sm" });
+
+<section className={classes.root}>
+  <header className={classes.header}>
+    <h2 className={classes.title}>Usage</h2>
+    <p className={classes.description}>This month</p>
+  </header>
+  <div className={classes.body}>…</div>
+  <footer className={classes.footer}>…</footer>
+</section>;
+```
+
+## Alert
+
+One choice of `tone` styles the root, the icon, the title, and the
+description together:
+
+<RecipePlayground name="class-recipe/cookbook/alert" />
+
+## Dialog
+
+The recipe styles the overlay and the content of a dialog. Use it with
+the dialog primitive of your choice, such as the `<dialog>` element or a
+headless component library:
+
+<RecipePlayground name="class-recipe/cookbook/dialog" />
+
+## Form field
+
+A label, an input, and a message, whose colors follow `invalid`:
+
+<RecipePlayground name="class-recipe/cookbook/field" />
+
+```tsx
+import { useId, type ComponentProps } from "react";
+import type { VariantsOf } from "@lynstack/class-recipe";
+
+type FieldProps = Omit<ComponentProps<"input">, "size"> &
+  VariantsOf<typeof field> & {
+    readonly label: string;
+    readonly message?: string;
+  };
+
+export function Field({ label, message, size, invalid, ...props }: FieldProps) {
+  const id = useId();
+  const classes = field({ size, invalid });
+  return (
+    <div className={classes.root}>
+      <label htmlFor={id} className={classes.label}>
+        {label}
+      </label>
+      <input
+        id={id}
+        className={classes.input}
+        aria-invalid={invalid}
+        aria-describedby={message === undefined ? undefined : `${id}-message`}
+        {...props}
+      />
+      {message !== undefined && (
+        <p id={`${id}-message`} className={classes.message}>
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+`size` is also an attribute of `<input>`, so the props omit it (see
+[Building components](/recipe/class-recipe/building-components/#variant-names-that-html-also-uses)).
+
+## Next steps
+
+- [Building components](/recipe/class-recipe/building-components/) shows
+  how to type and split the props of these components.
+- [Composing recipes](/recipe/class-recipe/composing/) shares classes
+  between recipes, such as the border of every form control.
+- [Using with shadcn/ui](/recipe/class-recipe/shadcn-ui/) converts the
+  components of shadcn/ui.

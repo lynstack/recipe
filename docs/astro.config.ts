@@ -166,6 +166,7 @@ export default defineConfig({
               },
               {
                 items: [
+                  "class-recipe/cookbook",
                   "class-recipe/editor-setup",
                   "class-recipe/agent-skill",
                   { label: "Benchmarks", slug: "class-recipe/performance" },
