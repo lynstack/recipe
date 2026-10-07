@@ -266,6 +266,7 @@ export default defineConfig({
               {
                 items: [
                   { label: "Checklist", slug: "recipe/practices" },
+                  "recipe/glossary",
                   { label: "Benchmarks", slug: "recipe/performance" },
                   changelogs.recipe,
                 ],
