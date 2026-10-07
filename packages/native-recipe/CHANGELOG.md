@@ -5,6 +5,18 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.5.0 — 2026-10-07
+
+Runs with React Native 0.76 and later, and its types reject more configs
+that never give a style.
+
+- The peer dependency on React Native starts at 0.76, as in Expo SDK 52,
+  instead of 0.80.
+- The types reject an array of styles, or a number, as a style in a
+  config, with every React Native version. Before, they passed the types
+  with React Native 0.79 and earlier, and the number with every version,
+  and threw only when the recipe was created.
+
 ## 1.4.0 — 2026-10-07
 
 A config with the wrong shape fails with a message that names what is

@@ -1,6 +1,6 @@
 {
   "name": "@lynstack/native-recipe",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Fast, type-safe React Native style recipes with variants, compound variants, and slots.",
   "keywords": [
     "react-native",
