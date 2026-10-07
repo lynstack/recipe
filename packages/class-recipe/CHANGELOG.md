@@ -4,6 +4,35 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.3.0 — 2026-10-07
+
+A recipe can build on other recipes with `composes`.
+
+- `cva` and `sva` take `composes`, a list of recipes of the package whose
+  configs they add to their own, as if written in one config: their base
+  classes first, the classes of each option in the order of the recipes,
+  their compound variants first, and the last default given for each
+  variant. The recipe accepts the variants of every recipe it composes. A
+  recipe composed several times counts once.
+- A slot recipe has the slots of the slot recipes it composes, theirs
+  first, gives classes to any of them, and adds `classNames` to each.
+- A recipe of `createRecipes` composes any recipe of the package and
+  joins the classes with its own join.
+- A composed recipe joins the classes that several recipes give one
+  option into one string when it is created, and builds its class names
+  as fast as the one config it stands for, with or without the cache.
+- A join passed to `createRecipes` must return the same class name however
+  the classes are split into class strings, as `cx` and `twMerge` do. A
+  recipe already passed its cached class name to the join as one string
+  with `className`; a composed recipe also passes the classes of an option
+  that several recipes give as one string.
+- `Recipe` and `SlotRecipe` take what they pass on to the recipes that
+  compose them as an optional type parameter.
+- The docs migrate `extend` of tailwind-variants to `composes`, and the
+  agent skill teaches to compose a shared recipe rather than copy its
+  config, and not to set again a property that it sets.
+- Depends on `@lynstack/recipe` through the range `^1.4.0`.
+
 ## 1.2.0 — 2026-10-06
 
 - `cva` and `sva` take `cache` in their config, which overrides the
