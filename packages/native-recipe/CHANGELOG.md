@@ -5,6 +5,23 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.4.0 — 2026-10-07
+
+A config with the wrong shape fails with a message that names what is
+wrong.
+
+- Creating a style recipe or a slot style recipe, or the recipe of a
+  theme, checks the styles of its config, which the types already check,
+  so that a config from untyped code throws a `TypeError` that names the
+  part to fix: a style that is not an object, something else than the
+  style of each slot in a slot style recipe, or a compound variant
+  without `style` or `styles`. Before, such a config gave wrong styles,
+  ignored them, or threw an unrelated error.
+- An option of a style recipe that is a number or a string, which the
+  types accept but which never gave a style, now throws the same
+  `TypeError`.
+- Depends on `@lynstack/recipe` through the range `^1.6.0`.
+
 ## 1.3.0 — 2026-10-07
 
 A recipe lists the options and defaults of its variants, so that a
