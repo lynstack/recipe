@@ -5,39 +5,168 @@ description: "Design class name recipes whose classes never conflict, without ta
 
 import RecipeExample from "../../../components/RecipeExample.astro";
 
-By default, classes are joined with `cx`, which keeps every class. When two
-classes set the same CSS property, such as `px-4` and `px-2`, the one
-defined later in the stylesheet wins, whatever their order in the class
-name. A recipe avoids this by construction when it sets each CSS property
-of an element in one place:
+By default, a recipe joins its classes with `cx`, which keeps every class.
+Two classes **conflict** when they set the same CSS property on one
+element, such as `px-4` and `px-2`. Then the class defined later in the
+stylesheet wins, whatever their order in the class name. The result can
+look right on one page and wrong on another.
 
-- **Set each property in `base` or in one variant, never in both.** Give
-  every option of the variant its own class, rather than a default in
-  `base` that an option overrides.
-- **Turn props that set the same property into one variant.** For
-  example, derive a `state` of `idle`, `loading`, or `disabled` from the
-  `loading` and `disabled` props, rather than a variant for each.
-- **Set a property that depends on several variants only in compound
-  variants**, with one compound variant for each combination.
-- **Compose a shared recipe rather than copying its config**, and set in
-  the recipe that composes it only properties that the shared recipe
-  leaves alone: `composes` adds classes after the shared recipe's, and
-  never replaces them (see
-  [Composing recipes](/recipe/class-recipe/cva/#composing-recipes)).
-- **Add an option rather than an override.** `className`, `classNames`,
-  and compound variants add classes after the variants; they never remove
-  one.
+You can avoid conflicts by design: set each CSS property of an element in
+one place only. Then there is nothing to resolve, and you need no
+`tailwind-merge`. The rules below show how. Each one shows a recipe that
+conflicts, then the same recipe without the conflict.
+
+## Set each property in `base` or in one variant
+
+Never set a property in `base` and again in a variant. Give every option
+of the variant its own class instead, rather than a default in `base`
+that an option overrides.
+
+Before, `base` and `invalid` both set the border color, so an invalid
+input has two border colors:
 
 <RecipeExample
   name="class-recipe/conflict-free-recipes/conflicting"
   calls={[{ invalid: true }]}
 />
 
+After, only the variant sets it, with one class for each option:
+
 <RecipeExample
   name="class-recipe/conflict-free-recipes/input"
+  calls={[{}, { invalid: true }]}
+/>
+
+Put a class that every option shares in `base`, and a class that differs
+between options in every option of the variant. Declare an option even
+when it adds no classes, with `""`, so that every choice has a name that
+callers can pass.
+
+## Turn props that set the same property into one variant
+
+When two props set the same property, such as `loading` and `disabled`,
+which both set the cursor and the opacity, a call can choose both:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/state-before"
+  calls={[{ loading: true, disabled: true }]}
+/>
+
+Derive one variant from the props instead, in the component. The recipe
+then sees a single choice:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/state-after"
+  calls={[{ state: "disabled" }]}
+/>
+
+```tsx
+function buttonState(loading: boolean, disabled: boolean) {
+  if (disabled) {
+    return "disabled";
+  }
+  return loading ? "loading" : "idle";
+}
+
+button({ state: buttonState(loading, disabled) });
+```
+
+## Set a property that depends on several variants only in compound variants
+
+The padding of a button can depend on two variants: its size, and whether
+it holds only an icon. When `size` sets the padding and `iconOnly` sets it
+again, an icon button gets two paddings, and one width for every size:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/compound-before"
+  calls={[{ iconOnly: true }]}
+/>
+
+No single variant should set such a property. Set it only in compound
+variants, with one compound variant for each combination:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/compound-after"
+  calls={[{}, { size: "sm", iconOnly: true }]}
+/>
+
+The options of `iconOnly` add no classes of their own: the compound
+variants hold all of its classes.
+
+## Compose a shared recipe, and set only what it leaves alone
+
+When several components share classes and variants, such as the border
+and the sizes of every form control, put them in one recipe and list it in
+the `composes` of the others (see
+[Composing recipes](/recipe/class-recipe/composing/)). A recipe that
+composes another adds its classes after the other's; it never replaces
+them. So it must not set a property that the other recipe sets.
+
+Before, `control` sets the height in `size`, and `input` sets it again:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/composed-before"
+  calls={[{}]}
+/>
+
+After, `input` sets only properties that `control` leaves alone:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/composed-after"
   calls={[{ invalid: true }]}
 />
 
-These rules, with more examples, ship with the package as an
+To change a property that the shared recipe sets, add an option to the
+shared recipe, or move the property out of it into each recipe that
+composes it.
+
+## Add an option rather than an override
+
+`className`, `classNames`, and compound variants add classes after the
+variants; they never remove one. Passing `className` to change a property
+that the recipe sets leaves both classes. Add an option to the variant that
+owns the property instead, such as `compact` below. Compare the first
+call, which overrides the padding, with the second, which chooses the
+option:
+
+<RecipeExample
+  name="class-recipe/conflict-free-recipes/option"
+  calls={[{ size: "md", className: "px-2" }, { size: "compact" }]}
+/>
+
+Use `className` and `classNames` only for properties that the recipe does
+not set, such as margins, widths, or positions.
+
+## Pick classes with a recipe, not a lookup
+
+Classes that depend on a prop belong in a recipe, not in a hand-written
+object or a ternary such as `tone === "danger" ? "bg-red-50" : "bg-blue-50"`.
+A recipe keeps every option in one place, checks the options with
+TypeScript, and caches the result. `cx` is fine for a class that sets a
+property the recipe leaves alone, such as `cx(classes.label, loading && "invisible")`.
+
+## Check a recipe
+
+For each element, list the CSS properties that its classes set. Then ask:
+
+- Does a property appear in more than one of `base`, a variant, or
+  compound variants that can apply together?
+- Does a recipe that composes another set a property that the other
+  already sets?
+- Does a call pass `className` or `classNames` to change a property that
+  the recipe sets?
+
+When the answer to each is no, the recipe is conflict-free.
+
+These rules ship with the package as an
 [agent skill](/recipe/class-recipe/agent-skill/), which teaches coding
 agents to follow them.
+
+## Next steps
+
+- [Merging classes](/recipe/class-recipe/tailwind-merge/) resolves
+  conflicts with `twMerge` instead, when you cannot avoid them.
+- [Cookbook](/recipe/class-recipe/cookbook/) has conflict-free recipes for
+  common components.
+- [Agent skill](/recipe/class-recipe/agent-skill/) teaches coding agents
+  these rules.

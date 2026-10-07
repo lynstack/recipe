@@ -52,6 +52,59 @@ type ButtonVariants = VariantsOf<typeof button>;
 See [Building components](/recipe/class-recipe/building-components/) for
 using it in a component.
 
+## Props that include `className`
+
+`VariantsOf` leaves out `className` and `classNames`. To type everything a
+recipe accepts, overrides included, read the type of its argument with
+`Parameters`:
+
+```ts
+type ButtonProps = Parameters<typeof button>[0];
+// => { readonly tone: "neutral" | "danger";
+//      readonly size?: "sm" | "md" | undefined;
+//      readonly className?: string | undefined }
+```
+
+When every variant has a default, as in a `stack` recipe with a default
+`gap`, the argument is optional, so its type includes `undefined`. Remove
+it with `NonNullable`:
+
+```ts
+type StackProps = NonNullable<Parameters<typeof stack>[0]>;
+```
+
+You can also write the type yourself, from `VariantsOf`:
+
+```ts
+import type { SlotClasses, VariantsOf } from "@lynstack/class-recipe";
+
+type ButtonProps = VariantsOf<typeof button> & {
+  readonly className?: string | undefined;
+};
+
+type CardProps = VariantsOf<typeof card> & {
+  readonly classNames?: SlotClasses<"root" | "title"> | undefined;
+};
+```
+
+### `RecipeProps` takes a config, not a recipe
+
+The package exports `RecipeProps` and `SlotRecipeProps`, but they build
+the props from the parts of a config, not from a recipe.
+`RecipeProps<Variants, DefaultedName>` takes two type arguments: the type
+of the config's `variants`, and the names of the variants that have a
+default. So `RecipeProps<typeof button>` is an error:
+
+```ts
+type Props = RecipeProps<typeof button>;
+// Error: Generic type 'RecipeProps' requires 2 type argument(s).
+```
+
+`SlotRecipeProps<Slot, Variants, DefaultedName>` takes the slot names
+first. Use them only in code that builds on configs, such as a function
+that creates recipes. For a recipe, use `Parameters` or `VariantsOf` as
+above.
+
 ## Reserved names
 
 `className` and `classNames` are the names of the overrides, so they
@@ -62,8 +115,9 @@ cannot be variant names: a config that declares either is a type error.
 When the classes of a recipe come from outside the code, such as a CMS or
 a theme file, type the data with the names of its variants and options.
 The recipe then checks every call as above. Write the type with `type`,
-not `interface`, since an interface does not satisfy the type of
-`variants`:
+not `interface`. An interface has no index signature, so it does not
+satisfy the type of `variants`, and TypeScript reports
+"Index signature for type 'string' is missing in type …":
 
 ```ts
 import { sva } from "@lynstack/class-recipe";
@@ -134,3 +188,10 @@ such as `RecipeConfig` and `SlotRecipeProps`, for code that builds on
 them; see [Exports](/recipe/class-recipe/exports/). For a library of
 recipes of other values, build on the types of
 [`@lynstack/recipe`](/recipe/recipe/typescript/).
+
+## Next steps
+
+- [Building components](/recipe/class-recipe/building-components/) uses
+  these types in components.
+- [All exports](/recipe/class-recipe/exports/) lists every type.
+- [FAQ](/recipe/class-recipe/faq/) answers common type errors.

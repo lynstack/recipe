@@ -135,6 +135,8 @@ export default defineConfig({
                     slug: "class-recipe/tailwind-merge",
                   },
                   "class-recipe/building-components",
+                  "class-recipe/shadcn-ui",
+                  "class-recipe/frameworks",
                   { label: "Typing recipes", slug: "class-recipe/typescript" },
                 ],
                 label: "Guides",
