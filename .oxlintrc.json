@@ -120,7 +120,7 @@
   ],
   // The examples are apps that readers open and edit, written as the docs
   // write them, outside the workspace.
-  "ignorePatterns": ["dist", ".astro", "examples"],
+  "ignorePatterns": ["dist", ".astro", "examples", "compat"],
   "env": {
     "builtin": true
   }

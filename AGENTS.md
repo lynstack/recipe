@@ -59,10 +59,19 @@ it before working in that folder.
   `docs/src/packages.ts` builds. The examples are not in the workspace:
   they install the published packages, at the exact version of their last
   release, with npm.
+- `compat` checks the packed packages where the docs say they run.
+  `compat/versions.json` holds the oldest Node.js, Bun, Deno, and
+  TypeScript that the packages support, and the docs read their
+  requirements from it. `smoke.mjs` imports each package and `smoke.cjs`
+  requires it; the fixture of each package is compiled outside it, with
+  the types of React Native that `compat/package.json` installs with npm.
+  To support an older or newer minimum, change `versions.json`; never
+  write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
   named after it, `ci.yml`, which checks what the packages share and the
-  docs, and `docs.yml`, which builds the docs and deploys them to GitHub
-  Pages on every push to `main` that changes them.
+  docs, `compat.yml`, which runs `compat` on the oldest and the newest of
+  each runtime and TypeScript, and `docs.yml`, which builds the docs and
+  deploys them to GitHub Pages on every push to `main` that changes them.
 
 ## Commands
 

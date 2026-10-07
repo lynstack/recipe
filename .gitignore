@@ -13,3 +13,4 @@ coverage/
 *.log
 *.tsbuildinfo
 **/fixtures/consumer/out/
+compat/fixtures/
