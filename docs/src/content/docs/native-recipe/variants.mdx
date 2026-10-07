@@ -64,6 +64,11 @@ is `false`.
 Here `invalid` declares both options, so `false` has a style of its own.
 `disabled` declares only `true`.
 
+When a component also passes a boolean variant to an element, such as
+`disabled` to a `Pressable`, type that prop as `boolean`. `VariantsOf`
+allows the string `"false"`, which is truthy, so `disabled="false"` would
+disable the pressable.
+
 ## Option names that are numbers
 
 An option whose name is a number accepts that number as well as the

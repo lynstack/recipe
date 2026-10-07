@@ -74,6 +74,11 @@ The recipe accepts the booleans `true` and `false`, and also the strings
   calls={[{}, { invalid: true, disabled: true }]}
 />
 
+When a component also passes a boolean variant to an element, such as
+`disabled` to a `<button>`, type that prop as `boolean`. `VariantsOf`
+allows the string `"false"`, which is truthy, so `disabled="false"` would
+disable the button.
+
 ## Option names that are numbers
 
 When an option's name is a number, the recipe accepts the number and the
