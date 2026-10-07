@@ -241,10 +241,11 @@ describe(createThemedRecipes, () => {
         raised: { true: { header: { color: theme.colors.primary } } },
       },
     }));
-    const token = createStyleRecipe((theme) => ({
-      // @ts-expect-error the theme has no spacing
-      variants: { size: { sm: { padding: theme.spacing } } },
-    }));
+    const token = createStyleRecipe((theme) => {
+      expectTypeOf(theme).toEqualTypeOf<Theme>();
+      expectTypeOf(theme).not.toHaveProperty("spacing");
+      return { variants: { size: { sm: { padding: theme.radius } } } };
+    });
 
     expect(defaultOption).toBeTypeOf("function");
     expect(compoundOption).toBeTypeOf("function");

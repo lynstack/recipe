@@ -21,9 +21,22 @@ describe("a style recipe's config from untyped code", () => {
       // @ts-expect-error: base is a style object.
       createStyleRecipe({ base: [{ padding: 8 }], variants: {} }),
     ).toThrow(new TypeError("`base` needs a style object."));
+    const styles = [{ padding: 8 }];
     expect(() =>
-      // The types accept a number here, which never was a style.
+      // @ts-expect-error: base is a style object.
+      createStyleRecipe({ base: styles, variants: {} }),
+    ).toThrow(new TypeError("`base` needs a style object."));
+    expect(() =>
+      // @ts-expect-error: an option's style is an object.
       createStyleRecipe({ variants: { size: { sm: 32 } } }),
+    ).toThrow(
+      new TypeError(
+        'The option "sm" of the variant "size" needs a style object.',
+      ),
+    );
+    expect(() =>
+      // @ts-expect-error: an option's style is an object.
+      createStyleRecipe({ variants: { size: { sm: [{ padding: 8 }] } } }),
     ).toThrow(
       new TypeError(
         'The option "sm" of the variant "size" needs a style object.',

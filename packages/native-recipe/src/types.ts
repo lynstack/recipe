@@ -17,9 +17,12 @@ type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
  * style has, which the `NativeStyle` constraint alone lets through next to
  * known ones.
  */
-type NoUnknownProperties<Style> = Readonly<
-  Partial<Record<Exclude<KeyOfEach<Style>, StyleKey>, never>>
->;
+type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never]
+  ? unknown
+  : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
+
+/** The keys of the styles in `Style` that no React Native style has. */
+type UnknownKey<Style> = Exclude<KeyOfEach<Style>, StyleKey>;
 
 /** The values that the styles in the union `Style` give to `Key`. */
 type PropertyOfEach<Style, Key extends PropertyKey> = {
