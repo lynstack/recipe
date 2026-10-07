@@ -1,6 +1,8 @@
 ---
 title: createSlotStyleRecipe
 description: "Create a slot style recipe that maps variants to the styles of several React Native elements of a component, such as a card's container, title, and body."
+sidebar:
+  badge: Updated
 head:
   - tag: title
     content: "createSlotStyleRecipe: React Native slot styles | lynstack recipe"
@@ -32,6 +34,7 @@ takes a style:
 
 | Property           | Description                                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own; see [Composing slot recipes](#composing-slot-recipes). |
 | `slots`            | The names of the slots, in the order of the result.                                                                          |
 | `base`             | Optional. The style each slot always has.                                                                                    |
 | `variants`         | For each variant name, the style of each slot for each of its options.                                                       |
@@ -76,4 +79,17 @@ A compound variant gives the style to add to each slot it names, under
 <RecipeExample
   name="native-recipe/create-slot-style-recipe/field"
   calls={[{ invalid: true, disabled: true }]}
+/>
+
+## Composing slot recipes
+
+`composes` lists slot style recipes whose configs the slot recipe adds to
+its own, as a style recipe does (see
+[Composing recipes](/recipe/native-recipe/create-style-recipe/#composing-recipes)).
+The slot recipe has the slots of each, theirs first, and gives styles to
+any of them:
+
+<RecipeExample
+  name="native-recipe/create-slot-style-recipe/dialog"
+  calls={[{ tone: "inverted", compact: true }]}
 />

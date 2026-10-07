@@ -3,6 +3,7 @@ import type { Example } from "../../example.ts";
 import { badge } from "../../recipes/native-recipe/create-style-recipe/badge.ts";
 import { button } from "../../recipes/native-recipe/create-style-recipe/button.ts";
 import { heading } from "../../recipes/native-recipe/create-style-recipe/heading.ts";
+import { iconButton } from "../../recipes/native-recipe/create-style-recipe/icon-button.ts";
 import { input } from "../../recipes/native-recipe/create-style-recipe/input.ts";
 import { stack } from "../../recipes/native-recipe/create-style-recipe/stack.ts";
 import { text } from "../../recipes/native-recipe/create-style-recipe/text.ts";
@@ -38,6 +39,18 @@ const examples = {
     options: { level: ["1", "2"] },
     recipe: heading,
     required: ["level"],
+    valuesOf: elementValue,
+  }),
+  "icon-button": defineExample({
+    kind: "style",
+    name: "iconButton",
+    options: {
+      outlined: ["false", "true"],
+      size: ["sm", "md"],
+      tone: ["neutral", "danger"],
+    },
+    recipe: iconButton,
+    required: ["tone"],
     valuesOf: elementValue,
   }),
   input: defineExample({

@@ -1,6 +1,14 @@
-import type { KindRecipe, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindRecipe,
+  ComposedDefaultedName,
+  ComposedVariants,
+  KindRecipe,
+  KindVariants,
+  RecipeComposition,
+} from "@lynstack/recipe";
 
 import type {
+  ComposedStyle,
   CompoundCondition,
   DefaultVariants,
   KeyOfEach,
@@ -54,13 +62,22 @@ interface StyleCompoundVariant<Variants, Style = NativeStyle> {
  * @typeParam Base - The base style.
  * @typeParam Compounds - The compound variants.
  * @typeParam DefaultedName - The names of the variants that have a default.
+ * @typeParam Composed - The types of the recipes that the recipe composes.
  */
 interface StyleRecipeConfig<
   Variants,
   Base,
   Compounds,
-  DefaultedName extends keyof Variants,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindRecipe<NativeStyle>[] = readonly [],
 > {
+  /**
+   * Recipes whose config the recipe adds to its own, in order, as if it
+   * were written in one config: their base styles first, the style of each
+   * of their options before its own, and their compound variants first. A
+   * recipe composed several times counts once.
+   */
+  readonly composes?: Composed | undefined;
   /** The style applied whatever the variants. */
   readonly base?: (Base & NativeStyle & NoUnknownProperties<Base>) | undefined;
   /** For each variant name, the style of each of its options. */
@@ -72,13 +89,14 @@ interface StyleRecipeConfig<
   readonly compoundVariants?:
     | (Compounds &
         readonly StyleCompoundVariant<
-          NoInfer<Variants>,
+          NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownProperties<CompoundStyle<Compounds>>
         >[])
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    DefaultVariants<Variants, DefaultedName> | undefined;
+    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | undefined;
   /**
    * Whether the recipe caches the style of each declared selection.
    * Defaults to `true`.
@@ -86,9 +104,15 @@ interface StyleRecipeConfig<
   readonly cache?: boolean | undefined;
 }
 
-/** Every style that a recipe's config declares, as a union. */
-type DeclaredStyle<Variants, Base, Compounds> =
-  Base | OptionValue<Variants> | CompoundStyle<Compounds>;
+/**
+ * Every style that a recipe's config declares, and the style of each recipe
+ * it composes, as a union.
+ */
+type DeclaredStyle<Variants, Base, Compounds, Composed = readonly []> =
+  | Base
+  | OptionValue<Variants>
+  | CompoundStyle<Compounds>
+  | ComposedStyle<Composed>;
 
 type CompoundStyle<Compounds> = Compounds extends readonly (infer Compound)[]
   ? Compound extends { readonly style: infer Style }
@@ -97,13 +121,13 @@ type CompoundStyle<Compounds> = Compounds extends readonly (infer Compound)[]
   : never;
 
 /**
- * The style a recipe returns: each property its config declares, with the
- * types the config gives it.
+ * The style a recipe returns: each property its config and the recipes it
+ * composes declare, with the types they give it.
  */
-type RecipeStyle<Variants, Base, Compounds> = {
+type RecipeStyle<Variants, Base, Compounds, Composed = readonly []> = {
   readonly [
-    Key in KeyOfEach<DeclaredStyle<Variants, Base, Compounds>>
-  ]?: PropertyOfEach<DeclaredStyle<Variants, Base, Compounds>, Key>;
+    Key in KeyOfEach<DeclaredStyle<Variants, Base, Compounds, Composed>>
+  ]?: PropertyOfEach<DeclaredStyle<Variants, Base, Compounds, Composed>, Key>;
 };
 
 /**
@@ -112,8 +136,32 @@ type RecipeStyle<Variants, Base, Compounds> = {
  *
  * @typeParam Props - The variants the recipe accepts.
  * @typeParam Style - The style the recipe returns.
+ * @typeParam Composition - What the recipe passes on to the recipes that
+ *   compose it, which its type carries under a `~composition` property that
+ *   exists in the type only. Without it, the type does not allow composing
+ *   the recipe.
  */
-type StyleRecipe<Props, Style> = KindRecipe<Props, Style>;
+type StyleRecipe<Props, Style, Composition = unknown> = KindRecipe<
+  Props,
+  Style,
+  Composition
+>;
+
+/**
+ * The recipe of a config whose variants, with those of the recipes it
+ * composes, are `Variants`, whose variants with a default are
+ * `DefaultedName`, and which returns `Style`.
+ */
+type ComposedStyleRecipe<Variants, DefaultedName, Style> = StyleRecipe<
+  VariantSelection<Variants, Extract<DefaultedName, keyof Variants>>,
+  Style,
+  RecipeComposition<
+    Variants,
+    Extract<DefaultedName, keyof Variants>,
+    NativeStyle,
+    undefined
+  >
+>;
 
 /**
  * Creates a style recipe: a function that returns the style of one element
@@ -140,6 +188,12 @@ type StyleRecipe<Props, Style> = KindRecipe<Props, Style>;
  * are ignored. The recipe's `variantKeys` property lists the names of its
  * variants.
  *
+ * A recipe composes the recipes listed in its config's `composes` as if
+ * their configs and its own were one: their base styles first, then the
+ * style of each option, in the order of the recipes, then their compound
+ * variants before its own; the default of a variant is the last one given.
+ * A recipe composed several times counts once.
+ *
  * Each style is checked against the styles of React Native, as in
  * `StyleSheet.create`, and the recipe's result keeps the types of the
  * properties the config declares.
@@ -151,8 +205,10 @@ type StyleRecipe<Props, Style> = KindRecipe<Props, Style>;
  *   `config.compoundVariants`.
  * @typeParam DefaultedName - The names of the variants that have a
  *   default, inferred from `config.defaultVariants`.
- * @param config - The base style, variants, compound variants, and default
- *   variants of the recipe.
+ * @typeParam Composed - The types of the recipes it composes, inferred from
+ *   `config.composes`.
+ * @param config - The recipes it composes, and the base style, variants,
+ *   compound variants, and default variants of the recipe.
  * @returns The recipe.
  *
  * @example
@@ -181,19 +237,32 @@ type StyleRecipe<Props, Style> = KindRecipe<Props, Style>;
  * button({ tone: "danger" }) === button({ tone: "danger" }); // => true
  *
  * button.variantKeys; // => ["tone", "size"]
+ *
+ * const iconButton = createStyleRecipe({
+ *   composes: [button],
+ *   variants: { size: { icon: { height: 40, width: 40 } } },
+ * });
+ *
+ * iconButton({ tone: "neutral", size: "icon" });
+ * // => { alignItems: "center", borderRadius: 8, backgroundColor: "#f3f4f6", height: 40, width: 40 }
  * ```
  */
 function createStyleRecipe<
   const Variants extends StyleRecipeVariants,
   const Base extends NativeStyle = never,
-  const Compounds extends readonly StyleCompoundVariant<NoInfer<Variants>>[] =
+  const Compounds extends readonly StyleCompoundVariant<
+    NoInfer<ComposedVariants<Composed, Variants>>
+  >[] = readonly [],
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
     readonly [],
-  const DefaultedName extends keyof Variants = never,
 >(
-  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName>,
-): StyleRecipe<
-  VariantSelection<Variants, DefaultedName>,
-  RecipeStyle<Variants, Base, Compounds>
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
+): ComposedStyleRecipe<
+  ComposedVariants<Composed, Variants>,
+  ComposedDefaultedName<Composed, DefaultedName>,
+  RecipeStyle<Variants, Base, Compounds, Composed>
 >;
 
 function createStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {

@@ -14,8 +14,10 @@ import {
 import { describe, expect, it } from "vitest";
 import type { Arbitrary } from "fast-check";
 
+import type { ByName } from "./style.arbitraries.js";
 import { createSlotStyleRecipe } from "./slot-style-recipe.js";
 import { createStyleRecipe } from "./style-recipe.js";
+import { entriesOf } from "./style.arbitraries.js";
 
 interface Style {
   readonly borderWidth?: number;
@@ -23,8 +25,6 @@ interface Style {
   readonly height?: number | undefined;
   readonly opacity?: number;
 }
-
-type ByName<Value> = Readonly<Record<string, Value>>;
 
 type Styles = ByName<Style>;
 
@@ -49,19 +49,6 @@ const style: Arbitrary<Style> = record(
   },
   { requiredKeys: [] },
 );
-
-function entriesOf<Value>(
-  names: readonly string[],
-  valueOfName: (name: string) => Arbitrary<Value>,
-): Arbitrary<ByName<Value>> {
-  const values = names.map((name) =>
-    valueOfName(name).map((value): readonly [string, Value] => [name, value]),
-  );
-  return tuple(...values).map(
-    (list: readonly (readonly [string, Value])[]): ByName<Value> =>
-      Object.fromEntries(list),
-  );
-}
 
 function modelOf(
   slots: readonly string[],

@@ -1,4 +1,12 @@
-import type { KindRecipe } from "@lynstack/recipe";
+import type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedDefaultedName,
+  ComposedSlot,
+  ComposedVariants,
+  KindRecipe,
+  RecipeComposition,
+} from "@lynstack/recipe";
 
 import type {
   LooseSlotStyleRecipe,
@@ -9,12 +17,13 @@ import type {
   LooseStyleRecipeConfig,
 } from "./compile-style-recipe.js";
 import type {
+  NativeStyle,
   RecipeSlotStyles,
-  SlotStyleRecipeConfig,
-} from "./slot-style-recipe.js";
+  VariantSelection,
+} from "./types.js";
 import type { RecipeStyle, StyleRecipeConfig } from "./style-recipe.js";
 import type { LooseThemedRecipe } from "./compile-themed-recipe.js";
-import type { VariantSelection } from "./types.js";
+import type { SlotStyleRecipeConfig } from "./slot-style-recipe.js";
 import { buildSlotStyleRecipe } from "./compile-slot-style-recipe.js";
 import { buildStyleRecipe } from "./compile-style-recipe.js";
 import { buildThemedRecipe } from "./compile-themed-recipe.js";
@@ -27,16 +36,45 @@ import { buildThemedRecipe } from "./compile-themed-recipe.js";
  * @typeParam Theme - The theme the styles are built from.
  * @typeParam Props - The variants the recipe accepts.
  * @typeParam Result - What the recipe returns.
+ * @typeParam Composition - What the recipe of each theme passes on to the
+ *   recipes that compose it, under a `~composition` property that exists in
+ *   the type only. Without it, the type does not allow composing the recipe
+ *   of a theme.
  */
-type ThemedRecipe<Theme, Props, Result> = (Partial<Props> extends Props
+type ThemedRecipe<
+  Theme,
+  Props,
+  Result,
+  Composition = unknown,
+> = (Partial<Props> extends Props
   ? (theme: Theme, props?: Props) => Result
   : (theme: Theme, props: Props) => Result) & {
   /**
    * Returns the recipe of `theme`, the same recipe for the same theme
-   * object, with the names of its variants in `variantKeys`.
+   * object, with the names of its variants in `variantKeys`. A themed
+   * recipe composes it with the theme its own config is built from.
    */
-  readonly withTheme: (theme: Theme) => KindRecipe<Props, Result>;
+  readonly withTheme: (theme: Theme) => KindRecipe<Props, Result, Composition>;
 };
+
+/**
+ * The themed recipe of a config whose variants, with those of the recipes
+ * it composes, are `Variants`, whose variants with a default are
+ * `DefaultedName`, and which returns `Result`. `Slots` lists the slots of a
+ * slot recipe, or is `undefined` for a recipe without slots.
+ */
+type ComposedThemedRecipe<Theme, Variants, DefaultedName, Result, Slots> =
+  ThemedRecipe<
+    Theme,
+    VariantSelection<Variants, Extract<DefaultedName, keyof Variants>>,
+    Result,
+    RecipeComposition<
+      Variants,
+      Extract<DefaultedName, keyof Variants>,
+      NativeStyle,
+      Slots
+    >
+  >;
 
 /**
  * The functions that {@link createThemedRecipes} returns, which create
@@ -56,6 +94,8 @@ interface ThemedRecipeCreators<Theme extends object> {
    *   `config.compoundVariants`.
    * @typeParam DefaultedName - The names of the variants that have a
    *   default, inferred from `config.defaultVariants`.
+   * @typeParam Composed - The types of the recipes it composes, inferred
+   *   from `config.composes`.
    * @param config - Returns the config of the recipe for a theme.
    * @returns The themed recipe.
    */
@@ -63,15 +103,20 @@ interface ThemedRecipeCreators<Theme extends object> {
     const Variants,
     const Base = never,
     const Compounds = readonly [],
-    const DefaultedName extends keyof Variants = never,
+    const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+      never,
+    const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
+      readonly [],
   >(
     config: (
       theme: Theme,
-    ) => StyleRecipeConfig<Variants, Base, Compounds, DefaultedName>,
-  ) => ThemedRecipe<
+    ) => StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
+  ) => ComposedThemedRecipe<
     Theme,
-    VariantSelection<Variants, DefaultedName>,
-    RecipeStyle<Variants, Base, Compounds>
+    ComposedVariants<Composed, Variants>,
+    ComposedDefaultedName<Composed, DefaultedName>,
+    RecipeStyle<Variants, Base, Compounds, Composed>,
+    undefined
   >;
   /**
    * Creates a themed slot style recipe: `createSlotStyleRecipe` with a
@@ -85,6 +130,8 @@ interface ThemedRecipeCreators<Theme extends object> {
    *   `config.compoundVariants`.
    * @typeParam DefaultedName - The names of the variants that have a
    *   default, inferred from `config.defaultVariants`.
+   * @typeParam Composed - The types of the slot recipes it composes,
+   *   inferred from `config.composes`.
    * @param config - Returns the config of the slot recipe for a theme.
    * @returns The themed slot recipe.
    */
@@ -93,15 +140,33 @@ interface ThemedRecipeCreators<Theme extends object> {
     const Variants,
     const Base = never,
     const Compounds = readonly [],
-    const DefaultedName extends keyof Variants = never,
+    const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+      never,
+    const Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[] =
+      readonly [],
   >(
     config: (
       theme: Theme,
-    ) => SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName>,
-  ) => ThemedRecipe<
+    ) => SlotStyleRecipeConfig<
+      Slot,
+      Variants,
+      Base,
+      Compounds,
+      DefaultedName,
+      Composed
+    >,
+  ) => ComposedThemedRecipe<
     Theme,
-    VariantSelection<Variants, DefaultedName>,
-    RecipeSlotStyles<Slot, Variants, Base, Compounds>
+    ComposedVariants<Composed, Variants>,
+    ComposedDefaultedName<Composed, DefaultedName>,
+    RecipeSlotStyles<
+      ComposedSlot<Composed, Slot>,
+      Variants,
+      Base,
+      Compounds,
+      Composed
+    >,
+    readonly ComposedSlot<Composed, Slot>[]
   >;
 }
 
@@ -119,7 +184,9 @@ interface ThemedRecipeCreators<Theme extends object> {
  * theme that is no longer referenced is released with its recipe.
  *
  * The config of every theme must declare the same variants and options;
- * only the styles may depend on the theme.
+ * only the styles may depend on the theme. A themed recipe composes the
+ * recipe of a theme that `withTheme` returns, such as
+ * `composes: [control.withTheme(theme)]` in the config of `theme`.
  *
  * @typeParam Theme - The theme the styles are built from.
  * @returns `createStyleRecipe` and `createSlotStyleRecipe`, which take a
@@ -156,6 +223,15 @@ interface ThemedRecipeCreators<Theme extends object> {
  * button(light) === button(light, { tone: "primary" }); // => true
  *
  * button.withTheme(light).variantKeys; // => ["tone"]
+ *
+ * const iconButton = createStyleRecipe((theme) => ({
+ *   composes: [button.withTheme(theme)],
+ *   base: { width: 40, height: 40 },
+ *   variants: {},
+ * }));
+ *
+ * iconButton(light, { tone: "surface" });
+ * // => { borderRadius: 8, width: 40, height: 40, backgroundColor: "#ffffff" }
  * ```
  */
 function createThemedRecipes<

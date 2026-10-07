@@ -36,6 +36,113 @@ type OptionValue<Variants> = {
 }[keyof Variants];
 
 /**
+ * Styles for some of a slot recipe's slots, keyed by slot name.
+ *
+ * @typeParam Slot - The names of the slots.
+ */
+type SlotStyles<Slot extends string> = Readonly<
+  Partial<Record<Slot, NativeStyle | undefined>>
+>;
+
+/**
+ * Rejects the slots and style properties of an option's styles that the
+ * slot recipe does not have, unless the option's slot names are not known
+ * at compile time.
+ */
+type NoUnknownSlotStyles<
+  Styles,
+  Slot extends string,
+> = string extends keyof Styles
+  ? unknown
+  : {
+      readonly [Name in keyof Styles]: Name extends Slot
+        ? NoUnknownProperties<NonNullable<Styles[Name]>>
+        : never;
+    };
+
+type NoUnknownVariantStyles<Variants, Slot extends string> = {
+  readonly [Name in keyof Variants]: {
+    readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<
+      Variants[Name][Option],
+      Slot
+    >;
+  };
+};
+
+/**
+ * Rejects the slots and style properties of the compound variants' styles,
+ * given as a union, that the slot recipe does not have.
+ */
+type NoUnknownCompoundStyles<Styles, Slot extends string> = Readonly<
+  Partial<Record<Exclude<KeyOfEach<Styles>, Slot>, never>>
+> & {
+  readonly [Name in Slot]?: NoUnknownProperties<DeclaredStyle<Styles, Name>>;
+};
+
+/** Every style that a slot recipe's config declares for `Slot`, as a union. */
+type DeclaredStyle<Styles, Slot> = Styles extends unknown
+  ? Slot extends keyof Styles
+    ? Exclude<Styles[Slot], undefined>
+    : never
+  : never;
+
+/**
+ * Every slot style that a slot recipe's config declares, and the styles of
+ * each slot recipe it composes, as a union.
+ */
+type DeclaredSlotStyles<Variants, Base, Compounds, Composed> =
+  | Base
+  | OptionValue<Variants>
+  | CompoundStyles<Compounds>
+  | ComposedStyle<Composed>;
+
+type CompoundStyles<Compounds> = Compounds extends readonly (infer Compound)[]
+  ? Compound extends { readonly styles: infer Styles }
+    ? Styles
+    : never
+  : never;
+
+/**
+ * The styles a slot recipe returns: for each slot, each property its config
+ * and the slot recipes it composes declare for it, with the types they give
+ * it.
+ */
+type RecipeSlotStyles<
+  Slot extends string,
+  Variants,
+  Base,
+  Compounds,
+  Composed = readonly [],
+> = {
+  readonly [Name in Slot]: {
+    readonly [
+      Key in KeyOfEach<
+        DeclaredStyle<
+          DeclaredSlotStyles<Variants, Base, Compounds, Composed>,
+          Name
+        >
+      >
+    ]?: PropertyOfEach<
+      DeclaredStyle<
+        DeclaredSlotStyles<Variants, Base, Compounds, Composed>,
+        Name
+      >,
+      Key
+    >;
+  };
+};
+
+/**
+ * What the recipes of `Composed` return, as a union: the style of a style
+ * recipe, or the styles of a slot style recipe.
+ */
+type ComposedStyle<Composed> = Composed extends readonly (infer Recipe)[]
+  ? Recipe extends (...args: never) => infer Style
+    ? Style
+    : never
+  : never;
+
+/**
  * The variants a recipe accepts, a themed recipe included. Use it to type
  * the props of a component built on a recipe.
  *
@@ -72,10 +179,18 @@ export type {
   VariantSelection,
 } from "@lynstack/recipe";
 export type {
+  ComposedStyle,
+  CompoundStyles,
+  DeclaredStyle,
   KeyOfEach,
   NativeStyle,
+  NoUnknownCompoundStyles,
   NoUnknownProperties,
+  NoUnknownSlotStyles,
+  NoUnknownVariantStyles,
   OptionValue,
   PropertyOfEach,
+  RecipeSlotStyles,
+  SlotStyles,
   VariantsOf,
 };

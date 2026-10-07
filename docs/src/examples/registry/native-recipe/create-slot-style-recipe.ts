@@ -1,6 +1,7 @@
 import { defineExample, slotValues } from "../../example.ts";
 import type { Example } from "../../example.ts";
 import { card } from "../../recipes/native-recipe/create-slot-style-recipe/card.ts";
+import { dialog } from "../../recipes/native-recipe/create-slot-style-recipe/dialog.ts";
 import { field } from "../../recipes/native-recipe/create-slot-style-recipe/field.ts";
 import { iconButton } from "../../recipes/native-recipe/create-slot-style-recipe/icon-button.ts";
 
@@ -11,6 +12,14 @@ const examples = {
     name: "card",
     options: { compact: ["false", "true"], tone: ["plain", "inverted"] },
     recipe: card,
+    required: [],
+    valuesOf: slotValues,
+  }),
+  dialog: defineExample({
+    kind: "style",
+    name: "dialog",
+    options: { compact: ["false", "true"], tone: ["plain", "inverted"] },
+    recipe: dialog,
     required: [],
     valuesOf: slotValues,
   }),

@@ -1,4 +1,8 @@
-import type { KindRecipe, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindRecipe,
+  KindRecipe,
+  KindVariants,
+} from "@lynstack/recipe";
 import { createRecipeKind } from "@lynstack/recipe";
 
 /** A style in the loose shape the runtime works with. */
@@ -7,6 +11,7 @@ type LooseStyle = Readonly<Record<string, unknown>>;
 type LooseSelection = Readonly<Record<string, unknown>>;
 
 interface LooseStyleRecipeConfig {
+  readonly composes?: readonly ComposableKindRecipe<LooseStyle>[] | undefined;
   readonly base?: LooseStyle | undefined;
   readonly variants: KindVariants<LooseStyle>;
   readonly compoundVariants?:
@@ -34,6 +39,10 @@ interface StyleAccumulator {
  * freezes. Recipes and slot recipes of the package share it.
  */
 const styleKind = {
+  combine: (first: LooseStyle, second: LooseStyle): LooseStyle => ({
+    ...first,
+    ...second,
+  }),
   finish: (style: StyleAccumulator): LooseStyle => Object.freeze(style),
   initial: (base: LooseStyle | undefined): StyleAccumulator => ({ ...base }),
   reduce: (style: StyleAccumulator, value: LooseStyle): StyleAccumulator =>
@@ -47,6 +56,7 @@ function buildStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
   return styleRecipe({
     base: config.base,
     cache: config.cache,
+    composes: config.composes,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
       value: compound.style,
       variants: compound.variants,

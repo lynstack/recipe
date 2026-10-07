@@ -1,6 +1,8 @@
 ---
 title: createThemedRecipes
 description: "Create style recipes and slot style recipes whose styles are built from the tokens of a theme, and get the same frozen styles for the same theme and variants."
+sidebar:
+  badge: Updated
 head:
   - tag: title
     content: "createThemedRecipes: themed React Native styles | lynstack recipe"
@@ -108,6 +110,28 @@ lightButton.variantKeys; // => ["tone"]
 
 Use it to read `variantKeys`, or to pass a recipe to code that takes a
 plain recipe, such as a child component that does not know about themes.
+
+## Composing themed recipes
+
+A themed recipe composes the recipe of its theme: list
+`withTheme(theme)` in `composes`, with the theme its config function
+receives, so that each theme composes the recipe of the same theme.
+
+```ts
+const iconButton = createStyleRecipe((theme) => ({
+  composes: [button.withTheme(theme)],
+  base: { width: 40, height: 40 },
+  variants: {},
+}));
+
+iconButton(dark, { tone: "surface" });
+// => { borderRadius: 8, width: 40, height: 40, backgroundColor: "#111827" }
+```
+
+A themed recipe can also compose recipes without a theme, and a slot
+recipe composes the `withTheme(theme)` of a themed slot recipe in the same
+way. See [Composing recipes](/recipe/native-recipe/create-style-recipe/#composing-recipes)
+for how the configs merge.
 
 ## Slot recipes
 

@@ -1,6 +1,6 @@
 ---
 name: native-recipe
-description: Write React Native component styles with @lynstack/native-recipe (createStyleRecipe, createSlotStyleRecipe, createThemedRecipes) that stay stable between renders and come from theme tokens. Use this skill whenever you create or change a React Native component whose styles depend on props, state, the color scheme, or a theme in a project that imports @lynstack/native-recipe, whenever you add or edit a variant, compound variant, slot, theme, or token, and whenever you are tempted to build a style inline, copy a recipe's style, or wrap it in a style array, even if the user does not mention the library by name.
+description: Write React Native component styles with @lynstack/native-recipe (createStyleRecipe, createSlotStyleRecipe, createThemedRecipes) that stay stable between renders and come from theme tokens. Use this skill whenever you create or change a React Native component whose styles depend on props, state, the color scheme, or a theme in a project that imports @lynstack/native-recipe, whenever you add or edit a variant, compound variant, slot, composed recipe, theme, or token, and whenever you are tempted to build a style inline, copy a recipe's style, or wrap it in a style array, even if the user does not mention the library by name.
 ---
 
 # Stable, themed styles with native-recipe
@@ -97,6 +97,9 @@ type BadgeProps = VariantsOf<typeof badge>; // also works on themed recipes
   the variants' styles.
 - A recipe ignores props that are not variants, so it can take all of a
   component's props.
+- `composes: [other]` adds the config of another recipe of the same kind
+  (style recipe or slot style recipe) before its own; see
+  [Compose a shared recipe](#compose-a-shared-recipe-instead-of-copying-its-config).
 
 ## Do
 
@@ -161,6 +164,37 @@ const styles = button({ tone, size });
   <Text style={styles.label}>{title}</Text>
 </Pressable>;
 ```
+
+### Compose a shared recipe instead of copying its config
+
+When several components share styles and variants, such as every
+control's border and sizes, put them in one recipe and list it in the
+`composes` of the others. The composed recipe's styles come first, so the
+recipe that composes it overrides a property it sets again, and it
+accepts the composed recipe's variants too.
+
+```ts
+const control = createStyleRecipe({
+  base: { borderRadius: 8, borderWidth: 1 },
+  variants: { size: { sm: { height: 32 }, md: { height: 40 } } },
+  defaultVariants: { size: "md" },
+});
+
+const input = createStyleRecipe({
+  composes: [control],
+  base: { paddingHorizontal: 12 },
+  variants: { invalid: { true: { borderColor: "#dc2626" } } },
+});
+
+input({ size: "sm", invalid: true });
+// => { borderRadius: 8, borderWidth: 1, paddingHorizontal: 12, height: 32, borderColor: "#dc2626" }
+```
+
+In a themed recipe, compose the recipe of the same theme:
+`composes: [control.withTheme(theme)]`, with the `theme` the config
+function receives. A compound variant of the composed recipe applies after
+every option of the recipe that composes it; to override one, give that
+recipe a compound variant with the same condition.
 
 ### Take colors, spacing, and sizes from the theme
 
@@ -287,6 +321,8 @@ no variants.
   or wrapped in an array without an override, where a variant would do?
 - Is any recipe a static style with no variants and no tokens, which
   belongs in `StyleSheet.create`?
+- Does any recipe copy the styles and variants of another, where it could
+  compose it?
 - Does any component copy, spread, or change a style a recipe returned?
 - In a project with a theme, does any recipe write a color, spacing, or
   size that a token exists for?

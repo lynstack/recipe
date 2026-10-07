@@ -1,13 +1,23 @@
-import type { KindRecipe, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindSlotRecipe,
+  ComposedDefaultedName,
+  ComposedSlot,
+  ComposedVariants,
+  KindRecipe,
+  KindVariants,
+  RecipeComposition,
+} from "@lynstack/recipe";
 
 import type {
   CompoundCondition,
+  CompoundStyles,
   DefaultVariants,
-  KeyOfEach,
   NativeStyle,
-  NoUnknownProperties,
-  OptionValue,
-  PropertyOfEach,
+  NoUnknownCompoundStyles,
+  NoUnknownSlotStyles,
+  NoUnknownVariantStyles,
+  RecipeSlotStyles,
+  SlotStyles,
   VariantSelection,
 } from "./types.js";
 import type {
@@ -17,54 +27,10 @@ import type {
 import { buildSlotStyleRecipe } from "./compile-slot-style-recipe.js";
 
 /**
- * Styles for some of a slot recipe's slots, keyed by slot name.
- *
- * @typeParam Slot - The names of the slots.
- */
-type SlotStyles<Slot extends string> = Readonly<
-  Partial<Record<Slot, NativeStyle | undefined>>
->;
-
-/**
  * The variants of a {@link SlotStyleRecipeConfig}: for each variant name,
  * the styles of each slot for each of its options.
  */
 type SlotStyleRecipeVariants = KindVariants<SlotStyles<string>>;
-
-/**
- * Rejects the slots and style properties of an option's styles that the
- * slot recipe does not have, unless the option's slot names are not known
- * at compile time.
- */
-type NoUnknownSlotStyles<
-  Styles,
-  Slot extends string,
-> = string extends keyof Styles
-  ? unknown
-  : {
-      readonly [Name in keyof Styles]: Name extends Slot
-        ? NoUnknownProperties<NonNullable<Styles[Name]>>
-        : never;
-    };
-
-type NoUnknownVariantStyles<Variants, Slot extends string> = {
-  readonly [Name in keyof Variants]: {
-    readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<
-      Variants[Name][Option],
-      Slot
-    >;
-  };
-};
-
-/**
- * Rejects the slots and style properties of the compound variants' styles,
- * given as a union, that the slot recipe does not have.
- */
-type NoUnknownCompoundStyles<Styles, Slot extends string> = Readonly<
-  Partial<Record<Exclude<KeyOfEach<Styles>, Slot>, never>>
-> & {
-  readonly [Name in Slot]?: NoUnknownProperties<DeclaredStyle<Styles, Name>>;
-};
 
 /**
  * Styles added to some slots when several variants have particular options
@@ -91,24 +57,39 @@ interface SlotStyleCompoundVariant<Variants, Styles = SlotStyles<string>> {
  * @typeParam Base - The base styles, keyed by slot name.
  * @typeParam Compounds - The compound variants.
  * @typeParam DefaultedName - The names of the variants that have a default.
+ * @typeParam Composed - The types of the slot recipes that it composes.
  */
 interface SlotStyleRecipeConfig<
   Slot extends string,
   Variants,
   Base,
   Compounds,
-  DefaultedName extends keyof Variants,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[] =
+    readonly [],
 > {
-  /** The names of the elements the recipe styles. */
+  /**
+   * Slot recipes whose config the recipe adds to its own, in order, as if
+   * it were written in one config: their slots and base styles first, the
+   * styles of each of their options before its own, and their compound
+   * variants first. A slot recipe composed several times counts once.
+   */
+  readonly composes?: Composed | undefined;
+  /**
+   * The names of the elements the recipe styles, after those of the slot
+   * recipes it composes.
+   */
   readonly slots: readonly Slot[];
   /** The style of each slot whatever the variants. */
   readonly base?:
-    | (Base & SlotStyles<string> & NoUnknownSlotStyles<Base, NoInfer<Slot>>)
+    | (Base &
+        SlotStyles<string> &
+        NoUnknownSlotStyles<Base, NoInfer<ComposedSlot<Composed, Slot>>>)
     | undefined;
   /** For each variant name, the style of each slot for each of its options. */
   readonly variants: Variants &
     SlotStyleRecipeVariants &
-    NoUnknownVariantStyles<Variants, NoInfer<Slot>>;
+    NoUnknownVariantStyles<Variants, NoInfer<ComposedSlot<Composed, Slot>>>;
   /**
    * Styles added to some slots when several variants have particular
    * options at the same time, applied in order after the styles of the
@@ -117,13 +98,17 @@ interface SlotStyleRecipeConfig<
   readonly compoundVariants?:
     | (Compounds &
         readonly SlotStyleCompoundVariant<
-          NoInfer<Variants>,
-          NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>>
+          NoInfer<ComposedVariants<Composed, Variants>>,
+          NoUnknownCompoundStyles<
+            CompoundStyles<Compounds>,
+            NoInfer<ComposedSlot<Composed, Slot>>
+          >
         >[])
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    DefaultVariants<Variants, DefaultedName> | undefined;
+    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | undefined;
   /**
    * Whether the recipe caches the styles of each declared selection.
    * Defaults to `true`.
@@ -137,42 +122,36 @@ interface SlotStyleRecipeConfig<
  *
  * @typeParam Props - The variants the recipe accepts.
  * @typeParam Styles - The style of each slot, keyed by slot name.
+ * @typeParam Composition - What the slot recipe passes on to the slot
+ *   recipes that compose it, under a `~composition` property that exists in
+ *   the type only. Without it, the type does not allow composing it.
  */
-type SlotStyleRecipe<Props, Styles> = KindRecipe<Props, Styles>;
-
-/** Every style that a slot recipe's config declares for `Slot`, as a union. */
-type DeclaredStyle<Styles, Slot> = Styles extends unknown
-  ? Slot extends keyof Styles
-    ? Exclude<Styles[Slot], undefined>
-    : never
-  : never;
-
-/** Every slot style that a slot recipe's config declares, as a union. */
-type DeclaredSlotStyles<Variants, Base, Compounds> =
-  Base | OptionValue<Variants> | CompoundStyles<Compounds>;
-
-type CompoundStyles<Compounds> = Compounds extends readonly (infer Compound)[]
-  ? Compound extends { readonly styles: infer Styles }
-    ? Styles
-    : never
-  : never;
+type SlotStyleRecipe<Props, Styles, Composition = unknown> = KindRecipe<
+  Props,
+  Styles,
+  Composition
+>;
 
 /**
- * The styles a slot recipe returns: for each slot, each property its config
- * declares for it, with the types the config gives it.
+ * The slot recipe of a config with the slot recipes it composes, whose
+ * slots are `Slot`, whose variants are `Variants`, whose variants with a
+ * default are `DefaultedName`, and which returns `Styles`.
  */
-type RecipeSlotStyles<Slot extends string, Variants, Base, Compounds> = {
-  readonly [Name in Slot]: {
-    readonly [
-      Key in KeyOfEach<
-        DeclaredStyle<DeclaredSlotStyles<Variants, Base, Compounds>, Name>
-      >
-    ]?: PropertyOfEach<
-      DeclaredStyle<DeclaredSlotStyles<Variants, Base, Compounds>, Name>,
-      Key
-    >;
-  };
-};
+type ComposedSlotStyleRecipe<
+  Slot extends string,
+  Variants,
+  DefaultedName,
+  Styles,
+> = SlotStyleRecipe<
+  VariantSelection<Variants, Extract<DefaultedName, keyof Variants>>,
+  Styles,
+  RecipeComposition<
+    Variants,
+    Extract<DefaultedName, keyof Variants>,
+    NativeStyle,
+    readonly Slot[]
+  >
+>;
 
 /**
  * Creates a slot style recipe: a function that returns the style of each
@@ -200,6 +179,9 @@ type RecipeSlotStyles<Slot extends string, Variants, Base, Compounds> = {
  * not variants are ignored. The recipe's `variantKeys` property lists the
  * names of its variants.
  *
+ * A slot recipe composes the slot recipes listed in `composes` as a recipe
+ * composes recipes, and has the slots of each, theirs first.
+ *
  * Each style is checked against the styles of React Native, as in
  * `StyleSheet.create`, and the style of each slot in the recipe's result
  * keeps the types of the properties the config declares for it.
@@ -212,8 +194,10 @@ type RecipeSlotStyles<Slot extends string, Variants, Base, Compounds> = {
  *   `config.compoundVariants`.
  * @typeParam DefaultedName - The names of the variants that have a
  *   default, inferred from `config.defaultVariants`.
- * @param config - The slots, base styles, variants, compound variants, and
- *   default variants of the recipe.
+ * @typeParam Composed - The types of the slot recipes it composes, inferred
+ *   from `config.composes`.
+ * @param config - The slot recipes it composes, and the slots, base styles,
+ *   variants, compound variants, and default variants of the recipe.
  * @returns The slot recipe.
  *
  * @example
@@ -241,6 +225,16 @@ type RecipeSlotStyles<Slot extends string, Variants, Base, Compounds> = {
  * button({ size: "sm" }) === styles; // => true
  *
  * button.variantKeys; // => ["tone", "size"]
+ *
+ * const iconButton = createSlotStyleRecipe({
+ *   composes: [button],
+ *   slots: ["icon"],
+ *   base: { root: { gap: 8 }, icon: { width: 16, height: 16 } },
+ *   variants: {},
+ * });
+ *
+ * iconButton().root; // => { borderRadius: 8, gap: 8, backgroundColor: "#2563eb", height: 40 }
+ * iconButton().icon; // => { width: 16, height: 16 }
  * ```
  */
 function createSlotStyleRecipe<
@@ -248,14 +242,32 @@ function createSlotStyleRecipe<
   const Variants extends SlotStyleRecipeVariants,
   const Base extends SlotStyles<string> = never,
   const Compounds extends readonly SlotStyleCompoundVariant<
-    NoInfer<Variants>
+    NoInfer<ComposedVariants<Composed, Variants>>
   >[] = readonly [],
-  const DefaultedName extends keyof Variants = never,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[] =
+    readonly [],
 >(
-  config: SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName>,
-): SlotStyleRecipe<
-  VariantSelection<Variants, DefaultedName>,
-  RecipeSlotStyles<Slot, Variants, Base, Compounds>
+  config: SlotStyleRecipeConfig<
+    Slot,
+    Variants,
+    Base,
+    Compounds,
+    DefaultedName,
+    Composed
+  >,
+): ComposedSlotStyleRecipe<
+  ComposedSlot<Composed, Slot>,
+  ComposedVariants<Composed, Variants>,
+  ComposedDefaultedName<Composed, DefaultedName>,
+  RecipeSlotStyles<
+    ComposedSlot<Composed, Slot>,
+    Variants,
+    Base,
+    Compounds,
+    Composed
+  >
 >;
 
 function createSlotStyleRecipe(
@@ -266,10 +278,8 @@ function createSlotStyleRecipe(
 
 export { createSlotStyleRecipe };
 export type {
-  RecipeSlotStyles,
   SlotStyleCompoundVariant,
   SlotStyleRecipe,
   SlotStyleRecipeConfig,
   SlotStyleRecipeVariants,
-  SlotStyles,
 };

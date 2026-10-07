@@ -1,7 +1,8 @@
 ---
 title: How native-recipe works
-description: "How native-recipe builds and caches React Native styles: compiled once, the order of styles, frozen styles that keep the style prop stable, a recipe per theme."
+description: "How native-recipe builds and caches React Native styles: compiled once, the order of styles, composed recipes, frozen styles that keep the style prop stable, a recipe per theme."
 sidebar:
+  badge: Updated
   label: How it works
 ---
 
@@ -38,6 +39,18 @@ A later style overrides the properties of an earlier one, as in
 Defaults apply before compound variants match, so a compound variant can
 match a default option. A slot recipe merges the style of each slot in the
 same order.
+
+## Composed recipes
+
+A recipe that composes others merges their configs with its own when it is
+created, theirs first: their base styles come before its own, their style
+for an option before its own for that option, and their compound variants
+before its own (see
+[Composing recipes](/recipe/native-recipe/create-style-recipe/#composing-recipes)).
+It merges the styles that several recipes give one option into one style,
+and compiles the result as one config, so it costs what that one config
+costs, with or without the cache. The recipes it composes keep their own
+configs and caches.
 
 ## Stable styles
 

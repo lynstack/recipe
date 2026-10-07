@@ -1,6 +1,8 @@
 ---
 title: createStyleRecipe
 description: "Create a style recipe that maps variants, compound variants, and default variants to the style of one React Native element, with types inferred from its config."
+sidebar:
+  badge: Updated
 head:
   - tag: title
     content: "createStyleRecipe: React Native style recipes | lynstack recipe"
@@ -21,6 +23,7 @@ style={badge({ tone })} />`.
 
 | Property           | Description                                                                                                            |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Recipes whose configs the recipe adds to its own; see [Composing recipes](#composing-recipes).               |
 | `base`             | Optional. The style the element always has.                                                                            |
 | `variants`         | For each variant name, the style of each of its options.                                                               |
 | `compoundVariants` | Optional. Styles added when several variants have particular options at the same time, in order.                       |
@@ -108,6 +111,31 @@ only `tone: "danger"` matches the first compound variant through the
 default `size: "md"`. Matching compound variants
 are applied in the order they are declared. A compound variant that names
 an undeclared variant, or lists no declared option for one, never matches.
+
+## Composing recipes
+
+`composes` lists style recipes whose configs the recipe adds to its own,
+as if they were written in one config: their base styles first, then the
+style of each option, in the order of the recipes, then their compound
+variants before its own. The default of a variant is the last one given.
+The recipe accepts the variants of every recipe it composes, and its
+styles override theirs where they set the same property:
+
+<RecipeExample
+  name="native-recipe/create-style-recipe/icon-button"
+  calls={[{ tone: "neutral", size: "sm" }, { tone: "danger" }]}
+/>
+
+A compound variant of a composed recipe applies after every option, as
+the one of `button` that adds `paddingHorizontal` does, so the recipe's
+own options do not override it; give the recipe a compound variant with
+the same condition to override one. A recipe composed several times
+counts once, and a recipe that only composes others still declares
+`variants: {}`. A themed recipe
+composes the recipe of its theme (see
+[createThemedRecipes](/recipe/native-recipe/create-themed-recipes/#composing-themed-recipes)).
+See [Composing recipes](/recipe/recipe/composing/) in the engine's docs for
+how the configs merge.
 
 ## Overriding styles
 

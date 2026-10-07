@@ -12,7 +12,6 @@ export type {
   SlotStyleRecipe,
   SlotStyleRecipeConfig,
   SlotStyleRecipeVariants,
-  SlotStyles,
 } from "./slot-style-recipe.js";
 export { createStyleRecipe } from "./style-recipe.js";
 export type {
@@ -28,6 +27,7 @@ export type {
   DefaultVariants,
   NativeStyle,
   RecipeFunction,
+  SlotStyles,
   VariantOption,
   VariantSelection,
   VariantsOf,

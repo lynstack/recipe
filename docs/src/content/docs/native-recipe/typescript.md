@@ -54,6 +54,9 @@ with `overflow: "scroll"` can go to a `View` but not to an `Image`.
 Each slot of a slot recipe has its own style type, so `styles.label` of a
 button can go to a `Text` while `styles.root` goes to a `Pressable`.
 
+A recipe that composes others also returns the properties of each, with
+the values they give them, and a slot recipe the slots of each.
+
 ## Typing component props
 
 `VariantsOf` returns the variants a recipe accepts. Use it to type the

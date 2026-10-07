@@ -1,4 +1,8 @@
-import type { KindRecipe, KindSlotVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindSlotRecipe,
+  KindRecipe,
+  KindSlotVariants,
+} from "@lynstack/recipe";
 import { createSlotRecipeKind } from "@lynstack/recipe";
 
 import type { LooseSelection, LooseStyle } from "./compile-style-recipe.js";
@@ -7,6 +11,8 @@ import { styleKind } from "./compile-style-recipe.js";
 type LooseSlotStyles = Readonly<Record<string, LooseStyle | undefined>>;
 
 interface LooseSlotStyleRecipeConfig {
+  readonly composes?:
+    readonly ComposableKindSlotRecipe<LooseStyle>[] | undefined;
   readonly slots: readonly string[];
   readonly base?: LooseSlotStyles | undefined;
   readonly variants: KindSlotVariants<LooseStyle>;
@@ -34,6 +40,7 @@ function buildSlotStyleRecipe(
   return slotStyleRecipe({
     base: config.base,
     cache: config.cache,
+    composes: config.composes,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
       value: compound.styles,
       variants: compound.variants,
