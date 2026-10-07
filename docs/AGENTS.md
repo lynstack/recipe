@@ -18,6 +18,23 @@ GitHub Pages at `https://lynstack.github.io/recipe/`.
   in `src/components`.
 - Keep logic in `.ts` files, which are typechecked, and keep `.astro`
   files to markup.
+
+## Structure of a package's section
+
+- Every topic has the same groups, in this order: Get started, Concepts,
+  Guides, API reference, and Resources. class-recipe also has Migrate.
+- Concepts explain, Guides show how to do a task, and API reference pages
+  list a function's signature, config, and result. A rule belongs to one
+  page; the others link to it.
+- The docs of class-recipe and native-recipe are complete without the
+  engine's. They never require its words, such as "kind" or "reduce",
+  and link to the engine only in an "Under the hood" aside.
+- The engine's section is for authors of libraries built on it.
+- Each package has a glossary, and defines a term, or links it there, the
+  first time a page uses it. Quick starts and guides end with Next steps.
+- Never change a page's slug: the packages' TSDoc, READMEs, and skills
+  link to them. When a section moves, keep a heading with its text where
+  a link points to it, with a link to the new place.
 - The docs depend on React Native and its React types only to typecheck
   the recipes of `@lynstack/native-recipe`.
 
