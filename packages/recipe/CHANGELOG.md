@@ -4,6 +4,25 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.6.0 — 2026-10-07
+
+A config with the wrong shape fails with a message that names what is
+wrong, and a library that wraps slot recipes can reject unknown slots.
+
+- Creating a recipe or a slot recipe checks the shape of its config,
+  which the types already check, so that a config from untyped code
+  throws a `TypeError` that names the part to fix: no `variants`, a
+  variant whose options are not an object, a `compoundVariants` that is
+  not an array, or a compound variant without `variants`. In a slot
+  recipe, it also checks that `slots` is an array and that `base`, each
+  option, and the `value` of each compound variant are an object of the
+  value of each slot. Before, such a config threw an unrelated error, or a
+  compound variant without `variants` matched every selection. The check
+  runs once, when the recipe is created.
+- `NoUnknownSlots` is exported: a library intersects the variants of its
+  slot recipes' configs with it, as the engine's own config does, so that
+  a value for a slot that `slots` does not name is a type error.
+
 ## 1.5.0 — 2026-10-07
 
 A recipe lists the options and defaults of its variants, so that a
