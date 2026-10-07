@@ -36,6 +36,7 @@ export type {
 export type {
   CompoundCondition,
   DefaultVariants,
+  NoUnknownSlots,
   RecipeFunction,
   RecipeKind,
   VariantKey,

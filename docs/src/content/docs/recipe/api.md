@@ -313,8 +313,9 @@ The config of a slot recipe has its own types:
 | `KindSlotVariants`        | The variants of a slot recipe's config: for each variant name, the values of each slot for each of its options. |
 | `KindSlotCompoundVariant` | Values added to some slots when several variants have particular options at the same time.                      |
 | `SlotValues`              | Values for some of a slot recipe's slots, keyed by slot name.                                                   |
+| `NoUnknownSlots`          | Rejects a value for a slot that a list of slot names does not name.                                             |
 
 `KindSlotRecipeConfig` rejects a value for a slot that `slots` does not
-name with a type that is not exported, so a library that wraps slot
-recipes cannot reproduce that check yet; see
+name with `NoUnknownSlots`. A library that wraps slot recipes intersects
+its own variants with it to do the same; see
 [Building a library](/recipe/recipe/building-a-library/#slot-recipes).

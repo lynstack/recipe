@@ -250,6 +250,36 @@ interface RecipeKind<Value, Accumulator, Result> {
   readonly cache?: boolean | undefined;
 }
 
+/**
+ * Rejects the slots of each option's values that `Slot` does not name,
+ * unless the option's slot names are not known at compile time. A library
+ * that wraps slot recipes intersects its variants with it, as
+ * `KindSlotRecipeConfig` does, so that a value for an unknown slot is a
+ * type error.
+ *
+ * @typeParam Variants - The variants of a slot recipe's config.
+ * @typeParam Slot - The names of the slots.
+ *
+ * @example
+ * ```ts
+ * interface SlotConfig<Slot extends string, Variants> {
+ *   readonly slots: readonly Slot[];
+ *   readonly variants: Variants & NoUnknownSlots<Variants, NoInfer<Slot>>;
+ * }
+ * ```
+ */
+type NoUnknownSlots<Variants, Slot extends string> = {
+  readonly [Name in keyof Variants]: {
+    readonly [
+      Option in keyof Variants[Name]
+    ]: string extends keyof Variants[Name][Option]
+      ? unknown
+      : Readonly<
+          Partial<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>
+        >;
+  };
+};
+
 export type {
   AnySelection,
   KindCompoundCondition,
@@ -257,6 +287,7 @@ export type {
   KindSelection,
   CompoundCondition,
   DefaultVariants,
+  NoUnknownSlots,
   RecipeFunction,
   RecipeKind,
   SelectionDefaults,

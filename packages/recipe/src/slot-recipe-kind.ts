@@ -8,6 +8,7 @@ import type {
 import type {
   KindCompoundCondition,
   KindDefaultVariants,
+  NoUnknownSlots,
   RecipeKind,
 } from "./types.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
@@ -39,22 +40,6 @@ type SlotValues<Slot extends string, Value> = Readonly<
  * @typeParam Value - The value of a slot.
  */
 type KindSlotVariants<Value> = KindVariants<SlotValues<string, Value>>;
-
-/**
- * Rejects the slots of each option's values that `Slot` does not name,
- * unless the option's slot names are not known at compile time.
- */
-type NoUnknownSlots<Variants, Slot extends string> = {
-  readonly [Name in keyof Variants]: {
-    readonly [
-      Option in keyof Variants[Name]
-    ]: string extends keyof Variants[Name][Option]
-      ? unknown
-      : Readonly<
-          Partial<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>
-        >;
-  };
-};
 
 /**
  * Values added to some slots when several variants have particular options

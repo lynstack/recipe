@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { VariantKey, VariantsOf } from "./types.js";
+import type { NoUnknownSlots, VariantKey, VariantsOf } from "./types.js";
 import { createRecipeKind } from "./recipe-kind.js";
 
 type Style = Readonly<Record<string, string | number>>;
@@ -57,5 +57,47 @@ describe("the variant names of a recipe", () => {
     expectTypeOf(sized.variantKeys).toEqualTypeOf<
       readonly VariantKey<VariantsOf<typeof sized>>[]
     >();
+  });
+});
+
+describe("the slots a slot recipe's variants name", () => {
+  type SlotVariants = Readonly<
+    Record<string, Readonly<Record<string, Readonly<Record<string, Style>>>>>
+  >;
+
+  /** The config of a library's slot recipe, which rejects unknown slots. */
+  interface SlotConfig<Slot extends string, Variants extends SlotVariants> {
+    readonly slots: readonly Slot[];
+    readonly variants: Variants & NoUnknownSlots<Variants, NoInfer<Slot>>;
+  }
+
+  /** Returns a library's slot recipe config, typed. */
+  function slotConfig<
+    const Slot extends string,
+    const Variants extends SlotVariants,
+  >(config: SlotConfig<Slot, Variants>): SlotConfig<Slot, Variants> {
+    return config;
+  }
+
+  it("rejects a value for a slot that the config does not name", () => {
+    const config = slotConfig({
+      slots: ["root"],
+      variants: { size: { sm: { root: { padding: 4 } } } },
+    });
+    const unknownSlot = slotConfig({
+      slots: ["root"],
+      // @ts-expect-error: title is not a slot.
+      variants: { size: { sm: { title: { padding: 4 } } } },
+    });
+
+    expect(config.variants.size.sm.root).toStrictEqual({ padding: 4 });
+    expect(unknownSlot.slots).toStrictEqual(["root"]);
+    expectTypeOf<
+      NoUnknownSlots<{ size: { sm: { title: Style } } }, "root">
+    >().toEqualTypeOf<{
+      readonly size: {
+        readonly sm: Readonly<Partial<Record<"title", never>>>;
+      };
+    }>();
   });
 });

@@ -147,11 +147,10 @@ object for those slots, and the cached result when it names none.
   calls={[{}, { tone: "dark", styles: { title: { color: "red" } } }]}
 />
 
-`KindSlotVariants<Style>` accepts a value for any slot name. The engine's
-own config rejects a value for a slot that `slots` does not name, with a
-type, `NoUnknownSlots`, that the package does not export yet. A wrapper
-cannot reproduce that check: in `slotSv`, such a value is not a type
-error, and the slot recipe ignores it at runtime.
+`KindSlotVariants<Style>` accepts a value for any slot name, so
+`SlotStyleVariantsConfig` intersects its variants with
+`NoUnknownSlots<Variants, NoInfer<Slot>>`, as the engine's own config
+does: a value for a slot that `slots` does not name is a type error.
 
 ## Composing recipes
 

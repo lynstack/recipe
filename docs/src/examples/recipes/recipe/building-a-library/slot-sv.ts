@@ -3,6 +3,7 @@ import type {
   DefaultVariants,
   KindRecipe,
   KindSlotVariants,
+  NoUnknownSlots,
   RecipeFunction,
   SlotValues,
   VariantSelection,
@@ -17,7 +18,7 @@ interface SlotStyleVariantsConfig<
 > {
   readonly slots: readonly Slot[];
   readonly base?: SlotValues<NoInfer<Slot>, Style>;
-  readonly variants: Variants;
+  readonly variants: Variants & NoUnknownSlots<Variants, NoInfer<Slot>>;
   readonly compoundVariants?: readonly {
     readonly variants: CompoundCondition<NoInfer<Variants>>;
     readonly styles: SlotValues<NoInfer<Slot>, Style>;
