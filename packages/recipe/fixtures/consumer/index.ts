@@ -5,6 +5,7 @@ import type {
   CreateKindRecipe,
   CreateKindSlotRecipe,
   KindRecipe,
+  NoUnknownSlots,
   RecipeKind,
   VariantKey,
   VariantsOf,
@@ -83,6 +84,10 @@ const dialog = slotStyleRecipe({
 const dialogStyles: Readonly<Record<"root" | "title" | "footer", Style>> =
   dialog({ tone: "dark" });
 const composableSlots: ComposableKindSlotRecipe<Style> = card;
+const knownSlots: NoUnknownSlots<
+  { readonly tone: { readonly dark: { readonly root: Style } } },
+  "root"
+> = { tone: { dark: {} } };
 const dialogOptions: { readonly tone: readonly ("dark" | "light")[] } =
   dialog.variantOptions;
 
@@ -96,6 +101,7 @@ export {
   emphasis,
   emphasisKeys,
   emphasisStyle,
+  knownSlots,
   sizes,
   cardKeys,
   cardStyles,
