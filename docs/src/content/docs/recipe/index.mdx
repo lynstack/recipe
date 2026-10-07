@@ -1,6 +1,6 @@
 ---
 title: recipe
-description: "A typed engine for values driven by variants: define a kind once by how it combines values, and get recipes and slot recipes that select, cache, and type them."
+description: "The engine for library authors that class-recipe and native-recipe are built on: define a kind once by how it combines values, and get recipes and slot recipes that select, cache, and type them."
 ---
 
 import PackageMeta from "../../../components/PackageMeta.astro";
@@ -15,6 +15,14 @@ component's variants to a result of any type: class names, style objects,
 or anything else that can be built from parts.
 [`@lynstack/class-recipe`](/recipe/class-recipe/) and
 [`@lynstack/native-recipe`](/recipe/native-recipe/) are built on it.
+
+## Who it is for
+
+If you style components with class names or React Native styles, you want
+[class-recipe](/recipe/class-recipe/) or
+[native-recipe](/recipe/native-recipe/); this engine is for building such
+libraries. Use it when you write a styling library, or recipes for a type
+of value that neither package covers.
 
 ## The engine and the kind
 
@@ -50,11 +58,9 @@ A kind goes through three steps:
 
 <RecipePlayground name="recipe/index/text" />
 
-```ts
-text.variantKeys; // => ["size", "muted"]
-text.variantOptions; // => { size: ["sm", "lg"], muted: ["false", "true"] }
-text.defaultVariants; // => { size: "sm", muted: "false" }
-```
+A recipe also lists its variants, their options, and their defaults, so
+that a library can read them without the config; see
+[Variants](/recipe/recipe/variants/#listing-the-variants).
 
 ## When to use it
 
@@ -71,14 +77,16 @@ text.defaultVariants; // => { size: "sm", muted: "false" }
   [Building a library](/recipe/recipe/building-a-library/).
 
 The package has no dependencies and ships as an ES module only. A cached
-call costs one lookup per variant and one for the cache, and allocates
-nothing.
+call allocates nothing; [Caching](/recipe/recipe/caching/#a-cached-call)
+gives its cost.
 
 ## Next steps
 
+- [Installation](/recipe/recipe/installation/) adds the package and lists
+  its requirements.
 - [Quick start](/recipe/recipe/quick-start/) builds a kind, a recipe, and
   a slot recipe step by step.
-- [How it works](/recipe/recipe/how-it-works/) follows a call from the
-  selection to the result.
-- [Designing a kind](/recipe/recipe/designing-a-kind/) shows the patterns
-  for writing kinds that stay fast and correct.
+- [Recipe kinds](/recipe/recipe/recipe-kinds/) defines what a kind must
+  do, and how the engine calls it.
+- [Checklist](/recipe/recipe/practices/) sums up the rules for kinds,
+  recipes, and libraries, each with a link.
