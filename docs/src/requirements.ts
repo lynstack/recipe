@@ -34,14 +34,14 @@ const sharedRequirements: readonly Requirement[] = [
   },
 ];
 
-/** Writes a range such as `>=0.80.0` as `0.80`. */
+/** Writes a range such as `>=0.76.0` as `0.76`. */
 function minimumOf(range: string): string {
   return range.replace(/^>=/u, "").replace(/\.0$/u, "");
 }
 
 const reactNative: Requirement = {
   name: "React Native",
-  supported: `${minimumOf(nativeRecipePackage.peerDependencies["react-native"])} or newer, as in Expo SDK 54 or newer`,
+  supported: `${minimumOf(nativeRecipePackage.peerDependencies["react-native"])} or newer, as in Expo SDK 52 or newer`,
 };
 
 /** Returns what the package in `folder` needs of a project that installs it. */
