@@ -54,13 +54,12 @@ fits your version of Tailwind CSS.
 4. Pass `className` to the recipe, and drop the `cn` call around it. The
    recipe adds `className` last, and merges it with its join.
 
-Here is a `button.tsx` before the change. The exact classes depend on
-your version of shadcn/ui:
+Here is a `button.tsx` built on [Base UI](https://base-ui.com) before the
+change. The exact classes depend on your version of shadcn/ui:
 
 ```tsx
 // src/components/ui/button.tsx
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -95,18 +94,12 @@ const buttonVariants = cva(
 
 function Button({
   className,
-  variant,
-  size,
-  asChild = false,
+  variant = "default",
+  size = "default",
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
-
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
-    <Comp
+    <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
@@ -121,9 +114,8 @@ And after:
 
 ```tsx
 // src/components/ui/button.tsx
-import * as React from "react";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import type { VariantsOf } from "@lynstack/class-recipe";
-import { Slot } from "@radix-ui/react-slot";
 import { cva } from "@/lib/utils";
 
 const buttonVariants = cva({
@@ -153,20 +145,21 @@ const buttonVariants = cva({
 
 function Button({
   className,
-  variant,
-  size,
-  asChild = false,
+  variant = "default",
+  size = "default",
   ...props
-}: React.ComponentProps<"button"> &
-  VariantsOf<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
-
+}: ButtonPrimitive.Props & VariantsOf<typeof buttonVariants>) {
   return (
-    <Comp
+    <ButtonPrimitive
       data-slot="button"
-      className={buttonVariants({ variant, size, className })}
+      className={(state) =>
+        buttonVariants({
+          variant,
+          size,
+          className:
+            typeof className === "function" ? className(state) : className,
+        })
+      }
       {...props}
     />
   );
@@ -175,12 +168,22 @@ function Button({
 export { Button, buttonVariants };
 ```
 
-The component keeps its API: `variant`, `size`, `asChild` with `Slot`
-from `@radix-ui/react-slot`, and the `buttonVariants` export, which other
-components and links call, such as
-`<a className={buttonVariants({ variant: "ghost" })}>`. Newer versions of
-shadcn/ui import `Slot` from `radix-ui` instead; keep the import that your
-component has.
+A Base UI component takes a `className` that is either a string or a
+function of its state, such as
+`className={(state) => (state.disabled ? "opacity-25" : "")}`. A recipe
+takes a string, so the component passes Base UI a function, which calls
+the recipe with the `className` of that state. class-variance-authority
+ignores a function, so the classes it returned were lost; the recipe adds
+them.
+
+The component keeps its API: `variant`, `size`, the `render` prop of
+Base UI, such as `<Button nativeButton={false} render={<a href="/" />}>`,
+and the `buttonVariants` export, which other components and links call,
+such as `<a className={buttonVariants({ variant: "ghost" })}>`.
+
+A component built on Radix takes `asChild` and renders `Slot` instead,
+and its `className` is a string: pass it to the recipe directly, as in
+`className={buttonVariants({ variant, size, className })}`.
 
 Every variant of the button has a default, so its props stay optional. In
 a component whose variant has no default, `VariantsOf` makes that variant
