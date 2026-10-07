@@ -74,11 +74,13 @@ default join, they are required. Then it teaches the agent to:
 - Declare an option even when it adds no classes.
 - Style a component of several elements with one slot recipe, and type
   its props from the recipe.
+- Compose a shared recipe instead of copying its config.
 - Use `cx` only to add classes that set new properties.
 
 And not to:
 
 - Override a recipe with `className` or `classNames`.
+- Set again a property that a composed recipe sets.
 - Use compound variants to override a variant.
 - Pick classes with lookup objects or conditionals.
 

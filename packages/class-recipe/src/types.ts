@@ -1,6 +1,7 @@
 import type {
   VariantKey as KindVariantKey,
   VariantsOf as KindVariantsOf,
+  VariantSelection,
 } from "@lynstack/recipe";
 
 /**
@@ -47,6 +48,72 @@ type OptionsOnly<Variants> = {
   [Name in keyof Variants]: Exclude<Variants[Name], object>;
 };
 
+/**
+ * Classes for some of a slot recipe's slots, keyed by slot name.
+ *
+ * @typeParam Slot - The names of the slots.
+ */
+type SlotClasses<Slot extends string> = Readonly<
+  Partial<Record<Slot, string | undefined>>
+>;
+
+/**
+ * The class name of every slot, keyed by slot name, as returned by a slot
+ * recipe.
+ *
+ * @typeParam Slot - The names of the slots.
+ */
+type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
+
+/**
+ * Rejects the slots of each option's classes that `Slot` does not name,
+ * unless the option's slot names are not known at compile time.
+ */
+type NoUnknownSlots<Variants, Slot extends string> = {
+  readonly [Name in keyof Variants]: {
+    readonly [
+      Option in keyof Variants[Name]
+    ]: string extends keyof Variants[Name][Option]
+      ? unknown
+      : Readonly<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>;
+  };
+};
+
+/**
+ * The variants of a slot recipe whose variant names are not known at
+ * compile time. Every property but `classNames` is a variant, which
+ * TypeScript cannot express, so a value may also be classes by slot.
+ */
+type WideSelection<Slot extends string> = Readonly<
+  Record<string, string | SlotClasses<Slot> | undefined>
+>;
+
+/**
+ * The properties a slot recipe accepts: its variants and a `classNames`
+ * override for each slot.
+ *
+ * When the variant names are not known at compile time, every property but
+ * `classNames` may be a variant, whose option is named by a string.
+ * TypeScript cannot leave `classNames` out of those names, so a variant
+ * also accepts classes by slot, which select no option.
+ *
+ * @typeParam Slot - The names of the slots.
+ * @typeParam Variants - The variant definitions, keyed by variant name.
+ * @typeParam DefaultedName - The names of the variants that have a default.
+ */
+type SlotRecipeProps<
+  Slot extends string,
+  Variants,
+  DefaultedName extends keyof Variants,
+> = Simplify<
+  (string extends keyof Variants
+    ? WideSelection<Slot>
+    : VariantSelection<Variants, DefaultedName>) & {
+    /** Classes added last to each slot, after every class of the recipe. */
+    readonly classNames?: SlotClasses<Slot> | undefined;
+  }
+>;
+
 export type {
   CompoundCondition,
   DefaultVariants,
@@ -54,4 +121,12 @@ export type {
   VariantOption,
   VariantSelection,
 } from "@lynstack/recipe";
-export type { Simplify, VariantKey, VariantsOf };
+export type {
+  NoUnknownSlots,
+  Simplify,
+  SlotClasses,
+  SlotClassNames,
+  SlotRecipeProps,
+  VariantKey,
+  VariantsOf,
+};

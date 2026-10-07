@@ -2,6 +2,7 @@ import { defineExample, slotValues } from "../../example.ts";
 import type { Example } from "../../example.ts";
 import { alert } from "../../recipes/class-recipe/sva/alert.ts";
 import { card } from "../../recipes/class-recipe/sva/card.ts";
+import { dialog } from "../../recipes/class-recipe/sva/dialog.ts";
 import { heading } from "../../recipes/class-recipe/sva/heading.ts";
 
 /** The examples of the page sva of the docs of class-recipe, by recipe. */
@@ -19,6 +20,14 @@ const examples = {
     name: "card",
     options: { elevated: ["false", "true"], size: ["sm", "md"] },
     recipe: card,
+    required: [],
+    valuesOf: slotValues,
+  }),
+  dialog: defineExample({
+    kind: "className",
+    name: "dialog",
+    options: { elevated: ["false", "true"], size: ["sm", "md"] },
+    recipe: dialog,
     required: [],
     valuesOf: slotValues,
   }),

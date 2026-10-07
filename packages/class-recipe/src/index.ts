@@ -22,18 +22,18 @@ export type {
 export { createSlotRecipe, sva } from "./slot-recipe.js";
 export type {
   CreateSlotRecipe,
-  SlotClasses,
-  SlotClassNames,
   SlotCompoundVariant,
   SlotRecipe,
   SlotRecipeConfig,
-  SlotRecipeProps,
   SlotRecipeVariants,
 } from "./slot-recipe.js";
 export type {
   CompoundCondition,
   DefaultVariants,
   RecipeFunction,
+  SlotClasses,
+  SlotClassNames,
+  SlotRecipeProps,
   VariantOption,
   VariantSelection,
   VariantsOf,

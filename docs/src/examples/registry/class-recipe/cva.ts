@@ -3,6 +3,7 @@ import type { Example } from "../../example.ts";
 import { badge } from "../../recipes/class-recipe/cva/badge.ts";
 import { button } from "../../recipes/class-recipe/cva/button.ts";
 import { heading } from "../../recipes/class-recipe/cva/heading.ts";
+import { iconButton } from "../../recipes/class-recipe/cva/icon-button.ts";
 import { input } from "../../recipes/class-recipe/cva/input.ts";
 import { stack } from "../../recipes/class-recipe/cva/stack.ts";
 
@@ -37,6 +38,18 @@ const examples = {
     options: { level: ["1", "2"] },
     recipe: heading,
     required: ["level"],
+    valuesOf: elementValue,
+  }),
+  "icon-button": defineExample({
+    kind: "className",
+    name: "iconButton",
+    options: {
+      outlined: ["false", "true"],
+      size: ["sm", "md"],
+      tone: ["neutral", "danger"],
+    },
+    recipe: iconButton,
+    required: ["tone"],
     valuesOf: elementValue,
   }),
   input: defineExample({

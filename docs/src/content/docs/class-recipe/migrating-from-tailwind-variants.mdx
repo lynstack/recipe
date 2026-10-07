@@ -22,7 +22,7 @@ recipe. Most of the config moves over with a few mechanical changes:
 | `{ size: "sm", class: { title: "..." } }`                                              | `{ variants: { size: "sm" }, classNames: { title: "..." } }`                                                                                            |
 | `compoundSlots`                                                                        | A compound variant that gives the same classes to each slot in `classNames`, listed after the other compound variants                                   |
 | `title({ class: "..." })`                                                              | `card({ classNames: { title: "..." } })`                                                                                                                |
-| `extend`                                                                               | A shared config object, spread into each recipe                                                                                                         |
+| `extend: button`                                                                       | `composes: [button]`, as in [Extending a recipe](#extending-a-recipe)                                                                                   |
 | `VariantProps<typeof button>`                                                          | `VariantsOf<typeof button>`, from `@lynstack/class-recipe`, in which [a required variant stays required](#a-variant-without-a-default-becomes-required) |
 | `tv`, `cn(...)`, and `cnMerge(...)(config)`, which merge                               | `cva`, `sva`, and `cx(...)` from `createRecipes({ join: twMerge })`                                                                                     |
 | `createTV({ twMergeConfig })`, or a `tv` of your own that passes one                   | `createRecipes` with `extendTailwindMerge`, as in [Merging classes](#merging-classes)                                                                   |
@@ -137,36 +137,32 @@ variants and so lose to them when classes are merged.
 
 ## Extending a recipe
 
-class-recipe has no `extend`. Keep the config that recipes share in an
-object declared `as const`, and spread it into each of them. Without
-`as const`, the option in `defaultVariants` widens to `string`, which
-the recipe rejects:
+`extend: button` becomes `composes: [button]`, which takes a list of
+recipes:
 
 <CodeComparison name="tailwind-variants/icon-button" />
 
-`extend` merges the two configs: it joins their `base` classes, adds the
-classes of an option given again to those of the recipe it extends,
-merges `defaultVariants` and `slots`, and concatenates `compoundVariants`
-and `compoundSlots`. It also lists the variants of the new recipe before
-those it extends, which decides the order of their classes. A spread
-replaces each property it gives again, so:
-
-- Join `base` yourself, the classes of the recipe it extends first.
-- Spread the shared `compoundVariants` first into the new array.
-- Declare the new variants before the shared ones, as above.
-- Take a variant that both recipes declare out of the shared variants,
-  which would replace it, and declare it with the new ones, joining the
-  classes of each option that both give:
+`composes` merges the configs as `extend` does: it joins the `base`
+classes, adds the classes of an option given again after those of the
+recipe extended, merges `defaultVariants` and `slots`, and concatenates
+`compoundVariants`. They differ in the order of the variants:
+`extend` lists the variants of the new recipe first, and `composes` lists
+those of the recipes it composes first. The classes of an element are the
+same, in another order, which matters only to a join that merges
+conflicting classes, where the later class wins: with `composes`, the
+class of the new recipe's variant. Here, `text-xs` comes after `h-8 px-3`
+in both:
 
 <CodeComparison name="tailwind-variants/extend-variant" />
 
-A slot recipe extends the same way. Spread its `slots` into the new list,
-and join the `base` classes of each slot that the new recipe gives again.
-`as const` also keeps the slot names: where they widen to `string`, the
-recipe accepts any slot name in `classNames`, so a misspelled one goes
-unnoticed:
+A slot recipe extends the same way, with `composes`: it has the slots of
+the slot recipe it composes, and gives classes to any of them. A recipe
+that declares no variants of its own still writes `variants: {}`:
 
 <CodeComparison name="tailwind-variants/extend-slots" />
+
+A recipe can compose several recipes, in order. `compoundSlots` stay
+compound variants of each recipe, as in [Slots](#slots).
 
 ## Behaviors that change
 

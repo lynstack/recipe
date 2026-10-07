@@ -19,6 +19,11 @@ of an element in one place:
   `loading` and `disabled` props, rather than a variant for each.
 - **Set a property that depends on several variants only in compound
   variants**, with one compound variant for each combination.
+- **Compose a shared recipe rather than copying its config**, and set in
+  the recipe that composes it only properties that the shared recipe
+  leaves alone: `composes` adds classes after the shared recipe's, and
+  never replaces them (see
+  [Composing recipes](/recipe/class-recipe/cva/#composing-recipes)).
 - **Add an option rather than an override.** `className`, `classNames`,
   and compound variants add classes after the variants; they never remove
   one.

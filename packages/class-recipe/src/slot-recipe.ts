@@ -1,12 +1,22 @@
-import type { KindVariants } from "@lynstack/recipe";
+import type {
+  Composable,
+  ComposableKindSlotRecipe,
+  ComposedDefaultedName,
+  ComposedSlot,
+  ComposedVariants,
+  KindVariants,
+  RecipeComposition,
+} from "@lynstack/recipe";
 
 import type {
   CompoundCondition,
   DefaultVariants,
+  NoUnknownSlots,
   RecipeFunction,
-  Simplify,
+  SlotClassNames,
+  SlotClasses,
+  SlotRecipeProps,
   VariantKey,
-  VariantSelection,
 } from "./types.js";
 import type {
   LooseSlotRecipe,
@@ -17,41 +27,10 @@ import { buildSlotRecipe } from "./compile-slot-recipe.js";
 import { defaultBuildOptions } from "./build-options.js";
 
 /**
- * Classes for some of a slot recipe's slots, keyed by slot name.
- *
- * @typeParam Slot - The names of the slots.
- */
-type SlotClasses<Slot extends string> = Readonly<
-  Partial<Record<Slot, string | undefined>>
->;
-
-/**
- * The class name of every slot, keyed by slot name, as returned by a slot
- * recipe.
- *
- * @typeParam Slot - The names of the slots.
- */
-type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
-
-/**
  * The variants of a {@link SlotRecipeConfig}: for each variant name, the
  * classes of each slot for each of its options.
  */
 type SlotRecipeVariants = KindVariants<SlotClasses<string>>;
-
-/**
- * Rejects the slots of each option's classes that `Slot` does not name,
- * unless the option's slot names are not known at compile time.
- */
-type NoUnknownSlots<Variants, Slot extends string> = {
-  readonly [Name in keyof Variants]: {
-    readonly [
-      Option in keyof Variants[Name]
-    ]: string extends keyof Variants[Name][Option]
-      ? unknown
-      : Readonly<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>;
-  };
-};
 
 /**
  * Classes added to some slots when several variants have particular options
@@ -76,22 +55,35 @@ interface SlotCompoundVariant<Slot extends string, Variants> {
  * @typeParam Slot - The names of the slots.
  * @typeParam Variants - The variant definitions, keyed by variant name.
  * @typeParam DefaultedName - The names of the variants that have a default.
+ * @typeParam Composed - The types of the slot recipes that it composes.
  */
 interface SlotRecipeConfig<
   Slot extends string,
   Variants extends SlotRecipeVariants,
-  DefaultedName extends keyof Variants,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindSlotRecipe<string>[] = readonly [],
 > {
-  /** The names of the elements the recipe styles. */
+  /**
+   * Slot recipes whose config the recipe adds to its own, in order, as if
+   * it were written in one config: their slots and base classes first, the
+   * classes of each of their options before its own, and their compound
+   * variants first. A slot recipe composed several times counts once.
+   */
+  readonly composes?: Composed | undefined;
+  /**
+   * The names of the elements the recipe styles, after those of the slot
+   * recipes it composes.
+   */
   readonly slots: readonly Slot[];
   /** Classes applied to each slot whatever the variants. */
-  readonly base?: SlotClasses<NoInfer<Slot>> | undefined;
+  readonly base?:
+    SlotClasses<NoInfer<ComposedSlot<Composed, Slot>>> | undefined;
   /**
    * For each variant name, the classes of each slot for each of its options.
    * The names `className` and `classNames` are reserved for overrides.
    */
   readonly variants: Variants &
-    NoUnknownSlots<Variants, NoInfer<Slot>> & {
+    NoUnknownSlots<Variants, NoInfer<ComposedSlot<Composed, Slot>>> & {
       readonly className?: never;
       readonly classNames?: never;
     };
@@ -101,11 +93,15 @@ interface SlotRecipeConfig<
    * classes.
    */
   readonly compoundVariants?:
-    | readonly SlotCompoundVariant<NoInfer<Slot>, NoInfer<Variants>>[]
+    | readonly SlotCompoundVariant<
+        NoInfer<ComposedSlot<Composed, Slot>>,
+        NoInfer<ComposedVariants<Composed, Variants>>
+      >[]
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    DefaultVariants<Variants, DefaultedName> | undefined;
+    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | undefined;
   /**
    * Whether the recipe caches the class names of each declared selection.
    * Defaults to the `cache` option of `createRecipes`, which is `true`.
@@ -114,59 +110,28 @@ interface SlotRecipeConfig<
 }
 
 /**
- * The variants of a slot recipe whose variant names are not known at
- * compile time. Every property but `classNames` is a variant, which
- * TypeScript cannot express, so a value may also be classes by slot.
- */
-type WideSelection<Slot extends string> = Readonly<
-  Record<string, string | SlotClasses<Slot> | undefined>
->;
-
-/**
- * The properties a slot recipe accepts: its variants and a `classNames`
- * override for each slot.
- *
- * When the variant names are not known at compile time, every property but
- * `classNames` may be a variant, whose option is named by a string.
- * TypeScript cannot leave `classNames` out of those names, so a variant
- * also accepts classes by slot, which select no option.
- *
- * @typeParam Slot - The names of the slots.
- * @typeParam Variants - The variant definitions, keyed by variant name.
- * @typeParam DefaultedName - The names of the variants that have a default.
- */
-type SlotRecipeProps<
-  Slot extends string,
-  Variants,
-  DefaultedName extends keyof Variants,
-> = Simplify<
-  (string extends keyof Variants
-    ? WideSelection<Slot>
-    : VariantSelection<Variants, DefaultedName>) & {
-    /** Classes added last to each slot, after every class of the recipe. */
-    readonly classNames?: SlotClasses<Slot> | undefined;
-  }
->;
-
-/**
  * A function that returns the class name of every slot for a selection of
  * variants, with the names of those variants in `variantKeys`.
  *
  * @typeParam Slot - The names of the slots.
  * @typeParam Props - The properties the recipe accepts; see
  *   {@link SlotRecipeProps}.
+ * @typeParam Composition - What the slot recipe passes on to the slot
+ *   recipes that compose it, under a `~composition` property that exists in
+ *   the type only. Without it, the type does not allow composing it.
  */
-type SlotRecipe<Slot extends string, Props> = RecipeFunction<
+type SlotRecipe<
+  Slot extends string,
   Props,
-  SlotClassNames<Slot>
-> & {
+  Composition = unknown,
+> = RecipeFunction<Props, SlotClassNames<Slot>> & {
   /**
    * The names of the recipe's variants, in the order of
    * `Object.keys(config.variants)`. Use it to split a component's props into
    * the recipe's variants and the rest.
    */
   readonly variantKeys: readonly VariantKey<Props>[];
-};
+} & Composable<Composition>;
 
 /**
  * The type of {@link createSlotRecipe}.
@@ -176,36 +141,53 @@ type SlotRecipe<Slot extends string, Props> = RecipeFunction<
  *   `config.variants`.
  * @typeParam DefaultedName - The names of the variants that have a
  *   default, inferred from `config.defaultVariants`.
- * @param config - The slots, base classes, variants, compound variants,
- *   and default variants of the recipe.
+ * @typeParam Composed - The types of the slot recipes it composes, inferred
+ *   from `config.composes`.
+ * @param config - The slot recipes it composes, and the slots, base
+ *   classes, variants, compound variants, and default variants of the
+ *   recipe.
  * @returns The slot recipe.
  */
 type CreateSlotRecipe = <
   const Slot extends string,
   const Variants extends SlotRecipeVariants,
-  const DefaultedName extends keyof Variants = never,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<string>[] =
+    readonly [],
 >(
-  config: SlotRecipeConfig<Slot, Variants, DefaultedName>,
-) => SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>>;
+  config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
+) => ComposedSlotRecipe<
+  ComposedSlot<Composed, Slot>,
+  ComposedVariants<Composed, Variants>,
+  ComposedDefaultedName<Composed, DefaultedName>
+>;
+
+/** The slot recipe of a config with the slot recipes it composes. */
+type ComposedSlotRecipe<
+  Slot extends string,
+  Variants,
+  DefaultedName,
+> = SlotRecipe<
+  Slot,
+  SlotRecipeProps<Slot, Variants, Extract<DefaultedName, keyof Variants>>,
+  RecipeComposition<
+    Variants,
+    Extract<DefaultedName, keyof Variants>,
+    string,
+    readonly Slot[]
+  >
+>;
 
 /**
  * Returns a `createSlotRecipe` whose recipes combine their classes with
  * `options.join` and cache them unless `options.cache` is false.
  */
-function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
-  function createSlotRecipe<
-    const Slot extends string,
-    const Variants extends SlotRecipeVariants,
-    const DefaultedName extends keyof Variants = never,
-  >(
-    config: SlotRecipeConfig<Slot, Variants, DefaultedName>,
-  ): SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>>;
+function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe;
 
-  function createSlotRecipe(config: LooseSlotRecipeConfig): LooseSlotRecipe {
-    return buildSlotRecipe(config, options);
-  }
-
-  return createSlotRecipe;
+function makeCreateSlotRecipe(options: BuildOptions): unknown {
+  return (config: LooseSlotRecipeConfig): LooseSlotRecipe =>
+    buildSlotRecipe(config, options);
 }
 
 /**
@@ -229,6 +211,9 @@ function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
  * to `false`. An option that the config does not declare adds no classes.
  * The recipe's `variantKeys` property lists the names of its variants.
  *
+ * A slot recipe composes the slot recipes listed in `composes` as a recipe
+ * composes recipes, and has the slots of each, theirs first.
+ *
  * Classes are added, never removed, so without a join function that merges
  * them, set each CSS property of an element in one place; see
  * {@link https://lynstack.github.io/recipe/class-recipe/conflict-free-recipes/ | Writing conflict-free recipes}.
@@ -251,6 +236,16 @@ function makeCreateSlotRecipe(options: BuildOptions): CreateSlotRecipe {
  * classNames.root; // => "rounded-lg border p-4 shadow"
  * classNames.title; // => "font-medium text-base"
  * card.variantKeys; // => ["size"]
+ *
+ * const dialog = createSlotRecipe({
+ *   composes: [card],
+ *   slots: ["footer"],
+ *   base: { root: "shadow-lg", footer: "flex justify-end" },
+ *   variants: {},
+ * });
+ *
+ * dialog().root; // => "rounded-lg border shadow-lg p-4"
+ * dialog().footer; // => "flex justify-end"
  * ```
  */
 const createSlotRecipe: CreateSlotRecipe =
@@ -283,11 +278,8 @@ const sva: CreateSlotRecipe = createSlotRecipe;
 export { createSlotRecipe, makeCreateSlotRecipe, sva };
 export type {
   CreateSlotRecipe,
-  SlotClassNames,
-  SlotClasses,
   SlotCompoundVariant,
   SlotRecipe,
   SlotRecipeConfig,
-  SlotRecipeProps,
   SlotRecipeVariants,
 };

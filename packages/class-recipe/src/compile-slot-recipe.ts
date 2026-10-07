@@ -1,4 +1,8 @@
-import type { CreateKindSlotRecipe, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindSlotRecipe,
+  CreateKindSlotRecipe,
+  KindVariants,
+} from "@lynstack/recipe";
 import { createSlotRecipeKind } from "@lynstack/recipe";
 
 import {
@@ -16,6 +20,7 @@ type LooseSlotClasses = Readonly<Record<string, string | undefined>>;
 type LooseSlotClassNames = Readonly<Record<string, string>>;
 
 interface LooseSlotRecipeConfig {
+  readonly composes?: readonly ComposableKindSlotRecipe<string>[] | undefined;
   readonly slots: readonly string[];
   readonly base?: LooseSlotClasses | undefined;
   readonly variants: KindVariants<LooseSlotClasses>;
@@ -48,6 +53,23 @@ interface Slots {
   readonly addClasses: (className: string, classes: string) => string;
 }
 
+/** The slot recipe of the engine that each one of the package is built on. */
+const engineSlotRecipes = new WeakMap<
+  object,
+  ComposableKindSlotRecipe<string>
+>();
+
+/**
+ * Returns the slot recipes of the engine that `composes` names: the one
+ * each slot recipe of the package is built on, or the slot recipe itself,
+ * which the engine rejects unless it created it.
+ */
+function engineSlotRecipesOf(
+  composes: readonly ComposableKindSlotRecipe<string>[] = [],
+): readonly ComposableKindSlotRecipe<string>[] {
+  return composes.map((recipe) => engineSlotRecipes.get(recipe) ?? recipe);
+}
+
 /**
  * Returns the slot recipe function for `config`, whose classes are combined
  * with `options.join` and cached unless `options.cache` is false.
@@ -58,16 +80,22 @@ function buildSlotRecipe(
 ): LooseSlotRecipe {
   const joinClasses = createJoinClasses(options.join);
   const concatenates = joinClasses === concatClasses;
+  const classRecipe = concatenates
+    ? concatKind(options)
+    : joinKind(joinClasses, options);
+  const composes = engineSlotRecipesOf(config.composes);
+  const classNamesOf = classRecipe({
+    ...withStringClasses(config),
+    composes,
+  });
   const slots: Slots = {
     addClasses: concatenates
       ? appendClasses
       : (className, classes) => joinClasses([className, classes]),
-    names: [...config.slots],
+    // The result of a slot recipe that composes others lists their slots.
+    names:
+      composes.length === 0 ? [...config.slots] : Object.keys(classNamesOf()),
   };
-  const classRecipe = concatenates
-    ? concatKind(options)
-    : joinKind(joinClasses, options);
-  const classNamesOf = classRecipe(withStringClasses(config, slots.names));
 
   const slotRecipe = (
     props?: LooseSlotRecipeProps | null,
@@ -78,7 +106,11 @@ function buildSlotRecipe(
       ? classNames
       : withOverrides(slots, classNames, overrides);
   };
-  return Object.assign(slotRecipe, { variantKeys: classNamesOf.variantKeys });
+  const result = Object.assign(slotRecipe, {
+    variantKeys: classNamesOf.variantKeys,
+  });
+  engineSlotRecipes.set(result, classNamesOf);
+  return result;
 }
 
 /** Slot recipes whose classes are concatenated by slot. */
@@ -111,13 +143,11 @@ function joinKind(
 
 /**
  * Returns `config` as a slot recipe of a kind takes it: the classes of each
- * compound variant under `value`, and of each value only the declared
- * slots whose classes are a string that is not empty.
+ * compound variant under `value`, and of each value only the slots whose
+ * classes are a string that is not empty. The engine ignores the slots that
+ * neither the config nor a slot recipe it composes declares.
  */
-function withStringClasses(
-  config: LooseSlotRecipeConfig,
-  slots: readonly string[],
-): {
+function withStringClasses(config: LooseSlotRecipeConfig): {
   readonly slots: readonly string[];
   readonly base: LooseSlotClassNames;
   readonly variants: KindVariants<LooseSlotClassNames>;
@@ -139,7 +169,7 @@ function withStringClasses(
           Object.entries(options).map(
             ([option, classes]: readonly [string, LooseSlotClasses]) => [
               option,
-              stringClasses(slots, classes),
+              stringClasses(classes),
             ],
           ),
         ),
@@ -147,25 +177,25 @@ function withStringClasses(
     ),
   );
   return {
-    base: stringClasses(slots, config.base ?? {}),
+    base: stringClasses(config.base ?? {}),
     cache: config.cache,
     compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
-      value: stringClasses(slots, compound.classNames),
+      value: stringClasses(compound.classNames),
       variants: compound.variants,
     })),
     defaultVariants: config.defaultVariants,
-    slots,
+    slots: config.slots,
     variants,
   };
 }
 
-/** Returns the classes in `classes` of each slot that has some. */
-function stringClasses(
-  slots: readonly string[],
-  classes: LooseSlotClasses,
-): LooseSlotClassNames {
+/**
+ * Returns the classes in `classes` of each slot that has some, including
+ * slots that only a slot recipe it composes declares.
+ */
+function stringClasses(classes: LooseSlotClasses): LooseSlotClassNames {
   return Object.fromEntries(
-    slots
+    Object.keys(classes)
       .map((slot) => [slot, classOfSlot(classes, slot)] as const)
       .filter(([, classesOfSlot]) => classesOfSlot !== ""),
   );

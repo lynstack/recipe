@@ -19,7 +19,7 @@ props into class names. It differs from them in these ways:
 | Slots                     | Yes                                                               | No                                                                                        | Yes                                                                               |
 | Variant without a default | Required by its type                                              | Optional                                                                                  | Optional                                                                          |
 | Conflict resolution       | Any join function, cached                                         | Call `twMerge` on the result                                                              | `tailwind-merge`, built in                                                        |
-| Extending a recipe        | Spread a shared config                                            | No                                                                                        | `extend`                                                                          |
+| Extending a recipe        | `composes`                                                        | No                                                                                        | `extend`                                                                          |
 | Recipe calls per second   | {formatRoughHz(recipeSpeedOf("class-recipe"))}                    | {formatRoughHz(recipeSpeedOf("class-variance-authority"))}                                | {formatRoughHz(recipeSpeedOf("tailwind-variants"))}                               |
 
 The calls per second come from the

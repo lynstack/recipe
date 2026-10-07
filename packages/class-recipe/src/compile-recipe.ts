@@ -1,4 +1,8 @@
-import type { CreateKindRecipe, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindRecipe,
+  CreateKindRecipe,
+  KindVariants,
+} from "@lynstack/recipe";
 import { createRecipeKind } from "@lynstack/recipe";
 
 import { appendClasses, createJoinClasses } from "./join-classes.js";
@@ -8,6 +12,7 @@ import { cx } from "./cx.js";
 type LooseSelection = Readonly<Record<string, unknown>>;
 
 interface LooseRecipeConfig {
+  readonly composes?: readonly ComposableKindRecipe<string>[] | undefined;
   readonly base?: string | undefined;
   readonly variants: KindVariants<string>;
   readonly compoundVariants?:
@@ -30,6 +35,20 @@ type LooseRecipe = ((props?: LooseRecipeProps | null) => string) & {
 
 const noProps: LooseRecipeProps = Object.freeze({});
 
+/** The recipe of the engine that each recipe of the package is built on. */
+const engineRecipes = new WeakMap<object, ComposableKindRecipe<string>>();
+
+/**
+ * Returns the recipes of the engine that `composes` names: the one each
+ * recipe of the package is built on, or the recipe itself, which the engine
+ * rejects unless it created it.
+ */
+function engineRecipesOf(
+  composes: readonly ComposableKindRecipe<string>[] = [],
+): readonly ComposableKindRecipe<string>[] {
+  return composes.map((recipe) => engineRecipes.get(recipe) ?? recipe);
+}
+
 /**
  * Returns the function that builds the recipe of a config, whose classes
  * are combined with `options.join` and cached unless `options.cache` is
@@ -46,6 +65,7 @@ function createRecipeBuilder(
     const classesOf = classRecipe({
       base: config.base,
       cache: config.cache,
+      composes: engineRecipesOf(config.composes),
       compoundVariants: (config.compoundVariants ?? []).map((compound) => ({
         value: compound.className,
         variants: compound.variants,
@@ -62,7 +82,11 @@ function createRecipeBuilder(
         ? joinClasses([classes, className])
         : classes;
     };
-    return Object.assign(recipe, { variantKeys: classesOf.variantKeys });
+    const result = Object.assign(recipe, {
+      variantKeys: classesOf.variantKeys,
+    });
+    engineRecipes.set(result, classesOf);
+    return result;
   };
 }
 

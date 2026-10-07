@@ -42,10 +42,42 @@ const merged = createRecipes({
   join: (...classNames) => cx(classNames),
 });
 
+const iconButton = cva({
+  composes: [button],
+  compoundVariants: [
+    { className: "rounded-full", variants: { shape: "round", size: "lg" } },
+  ],
+  variants: { shape: { round: "aspect-square" } },
+});
+
+const select = sva({
+  base: { trigger: "h-10" },
+  composes: [field],
+  slots: ["trigger"],
+  variants: { invalid: { true: { label: "text-red-700" } } },
+});
+
+const iconClassName: string = iconButton({ shape: "round", tone: "danger" });
+const selectClassNames: Readonly<
+  Record<"input" | "label" | "trigger", string>
+> = select({ invalid: true });
 const className: string = button({ tone: "danger" });
 const buttonKeys: readonly ("disabled" | "size" | "tone")[] =
   button.variantKeys;
 const cardKeys: readonly "size"[] = card.variantKeys;
 
-export { button, buttonKeys, card, cardKeys, className, field, merged, pill };
+export {
+  button,
+  buttonKeys,
+  card,
+  cardKeys,
+  className,
+  field,
+  iconButton,
+  iconClassName,
+  merged,
+  pill,
+  select,
+  selectClassNames,
+};
 export type { ButtonVariants };

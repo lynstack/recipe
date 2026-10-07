@@ -23,6 +23,7 @@ recipe takes a string:
 
 | Property           | Description                                                                                                                                                           |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own; see [Composing slot recipes](#composing-slot-recipes).                                          |
 | `slots`            | The names of the slots, in the order of the result.                                                                                                                   |
 | `base`             | Optional. The classes each slot always has.                                                                                                                           |
 | `variants`         | For each variant name, the classes of each slot for each of its options.                                                                                              |
@@ -113,6 +114,18 @@ Conditions are checked after defaults are applied, which is why the first
 call matches `size: "md"` without passing it. Matching compound variants
 are added in the order they are declared. A compound variant that names an
 undeclared variant or option never matches; its config is a type error.
+
+## Composing slot recipes
+
+`composes` lists slot recipes whose configs the slot recipe adds to its
+own, as `cva` does (see [Composing recipes](/recipe/class-recipe/cva/#composing-recipes)).
+The slot recipe has the slots of each, theirs first, and gives classes to
+any of them:
+
+<RecipeExample name="class-recipe/sva/dialog" calls={[{ size: "sm" }]} />
+
+`classNames` adds classes to every slot, including those of the slot
+recipes it composes.
 
 ## Overriding classes
 

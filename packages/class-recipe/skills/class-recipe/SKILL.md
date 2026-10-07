@@ -1,6 +1,6 @@
 ---
 name: class-recipe
-description: Write conflict-free component styles with @lynstack/class-recipe (cva or createRecipe, sva or createSlotRecipe, cx) when classes are joined without tailwind-merge. Use this skill whenever you create or change a component whose class names depend on props or state in a project that imports @lynstack/class-recipe, whenever you add or edit a variant, compound variant, or slot, and whenever you are tempted to override a recipe's classes with className, even if the user does not mention the library by name.
+description: Write conflict-free component styles with @lynstack/class-recipe (cva or createRecipe, sva or createSlotRecipe, cx) when classes are joined without tailwind-merge. Use this skill whenever you create or change a component whose class names depend on props or state in a project that imports @lynstack/class-recipe, whenever you add or edit a variant, compound variant, slot, or composed recipe, and whenever you are tempted to override a recipe's classes with className, even if the user does not mention the library by name.
 ---
 
 # Conflict-free recipes with class-recipe
@@ -173,6 +173,35 @@ classNames.root; // => "flex gap-3 rounded-lg border p-4 border-red-200 bg-red-5
 classNames.icon; // => "size-5 shrink-0 text-red-600"
 ```
 
+### Compose a shared recipe instead of copying its config
+
+When several components share classes and variants, such as every form
+control's border and sizes, put them in one recipe and list it in the
+`composes` of the others. The composed recipe's classes come first, and
+the recipe that composes it accepts its variants too.
+
+```ts
+const control = cva({
+  base: "rounded-md border",
+  variants: { size: { sm: "h-8 text-sm", md: "h-10 text-base" } },
+  defaultVariants: { size: "md" },
+});
+
+const input = cva({
+  composes: [control],
+  base: "px-3",
+  variants: {
+    invalid: { true: "border-red-600", false: "border-gray-300" },
+  },
+});
+
+input({ invalid: true });
+// => "rounded-md border px-3 h-10 text-base border-red-600"
+```
+
+The rule of one place covers every recipe that `composes` brings in: the
+recipe that composes another sets only properties the other leaves alone.
+
 ### Type the props from the recipe
 
 Use `VariantsOf` so the component's props follow the recipe, and
@@ -215,6 +244,14 @@ button({ size: "md", className: "px-2" });
 button({ size: "compact" });
 ```
 
+### Don't set again a property that a composed recipe sets
+
+A recipe that composes another adds its classes after the other's; it
+cannot replace them. If `control` sets the height in `size`, giving
+`input` a `size` option with `h-9` leaves both heights. Add the option to
+the composed recipe, or move the property out of it into each recipe that
+composes it.
+
 ### Don't use compound variants to override a variant
 
 A compound variant adds classes after the variants; it cannot remove one.
@@ -247,6 +284,8 @@ const panel = cva({
 - For each element, list the CSS properties its classes set: does any
   property appear in more than one of `base`, a variant, or a compound
   variant that can apply together?
+- Does a recipe that composes others set a property that one of them
+  already sets?
 - Does any call pass `className` or `classNames` to override a class the
   recipe already sets?
 - Is any class chosen by a lookup object or a conditional instead of a

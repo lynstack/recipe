@@ -18,6 +18,7 @@ selection of variants. It is also exported as `createRecipe`.
 
 | Property           | Description                                                                                                                                                      |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Recipes whose configs the recipe adds to its own; see [Composing recipes](#composing-recipes).                                                         |
 | `base`             | Optional. The classes the element always has.                                                                                                                    |
 | `variants`         | For each variant name, the classes of each of its options. `className` and `classNames` are reserved names.                                                      |
 | `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.                                                                |
@@ -82,6 +83,31 @@ default `size: "md"`, and a condition can match
 the `false` of a boolean variant. Matching compound variants are added in
 the order they are declared. A compound variant that names an undeclared
 variant or option never matches; its config is a type error.
+
+## Composing recipes
+
+`composes` lists recipes whose configs the recipe adds to its own, as if
+they were written in one config: their base classes first, then the
+classes of each option, in the order of the recipes, then their compound
+variants before its own. The default of a variant is the last one given.
+The recipe accepts the variants of every recipe it composes:
+
+<RecipeExample
+  name="class-recipe/cva/icon-button"
+  calls={[{ tone: "neutral" }, { tone: "danger", size: "sm" }]}
+/>
+
+A recipe composed several times counts once. A recipe of
+[`createRecipes`](/recipe/class-recipe/create-recipes/) can compose any
+recipe of the package, and joins the classes with its own join. A recipe
+that only composes others still declares `variants: {}`.
+
+Composing adds classes, as a config does: give each CSS property of an
+element in one of the recipes, as
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
+describes, or use a join that merges classes. See
+[Composing recipes](/recipe/recipe/composing/) in the engine's docs for
+how the configs merge.
 
 ## Overriding classes
 

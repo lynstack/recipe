@@ -15,7 +15,7 @@ import type { Arbitrary } from "fast-check";
 import { twMerge } from "tailwind-merge";
 
 import type { RecipesOptions } from "./create-recipes.js";
-import type { SlotClasses } from "./slot-recipe.js";
+import type { SlotClasses } from "./types.js";
 import { createRecipes } from "./create-recipes.js";
 
 type Classes = SlotClasses<string>;
