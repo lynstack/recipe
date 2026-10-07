@@ -138,4 +138,4 @@ A library can define its own `VariantsOf` to leave out the props its
 recipes take besides their variants, as `@lynstack/class-recipe` leaves
 out `className`. Slot recipes have their own config types,
 `KindSlotRecipeConfig` and `KindSlotVariants`; see
-[Exports](/recipe/recipe/exports/) for the full list.
+the [API reference](/recipe/recipe/api/) for the full list.

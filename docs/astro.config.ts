@@ -260,10 +260,7 @@ export default defineConfig({
                 label: "Guides",
               },
               {
-                items: [
-                  "recipe/api",
-                  { label: "All exports", slug: "recipe/exports" },
-                ],
+                items: ["recipe/api"],
                 label: "API reference",
               },
               {
@@ -285,5 +282,7 @@ export default defineConfig({
       title: "lynstack recipe",
     }),
   ],
+  // Astro adds the base to each source, not to the destination.
+  redirects: { "/recipe/exports": `${base}/recipe/api/` },
   site,
 });
