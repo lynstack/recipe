@@ -5,6 +5,34 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.2.0 — 2026-10-07
+
+A recipe can build on other recipes with `composes`.
+
+- `createStyleRecipe` and `createSlotStyleRecipe` take `composes`, a list
+  of recipes of the package whose configs they add to their own, as if
+  written in one config: their base styles first, the style of each
+  option in the order of the recipes, their compound variants first, and
+  the last default given for each variant. The recipe accepts the
+  variants of every recipe it composes, and its styles override theirs
+  where they set the same property. A recipe composed several times
+  counts once.
+- A slot style recipe has the slots of the slot style recipes it
+  composes, theirs first, and gives styles to any of them.
+- A themed recipe composes the recipe of its theme: list
+  `recipe.withTheme(theme)` in `composes`, with the theme its config
+  function receives.
+- A composed recipe merges the styles that several recipes give one
+  option into one style when it is created, and builds its styles as fast
+  as the one config it stands for, with or without the cache.
+- The style a composed recipe returns has the properties of every recipe
+  it composes, with their types. `StyleRecipe`, `SlotStyleRecipe`, and
+  `ThemedRecipe` take what they pass on to the recipes that compose them
+  as an optional type parameter.
+- The agent skill teaches to compose a shared recipe rather than copy its
+  config.
+- Depends on `@lynstack/recipe` through the range `^1.4.0`.
+
 ## 1.1.0 — 2026-10-06
 
 - `createStyleRecipe` and `createSlotStyleRecipe` take `cache` in their
