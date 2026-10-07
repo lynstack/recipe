@@ -120,7 +120,11 @@ export default defineConfig({
                 label: "Get started",
               },
               {
-                items: ["class-recipe/how-it-works"],
+                items: [
+                  "class-recipe/variants",
+                  "class-recipe/composing",
+                  "class-recipe/how-it-works",
+                ],
                 label: "Concepts",
               },
               {

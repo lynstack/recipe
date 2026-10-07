@@ -1,59 +1,78 @@
 ---
 title: class-recipe exports
-description: "Every function and type that @lynstack/class-recipe exports: cx, cva, sva, createRecipes, and the types of recipes, slot recipes, and their configs."
+description: "Every function and type that @lynstack/class-recipe exports: cx, cva, sva, createRecipes, and the types of recipes, slot recipes, and their configs, with their signatures and type parameters."
 sidebar:
   label: Exports
 ---
 
+Every export is documented with TSDoc, so your editor shows the full
+reference, including the types of each config and its props.
+
 ## Functions
 
-| Export             | Description                                                               |
-| ------------------ | ------------------------------------------------------------------------- |
-| `cx`               | Joins class names, skipping falsy values. Compatible with `clsx`.         |
-| `cva`              | Creates a recipe that returns the class name of one element.              |
-| `sva`              | Creates a slot recipe that returns the class names of several elements.   |
-| `createRecipe`     | The same function as `cva`, under a longer name.                          |
-| `createSlotRecipe` | The same function as `sva`, under a longer name.                          |
-| `createRecipes`    | Returns `cx` and the recipe creators with a custom join or cache setting. |
+| Export             | Signature                                  | Description                                                          | See                                                   |
+| ------------------ | ------------------------------------------ | -------------------------------------------------------------------- | ----------------------------------------------------- |
+| `cx`               | `(...inputs: ClassArray) => string`        | Joins class names, skipping falsy values. Compatible with `clsx`.    | [cx](/recipe/class-recipe/cx/)                        |
+| `cva`              | `(config: RecipeConfig) => Recipe`         | Creates a recipe that returns the class name of one element.         | [cva](/recipe/class-recipe/cva/)                      |
+| `sva`              | `(config: SlotRecipeConfig) => SlotRecipe` | Creates a slot recipe that returns the class names of several slots. | [sva](/recipe/class-recipe/sva/)                      |
+| `createRecipe`     | Same as `cva`                              | The same function as `cva`, under a longer name.                     | [cva](/recipe/class-recipe/cva/)                      |
+| `createSlotRecipe` | Same as `sva`                              | The same function as `sva`, under a longer name.                     | [sva](/recipe/class-recipe/sva/)                      |
+| `createRecipes`    | `(options?: RecipesOptions) => Recipes`    | Returns `cx` and the recipe creators with a custom join or cache.    | [createRecipes](/recipe/class-recipe/create-recipes/) |
 
-## Types
+`cva` and `sva` are generic: they infer the type parameters of the config
+and of the recipe from the config you pass.
 
-| Export                | Description                                                                                                                                      |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `VariantsOf`          | The variants a recipe accepts, without `className` or `classNames`.                                                                              |
-| `Recipe`              | A function that returns the class name for a selection of variants, with its variants in `variantKeys`, `variantOptions`, and `defaultVariants`. |
-| `RecipeConfig`        | The configuration of a recipe made by `cva`.                                                                                                     |
-| `RecipeProps`         | The properties a recipe accepts: its variants and a `className` override.                                                                        |
-| `RecipeVariants`      | The variants of a recipe's config: for each variant name, the classes of each of its options.                                                    |
-| `CompoundVariant`     | Classes added when several variants have particular options at the same time.                                                                    |
-| `CreateRecipe`        | The type of `cva` and `createRecipe`.                                                                                                            |
-| `SlotRecipe`          | A function that returns the class name of every slot for a selection of variants, with its variants listed as a `Recipe` lists them.             |
-| `SlotRecipeConfig`    | The configuration of a slot recipe made by `sva`.                                                                                                |
-| `SlotRecipeProps`     | The properties a slot recipe accepts: its variants and a `classNames` override for each slot.                                                    |
-| `SlotRecipeVariants`  | The variants of a slot recipe's config: for each variant name, the classes of each slot for each of its options.                                 |
-| `SlotCompoundVariant` | Classes added to some slots when several variants have particular options at the same time.                                                      |
-| `SlotClasses`         | Classes for some of a slot recipe's slots, keyed by slot name.                                                                                   |
-| `SlotClassNames`      | The class name of every slot, keyed by slot name, as returned by a slot recipe.                                                                  |
-| `CreateSlotRecipe`    | The type of `sva` and `createSlotRecipe`.                                                                                                        |
-| `Recipes`             | The functions that `createRecipes` returns, all sharing one join and cache setting.                                                              |
-| `RecipesOptions`      | The options of `createRecipes`.                                                                                                                  |
-| `ClassValue`          | A value that `cx` turns into class names.                                                                                                        |
-| `ClassArray`          | A list of class values, which may be nested.                                                                                                     |
-| `ClassDictionary`     | An object whose keys are class names, each included when its value is truthy.                                                                    |
-| `ClassJoin`           | Combines class strings into the final class name, such as `cx` or `twMerge`.                                                                     |
-| `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                                                                          |
-| `VariantOption`       | The values accepted for one variant.                                                                                                             |
-| `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                                                                           |
-| `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                                                           |
-| `RecipeFunction`      | A function that takes a selection, whose argument is optional when every variant is.                                                             |
+## Types for components
 
-The functions are described in [cx](/recipe/class-recipe/cx/),
-[cva](/recipe/class-recipe/cva/), [sva](/recipe/class-recipe/sva/), and
-[createRecipes](/recipe/class-recipe/create-recipes/). Every export is
-documented with TSDoc, so your editor shows the full reference, including
-the types of each config and its props.
+| Export            | Type parameters | Description                                                                               | See                                                                       |
+| ----------------- | --------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `VariantsOf`      | `<Recipe>`      | The variants a recipe or slot recipe accepts, without `className` or `classNames`.        | [Typing recipes](/recipe/class-recipe/typescript/#typing-component-props) |
+| `SlotClasses`     | `<Slot>`        | Classes for some of a slot recipe's slots, keyed by slot name. Types a `classNames` prop. | [Building components](/recipe/class-recipe/building-components/)          |
+| `SlotClassNames`  | `<Slot>`        | The class name of every slot, keyed by slot name, as a slot recipe returns it.            | [sva](/recipe/class-recipe/sva/#the-result)                               |
+| `ClassValue`      | None            | A value that `cx` turns into class names.                                                 | [cx](/recipe/class-recipe/cx/)                                            |
+| `ClassArray`      | None            | A list of class values, which may be nested.                                              | [cx](/recipe/class-recipe/cx/)                                            |
+| `ClassDictionary` | None            | An object whose keys are class names, each included when its value is truthy.             | [cx](/recipe/class-recipe/cx/)                                            |
 
-The recipes are recipes of a class name kind, built on
-[`@lynstack/recipe`](/recipe/recipe/). Use
-it to create recipes for values other than class names, such as style
-objects.
+## Types of recipes and configs
+
+| Export                | Type parameters                             | Description                                                                                                              | See                                                                                        |
+| --------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `Recipe`              | `<Props, Composition>`                      | A function that returns the class name for a selection, with `variantKeys`, `variantOptions`, and `defaultVariants`.     | [cva](/recipe/class-recipe/cva/#the-result)                                                |
+| `RecipeConfig`        | `<Variants, DefaultedName, Composed>`       | The config of a recipe made by `cva`.                                                                                    | [cva](/recipe/class-recipe/cva/#the-config)                                                |
+| `RecipeProps`         | `<Variants, DefaultedName>`                 | The props a recipe accepts: its variants and `className`. Takes the parts of a config, not a recipe.                     | [Typing recipes](/recipe/class-recipe/typescript/#recipeprops-takes-a-config-not-a-recipe) |
+| `RecipeVariants`      | None                                        | The variants of a recipe's config, with any names: for each variant name, the classes of each option.                    | [Typing recipes](/recipe/class-recipe/typescript/#variant-names-not-known-in-advance)      |
+| `CompoundVariant`     | `<Variants>`                                | A compound variant of a recipe: `{ variants, className }`.                                                               | [cva](/recipe/class-recipe/cva/#a-compound-variant)                                        |
+| `CreateRecipe`        | None                                        | The type of `cva` and `createRecipe`.                                                                                    | [cva](/recipe/class-recipe/cva/#signature)                                                 |
+| `SlotRecipe`          | `<Slot, Props, Composition>`                | A function that returns the class name of every slot for a selection, with its variants listed as a `Recipe` lists them. | [sva](/recipe/class-recipe/sva/#the-result)                                                |
+| `SlotRecipeConfig`    | `<Slot, Variants, DefaultedName, Composed>` | The config of a slot recipe made by `sva`.                                                                               | [sva](/recipe/class-recipe/sva/#the-config)                                                |
+| `SlotRecipeProps`     | `<Slot, Variants, DefaultedName>`           | The props a slot recipe accepts: its variants and `classNames`. Takes the parts of a config, not a recipe.               | [Typing recipes](/recipe/class-recipe/typescript/#recipeprops-takes-a-config-not-a-recipe) |
+| `SlotRecipeVariants`  | None                                        | The variants of a slot recipe's config, with any names: for each variant name, the classes of each slot for each option. | [Typing recipes](/recipe/class-recipe/typescript/#variant-names-not-known-in-advance)      |
+| `SlotCompoundVariant` | `<Slot, Variants>`                          | A compound variant of a slot recipe: `{ variants, classNames }`.                                                         | [sva](/recipe/class-recipe/sva/#a-compound-variant)                                        |
+| `CreateSlotRecipe`    | None                                        | The type of `sva` and `createSlotRecipe`.                                                                                | [sva](/recipe/class-recipe/sva/#signature)                                                 |
+| `Recipes`             | None                                        | The functions that `createRecipes` returns, all sharing one join and cache setting.                                      | [createRecipes](/recipe/class-recipe/create-recipes/#what-it-returns)                      |
+| `RecipesOptions`      | None                                        | The options of `createRecipes`.                                                                                          | [createRecipes](/recipe/class-recipe/create-recipes/#options)                              |
+| `ClassJoin`           | None                                        | `(...classNames: readonly string[]) => string`: combines class strings into the class name, such as `cx` or `twMerge`.   | [createRecipes](/recipe/class-recipe/create-recipes/#the-join-function)                    |
+
+In these type parameters, `Variants` is the type of a config's
+`variants`, `DefaultedName` the names of the variants that have a default,
+`Slot` the names of the slots, `Props` the props a recipe accepts, and
+`Composed` the types of the recipes in `composes`. `Composition` is what a
+recipe passes on to the recipes that compose it; it exists in the types
+only.
+
+## Types shared with the engine
+
+These types come from `@lynstack/recipe`, which class-recipe re-exports
+so that you need not install it.
+
+| Export              | Type parameters             | Description                                                                              |
+| ------------------- | --------------------------- | ---------------------------------------------------------------------------------------- |
+| `VariantSelection`  | `<Variants, DefaultedName>` | The variants a selection names, with the optional ones marked optional.                  |
+| `VariantOption`     | `<Options>`                 | The values accepted for one variant: its option names, and numbers or booleans for them. |
+| `DefaultVariants`   | `<Variants, DefaultedName>` | The option each defaulted variant uses when a selection leaves it out.                   |
+| `CompoundCondition` | `<Variants>`                | The condition of a compound variant: the options it matches for each variant it names.   |
+| `RecipeFunction`    | `<Props, Result>`           | A function that takes a selection, whose argument is optional when every variant is.     |
+
+The recipes of class-recipe are built on
+[`@lynstack/recipe`](/recipe/recipe/). Use it to create recipes for values
+other than class names, such as style objects.

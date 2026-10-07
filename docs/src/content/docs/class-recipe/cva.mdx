@@ -10,108 +10,85 @@ import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 `cva` creates a recipe, which returns the class name of one element for a
-selection of variants. It is also exported as `createRecipe`.
+selection of variants. It is also exported as `createRecipe`. For how
+variants work, read [Variants](/recipe/class-recipe/variants/) first.
 
 <RecipePlayground name="class-recipe/cva/badge" />
 
+## Signature
+
+```ts
+import { cva } from "@lynstack/class-recipe";
+
+const recipe = cva(config);
+recipe(props); // => string
+```
+
+`cva` infers the types of the recipe from `config`: the names of the
+variants and options, and which variants are required. Its type is
+`CreateRecipe` (see [All exports](/recipe/class-recipe/exports/)).
+
 ## The config
 
-| Property           | Description                                                                                                                                                      |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `composes`         | Optional. Recipes whose configs the recipe adds to its own; see [Composing recipes](#composing-recipes).                                                         |
-| `base`             | Optional. The classes the element always has.                                                                                                                    |
-| `variants`         | For each variant name, the classes of each of its options. `className` and `classNames` are reserved names.                                                      |
-| `compoundVariants` | Optional. Classes added when several variants have particular options at the same time, in order.                                                                |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                                                           |
-| `cache`            | Optional. Whether the recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`. |
+| Property           | Required | Description                                                                                                                                                             |
+| ------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variants`         | Required | For each variant name, the classes of each of its options, as a string. Pass `variants: {}` when the recipe has no variants. `className` and `classNames` are reserved. |
+| `base`             | Optional | The classes the element always has.                                                                                                                                     |
+| `compoundVariants` | Optional | A list of compound variants: classes added when several variants have particular options at the same time.                                                              |
+| `defaultVariants`  | Optional | The option each variant uses when a call leaves it out. A variant without a default is required.                                                                        |
+| `composes`         | Optional | Recipes whose configs the recipe adds before its own; see [Composing recipes](/recipe/class-recipe/composing/).                                                         |
+| `cache`            | Optional | Whether the recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`.                  |
+
+`variants` is required even when it is empty. A config without it is a
+type error, and throws a `TypeError` ("Cannot convert undefined or null to
+object") when the recipe is created.
+
+### A compound variant
+
+Each entry of `compoundVariants` is an object with these properties:
+
+| Property    | Required | Description                                                                                                            |
+| ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `variants`  | Required | The condition: for each variant it names, one option or a list of options. A variant it leaves out matches any option. |
+| `className` | Required | The classes added when the condition matches.                                                                          |
+
+```ts
+{ variants: { tone: "danger", size: ["md", "lg"] }, className: "font-semibold" }
+```
+
+See [Compound variants](/recipe/class-recipe/variants/#compound-variants).
+
+## The call
+
+A recipe takes one optional argument, an object with these properties:
+
+| Property              | Description                                                                                  |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| Each variant, by name | The option to use. Required for a variant without a default, unless it is a boolean variant. |
+| `className`           | Optional. Classes added after every class of the recipe. It takes one string.                |
+
+The recipe ignores every other property, so a component can pass it all
+of its props. When every variant is optional, the argument is optional
+too.
 
 ## The result
 
-A recipe returns the class name as a string. Classes are added in this
-order: `base`, then each variant in the order the config declares it, then
-the matching compound variants, then `className` (see
-[How it works](/recipe/class-recipe/how-it-works/)). The class name of
-each selection is built once and cached, so calling the recipe again with
-the same variants only looks it up.
+A recipe returns the class name as a string. It adds the classes in this
+order:
 
-## Required and default variants
+1. `base`.
+2. The classes of each variant's option, in the order of `variants`.
+3. The classes of each matching compound variant, in the order of
+   `compoundVariants`.
+4. `className`.
 
-A variant listed in `defaultVariants` may be left out or passed as
-`undefined`, and then uses its default. A variant without a default is
-required, so a component cannot forget to choose, for example, its tone.
-When every variant has a default, the argument itself is optional.
-
-<RecipeExample
-  name="class-recipe/cva/stack"
-  calls={[{}, { direction: "row" }, { gap: undefined }]}
-/>
-
-## Boolean variants
-
-A variant with an option named `"true"` or `"false"` also accepts the
-booleans `true` and `false`, and declares the missing one of those two
-options without classes. A variant whose only options are `"true"` and
-`"false"` is optional and defaults to `false`.
-
-<RecipeExample
-  name="class-recipe/cva/input"
-  calls={[{}, { invalid: true, disabled: true }]}
-/>
-
-## Option names that are numbers
-
-An option whose name is a number accepts that number as well as the
-string:
-
-<RecipeExample
-  name="class-recipe/cva/heading"
-  calls={[{ level: 1 }, { level: "2" }]}
-/>
-
-## Compound variants
-
-A compound variant adds its `className` when several variants have
-particular options at the same time. For each variant it names, it gives
-one option or a list of options; a variant it leaves out matches any
-option.
-
-<RecipePlayground name="class-recipe/cva/button" />
-
-Conditions are checked after defaults are applied, which is why choosing
-only `tone: "danger"` matches the first compound variant through the
-default `size: "md"`, and a condition can match
-the `false` of a boolean variant. Matching compound variants are added in
-the order they are declared. A compound variant that names an undeclared
-variant or option never matches; its config is a type error.
-
-## Composing recipes
-
-`composes` lists recipes whose configs the recipe adds to its own, as if
-they were written in one config: their base classes first, then the
-classes of each option, in the order of the recipes, then their compound
-variants before its own. The default of a variant is the last one given.
-The recipe accepts the variants of every recipe it composes:
-
-<RecipeExample
-  name="class-recipe/cva/icon-button"
-  calls={[{ tone: "neutral" }, { tone: "danger", size: "sm" }]}
-/>
-
-A recipe composed several times counts once. A recipe of
-[`createRecipes`](/recipe/class-recipe/create-recipes/) can compose any
-recipe of the package, and joins the classes with its own join. A recipe
-that only composes others still declares `variants: {}`.
-
-Composing adds classes, as a config does: give each CSS property of an
-element in one of the recipes, as
-[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
-describes, or use a join that merges classes. See
-[Composing recipes](/recipe/recipe/composing/) in the engine's docs for
-how the configs merge.
+The recipe builds the class name of each selection once and caches it, so
+a later call with the same variants is a lookup. See
+[How it works](/recipe/class-recipe/how-it-works/).
 
 ## Overriding classes
 
-Pass `className` to add classes after every class of the recipe:
+`className` adds classes after every class of the recipe:
 
 <RecipeExample
   name="class-recipe/cva/badge"
@@ -119,40 +96,20 @@ Pass `className` to add classes after every class of the recipe:
   calls={[{ tone: "danger", outlined: true, className: "uppercase" }]}
 />
 
-With the default join they are added, not substituted: one that sets the same CSS
-property as a class of the recipe leaves both in the class name. Design
-the recipe so that it needs no override (see
+With the default join, these classes are added, not substituted. A class
+that sets the same CSS property as a class of the recipe leaves both in
+the class name. Design the recipe so that it needs no override (see
 [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)),
-or use a join function such as `twMerge` (see
-[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/))
-to let these classes replace conflicting ones.
-
-## Undeclared options and other props
-
-- The types accept only the options the config declares. A value from
-  untyped data can still bypass them: an option that its variant does not
-  declare adds no classes, and its class name is built on every call
-  instead of being cached.
-- Properties of the selection that are not variants, besides `className`,
-  are ignored, so a component can pass a recipe all of its props.
-- Calling a recipe without a selection, or with `undefined` or `null`, is
-  the same as calling it with an empty one.
+or use a join such as `twMerge` (see
+[Merging classes](/recipe/class-recipe/tailwind-merge/)).
 
 ## Listing the variants
 
-A recipe lists its variants in three frozen properties, typed with the
-names of its variants and options:
-
-- `variantKeys`, the names of its variants, in the order of `variants`.
-  Use it to split a component's props into the recipe's variants and the
-  rest (see [Building components](/recipe/class-recipe/building-components/)).
-- `variantOptions`, the names of the options of each variant, as strings:
-  integer names first, in ascending order, then `"false"` and `"true"`,
-  which a variant that declares either one has, then the others in the
-  order they are declared.
-- `defaultVariants`, the option each variant uses when the recipe is
-  called without it, as a string: its default, or `"false"` for a boolean
-  variant.
+| Property          | Type                                    | Description                                                     |
+| ----------------- | --------------------------------------- | --------------------------------------------------------------- |
+| `variantKeys`     | A readonly array of variant names       | The names of the variants, in the order of `variants`.          |
+| `variantOptions`  | An object of readonly arrays of strings | For each variant, the names of its options.                     |
+| `defaultVariants` | An object of strings                    | For each variant that may be left out, the option it uses then. |
 
 ```ts
 badge.variantKeys; // => ["tone", "outlined"]
@@ -161,5 +118,11 @@ badge.variantOptions;
 badge.defaultVariants; // => { outlined: "false" }
 ```
 
-Use `variantOptions` to show every look of a component, such as in a
-story of each option, and call the recipe for each selection.
+These properties are frozen. See
+[Listing the variants](/recipe/class-recipe/variants/#listing-the-variants)
+for the order of the options.
+
+## Composing recipes
+
+`composes` is described in
+[Composing recipes](/recipe/class-recipe/composing/).

@@ -1,0 +1,115 @@
+---
+title: Composing recipes
+description: "Build a class-recipe recipe from others with composes: the order of the classes, which default wins, slot recipes that add slots, and what composing cannot do."
+head:
+  - tag: title
+    content: "Composing recipes in class-recipe | lynstack recipe"
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+Several components often share classes and variants. For example, every
+button-like element shares a shape, tones, and sizes. Put what they share
+in one recipe, and list that recipe in the `composes` of the others. A
+recipe that composes another accepts its variants too, and adds its own
+classes after the other recipe's classes.
+
+## Compose a recipe
+
+`iconButton` composes `button`. It adds a base class and a width for each
+size:
+
+<RecipeExample
+  name="class-recipe/composing/icon-button"
+  calls={[{ tone: "neutral" }, { tone: "danger", size: "sm" }]}
+/>
+
+The recipe behaves as if you had written the configs in one config:
+
+- **Base classes.** The base classes of the composed recipes come first,
+  then the recipe's own.
+- **Options.** When several recipes give classes to the same option, such
+  as `size: "sm"`, the recipe adds the classes of the composed recipes
+  first, then its own.
+- **Compound variants.** The compound variants of the composed recipes
+  come before the recipe's own.
+- **Defaults.** When several recipes give a variant a default, the last
+  one wins, and the recipe's own default comes last.
+- **Variants.** The recipe accepts the variants of every recipe it
+  composes. A variant that has no default in any of them stays required.
+
+`composes` takes a list. The recipe adds the recipes in the order of the
+list. A recipe that appears twice, directly or through another recipe,
+counts once.
+
+A recipe that only composes others still needs `variants`. Pass
+`variants: {}`:
+
+```ts
+const primaryButton = cva({
+  composes: [button],
+  variants: {},
+  defaultVariants: { tone: "danger" },
+});
+```
+
+## Compose a slot recipe
+
+A slot recipe composes other slot recipes in the same way. It has the
+slots of each composed recipe, theirs first, then the slots it adds. It
+can give classes to any of them. Here, `dialog` composes the `card` slot
+recipe and adds a `footer` slot:
+
+<RecipeExample name="class-recipe/composing/dialog" calls={[{ size: "sm" }]} />
+
+`classNames`, passed to `dialog`, adds classes to every slot, including the
+slots that come from `card`.
+
+A recipe composes only recipes, and a slot recipe only slot recipes.
+
+## Composing adds classes
+
+A recipe that composes another adds classes after the other's classes. It
+never removes one. With the default join, both classes stay when two of
+them set the same CSS property, and the stylesheet decides which one
+wins. So set each CSS property of an element in one recipe only (see
+[Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)),
+or create your recipes with a join that merges classes, such as `twMerge`
+(see [Merging classes](/recipe/class-recipe/tailwind-merge/)).
+
+A recipe created by [`createRecipes`](/recipe/class-recipe/create-recipes/)
+can compose any recipe of the package. It joins all the classes with its
+own join function.
+
+## What it costs
+
+A recipe merges the configs it composes once, when you create it. After
+that, it costs what one recipe with the merged config costs, with or
+without the cache.
+
+## Errors
+
+- A config without `variants` throws a `TypeError` when you create the
+  recipe. Pass `variants: {}`.
+- Listing anything other than a recipe of the package in `composes` is a
+  type error. It also throws a `TypeError` when you create the recipe.
+- The same `TypeError` happens when an app installs two copies of
+  `@lynstack/recipe`, the package that class-recipe is built on. Each
+  copy knows only its own recipes. Make sure the app installs one copy,
+  for example with `npm dedupe`.
+
+<Aside title="Under the hood">
+  class-recipe is built on the engine `@lynstack/recipe`. Its [Composing
+  recipes](/recipe/recipe/composing/) page explains how the engine merges the
+  configs. You do not need it to use class-recipe.
+</Aside>
+
+## Next steps
+
+- [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
+  shows what a composing recipe should and should not set.
+- [Cookbook](/recipe/class-recipe/cookbook/) has complete recipes for
+  common components.
+- [How it works](/recipe/class-recipe/how-it-works/) explains the order of
+  the classes and the cache.

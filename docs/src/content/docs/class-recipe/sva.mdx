@@ -11,126 +11,98 @@ import RecipePlayground from "../../../components/RecipePlayground.astro";
 
 `sva` creates a slot recipe, which styles a component made of several
 elements, its slots, and returns an object with the class name of every
-slot. It is also exported as `createSlotRecipe`.
+slot. It is also exported as `createSlotRecipe`. For how variants work,
+read [Variants](/recipe/class-recipe/variants/) first.
 
 <RecipePlayground name="class-recipe/sva/card" />
 
+## Signature
+
+```ts
+import { sva } from "@lynstack/class-recipe";
+
+const slotRecipe = sva(config);
+slotRecipe(props); // => { [slot]: string }
+```
+
+`sva` infers the types of the slot recipe from `config`: the names of the
+slots, variants, and options, and which variants are required. Its type is
+`CreateSlotRecipe` (see [All exports](/recipe/class-recipe/exports/)).
+
 ## The config
 
-A slot recipe takes the config of a [recipe](/recipe/class-recipe/cva/),
-with `slots`, and with an object of classes keyed by slot name wherever a
-recipe takes a string:
+The config of a slot recipe is the config of a
+[recipe](/recipe/class-recipe/cva/#the-config), with `slots`. Wherever a
+recipe takes a string of classes, a slot recipe takes an object of
+classes keyed by slot name, such as `{ root: "p-4", title: "font-bold" }`.
 
-| Property           | Description                                                                                                                                                           |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own; see [Composing slot recipes](#composing-slot-recipes).                                          |
-| `slots`            | The names of the slots, in the order of the result.                                                                                                                   |
-| `base`             | Optional. The classes each slot always has.                                                                                                                           |
-| `variants`         | For each variant name, the classes of each slot for each of its options.                                                                                              |
-| `compoundVariants` | Optional. Classes added to some slots, under `classNames`, when several variants match.                                                                               |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                                                                |
-| `cache`            | Optional. Whether the slot recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`. |
+| Property           | Required | Description                                                                                                                                                                   |
+| ------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slots`            | Required | The names of the slots, in the order of the result.                                                                                                                           |
+| `variants`         | Required | For each variant name, the classes of each slot for each of its options. Pass `variants: {}` when the slot recipe has no variants. `className` and `classNames` are reserved. |
+| `base`             | Optional | The classes each slot always has.                                                                                                                                             |
+| `compoundVariants` | Optional | A list of compound variants: classes added to some slots when several variants have particular options at the same time.                                                      |
+| `defaultVariants`  | Optional | The option each variant uses when a call leaves it out. A variant without a default is required.                                                                              |
+| `composes`         | Optional | Slot recipes whose configs the slot recipe adds before its own; see [Composing recipes](/recipe/class-recipe/composing/#compose-a-slot-recipe).                               |
+| `cache`            | Optional | Whether the slot recipe caches its class names. Defaults to the `cache` option of [`createRecipes`](/recipe/class-recipe/create-recipes/), which is `true`.                   |
 
-An option or compound variant gives classes only to the slots it names. A
-slot that `slots` does not name is a type error, and its classes are
-ignored.
+`variants` is required even when it is empty. A config without it is a
+type error, and throws a `TypeError` ("Cannot convert undefined or null to
+object") when the slot recipe is created.
+
+An option or a compound variant gives classes only to the slots it names.
+A slot that `slots` does not name is a type error, and its classes are
+ignored. Classes given as a string, where a slot recipe takes an object,
+are ignored too.
+
+### A compound variant
+
+Each entry of `compoundVariants` is an object with these properties:
+
+| Property     | Required | Description                                                                                                            |
+| ------------ | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `variants`   | Required | The condition: for each variant it names, one option or a list of options. A variant it leaves out matches any option. |
+| `classNames` | Required | The classes added when the condition matches, keyed by slot name.                                                      |
+
+```ts
+{ variants: { size: "md", elevated: true }, classNames: { header: "border-b" } }
+```
+
+See [Compound variants](/recipe/class-recipe/variants/#compound-variants).
+
+## The call
+
+A slot recipe takes one optional argument, an object with these
+properties:
+
+| Property              | Description                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Each variant, by name | The option to use. Required for a variant without a default, unless it is a boolean variant.               |
+| `classNames`          | Optional. Classes added after every class of some slots, keyed by slot name, such as `{ body: "italic" }`. |
+
+The slot recipe ignores every other property, so a component can pass it
+all of its props. When every variant is optional, the argument is
+optional too.
 
 ## The result
 
 A slot recipe returns an object with the class name of every slot, in the
 order of `slots`, and `""` for a slot without classes. Each slot's classes
-are added in the order of a [recipe](/recipe/class-recipe/cva/#the-result):
+come in the order of a [recipe](/recipe/class-recipe/cva/#the-result):
 `base`, the variants, the matching compound variants, then the slot's
-`classNames`. The result is frozen, and calling the recipe again with the
-same variants returns the same object, which keeps props stable for
-memoized components:
+`classNames`.
+
+The object is frozen. Calling the slot recipe again with the same
+variants returns the same object, which keeps props stable for memoized
+components:
 
 ```ts
 card({ elevated: true }) === card({ elevated: true }); // => true
 ```
 
-## Required and default variants
-
-A variant listed in `defaultVariants` may be left out or passed as
-`undefined`, and then uses its default. A variant without a default is
-required. When every variant has a default, the argument itself is
-optional, as for `card`, whose `elevated` is boolean:
-
-<RecipeExample
-  name="class-recipe/sva/card"
-  source={false}
-  calls={[{}, { size: undefined }]}
-/>
-
-`alert` has no default for `tone`, so a call cannot leave it out:
-
-<RecipeExample
-  name="class-recipe/sva/alert"
-  slotName="root"
-  calls={[{ tone: "danger" }]}
-/>
-
-## Boolean variants
-
-A variant with an option named `"true"` or `"false"` also accepts the
-booleans `true` and `false`, and declares the missing one of those two
-options without classes. A variant whose only options are `"true"` and
-`"false"` is optional and defaults to `false`, as `elevated` does:
-
-<RecipeExample
-  name="class-recipe/sva/card"
-  source={false}
-  slotName="root"
-  calls={[{ elevated: false }, { elevated: true }]}
-/>
-
-## Option names that are numbers
-
-An option whose name is a number accepts that number as well as the
-string:
-
-<RecipeExample
-  name="class-recipe/sva/heading"
-  slotName="root"
-  calls={[{ level: 1 }, { level: "2" }]}
-/>
-
-## Compound variants
-
-A compound variant adds its `classNames`, keyed by slot, when several
-variants have particular options at the same time. For each variant it
-names, it gives one option or a list of options; a variant it leaves out
-matches any option. In `card`, the header gets a border only when the
-card is both `md` and elevated:
-
-<RecipeExample
-  name="class-recipe/sva/card"
-  source={false}
-  slotName="header"
-  calls={[{ elevated: true }, { size: "sm", elevated: true }]}
-/>
-
-Conditions are checked after defaults are applied, which is why the first
-call matches `size: "md"` without passing it. Matching compound variants
-are added in the order they are declared. A compound variant that names an
-undeclared variant or option never matches; its config is a type error.
-
-## Composing slot recipes
-
-`composes` lists slot recipes whose configs the slot recipe adds to its
-own, as `cva` does (see [Composing recipes](/recipe/class-recipe/cva/#composing-recipes)).
-The slot recipe has the slots of each, theirs first, and gives classes to
-any of them:
-
-<RecipeExample name="class-recipe/sva/dialog" calls={[{ size: "sm" }]} />
-
-`classNames` adds classes to every slot, including those of the slot
-recipes it composes.
-
 ## Overriding classes
 
-Pass `classNames`, an object of classes keyed by slot name, to add classes
-after every class of those slots:
+`classNames` adds classes after every class of the slots it names:
 
 <RecipeExample
   name="class-recipe/sva/card"
@@ -138,32 +110,20 @@ after every class of those slots:
   calls={[{ size: "sm", classNames: { body: "italic" } }]}
 />
 
-Passing it with at least one class
-returns a new object and leaves the cached one unchanged. With the default
-join they are added, not substituted: one that sets the same CSS property
-as a class of the slot leaves both in its class name. Design the recipe so
-that it needs no override (see
+A call that passes `classNames` with at least one class returns a new
+object, and leaves the cached one unchanged. With the default join, these
+classes are added, not substituted: a class that sets the same CSS
+property as a class of the slot leaves both in its class name. Design the
+slot recipe so that it needs no override (see
 [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)),
-or use a join function such as `twMerge` (see
-[Resolving conflicts with tailwind-merge](/recipe/class-recipe/tailwind-merge/))
-to let these classes replace conflicting ones.
-
-## Undeclared options and other props
-
-- The types accept only the options the config declares. A value from
-  untyped data can still bypass them: an option that its variant does not
-  declare adds no classes, and its result is built on every call instead
-  of being cached.
-- Properties of the selection that are not variants, besides `classNames`,
-  are ignored, so a component can pass a slot recipe all of its props.
-- Calling a slot recipe without a selection, or with `undefined` or
-  `null`, is the same as calling it with an empty one.
+or use a join such as `twMerge` (see
+[Merging classes](/recipe/class-recipe/tailwind-merge/)).
 
 ## Listing the variants
 
-A slot recipe lists its variants as a recipe does (see
-[Listing the variants](/recipe/class-recipe/cva/#listing-the-variants)),
-in `variantKeys`, `variantOptions`, and `defaultVariants`:
+A slot recipe has the same `variantKeys`, `variantOptions`, and
+`defaultVariants` as a recipe (see
+[cva](/recipe/class-recipe/cva/#listing-the-variants)):
 
 ```ts
 card.variantKeys; // => ["size", "elevated"]
@@ -171,5 +131,5 @@ card.variantOptions; // => { size: ["sm", "md"], elevated: ["false", "true"] }
 card.defaultVariants; // => { size: "md", elevated: "false" }
 ```
 
-Use `variantKeys` to split a component's props into the recipe's variants
-and the rest (see [Building components](/recipe/class-recipe/building-components/)).
+Use `variantKeys` to split a component's props into the variants and the
+rest (see [Building components](/recipe/class-recipe/building-components/)).

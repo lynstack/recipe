@@ -1,0 +1,187 @@
+---
+title: Variants
+description: "How class-recipe turns props into classes: required and default variants, boolean variants, option names that are numbers, compound variants, null and undefined, and how a recipe lists its variants."
+head:
+  - tag: title
+    content: "Variants in class-recipe | lynstack recipe"
+---
+
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+A recipe turns the props of a component into class names. This page
+explains how it reads those props. The rules are the same for `cva` and
+`sva`.
+
+## Terms
+
+- A **recipe** is the function that `cva` returns. You call it with props,
+  and it returns a class name.
+- A **variant** is a prop that changes how the element looks, such as
+  `tone` or `size`.
+- An **option** is one value of a variant, such as `"sm"` or `"md"`. The
+  config gives the classes of each option.
+- A **selection** is the object you pass to the recipe. It chooses an
+  option for some or all of the variants.
+- A **default** is the option that a variant uses when the selection
+  leaves it out. You set it in `defaultVariants`.
+- A **slot** is one element of a component made of several elements, such
+  as the header of a card. A **slot recipe**, which `sva` returns, gives
+  the class name of each slot.
+
+The [glossary](/recipe/class-recipe/glossary/) lists these terms and a few
+more.
+
+## Required and default variants
+
+A variant with a default may be left out, or passed as `undefined`. It
+then uses its default. When every variant has a default, you can call the
+recipe without an argument:
+
+<RecipeExample
+  name="class-recipe/variants/stack"
+  calls={[{}, { direction: "row" }, { gap: undefined }]}
+/>
+
+A variant without a default is **required**. TypeScript reports an error
+when a call leaves it out, so a component cannot forget to choose it. In
+the next recipe, `tone` has no default:
+
+<RecipeExample
+  name="class-recipe/variants/button"
+  calls={[{ tone: "danger" }, { tone: "neutral", size: "sm" }]}
+/>
+
+```ts
+// @ts-expect-error: tone has no default, so it is required.
+button({ size: "sm" });
+```
+
+To make a variant optional, give it a default. To add no classes when a
+call leaves it out, declare an option without classes, such as
+`none: ""`, and make it the default.
+
+## Boolean variants
+
+A **boolean variant** is a variant whose only options are `true` and
+`false`. It is optional, and `false` by default. When you declare only one
+of the two options, the recipe declares the other one, without classes.
+The recipe accepts the booleans `true` and `false`, and also the strings
+`"true"` and `"false"`:
+
+<RecipeExample
+  name="class-recipe/variants/input"
+  calls={[{}, { invalid: true, disabled: true }]}
+/>
+
+## Option names that are numbers
+
+When an option's name is a number, the recipe accepts the number and the
+string:
+
+<RecipeExample
+  name="class-recipe/variants/heading"
+  calls={[{ level: 1 }, { level: "2" }]}
+/>
+
+## Compound variants
+
+A **compound variant** adds classes only when several variants have
+particular options at the same time. Each entry of `compoundVariants` has
+this shape:
+
+```ts
+{ variants: { tone: "danger", size: "md" }, className: "font-semibold" }
+```
+
+- `variants` is the condition. For each variant it names, it gives one
+  option, or a list of options. A variant that it leaves out matches any
+  option.
+- `className` holds the classes to add. In a slot recipe, the entry has
+  `classNames` instead, an object of classes keyed by slot name.
+
+The `button` recipe above has two compound variants:
+
+<RecipeExample
+  name="class-recipe/variants/button"
+  source={false}
+  calls={[
+    { tone: "danger" },
+    { tone: "danger", size: "sm" },
+    { tone: "neutral", outlined: true },
+  ]}
+/>
+
+- The recipe applies the defaults first, then checks the conditions. The
+  first call does not pass `size`, but the default `size: "md"` matches
+  the first compound variant.
+- A condition can match the `false` of a boolean variant, which a call
+  that leaves the variant out selects.
+- The recipe adds the classes of the matching compound variants in the
+  order of `compoundVariants`, after the classes of the variants.
+- A compound variant that names a variant or an option that the config
+  does not declare never matches. TypeScript reports its config as an
+  error.
+
+In a slot recipe, a compound variant gives classes to the slots it names.
+Here the header gets a border only when the card is both `md` and
+elevated:
+
+<RecipeExample
+  name="class-recipe/variants/card"
+  slotName="header"
+  calls={[{ elevated: true }, { size: "sm", elevated: true }]}
+/>
+
+## Undeclared options and other props
+
+- **Undeclared options.** TypeScript accepts only the options that the
+  config declares. Untyped data, such as the values of a form, can still
+  pass another one. An option that the variant does not declare adds no
+  classes, and the recipe builds the class name of such a call every time,
+  instead of caching it.
+- **Other props.** The recipe ignores every prop that is not a variant,
+  apart from `className` (or `classNames` for a slot recipe). So a
+  component can pass all of its props to its recipe.
+
+## `null` and `undefined`
+
+- A variant passed as `undefined` counts as left out: it uses its default.
+- TypeScript rejects `null` as a variant's value. A `null` from untyped
+  data counts as left out, like `undefined`.
+- Calling a recipe without an argument, or with `undefined` or `null`, is
+  the same as calling it with `{}`.
+
+## Listing the variants
+
+Every recipe and slot recipe has three properties that list its variants.
+They are frozen, and typed with the names of the variants and options:
+
+| Property          | What it holds                                                                                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variantKeys`     | The names of the variants, in the order of `variants`.                                                                                                                                                                                  |
+| `variantOptions`  | For each variant, the names of its options, as strings. Integer names come first, in ascending order; then `"false"` and `"true"`, for a variant that declares either one; then the other names, in the order the config declares them. |
+| `defaultVariants` | For each variant that may be left out, the option it uses then, as a string: its default, or `"false"` for a boolean variant.                                                                                                           |
+
+For the `button` recipe above:
+
+```ts
+button.variantKeys; // => ["tone", "size", "outlined"]
+button.variantOptions;
+// => { tone: ["neutral", "danger"], size: ["sm", "md"], outlined: ["false", "true"] }
+button.defaultVariants; // => { size: "md", outlined: "false" }
+```
+
+Use `variantKeys` to split a component's props into variants and the rest
+(see [Building components](/recipe/class-recipe/building-components/)).
+Use `variantOptions` to render every look of a component, such as in a
+story for each option, or in a test that calls the recipe with each
+selection.
+
+## Next steps
+
+- [Composing recipes](/recipe/class-recipe/composing/) builds a recipe
+  from others.
+- [Writing conflict-free recipes](/recipe/class-recipe/conflict-free-recipes/)
+  shows how to choose the classes of each option.
+- [cva](/recipe/class-recipe/cva/) and [sva](/recipe/class-recipe/sva/)
+  list every property of a config.

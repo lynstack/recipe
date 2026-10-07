@@ -9,15 +9,14 @@ head:
 `createRecipes` returns `cx`, `cva`, and `sva` that combine their classes
 with a join function of your choice, or whose recipes do not cache their
 class names. Call it once, in a module of your own, and import the
-functions from there:
+functions from there.
 
 ```ts
-// src/lib/recipe.ts
-import { createRecipes } from "@lynstack/class-recipe";
-import { twMerge } from "tailwind-merge";
-
-export const { cx, cva, sva } = createRecipes({ join: twMerge });
+createRecipes(options?: RecipesOptions): Recipes
 ```
+
+The most common use is to merge Tailwind CSS classes with `twMerge`.
+[Merging classes](/recipe/class-recipe/tailwind-merge/) shows that setup.
 
 ## Options
 
@@ -76,21 +75,5 @@ turns the cache off.
 
 ## Variants from untrusted input
 
-A recipe's cache keeps every class name it builds for as long as the
-recipe exists, up to one for each combination of declared options. On a
-server, a recipe whose variants come from requests lets clients choose
-those combinations, and a recipe that declares many of them grows its
-cache with each new one. Pass `cache: false` in the config of such a
-recipe, and keep the cache for the others:
-
-```ts
-const badge = cva({
-  cache: false,
-  base: "rounded-full px-2 text-xs",
-  variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-100" } },
-});
-```
-
-A recipe with few combinations, or whose variants the program chooses
-itself, needs no change (see
-[Caching](/recipe/recipe/caching/#variants-from-untrusted-input)).
+This section moved to
+[How it works](/recipe/class-recipe/how-it-works/#variants-from-untrusted-input).
