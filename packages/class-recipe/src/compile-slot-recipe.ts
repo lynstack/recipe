@@ -119,6 +119,7 @@ function concatKind(
 ): CreateKindSlotRecipe<string, string> {
   return createSlotRecipeKind({
     cache: options.cache,
+    combine: appendClasses,
     initial: (base: string | undefined): string => base ?? "",
     reduce: appendClasses,
   });
@@ -131,6 +132,7 @@ function joinKind(
 ): CreateKindSlotRecipe<string, string> {
   return createSlotRecipeKind({
     cache: options.cache,
+    combine: appendClasses,
     finish: joinClasses,
     initial: (base: string | undefined): readonly string[] =>
       base === undefined ? [] : [base],

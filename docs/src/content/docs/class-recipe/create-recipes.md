@@ -48,6 +48,12 @@ each declared selection and caches the result, then again for each call
 that passes `className` or `classNames`, or an undeclared option (see
 [How it works](/recipe/class-recipe/how-it-works/#the-join-function)).
 
+A class string may hold several classes, separated by spaces, and the join
+must return the same class name however the classes are split into class
+strings, as `cx` and `twMerge` do: a recipe passes the class name it cached
+as one class string, and a recipe that composes others passes the classes
+that several recipes give one option as one class string.
+
 ## Turning off the cache
 
 Pass `cache: false` to build the class names on every call instead, alone

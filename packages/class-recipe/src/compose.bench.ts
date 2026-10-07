@@ -23,6 +23,11 @@ const controlConfig = {
 
 const buttonConfig = {
   variants: {
+    size: {
+      sm: "gap-1",
+      md: "gap-2",
+      lg: "gap-3",
+    },
     variant: {
       primary: "bg-blue-600 text-white hover:bg-blue-700",
       secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
@@ -44,7 +49,15 @@ const buttonConfig = {
 const oneConfig = {
   ...buttonConfig,
   base,
-  variants: { ...controlConfig.variants, ...buttonConfig.variants },
+  variants: {
+    ...controlConfig.variants,
+    ...buttonConfig.variants,
+    size: {
+      sm: "h-8 px-3 text-sm gap-1",
+      md: "h-10 px-4 gap-2",
+      lg: "h-12 px-6 text-lg gap-3",
+    },
+  },
   defaultVariants: {
     ...controlConfig.defaultVariants,
     ...buttonConfig.defaultVariants,

@@ -5,7 +5,7 @@ import type { TestContext } from "vitest";
 const controlConfig = {
   slots: ["root", "icon"],
   base: {
-    root: "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors",
+    root: "inline-flex items-center justify-center rounded-md font-medium transition-colors",
     icon: "shrink-0",
   },
   variants: {
@@ -26,6 +26,11 @@ const buttonConfig = {
   slots: ["label"],
   base: { label: "truncate" },
   variants: {
+    size: {
+      sm: { root: "gap-1", label: "leading-4" },
+      md: { root: "gap-2", label: "leading-5" },
+      lg: { root: "gap-3", label: "leading-6" },
+    },
     variant: {
       primary: { root: "bg-blue-600 text-white hover:bg-blue-700" },
       secondary: { root: "bg-gray-100 text-gray-900 hover:bg-gray-200" },
@@ -50,7 +55,23 @@ const oneConfig = {
   ...buttonConfig,
   slots: [...controlConfig.slots, ...buttonConfig.slots],
   base: { ...controlConfig.base, ...buttonConfig.base },
-  variants: { ...controlConfig.variants, ...buttonConfig.variants },
+  variants: {
+    ...controlConfig.variants,
+    ...buttonConfig.variants,
+    size: {
+      sm: {
+        root: "h-8 px-3 text-sm gap-1",
+        icon: "size-4",
+        label: "leading-4",
+      },
+      md: { root: "h-10 px-4 gap-2", icon: "size-5", label: "leading-5" },
+      lg: {
+        root: "h-12 px-6 text-lg gap-3",
+        icon: "size-6",
+        label: "leading-6",
+      },
+    },
+  },
   defaultVariants: {
     ...controlConfig.defaultVariants,
     ...buttonConfig.defaultVariants,

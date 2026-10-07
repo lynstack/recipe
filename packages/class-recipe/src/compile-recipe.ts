@@ -94,6 +94,7 @@ function createRecipeBuilder(
 function concatKind(options: BuildOptions): CreateKindRecipe<string, string> {
   return createRecipeKind({
     cache: options.cache,
+    combine: appendClasses,
     initial: (base: string | undefined): string => base ?? "",
     reduce: appendClasses,
   });
@@ -106,6 +107,7 @@ function joinKind(
 ): CreateKindRecipe<string, string> {
   return createRecipeKind({
     cache: options.cache,
+    combine: appendClasses,
     finish: joinClasses,
     initial: (base: string | undefined): readonly string[] => [base ?? ""],
     reduce: (classNames: readonly string[], classes: string) => [
