@@ -20,6 +20,7 @@ that kind.
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `kind.initial` | `(base: Value \| undefined) => Accumulator`. Returns the accumulator a result starts from.                                   |
 | `kind.reduce`  | `(accumulator: Accumulator, value: Value) => Accumulator`. Adds a value to the accumulator.                                  |
+| `kind.combine` | Optional. `(first: Value, second: Value) => Value`. Combines two values into one, for recipes that compose others.           |
 | `kind.finish`  | Optional. `(accumulator: Accumulator) => Result`. Turns the accumulator into the result.                                     |
 | `kind.cache`   | Optional. Whether recipes cache the result of each declared selection, unless their config sets `cache`. Defaults to `true`. |
 

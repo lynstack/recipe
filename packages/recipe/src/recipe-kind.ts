@@ -9,6 +9,7 @@ import type {
   KindCompoundCondition,
   KindDefaultVariants,
   RecipeFunction,
+  RecipeKind,
   VariantKey,
 } from "./types.js";
 import type { LooseKindRecipeConfig, LooseRecipeKind } from "./build-recipe.js";
@@ -23,44 +24,6 @@ import { createSelector } from "./selector.js";
 import { withVariantKeys } from "./variants.js";
 
 const recipes = createRegistry<unknown>("recipe");
-
-/**
- * How a kind of recipe turns the values of a selection into its result,
- * such as by joining class names or merging style objects.
- *
- * @typeParam Value - The value of an option.
- * @typeParam Accumulator - What the values of a selection are reduced to.
- * @typeParam Result - What a recipe of this kind returns.
- */
-interface RecipeKind<Value, Accumulator, Result> {
-  /**
-   * Returns the accumulator that the values of a selection are reduced
-   * into, starting from the recipe's `base`, which is `undefined` when the
-   * recipe has none. It is called for each result a recipe builds, so it
-   * can return a new object each time.
-   */
-  readonly initial: (base: Value | undefined) => Accumulator;
-  /**
-   * Adds a value to the accumulator and returns the accumulator. It is
-   * called with the values that apply to a selection, in order of
-   * precedence: the value of each variant's selected option, in the order
-   * of `variants`, then the value of each matching compound variant, in the
-   * order of `compoundVariants`. An option or compound variant whose value
-   * is `undefined` adds nothing.
-   */
-  readonly reduce: (accumulator: Accumulator, value: Value) => Accumulator;
-  /**
-   * Turns the accumulator into the result, for example by freezing it.
-   * Without it, the result is the accumulator.
-   */
-  readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
-  /**
-   * Whether a recipe builds the result of each declared selection once and
-   * returns it again for the same selection, unless its config sets
-   * `cache`. Defaults to `true`.
-   */
-  readonly cache?: boolean | undefined;
-}
 
 /**
  * The variants of a {@link KindRecipeConfig}: for each variant name, the
@@ -216,7 +179,9 @@ type LooseKindRecipe = WithVariantKeys<
  * reduced first; every option of each is declared, with its values reduced
  * in the order of the recipes; their compound variants come before its own;
  * and a variant's default is the last one given. A recipe composed several
- * times counts once.
+ * times counts once. With `kind.combine`, the bases, and the values that
+ * the recipes give one option, are combined into one when the recipe is
+ * created, so that it reduces one value for each.
  *
  * @typeParam Value - The value of an option, inferred from the `value`
  *   parameter of `kind.reduce` or the `base` parameter of `kind.initial`.
@@ -235,6 +200,7 @@ type LooseKindRecipe = WithVariantKeys<
  * const styleRecipe = createRecipeKind({
  *   initial: (base?: Style): Record<string, string | number> => ({ ...base }),
  *   reduce: (style, value: Style) => Object.assign(style, value),
+ *   combine: (first, second) => ({ ...first, ...second }),
  *   finish: (style): Style => Object.freeze(style),
  * });
  *
@@ -294,5 +260,4 @@ export type {
   KindRecipe,
   KindRecipeConfig,
   KindVariants,
-  RecipeKind,
 };

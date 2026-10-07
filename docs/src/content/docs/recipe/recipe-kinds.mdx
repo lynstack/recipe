@@ -12,6 +12,7 @@ A kind is how a recipe turns the values of a selection into its result.
 interface RecipeKind<Value, Accumulator, Result> {
   initial: (base: Value | undefined) => Accumulator;
   reduce: (accumulator: Accumulator, value: Value) => Accumulator;
+  combine?: (first: Value, second: Value) => Value;
   finish?: (accumulator: Accumulator) => Result;
   cache?: boolean;
 }
@@ -55,6 +56,37 @@ one, changed, or a new one.
   adds a value.
 - It must not change `value`, which every result shares.
 
+## `combine`
+
+```ts
+combine?: (first: Value, second: Value) => Value;
+```
+
+Returns one value that adds what `first` then `second` add. Only a recipe
+that [composes](/recipe/recipe/composing/) others calls it, when it is
+created: it combines the bases of its configs, and the values that its
+configs give one option, so that it reduces one value for each, as the one
+config it stands for would. A slot recipe combines the values of each slot
+in the same way.
+
+- It must not change `first` or `second`, which other recipes share.
+- Without it, a composed recipe reduces each value, which gives the same
+  results, at a cost (see
+  [Composing recipes](/recipe/recipe/composing/#cost)).
+
+A kind with `combine` follows two more rules. In each, the two
+accumulators must be interchangeable: `finish` returns the same result for
+both, and again after the same values are reduced into each.
+
+- **Combining is reducing.** Reducing `first` then `second` into an
+  accumulator gives what reducing `combine(first, second)` gives.
+- **A base is the first value.** `initial(base)` gives what reducing
+  `base` into `initial(undefined)` gives.
+
+For class names, `combine` joins two strings of classes with a space, and
+for styles, it spreads both into a new object. A kind that cannot turn two
+values into one, such as one that counts its values, leaves it out.
+
 ## `finish`
 
 ```ts
@@ -88,6 +120,9 @@ returns it again for the same selection. It defaults to `true`, and the
   `initial` returned for this result.
 - **Never share a result that can change.** A cached result is shared by
   every call with the same variants; freeze an object result in `finish`.
+- **Combine as you reduce.** A `combine` that gives another result than
+  reducing each value changes what composed recipes return. See
+  [`combine`](#combine).
 
 ## Types
 
@@ -118,6 +153,7 @@ type MutableStyle = Record<string, string | number>;
 const styleRecipe = createRecipeKind({
   initial: (base?: Style): MutableStyle => ({ ...base }),
   reduce: (style: MutableStyle, value: Style) => Object.assign(style, value),
+  combine: (first: Style, second: Style): Style => ({ ...first, ...second }),
   finish: (style: MutableStyle): Style => Object.freeze(style),
 });
 ```

@@ -170,6 +170,21 @@ function mergeOptions<Value>(
   );
 }
 
+/**
+ * Combines values, none of them undefined, into one with `combine`, in
+ * order, or returns undefined when there are none.
+ */
+function combineValues<Value>(
+  values: readonly Value[],
+  combine: (first: Value, second: Value) => Value,
+): Value | undefined {
+  let combined: Value | undefined = undefined;
+  for (const value of values) {
+    combined = combined === undefined ? value : combine(combined, value);
+  }
+  return combined;
+}
+
 function ownValue<Value>(
   record: Readonly<Record<string, Value>>,
   key: string,
@@ -185,5 +200,5 @@ function unique(names: readonly string[]): readonly string[] {
   return [...new Set(names)];
 }
 
-export { createRegistry, layerOf, mergeLayers };
+export { combineValues, createRegistry, layerOf, mergeLayers };
 export type { Layer, MergedLayers, Registry };

@@ -1,4 +1,5 @@
 import type { CompiledVariants, Compound } from "./variants.js";
+import { combineValues } from "./compose.js";
 import { matches } from "./reduce-values.js";
 import { noOption } from "./variants.js";
 
@@ -9,6 +10,7 @@ type LooseSlotValues = Readonly<Record<string, unknown>>;
 interface SlotsKind {
   readonly initial: (base: unknown) => unknown;
   readonly reduce: (accumulator: unknown, value: unknown) => unknown;
+  readonly combine?: ((first: unknown, second: unknown) => unknown) | undefined;
   readonly finish?: ((accumulator: unknown) => unknown) | undefined;
 }
 
@@ -47,18 +49,23 @@ function valueOfSlot(
 }
 
 /**
- * Returns the entries of a list of values for some slots, the values of each
- * slot in the order of the list, or undefined when no slot has one.
+ * Returns the values of each slot in a list of values for some slots, in
+ * the order of the list, combined into one with `combine` when the kind
+ * has it.
  */
-function entriesOf(
+function slotValuesOf(
   slots: readonly string[],
   valuesList: readonly LooseSlotValues[],
-): SlotEntries | undefined {
-  return entriesBySlot(
-    slots.map((slot) =>
-      valuesList.flatMap((values) => listOf(valueOfSlot(values, slot))),
-    ),
-  );
+  combine: SlotsKind["combine"],
+): readonly (readonly unknown[])[] {
+  return slots.map((slot) => {
+    const values = valuesList.flatMap((each) =>
+      listOf(valueOfSlot(each, slot)),
+    );
+    return combine === undefined
+      ? values
+      : listOf(combineValues(values, combine));
+  });
 }
 
 /**
@@ -84,17 +91,22 @@ function listOf(value: unknown): readonly unknown[] {
 function compileEntries(
   compiled: CompiledVariants<readonly LooseSlotValues[]>,
   slots: readonly string[],
+  combine: SlotsKind["combine"],
 ): CompiledVariants<SlotEntries | undefined> {
+  const entriesOf = (
+    valuesList: readonly LooseSlotValues[],
+  ): SlotEntries | undefined =>
+    entriesBySlot(slotValuesOf(slots, valuesList, combine));
   return {
     ...compiled,
     compounds: compiled.compounds
       .map((compound): Compound<SlotEntries | undefined> => ({
         conditions: compound.conditions,
-        value: entriesOf(slots, compound.value),
+        value: entriesOf(compound.value),
       }))
       .filter((compound) => compound.value !== undefined),
     valuesByIndex: compiled.valuesByIndex.map((valuesOfVariant) =>
-      valuesOfVariant.map((values) => entriesOf(slots, values)),
+      valuesOfVariant.map((values) => entriesOf(values)),
     ),
   };
 }
@@ -152,20 +164,18 @@ function createSlotsBuilder(
   compiled: CompiledVariants<readonly LooseSlotValues[]>,
   config: SlotsConfig,
 ): (indexes: Int32Array) => Readonly<Record<string, unknown>> {
-  const { initial, reduce, finish = asResult } = kind;
+  const { initial, reduce, combine, finish = asResult } = kind;
   const names = [...config.slots];
   const slotNames: SlotNames = {
     names,
     template: Object.fromEntries(names.map((slot) => [slot, undefined])),
   };
-  const basesBySlot = names.map((slot) =>
-    config.bases.flatMap((base) => listOf(valueOfSlot(base, slot))),
-  );
+  const basesBySlot = slotValuesOf(names, config.bases, combine);
   const bases = basesBySlot.map(([base]: readonly unknown[]) => base);
   const otherBases = entriesBySlot(
     basesBySlot.map(([, ...others]: readonly unknown[]) => others),
   );
-  const { valuesByIndex, compounds } = compileEntries(compiled, names);
+  const { valuesByIndex, compounds } = compileEntries(compiled, names, combine);
 
   /** Returns the accumulator of each slot, with every base reduced. */
   const initialAccumulators = (): SlotAccumulators => {

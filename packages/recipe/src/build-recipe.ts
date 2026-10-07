@@ -2,12 +2,14 @@ import type { CompiledVariants, SelectedVariants } from "./variants.js";
 import type { Layer, MergedLayers } from "./compose.js";
 import { reduceEach, reduceValueLists, reduceValues } from "./reduce-values.js";
 import type { KindVariants } from "./recipe-kind.js";
+import { combineValues } from "./compose.js";
 import { compileVariants } from "./variants.js";
 
 /** A recipe kind in the loose shape the runtime works with. */
 interface LooseRecipeKind {
   readonly initial: (base: unknown) => unknown;
   readonly reduce: (accumulator: unknown, value: unknown) => unknown;
+  readonly combine?: ((first: unknown, second: unknown) => unknown) | undefined;
   readonly finish?: ((accumulator: unknown) => unknown) | undefined;
   readonly cache?: boolean | undefined;
 }
@@ -36,6 +38,8 @@ const asResult = (accumulator: unknown): unknown => accumulator;
 
 const noValues: readonly unknown[] = Object.freeze([]);
 
+const firstValue = (values: readonly unknown[]): unknown => values[0];
+
 /** Compiles a recipe that composes no other recipe. */
 function compileLayer(
   kind: LooseRecipeKind,
@@ -56,14 +60,25 @@ function compileLayer(
 
 /**
  * Compiles a recipe from the merged layers of the recipes it composes and
- * its own: its accumulator starts from the first base, and the other bases
- * are reduced into it first. When no option or compound variant has more
- * than one value, it compiles them as one config.
+ * its own. With `kind.combine`, it combines the bases and the values of
+ * each option and compiles them as one config. Without it, its accumulator
+ * starts from the first base, and the other bases are reduced into it
+ * first; when no option or compound variant has more than one value, it
+ * compiles them as one config.
  */
 function compileMergedLayers(
   kind: LooseRecipeKind,
   merged: MergedLayers<unknown>,
 ): CompiledRecipe {
+  const { combine } = kind;
+  if (combine !== undefined) {
+    const combined = (values: readonly unknown[]): unknown =>
+      combineValues(values, combine);
+    return compileLayer(
+      kind,
+      layerOfMerged(merged, combined(merged.bases), combined),
+    );
+  }
   const [base, ...otherBases] = merged.bases;
   const kindOfBases =
     otherBases.length === 0
@@ -73,33 +88,35 @@ function compileMergedLayers(
           initial: (): unknown =>
             reduceEach(kind.initial(base), otherBases, kind.reduce),
         };
-  const layer = singleValuedLayerOf(merged, base);
-  return layer === undefined
-    ? compileValueLists(kindOfBases, merged, base)
-    : compileLayer(kindOfBases, layer);
+  return isSingleValued(merged)
+    ? compileLayer(kindOfBases, layerOfMerged(merged, base, firstValue))
+    : compileValueLists(kindOfBases, merged, base);
 }
 
-/**
- * Returns the merged layers as one config, or undefined when an option or
- * a compound variant has more than one value.
- */
-function singleValuedLayerOf(
-  merged: MergedLayers<unknown>,
-  base: unknown,
-): Layer<unknown> | undefined {
+/** Whether no option or compound variant has more than one value. */
+function isSingleValued(merged: MergedLayers<unknown>): boolean {
   const optionValues = Object.values(merged.variants).flatMap((options) =>
     Object.values(options),
   );
-  if (
-    !optionValues.every((values) => hasOneValueAtMost(values)) ||
-    !merged.compoundVariants.every(({ value }) => hasOneValueAtMost(value))
-  ) {
-    return undefined;
-  }
+  return (
+    optionValues.every((values) => hasOneValueAtMost(values)) &&
+    merged.compoundVariants.every(({ value }) => hasOneValueAtMost(value))
+  );
+}
+
+/**
+ * Returns the merged layers as one config with `base`, the value of each
+ * option and compound variant made by `valueOf` from its values.
+ */
+function layerOfMerged(
+  merged: MergedLayers<unknown>,
+  base: unknown,
+  valueOf: (values: readonly unknown[]) => unknown,
+): Layer<unknown> {
   return {
     base,
     compoundVariants: merged.compoundVariants.map(({ variants, value }) => ({
-      value: value[0],
+      value: valueOf(value),
       variants,
     })),
     defaultVariants: merged.defaultVariants,
@@ -115,7 +132,7 @@ function singleValuedLayerOf(
             Object.entries(options).map(
               ([option, values]: readonly [string, readonly unknown[]]) => [
                 option,
-                values[0],
+                valueOf(values),
               ],
             ),
           ),

@@ -14,7 +14,7 @@ import {
 import { describe, expect, it } from "vitest";
 import type { Arbitrary } from "fast-check";
 
-import type { RecipeKind } from "./recipe-kind.js";
+import type { RecipeKind } from "./types.js";
 import { createRecipeKind } from "./recipe-kind.js";
 import { createSlotRecipeKind } from "./slot-recipe-kind.js";
 

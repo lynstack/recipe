@@ -15,7 +15,6 @@ export type {
   KindRecipe,
   KindRecipeConfig,
   KindVariants,
-  RecipeKind,
 } from "./recipe-kind.js";
 export { createSlotRecipeKind } from "./slot-recipe-kind.js";
 export type {
@@ -38,6 +37,7 @@ export type {
   CompoundCondition,
   DefaultVariants,
   RecipeFunction,
+  RecipeKind,
   VariantKey,
   VariantOption,
   VariantSelection,

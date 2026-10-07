@@ -59,7 +59,8 @@ Native's `style` prop keeps its identity between renders.
   becomes an integer key; `selector.ts` caches results by that key;
   `compose.ts` keeps the configs of each recipe, its layers, and merges
   the layers of a recipe that composes others into one config;
-  `build-recipe.ts` compiles a recipe from one config or merged layers;
+  `build-recipe.ts` compiles a recipe from one config or merged layers,
+  combining the values of each option with the kind's `combine`;
   `reduce-values.ts` reduces the values of a selection; and `slots.ts`
   turns the values of a slot recipe into entries by slot and builds the
   result of each slot.
@@ -91,7 +92,10 @@ Native's `style` prop keeps its identity between renders.
   with fast-check and compare the results with a reference: `cx` with
   `clsx`, `cva` with `class-variance-authority`, a recipe kind with a
   model of its documented behavior, a slot recipe with a recipe for each
-  slot, and a recipe or slot recipe that composes others with one config.
+  slot, and a recipe or slot recipe that composes others with one config,
+  with and without the `combine` of its kind. Arbitraries that several
+  property tests share sit in `*.arbitraries.ts`, which the build leaves
+  out.
   A benchmark imports its package by its name, so it runs against the
   built bundle, never against the sources directly. The
   `*.compare.bench.ts` benchmarks of `@lynstack/class-recipe` measure the

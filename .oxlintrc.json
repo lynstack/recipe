@@ -94,7 +94,7 @@
       "rules": { "import/no-default-export": "off" }
     },
     {
-      "files": ["**/*.test.ts", "**/*.bench.ts"],
+      "files": ["**/*.test.ts", "**/*.bench.ts", "**/*.arbitraries.ts"],
       "rules": {
         // vitest/require-top-level-describe puts a whole file in one
         // function, which no size limit for functions can allow.

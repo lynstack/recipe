@@ -21,13 +21,19 @@ and it has their variants, options, and values as well as its own. Here,
 A recipe that composes others behaves as if their configs and its own
 were written as one config, theirs first:
 
-| Property           | How the configs merge                                                                                             |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `base`             | The accumulator starts from the first base, and the other bases are reduced into it, in order.                    |
-| `variants`         | Every variant and option of each config is declared. An option that several configs give has all of their values. |
-| `compoundVariants` | The compound variants of each config, in order.                                                                   |
-| `defaultVariants`  | The default of a variant is the last one given.                                                                   |
-| `cache`            | The recipe's own, or its kind's.                                                                                  |
+| Property           | How the configs merge                                                                                                |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `base`             | The base of each config, in order.                                                                                   |
+| `variants`         | Every variant and option of each config is declared. An option that several configs give has their values, in order. |
+| `compoundVariants` | The compound variants of each config, in order.                                                                      |
+| `defaultVariants`  | The default of a variant is the last one given.                                                                      |
+| `cache`            | The recipe's own, or its kind's.                                                                                     |
+
+Where one config has one value, the merged config can have several: the
+bases of several configs, or their values for one option. The kind adds
+each in order, or combines them into one first, when it has
+[`combine`](/recipe/recipe/recipe-kinds/#combine). Either way, a result is
+what reducing them in order gives.
 
 The order of the values stays the one of a recipe: the bases, then the
 value of each variant's option, then the matching compound variants (see
@@ -49,6 +55,9 @@ can name the variants of the recipes it composes.
 A recipe's own variant does not override a compound variant of a recipe it
 composes, since compound variants apply last. To override one, give the
 recipe a compound variant with the same condition, which applies after it.
+
+A recipe reads the configs it composes when it is created. Changing a
+config later changes neither its recipe nor the recipes that compose it.
 
 ## Several recipes
 
@@ -98,13 +107,14 @@ A recipe merges the configs it composes once, when it is created, and
 compiles the result as it would compile one config. A cached call of a
 composed recipe costs what a cached call of that one config costs.
 
-Building a result costs the same too, except for an option or a compound
-variant that several configs give values to: the kind reduces each of its
-values, where one config could give a single value that combines them. A
-recipe that only adds variants and options of its own costs nothing more.
-
-A recipe reads the configs it composes when it is created. Changing a
-config later changes neither its recipe nor the recipes that compose it.
+Building a result costs the same too when the kind has
+[`combine`](/recipe/recipe/recipe-kinds/#combine): the recipe combines the
+bases, and the values that several configs give one option, when it is
+created, and builds every result from the one config they stand for.
+Without `combine`, the kind reduces each base after the first, and each
+value of an option that several configs give values to, where one config
+would give a single value. A recipe whose configs give at most one base,
+and never two values to one option, costs nothing more either way.
 
 ## Types
 

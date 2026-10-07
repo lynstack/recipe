@@ -160,6 +160,61 @@ type KindDefaultVariants<
   ? AnySelection
   : DefaultVariants<Variants, DefaultedName>;
 
+/**
+ * How a kind of recipe turns the values of a selection into its result,
+ * such as by joining class names or merging style objects.
+ *
+ * @typeParam Value - The value of an option.
+ * @typeParam Accumulator - What the values of a selection are reduced to.
+ * @typeParam Result - What a recipe of this kind returns.
+ */
+interface RecipeKind<Value, Accumulator, Result> {
+  /**
+   * Returns the accumulator that the values of a selection are reduced
+   * into, starting from the recipe's `base`, which is `undefined` when the
+   * recipe has none. It is called for each result a recipe builds, so it
+   * can return a new object each time.
+   */
+  readonly initial: (base: Value | undefined) => Accumulator;
+  /**
+   * Adds a value to the accumulator and returns the accumulator. It is
+   * called with the values that apply to a selection, in order of
+   * precedence: the value of each variant's selected option, in the order
+   * of `variants`, then the value of each matching compound variant, in the
+   * order of `compoundVariants`. An option or compound variant whose value
+   * is `undefined` adds nothing.
+   */
+  readonly reduce: (accumulator: Accumulator, value: Value) => Accumulator;
+  /**
+   * Returns one value that adds to an accumulator what `first` then
+   * `second` add. A recipe that composes other recipes calls it when it is
+   * created, to combine the bases of its recipes, and the values that its
+   * recipes give one option, so that it reduces one value for each, as the
+   * one config it stands for would. Without it, such a recipe reduces each
+   * value. It must not change `first` or `second`, which other recipes
+   * share, and the kind must then follow two rules. In each, the two
+   * accumulators must be interchangeable: `finish` returns the same result
+   * for both, and again after the same values are reduced into each.
+   *
+   * - Reducing `first` then `second` into an accumulator gives what
+   *   reducing `combine(first, second)` gives.
+   * - `initial(base)` gives what reducing `base` into `initial(undefined)`
+   *   gives.
+   */
+  readonly combine?: ((first: Value, second: Value) => Value) | undefined;
+  /**
+   * Turns the accumulator into the result, for example by freezing it.
+   * Without it, the result is the accumulator.
+   */
+  readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
+  /**
+   * Whether a recipe builds the result of each declared selection once and
+   * returns it again for the same selection, unless its config sets
+   * `cache`. Defaults to `true`.
+   */
+  readonly cache?: boolean | undefined;
+}
+
 export type {
   AnySelection,
   KindCompoundCondition,
@@ -168,6 +223,7 @@ export type {
   CompoundCondition,
   DefaultVariants,
   RecipeFunction,
+  RecipeKind,
   Simplify,
   VariantOption,
   VariantKey,

@@ -23,6 +23,9 @@ Each practice links to the page that explains it.
 - **Freeze an object result in `finish`.** A cached result is shared by
   every call with the same variants. See
   [Caching](/recipe/recipe/caching/#shared-results).
+- **Give a kind `combine` when two values can make one.** A recipe that
+  composes others then builds its results as fast as one config. See
+  [`combine`](/recipe/recipe/recipe-kinds/#combine).
 - **Do work that needs every value in `finish`.** Collect the values in
   `reduce`, and merge, sort, or deduplicate them once. See
   [Collect, then finish](/recipe/recipe/designing-a-kind/#collect-then-finish).

@@ -35,7 +35,7 @@ const controlConfig = {
 
 const buttonConfig = {
   slots: ["label"],
-  base: { label: { fontWeight: 500 } },
+  base: { root: { cursor: "pointer" }, label: { fontWeight: 500 } },
   variants: {
     variant: {
       primary: {
@@ -52,7 +52,7 @@ const buttonConfig = {
         icon: { color: "#6b7280" },
       },
     },
-    size: { lg: { label: { fontSize: 18 } } },
+    size: { lg: { root: { paddingInline: 24 }, label: { fontSize: 18 } } },
   },
   compoundVariants: [
     {
@@ -70,13 +70,24 @@ const buttonConfig = {
 const oneConfig = {
   ...buttonConfig,
   slots: [...controlConfig.slots, ...buttonConfig.slots],
-  base: { ...controlConfig.base, ...buttonConfig.base },
+  base: {
+    ...controlConfig.base,
+    ...buttonConfig.base,
+    root: { ...controlConfig.base.root, ...buttonConfig.base.root },
+  },
   variants: {
     ...controlConfig.variants,
     ...buttonConfig.variants,
     size: {
       ...controlConfig.variants.size,
-      lg: { ...controlConfig.variants.size.lg, label: { fontSize: 18 } },
+      lg: {
+        ...controlConfig.variants.size.lg,
+        ...buttonConfig.variants.size.lg,
+        root: {
+          ...controlConfig.variants.size.lg.root,
+          ...buttonConfig.variants.size.lg.root,
+        },
+      },
     },
   },
   defaultVariants: {
@@ -99,6 +110,11 @@ type Selectors = Readonly<Record<string, Selector>>;
 
 const cachedRecipe = createSlotRecipeKind(styles);
 const uncachedRecipe = createSlotRecipeKind({ ...styles, cache: false });
+const uncachedCombinedRecipe = createSlotRecipeKind({
+  ...styles,
+  combine: (first: Style, second: Style): Style => ({ ...first, ...second }),
+  cache: false,
+});
 
 const oneConfigOf = (slotRecipe: typeof cachedRecipe): Selector =>
   slotRecipe(oneConfig);
@@ -113,6 +129,7 @@ const cached = {
 
 const uncached = {
   composed: composedOf(uncachedRecipe),
+  "composed, combined": composedOf(uncachedCombinedRecipe),
   "one config": oneConfigOf(uncachedRecipe),
 };
 

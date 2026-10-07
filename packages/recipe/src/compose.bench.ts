@@ -35,7 +35,12 @@ const controlConfig = {
 } as const;
 
 const buttonConfig = {
+  base: { cursor: "pointer" },
   variants: {
+    size: {
+      sm: { fontWeight: 600 },
+      lg: { letterSpacing: 0.5 },
+    },
     variant: {
       primary: { backgroundColor: "#2563eb", color: "#fff" },
       secondary: { backgroundColor: "#f3f4f6", color: "#111827" },
@@ -53,10 +58,20 @@ const buttonConfig = {
   defaultVariants: { variant: "primary" },
 } as const;
 
+const { size } = controlConfig.variants;
+
 const oneConfig = {
-  ...controlConfig,
   ...buttonConfig,
-  variants: { ...controlConfig.variants, ...buttonConfig.variants },
+  base: { ...base, ...buttonConfig.base },
+  variants: {
+    size: {
+      sm: { ...size.sm, ...buttonConfig.variants.size.sm },
+      md: size.md,
+      lg: { ...size.lg, ...buttonConfig.variants.size.lg },
+    },
+    disabled: controlConfig.variants.disabled,
+    variant: buttonConfig.variants.variant,
+  },
   defaultVariants: {
     ...controlConfig.defaultVariants,
     ...buttonConfig.defaultVariants,
@@ -75,8 +90,17 @@ type Selector = (selection: (typeof selections)[number]) => Style;
 
 type Selectors = Readonly<Record<string, Selector>>;
 
+const combinedStyles = {
+  ...styles,
+  combine: (first: Style, second: Style): Style => ({ ...first, ...second }),
+};
+
 const cachedRecipe = createRecipeKind(styles);
 const uncachedRecipe = createRecipeKind({ ...styles, cache: false });
+const uncachedCombinedRecipe = createRecipeKind({
+  ...combinedStyles,
+  cache: false,
+});
 
 const oneConfigOf = (styleRecipe: typeof cachedRecipe): Selector =>
   styleRecipe(oneConfig);
@@ -91,6 +115,7 @@ const cached = {
 
 const uncached = {
   composed: composedOf(uncachedRecipe),
+  "composed, combined": composedOf(uncachedCombinedRecipe),
   "one config": oneConfigOf(uncachedRecipe),
 };
 

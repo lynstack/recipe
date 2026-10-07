@@ -5,12 +5,16 @@ import type {
   ComposedSlot,
   ComposedVariants,
 } from "./composition.js";
-import type { KindCompoundCondition, KindDefaultVariants } from "./types.js";
-import type { KindVariants, RecipeKind } from "./recipe-kind.js";
+import type {
+  KindCompoundCondition,
+  KindDefaultVariants,
+  RecipeKind,
+} from "./types.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
 import type { SelectedVariants, WithVariantKeys } from "./variants.js";
 import { compileVariants, withVariantKeys } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
+import type { KindVariants } from "./recipe-kind.js";
 import { createSelector } from "./selector.js";
 import { createSlotsBuilder } from "./slots.js";
 
@@ -200,7 +204,8 @@ type LooseSlotRecipe = WithVariantKeys<
  * `variantKeys` property lists the names of its variants.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
- * composes recipes, and has the slots of each, theirs first.
+ * composes recipes, and has the slots of each, theirs first. With
+ * `kind.combine`, the values of each slot are combined as a recipe's are.
  *
  * @typeParam Value - The value of a slot, inferred from the `value`
  *   parameter of `kind.reduce` or the `base` parameter of `kind.initial`.

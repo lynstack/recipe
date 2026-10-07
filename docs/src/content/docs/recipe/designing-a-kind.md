@@ -62,10 +62,15 @@ A string accumulator is never shared, since strings cannot change, and
 needs no `finish`:
 
 ```ts
+const appendClasses = (className: string, classes: string): string => {
+  if (classes === "") return className;
+  if (className === "") return classes;
+  return `${className} ${classes}`;
+};
+
 const classRecipe = createRecipeKind({
   initial: (base?: string): string => base ?? "",
-  reduce: (className, classes: string) =>
-    className === "" ? classes : `${className} ${classes}`,
+  reduce: appendClasses,
 });
 ```
 
@@ -109,6 +114,26 @@ whatever is cheapest to extend, such as an array, a `Map`, or a mutable
 object, and turn it into the result in `finish`: a string, a frozen
 object, or an immutable structure.
 
+## Combine values
+
+A recipe that composes others can have several values where one config
+has one: the base of each config, and the values that several configs give
+the same option. Give the kind
+[`combine`](/recipe/recipe/recipe-kinds/#combine), and the recipe combines
+them into one when it is created, so that its results cost what those of
+one config cost. Each design above has one:
+
+| Design                       | `combine`                                      |
+| ---------------------------- | ---------------------------------------------- |
+| A new value each time        | `(first, second) => ({ ...first, ...second })` |
+| Accumulator changed in place | `(first, second) => ({ ...first, ...second })` |
+| Primitive accumulator        | `appendClasses`, the same function as `reduce` |
+| Collect, then finish         | `` (first, second) => `${first} ${second}` ``  |
+
+`combine` returns a new value: `first` and `second` belong to the configs.
+A kind whose `finish` needs each value apart, such as one that counts
+them, has no `combine`, and its composed recipes reduce every value.
+
 ## What each design costs
 
 | Design                       | Copies per result | Safe to share without `finish` |
@@ -132,3 +157,8 @@ recipe uses it:
   that the first result has not changed.
 - Run the same tests with `cache: false`, which builds every result anew
   and shows whether `initial` returns a new accumulator each time.
+- With `combine`, create a recipe that composes another, both with a base
+  and with values for the same options, and check that it returns, for
+  every selection, what the one config it stands for returns. A
+  `combine` that breaks the [rules](/recipe/recipe/recipe-kinds/#combine)
+  returns something else.
