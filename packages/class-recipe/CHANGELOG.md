@@ -4,6 +4,24 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.5.0 — 2026-10-07
+
+A config with the wrong shape fails with a message that names what is
+wrong, and `PropsOf` types the props a recipe accepts.
+
+- Creating a recipe or a slot recipe checks the classes of its config,
+  which the types already check, so that a config from untyped code, such
+  as one written for class-variance-authority or tailwind-variants,
+  throws a `TypeError` that names the part to fix: classes that are not a
+  string, such as an array, `false`, or `null`; in `sva`, a string where
+  it takes the classes of each slot; or a compound variant without
+  `className` or `classNames`. A compound variant with `class` asks you to
+  rename it. Before, such a config returned wrong class names, ignored
+  the classes, or threw an unrelated error.
+- `PropsOf<typeof recipe>` is the props a recipe or slot recipe accepts:
+  its variants, and its `className` or `classNames` override.
+- Depends on `@lynstack/recipe` through the range `^1.6.0`.
+
 ## 1.4.0 — 2026-10-07
 
 A recipe lists the options and defaults of its variants, so that a
