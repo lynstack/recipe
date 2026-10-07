@@ -150,3 +150,88 @@ describe("variants", () => {
     expect(builds).toBe(2);
   });
 });
+
+describe("the options and defaults of a recipe's variants", () => {
+  const text = listRecipe({
+    variants: {
+      size: { sm: "sm", lg: "lg" },
+      tone: { neutral: "neutral", danger: "danger" },
+      muted: { true: "muted" },
+    },
+    defaultVariants: { size: "sm" },
+  });
+
+  it("lists the options of each variant in variantOptions", () => {
+    expect(text.variantOptions).toStrictEqual({
+      size: ["sm", "lg"],
+      tone: ["neutral", "danger"],
+      muted: ["false", "true"],
+    });
+    expect(Object.isFrozen(text.variantOptions)).toBe(true);
+    expect(Object.isFrozen(text.variantOptions.size)).toBe(true);
+    expectTypeOf(text.variantOptions).toEqualTypeOf<{
+      readonly size: readonly ("sm" | "lg")[];
+      readonly tone: readonly ("neutral" | "danger")[];
+      readonly muted: readonly ("true" | "false")[];
+    }>();
+  });
+
+  it("lists the options in the order it numbers them", () => {
+    const recipe = listRecipe({
+      variants: {
+        level: { beta: "beta", 2: "2", alpha: "alpha", 1: "1", true: "on" },
+      },
+    });
+
+    expect(recipe.variantOptions).toStrictEqual({
+      level: ["1", "2", "false", "true", "beta", "alpha"],
+    });
+  });
+
+  it("lists the option each variant uses by default in defaultVariants", () => {
+    expect(text.defaultVariants).toStrictEqual({ size: "sm", muted: "false" });
+    expect(Object.isFrozen(text.defaultVariants)).toBe(true);
+    expectTypeOf(text.defaultVariants).toEqualTypeOf<{
+      readonly size: "sm" | "lg";
+      readonly muted: "true" | "false";
+    }>();
+    expect(text({ tone: "neutral", ...text.defaultVariants })).toStrictEqual(
+      text({ tone: "neutral" }),
+    );
+  });
+
+  it("lists its defaults as the names of options", () => {
+    const recipe = listRecipe({
+      variants: { level: { 1: "one", 2: "two" }, open: { true: "open" } },
+      defaultVariants: { level: 2, open: true },
+    });
+
+    expect(recipe.defaultVariants).toStrictEqual({ level: "2", open: "true" });
+    expectTypeOf(recipe.defaultVariants).toEqualTypeOf<{
+      readonly level: "1" | "2";
+      readonly open: "true" | "false";
+    }>();
+  });
+
+  it("lists a default that names an undeclared option", () => {
+    const variants: KindVariants<string> = { size: { sm: "sm" } };
+    const recipe = listRecipe({ variants, defaultVariants: { size: "xl" } });
+
+    expect(recipe.defaultVariants).toStrictEqual({ size: "xl" });
+    expect(recipe()).toStrictEqual([]);
+  });
+
+  it("lists every variant and option when the names are not known", () => {
+    const variants: KindVariants<string> = { size: { sm: "sm" } };
+    const recipe = listRecipe({ variants, defaultVariants: { size: "sm" } });
+
+    expect(recipe.variantOptions).toStrictEqual({ size: ["sm"] });
+    expect(recipe.defaultVariants).toStrictEqual({ size: "sm" });
+    expectTypeOf(recipe.variantOptions).toEqualTypeOf<
+      Readonly<Record<string, readonly string[]>>
+    >();
+    expectTypeOf(recipe.defaultVariants).toEqualTypeOf<
+      Readonly<Record<string, string>>
+    >();
+  });
+});

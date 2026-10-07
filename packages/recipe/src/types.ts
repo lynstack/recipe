@@ -111,6 +111,41 @@ type KeyName<Key> = Key extends string
  */
 type VariantKey<Selection> = KeyName<keyof Selection>;
 
+/** The name of an option that a selection accepts, as a string. */
+type OptionNameOf<Option> = Option extends string | number | boolean
+  ? `${Option}`
+  : string;
+
+/**
+ * The names of the options of each variant in a selection, as strings, as a
+ * recipe lists them in `variantOptions`.
+ *
+ * @typeParam Selection - The variants a recipe accepts.
+ */
+type VariantOptions<Selection> = {
+  readonly [Name in keyof Selection as KeyName<Name>]-?: readonly OptionNameOf<
+    Exclude<Selection[Name], undefined>
+  >[];
+};
+
+/**
+ * The option, as a string, that each variant a selection may leave out
+ * uses then, as a recipe lists it in `defaultVariants`.
+ *
+ * @typeParam Selection - The variants a recipe accepts.
+ */
+type SelectionDefaults<Selection> = string extends keyof Selection
+  ? Readonly<Record<string, string>>
+  : {
+      readonly [
+        Name in keyof Selection as Pick<Selection, Name> extends Required<
+          Pick<Selection, Name>
+        >
+          ? never
+          : KeyName<Name>
+      ]-?: OptionNameOf<Exclude<Selection[Name], undefined>>;
+    };
+
 /**
  * The variants a recipe accepts. Use it to type the props of a component
  * built on a recipe.
@@ -224,9 +259,11 @@ export type {
   DefaultVariants,
   RecipeFunction,
   RecipeKind,
+  SelectionDefaults,
   Simplify,
   VariantOption,
   VariantKey,
+  VariantOptions,
   VariantSelection,
   VariantsOf,
 };

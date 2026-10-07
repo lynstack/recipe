@@ -57,13 +57,25 @@ type KindRecipe<Selection, Result, Composition = unknown> = ((
   selection?: Selection,
 ) => Result) & {
   readonly variantKeys: readonly VariantKey<Selection>[];
+  readonly variantOptions: {
+    readonly [Name in VariantKey<Selection>]: readonly string[];
+  };
+  readonly defaultVariants: {
+    readonly [Name in VariantKey<Selection>]?: string;
+  };
 } & Composable<Composition>;
 ```
 
 Takes a selection of variants and returns its result. The selection is
 optional when every variant is. `variantKeys` lists the names of the
 variants, in the order of `variants`, after those of the recipes it
-composes. `Composition` is what the recipe passes on to the recipes that
+composes. `variantOptions` lists the names of the options of each
+variant, as strings, in the order the recipe numbers them, and
+`defaultVariants` the option, as a string, that each variant a selection
+may leave out uses then. Their types name the options of each variant.
+The three are frozen; see
+[Listing the variants](/recipe/recipe/variants/#listing-the-variants).
+`Composition` is what the recipe passes on to the recipes that
 compose it, which its type carries under a `~composition` property that
 exists in the type only. See
 [How it works](/recipe/recipe/how-it-works/) for what a call does, and

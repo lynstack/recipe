@@ -82,6 +82,22 @@ type ButtonVariants = VariantsOf<typeof button>;
 `variantKeys` lists them: `VariantKey<ButtonVariants>` is
 `"tone" | "size"`.
 
+A recipe's `variantOptions` and `defaultVariants` are typed with the names
+of the options of each variant, as strings:
+
+```ts
+type ButtonOptions = (typeof button)["variantOptions"];
+// => { readonly tone: readonly ("primary" | "neutral")[];
+//      readonly size: readonly ("sm" | "lg")[] }
+
+type ButtonDefaults = (typeof button)["defaultVariants"];
+// => { readonly size: "sm" | "lg" }
+```
+
+When the variant names are not known, they are
+`Readonly<Record<string, readonly string[]>>` and
+`Readonly<Record<string, string>>`.
+
 ## Variant names not known in advance
 
 When the variant names of a config are not known at compile time, as in a

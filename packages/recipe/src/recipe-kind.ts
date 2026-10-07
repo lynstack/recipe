@@ -10,18 +10,20 @@ import type {
   KindDefaultVariants,
   RecipeFunction,
   RecipeKind,
+  SelectionDefaults,
   VariantKey,
+  VariantOptions,
 } from "./types.js";
 import type { LooseKindRecipeConfig, LooseRecipeKind } from "./build-recipe.js";
 import type {
   LooseVariants,
   SelectedVariants,
-  WithVariantKeys,
+  WithVariants,
 } from "./variants.js";
 import { compileLayer, compileMergedLayers } from "./build-recipe.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { createSelector } from "./selector.js";
-import { withVariantKeys } from "./variants.js";
+import { withVariants } from "./variants.js";
 
 const recipes = createRegistry<unknown>("recipe");
 
@@ -96,7 +98,8 @@ interface KindRecipeConfig<
 /**
  * A recipe made from a {@link RecipeKind}: a function that returns the
  * result of a selection of variants, with the names of those variants in
- * `variantKeys`.
+ * `variantKeys`, the names of their options in `variantOptions`, and the
+ * option each uses when a selection leaves it out in `defaultVariants`.
  *
  * @typeParam Selection - The variants the recipe accepts.
  * @typeParam Result - What the recipe returns.
@@ -114,6 +117,21 @@ type KindRecipe<Selection, Result, Composition = unknown> = RecipeFunction<
    * composes.
    */
   readonly variantKeys: readonly VariantKey<Selection>[];
+  /**
+   * The names of the options of each variant, as strings, in the order in
+   * which the recipe numbers them: integer names first, then `"false"` and
+   * `"true"`, which a variant that declares either one has, then the
+   * others in the order of the config. A frozen object, keyed in the order
+   * of `variantKeys`.
+   */
+  readonly variantOptions: VariantOptions<Selection>;
+  /**
+   * The option, as a string, that each variant uses when a selection
+   * leaves it out: its default, or `"false"` for a variant whose only
+   * options are `"true"` and `"false"`. A frozen object, keyed in the
+   * order of `variantKeys`, without the variants that have no default.
+   */
+  readonly defaultVariants: SelectionDefaults<Selection>;
 } & Composable<Composition>;
 
 /**
@@ -141,7 +159,7 @@ type CreateKindRecipe<Value, Result> = <
   undefined
 >;
 
-type LooseKindRecipe = WithVariantKeys<
+type LooseKindRecipe = WithVariants<
   (selection?: SelectedVariants | null) => unknown
 >;
 
@@ -160,7 +178,9 @@ type LooseKindRecipe = WithVariantKeys<
  * options are `"true"` and `"false"` defaults to `false`, an option that the
  * config does not declare adds no value, and properties of the selection
  * that are not variants are ignored. A recipe's `variantKeys` property lists
- * the names of its variants.
+ * the names of its variants, `variantOptions` the names of the options of
+ * each, and `defaultVariants` the option each uses when a selection leaves
+ * it out, so that a library can list every selection of a recipe.
  *
  * With the cache, a recipe builds the result of each declared selection
  * once, and calling it again with the same variants returns the same
@@ -222,6 +242,8 @@ type LooseKindRecipe = WithVariantKeys<
  * // => { color: "black", fontSize: 24, opacity: 0.6, fontWeight: 300 }
  *
  * text.variantKeys; // => ["size", "muted"]
+ * text.variantOptions; // => { size: ["sm", "lg"], muted: ["false", "true"] }
+ * text.defaultVariants; // => { size: "sm", muted: "false" }
  *
  * const heading = styleRecipe({
  *   composes: [text],
@@ -249,7 +271,7 @@ function createRecipeKind(kind: LooseRecipeKind): unknown {
         : compileMergedLayers(kind, mergeLayers(layers));
     const options = { cache: config.cache ?? kindCache };
     const recipe = createSelector(compiled, build, options);
-    return recipes.withLayers(withVariantKeys(recipe, compiled), layers);
+    return recipes.withLayers(withVariants(recipe, compiled), layers);
   };
 }
 

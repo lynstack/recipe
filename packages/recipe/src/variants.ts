@@ -221,38 +221,59 @@ function toOptionNames(value: unknown): readonly string[] {
     .filter((option) => option !== undefined);
 }
 
-/** A recipe function with the names of its variants. */
-type WithVariantKeys<Recipe> = Recipe & {
+/** A recipe function with the names, options, and defaults of its variants. */
+type WithVariants<Recipe> = Recipe & {
   readonly variantKeys: readonly string[];
+  readonly variantOptions: Readonly<Record<string, readonly string[]>>;
+  readonly defaultVariants: Readonly<Record<string, string>>;
 };
 
-/** Adds the names of the compiled variants to `recipe` as `variantKeys`. */
-function withVariantKeys<Recipe extends object>(
+/**
+ * Adds the names of the compiled variants to `recipe` as `variantKeys`,
+ * the names of their options as `variantOptions`, and the option each
+ * variant uses when a selection leaves it out as `defaultVariants`.
+ */
+function withVariants<Recipe extends object>(
   recipe: Recipe,
   compiled: CompiledVariants<unknown>,
-): WithVariantKeys<Recipe> {
+): WithVariants<Recipe> {
   return Object.assign(recipe, {
+    defaultVariants: Object.freeze(defaultVariantsOf(compiled)),
     variantKeys: Object.freeze([...compiled.names]),
+    variantOptions: Object.freeze(variantOptionsOf(compiled)),
   });
+}
+
+function variantOptionsOf(
+  compiled: CompiledVariants<unknown>,
+): Record<string, readonly string[]> {
+  const entries = compiled.names.map((name, index) => {
+    const options = compiled.indexByOption[index]?.keys() ?? [];
+    return [name, Object.freeze([...options])] as const;
+  });
+  return Object.fromEntries(entries);
+}
+
+function defaultVariantsOf(
+  compiled: CompiledVariants<unknown>,
+): Record<string, string> {
+  const entries = compiled.names.flatMap((name, index) => {
+    const option = compiled.defaultOptions[index];
+    return option === undefined ? [] : [[name, option] as const];
+  });
+  return Object.fromEntries(entries);
 }
 
 function isBooleanName(option: string): boolean {
   return option === "true" || option === "false";
 }
 
-export {
-  compileVariants,
-  noOption,
-  noProps,
-  select,
-  undeclared,
-  withVariantKeys,
-};
+export { compileVariants, noOption, noProps, select, undeclared, withVariants };
 export type {
   CompiledVariants,
   Compound,
   LooseCompoundVariant,
   LooseVariants,
   SelectedVariants,
-  WithVariantKeys,
+  WithVariants,
 };

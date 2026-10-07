@@ -1,6 +1,6 @@
 ---
 title: Variants
-description: "How a recipe's config resolves a selection: required and default variants, boolean variants, numeric option names, compound variants, and variantKeys."
+description: "How a recipe's config resolves a selection: required and default variants, boolean variants, numeric option names, compound variants, and how a recipe lists its variants, options, and defaults."
 ---
 
 import RecipeExample from "../../../components/RecipeExample.astro";
@@ -85,12 +85,31 @@ Compound variants apply after the values of the options, in the order of
 - Calling a recipe without a selection, or with `undefined` or `null`, is
   the same as calling it with an empty one.
 
-## `variantKeys`
+## Listing the variants
 
-A recipe lists the names of its variants, in the order of `variants`, in
-its `variantKeys` property. Use it to split a component's props into the
-recipe's variants and the rest:
+A recipe lists its variants in three frozen properties, so that a
+component or a library can read them without the config:
+
+- `variantKeys`, the names of its variants, in the order of `variants`.
+  Use it to split a component's props into the recipe's variants and the
+  rest.
+- `variantOptions`, the names of the options of each variant, as strings,
+  in the order in which the recipe
+  [numbers them](/recipe/recipe/how-it-works/#when-a-recipe-is-created):
+  integer names first, in ascending order, then `"false"` and `"true"`,
+  which a variant that declares either one has, then the others in the
+  order they are declared.
+- `defaultVariants`, the option each variant uses when a selection leaves
+  it out, as a string: its default, or `"false"` for a boolean variant. A
+  variant without a default is not in it.
 
 ```ts
 button.variantKeys; // => ["tone", "size"]
+button.variantOptions;
+// => { tone: ["primary", "neutral", "ghost"], size: ["sm", "lg"] }
+button.defaultVariants; // => { size: "sm" }
 ```
+
+Together they let a library list every selection of a recipe, as a story
+or a table of every option does, and call the recipe for each. The
+recipe's values stay out of them: call the recipe to get its result.

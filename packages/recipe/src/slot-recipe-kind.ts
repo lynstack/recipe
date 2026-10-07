@@ -11,8 +11,8 @@ import type {
   RecipeKind,
 } from "./types.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
-import type { SelectedVariants, WithVariantKeys } from "./variants.js";
-import { compileVariants, withVariantKeys } from "./variants.js";
+import type { SelectedVariants, WithVariants } from "./variants.js";
+import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import type { KindVariants } from "./recipe-kind.js";
 import { createSelector } from "./selector.js";
@@ -174,7 +174,7 @@ interface LooseSlotRecipeConfig {
   readonly cache?: boolean | undefined;
 }
 
-type LooseSlotRecipe = WithVariantKeys<
+type LooseSlotRecipe = WithVariants<
   (selection?: SelectedVariants | null) => Readonly<Record<string, unknown>>
 >;
 
@@ -199,9 +199,9 @@ type LooseSlotRecipe = WithVariantKeys<
  * in the order of `slots`. With the cache, a slot recipe builds it once for
  * each declared selection and returns the same object for the same
  * variants. The `cache` of a slot recipe's config overrides the kind's.
- * Variants, default variants, boolean variants, and undeclared
- * options behave as in {@link createRecipeKind}, and the recipe's
- * `variantKeys` property lists the names of its variants.
+ * Variants, boolean variants, undeclared options, and the `variantKeys`,
+ * `variantOptions`, and `defaultVariants` properties are as in
+ * {@link createRecipeKind}.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first. With
@@ -256,7 +256,8 @@ type LooseSlotRecipe = WithVariantKeys<
  * //   title: { fontSize: 18, color: "white", fontWeight: 600 },
  * // }
  *
- * card.variantKeys; // => ["tone"]
+ * card.variantOptions; // => { tone: ["light", "dark"] }
+ * card.defaultVariants; // => { tone: "light" }
  *
  * const dialog = slotStyleRecipe({
  *   composes: [card],
@@ -285,7 +286,7 @@ function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
     const build = createSlotsBuilder(kind, compiled, merged);
     const options = { cache: config.cache ?? kindCache };
     const recipe = createSelector(compiled, build, options);
-    return slotRecipes.withLayers(withVariantKeys(recipe, compiled), layers);
+    return slotRecipes.withLayers(withVariants(recipe, compiled), layers);
   };
 }
 

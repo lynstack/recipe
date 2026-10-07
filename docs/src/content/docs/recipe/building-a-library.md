@@ -1,6 +1,6 @@
 ---
 title: Building a library on it
-description: "Build a styling library on @lynstack/recipe: define its kinds once, type its config with the engine's types, handle override props, and split props."
+description: "Build a styling library on @lynstack/recipe: define its kinds once, type its config with the engine's types, handle override props, split props, and list the variants."
 sidebar:
   label: Building a library
 ---
@@ -48,9 +48,9 @@ the same checks as with the engine:
 import type {
   CompoundCondition,
   DefaultVariants,
+  KindRecipe,
   KindVariants,
   RecipeFunction,
-  VariantKey,
   VariantSelection,
 } from "@lynstack/recipe";
 
@@ -70,9 +70,11 @@ interface StyleVariantsConfig<
 type StyleVariants<Selection> = RecipeFunction<
   Selection & { readonly style?: Style },
   Style
-> & {
-  readonly variantKeys: readonly VariantKey<Selection>[];
-};
+> &
+  Pick<
+    KindRecipe<Selection, Style>,
+    "variantKeys" | "variantOptions" | "defaultVariants"
+  >;
 ```
 
 The `const` type parameters of `sv` below infer the option names of each
@@ -118,7 +120,12 @@ export function sv(config: LooseConfig) {
     props.style === undefined
       ? recipe(props)
       : Object.freeze({ ...recipe(props), ...props.style });
-  return Object.assign(styleVariants, { variantKeys: recipe.variantKeys });
+  const { defaultVariants, variantKeys, variantOptions } = recipe;
+  return Object.assign(styleVariants, {
+    defaultVariants,
+    variantKeys,
+    variantOptions,
+  });
 }
 ```
 
@@ -170,6 +177,30 @@ splitProps({ tone: "muted", testID: "box" }, box.variantKeys);
 // => { rest: { testID: "box" }, variants: { tone: "muted" } }
 ```
 
+## List every selection with `variantOptions`
+
+A tool that shows every look of a component, such as a story or a table of
+its options, reads the options of each variant from `variantOptions`, and
+calls the recipe for each selection. `defaultVariants` tells it which
+option a selection that leaves a variant out gets:
+
+```ts
+function selectionsOf(
+  variantOptions: Readonly<Record<string, readonly string[]>>,
+) {
+  return Object.entries(variantOptions).reduce<Record<string, string>[]>(
+    (selections, [name, options]) =>
+      selections.flatMap((selection) =>
+        options.map((option) => ({ ...selection, [name]: option })),
+      ),
+    [{}],
+  );
+}
+
+selectionsOf(box.variantOptions); // => [{ tone: "muted" }]
+box.defaultVariants; // => {}
+```
+
 ## Slot recipes
 
 A component with several elements uses a slot recipe of the same kind,
@@ -201,7 +232,7 @@ export function sv(config: LooseConfig) {
   });
   const styleVariants = /* as above */;
   engineRecipes.set(styleVariants, recipe);
-  return Object.assign(styleVariants, { variantKeys: recipe.variantKeys });
+  return Object.assign(styleVariants, /* the lists of the variants, as above */);
 }
 ```
 
@@ -244,11 +275,12 @@ type StyleVariants<
 > = RecipeFunction<
   VariantSelection<Variants, DefaultedName> & { readonly style?: Style },
   Style
-> & {
-  readonly variantKeys: readonly VariantKey<
-    VariantSelection<Variants, DefaultedName>
-  >[];
-} & Composable<RecipeComposition<Variants, DefaultedName, Style, undefined>>;
+> &
+  Pick<
+    KindRecipe<VariantSelection<Variants, DefaultedName>, Style>,
+    "variantKeys" | "variantOptions" | "defaultVariants"
+  > &
+  Composable<RecipeComposition<Variants, DefaultedName, Style, undefined>>;
 
 export function sv<
   const Variants extends KindVariants<Style>,
@@ -306,6 +338,7 @@ export function createStyleRecipes(options: { readonly cache?: boolean } = {}) {
 - Configs are translated once, when a recipe is created.
 - Overrides build a new object, and only when they are passed.
 - The library's functions infer the variants of each config with the
-  engine's types, and keep `variantKeys`.
+  engine's types, and keep `variantKeys`, `variantOptions`, and
+  `defaultVariants`.
 - A library that lets its recipes be composed passes `composes` on to the
   engine's recipes, and marks its recipes' types with `Composable`.

@@ -66,6 +66,10 @@ describe("a slot recipe that composes slot recipes", () => {
       "select-lg",
     ]);
     expect(select.variantKeys).toStrictEqual(["size", "invalid"]);
+    expect(select.variantOptions).toStrictEqual({
+      size: ["sm", "md", "lg"],
+      invalid: ["false", "true"],
+    });
     expectTypeOf<VariantsOf<typeof select>>().toEqualTypeOf<{
       readonly size?: "sm" | "md" | "lg" | undefined;
       readonly invalid?: boolean | "true" | "false" | undefined;

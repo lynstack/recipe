@@ -172,6 +172,29 @@ describe(createSlotRecipeKind, () => {
     >();
   });
 
+  it("lists the options and defaults of its variants", () => {
+    expect(button.variantOptions).toStrictEqual({
+      tone: ["primary", "ghost"],
+      size: ["sm", "md"],
+      loading: ["false", "true"],
+    });
+    expect(button.defaultVariants).toStrictEqual({
+      tone: "primary",
+      size: "md",
+      loading: "false",
+    });
+    expectTypeOf(button.variantOptions).toEqualTypeOf<{
+      readonly tone: readonly ("primary" | "ghost")[];
+      readonly size: readonly ("sm" | "md")[];
+      readonly loading: readonly ("true" | "false")[];
+    }>();
+    expectTypeOf(button.defaultVariants).toEqualTypeOf<{
+      readonly tone: "primary" | "ghost";
+      readonly size: "sm" | "md";
+      readonly loading: "true" | "false";
+    }>();
+  });
+
   it("infers the selection and the result", () => {
     expect(button()).toBeDefined();
     expectTypeOf(button).parameter(0).toEqualTypeOf<

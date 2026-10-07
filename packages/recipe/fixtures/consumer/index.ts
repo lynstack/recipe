@@ -52,6 +52,9 @@ const cardStyles: Readonly<Record<"root" | "title", Style>> = card({
 const cardKeys: readonly "tone"[] = card.variantKeys;
 const style: Style = text({ size: "lg" });
 const textKeys: readonly "size"[] = text.variantKeys;
+const textOptions: { readonly size: readonly ("sm" | "lg")[] } =
+  text.variantOptions;
+const textDefaults: { readonly size: "sm" | "lg" } = text.defaultVariants;
 const recipe: KindRecipe<{ readonly size?: "sm" | "lg" }, Style> = text;
 const variants: VariantsOf<typeof text> = { size: "lg" };
 const textKey: VariantKey<VariantsOf<typeof text>> = "size";
@@ -80,12 +83,15 @@ const dialog = slotStyleRecipe({
 const dialogStyles: Readonly<Record<"root" | "title" | "footer", Style>> =
   dialog({ tone: "dark" });
 const composableSlots: ComposableKindSlotRecipe<Style> = card;
+const dialogOptions: { readonly tone: readonly ("dark" | "light")[] } =
+  dialog.variantOptions;
 
 export {
   card,
   composable,
   composableSlots,
   dialog,
+  dialogOptions,
   dialogStyles,
   emphasis,
   emphasisKeys,
@@ -98,7 +104,9 @@ export {
   style,
   styleRecipe,
   text,
+  textDefaults,
   textKey,
   textKeys,
+  textOptions,
   variants,
 };

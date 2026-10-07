@@ -18,7 +18,8 @@ that API.
   and its types.
 - The other modules are internal:
   - `variants.ts` compiles variants into numbered options, so a selection
-    becomes an integer key, and lists the variants of a recipe.
+    becomes an integer key, and lists the variants, options, and defaults
+    of a recipe.
   - `selector.ts` caches results by that key.
   - `compose.ts` keeps the configs of each recipe, its layers, and merges
     the layers of a recipe that composes others into one config.

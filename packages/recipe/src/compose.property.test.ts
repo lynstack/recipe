@@ -103,7 +103,11 @@ function concatenatedBySlot(
   );
 }
 
-type LooseRecipe = (selection?: ByName<unknown>) => unknown;
+type LooseRecipe = ((selection?: ByName<unknown>) => unknown) & {
+  readonly variantKeys: readonly string[];
+  readonly variantOptions: ByName<readonly string[]>;
+  readonly defaultVariants: ByName<string>;
+};
 
 function previousAndFirst<Recipe>(
   recipes: readonly Recipe[],
@@ -145,19 +149,24 @@ const composedCombiningRecipe = composedRecipeOf(combiningKind);
 const composedCombiningSlotRecipe = composedSlotRecipeOf(combiningKind);
 
 /**
- * Checks that the composed recipe of a case returns what the recipe of its
- * flat config returns, and returns the same result again when it does.
+ * Checks that the composed recipe of a case has the variants, options, and
+ * defaults of the recipe of its flat config, returns what it returns, and
+ * returns the same result again when it does.
  */
 function behavesAsOneConfig<Value>(
   composedOf: (of: Case<Value>) => LooseRecipe,
   flatOf: (of: Case<Value>) => LooseRecipe,
 ): (of: Case<Value>) => void {
   return (of) => {
-    const callsOf = (recipe: LooseRecipe): readonly unknown[] =>
-      of.selections.map((each) => {
+    const callsOf = (recipe: LooseRecipe): readonly unknown[] => [
+      recipe.variantKeys,
+      recipe.variantOptions,
+      recipe.defaultVariants,
+      ...of.selections.map((each) => {
         const result = recipe(each);
         return [result, recipe(each) === result];
-      });
+      }),
+    ];
     expect(callsOf(composedOf(of))).toStrictEqual(callsOf(flatOf(of)));
   };
 }
