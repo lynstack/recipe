@@ -67,8 +67,8 @@ See [Recipe kinds](https://lynstack.github.io/recipe/recipe/recipe-kinds/)
 for what each function of a kind does,
 [Slot recipes](https://lynstack.github.io/recipe/recipe/slot-recipes/) for
 slot recipes, and
-[Practices](https://lynstack.github.io/recipe/recipe/practices/) for how to
-write kinds that stay fast.
+the [Checklist](https://lynstack.github.io/recipe/recipe/practices/) for
+how to write kinds, recipes, and libraries that stay fast and correct.
 
 ## Changelog
 

@@ -94,14 +94,10 @@ const mergedClassRecipe = createRecipeKind({
   },
   finish: (classes: string[]): string => twMerge(classes),
 });
-
-const button = mergedClassRecipe({
-  base: "px-4 py-2",
-  variants: { size: { sm: "px-2 py-1", lg: "px-6 py-3" } },
-});
-
-button({ size: "sm" }); // => "px-2 py-1"
 ```
+
+`twMerge` sees every value at once, so a later class replaces an earlier
+one that conflicts with it, such as `px-2` after `px-4`.
 
 `finish` runs once per result, and with the cache once per selection, so
 an expensive merge costs little in a cached recipe. This is how
@@ -162,3 +158,12 @@ recipe uses it:
   every selection, what the one config it stands for returns. A
   `combine` that breaks the [rules](/recipe/recipe/recipe-kinds/#combine)
   returns something else.
+
+## Next steps
+
+- [Building a library](/recipe/recipe/building-a-library/) wraps a kind
+  in a library with its own API.
+- [Caching](/recipe/recipe/caching/) explains when a kind's work runs once
+  per selection.
+- [Checklist](/recipe/recipe/practices/) sums up the rules for kinds, each
+  with a link.
