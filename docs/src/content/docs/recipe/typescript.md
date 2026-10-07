@@ -57,6 +57,14 @@ A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
 variants stay literal types.
 
+## Composed recipes
+
+A recipe that composes others infers its selection from every config, and
+its compound and default variants can name the variants of the recipes it
+composes. Composing a recipe whose values have another type, or a slot
+recipe in a recipe, is a type error (see
+[Composing recipes](/recipe/recipe/composing/#types)).
+
 ## Typing component props
 
 `VariantsOf` returns the variants a recipe accepts. Use it to type the
@@ -107,6 +115,8 @@ shows:
 | `RecipeFunction`    | A function whose argument is optional when every variant is.                         |
 | `VariantKey`        | The names in `variantKeys`.                                                          |
 | `VariantsOf`        | The variants a recipe accepts, which a library can define its own version of.        |
+| `ComposedVariants`  | The variants of a config together with those of the recipes it composes.             |
+| `Composable`        | The type of a library's recipe, marked so that other recipes can compose it.         |
 
 A library can define its own `VariantsOf` to leave out the props its
 recipes take besides their variants, as `@lynstack/class-recipe` leaves

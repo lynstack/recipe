@@ -30,6 +30,8 @@ values are, and the engine does it once for every kind of value:
 - It infers the types of the selection from the config.
 - It does all of this for each element of a component made of several,
   with slot recipes.
+- It composes recipes, so that one builds on the variants and values of
+  others.
 
 The rest is how values combine into a result, and that is what you give
 it: a **kind**, three small functions.

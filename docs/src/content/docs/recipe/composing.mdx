@@ -1,0 +1,129 @@
+---
+title: Composing recipes
+description: "Build a recipe on others with composes: how their configs merge into one, the order of their values, defaults, slot recipes, and the types it infers."
+---
+
+import RecipeExample from "../../../components/RecipeExample.astro";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+
+A recipe can build on other recipes: list them in its config's `composes`,
+and it has their variants, options, and values as well as its own. Here,
+`button` composes `control`, which holds what every control shares:
+
+<RecipePlayground name="recipe/composing/button" />
+
+`styleRecipe` is the function of the
+[Quick start](/recipe/recipe/quick-start/), whose kind merges styles with
+`Object.assign`.
+
+## As one config
+
+A recipe that composes others behaves as if their configs and its own
+were written as one config, theirs first:
+
+| Property           | How the configs merge                                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `base`             | The accumulator starts from the first base, and the other bases are reduced into it, in order.                    |
+| `variants`         | Every variant and option of each config is declared. An option that several configs give has all of their values. |
+| `compoundVariants` | The compound variants of each config, in order.                                                                   |
+| `defaultVariants`  | The default of a variant is the last one given.                                                                   |
+| `cache`            | The recipe's own, or its kind's.                                                                                  |
+
+The order of the values stays the one of a recipe: the bases, then the
+value of each variant's option, then the matching compound variants (see
+[How it works](/recipe/recipe/how-it-works/#the-order-of-the-values)).
+Within a variant, the values of the recipes it composes come before its
+own:
+
+<RecipeExample
+  name="recipe/composing/button"
+  source={false}
+  calls={[{}, { size: "lg" }, { disabled: true }]}
+/>
+
+`size: "lg"` is an option that only `button` declares, and `control` adds
+no value for it. With `disabled: true`, the compound variant of `button`
+applies after every option, as it would in one config: a compound variant
+can name the variants of the recipes it composes.
+
+A recipe's own variant does not override a compound variant of a recipe it
+composes, since compound variants apply last. To override one, give the
+recipe a compound variant with the same condition, which applies after it.
+
+## Several recipes
+
+`composes` lists any number of recipes, in the order their configs merge.
+A recipe that composes others can itself be composed, and its configs
+come with it. A recipe that the list reaches more than once, directly or
+through another recipe, counts once, where it first appears:
+
+```ts
+const iconButton = styleRecipe({
+  composes: [button, control],
+  variants: { shape: { square: { width: 40 } } },
+});
+// Merges control, then button, then iconButton: control counts once.
+```
+
+## Boolean variants
+
+A variant whose only options, in every config, are `"true"` and `"false"`
+is a boolean variant, optional and `false` by default. A recipe that adds
+another option to it makes it an ordinary variant, which is required
+unless a config gives it a default.
+
+## Kinds
+
+A recipe composes recipes of any kind whose values have the type of its
+own kind's values: it merges their configs, and builds every result with
+its own kind. A recipe that joins class names with `twMerge` can compose
+one that concatenates them, for example.
+
+A recipe composes only recipes that the engine created, and a slot recipe
+only slot recipes. Anything else in `composes` is a type error, and throws
+a `TypeError` when the recipe is created. This happens too when an app
+installs two copies of `@lynstack/recipe`, since each copy knows only its
+own recipes.
+
+## Slot recipes
+
+A slot recipe composes slot recipes in the same way, and has the slots of
+each, theirs first. Each slot merges as one config would:
+
+<RecipeExample name="recipe/composing/select" calls={[{ invalid: true }]} />
+
+## Cost
+
+A recipe merges the configs it composes once, when it is created, and
+compiles the result as it would compile one config. A call of a composed
+recipe costs what a call of that one config costs, with the cache or
+without it.
+
+A recipe reads the configs it composes when it is created. Changing a
+config later changes neither its recipe nor the recipes that compose it.
+
+## Types
+
+A recipe that composes others infers its selection from every config:
+
+- It accepts the options of each config for each variant.
+- A variant is optional when any config gives it a default, or when it is
+  a boolean variant.
+- Its compound variants and default variants can name the variants and
+  options of the recipes it composes.
+
+```ts
+import type { VariantsOf } from "@lynstack/recipe";
+
+type ButtonVariants = VariantsOf<typeof button>;
+// => { readonly size?: "sm" | "md" | "lg" | undefined;
+//      readonly disabled?: boolean | "true" | "false" | undefined;
+//      readonly tone?: "primary" | "neutral" | undefined }
+```
+
+`composes` takes the recipes as a list, inferred as a tuple, and each
+recipe's type carries what it passes on to the recipes that compose it,
+under a `~composition` property that exists in the type only. A library
+that wraps recipes passes it on, as
+[Building a library](/recipe/recipe/building-a-library/#composing-recipes)
+shows.

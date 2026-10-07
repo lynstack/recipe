@@ -11,7 +11,9 @@ call. The kind takes part only when a result is built.
 ## When a recipe is created
 
 The function that `createRecipeKind` returns compiles the config into a
-recipe, once:
+recipe, once. A recipe that composes others first merges their configs
+with its own into one (see [Composing recipes](/recipe/recipe/composing/)),
+and compiles that:
 
 1. It numbers the options of each variant from 1, in the order they are
    declared. A variant that declares an option named `"true"` or `"false"`
@@ -73,7 +75,9 @@ from the least to the most specific:
 2. The value of each compound variant that matches, in the order of
    `compoundVariants`.
 
-The base is not reduced: it is passed to `initial`. A value that is
+The base is not reduced: it is passed to `initial`. In a recipe that
+composes others, the first base is passed to `initial`, and the other
+bases are reduced first. A value that is
 `undefined` is skipped, so an option without a value adds nothing.
 
 The order is all the engine decides; what a later value does to an

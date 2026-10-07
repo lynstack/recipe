@@ -1,18 +1,28 @@
 import type {
-  CompoundCondition,
-  DefaultVariants,
+  Composable,
+  ComposableKindRecipe,
+  ComposedDefaultedName,
+  ComposedKindRecipe,
+  ComposedVariants,
+} from "./composition.js";
+import type {
+  KindCompoundCondition,
+  KindDefaultVariants,
   RecipeFunction,
   VariantKey,
-  VariantSelection,
 } from "./types.js";
+import type { LooseKindRecipeConfig, LooseRecipeKind } from "./build-recipe.js";
 import type {
   LooseVariants,
   SelectedVariants,
   WithVariantKeys,
 } from "./variants.js";
-import { compileVariants, withVariantKeys } from "./variants.js";
+import { compileLayer, compileMergedLayers } from "./build-recipe.js";
+import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { createSelector } from "./selector.js";
-import { reduceValues } from "./reduce-values.js";
+import { withVariantKeys } from "./variants.js";
+
+const recipes = createRegistry<unknown>("recipe");
 
 /**
  * How a kind of recipe turns the values of a selection into its result,
@@ -53,33 +63,6 @@ interface RecipeKind<Value, Accumulator, Result> {
 }
 
 /**
- * Any selection, for variants whose names are not known at compile time,
- * such as `Record<string, Record<string, string>>`.
- */
-type AnySelection = Readonly<Record<string, unknown>>;
-
-/** The selection of a recipe, or any selection for unknown variant names. */
-type KindSelection<
-  Variants,
-  DefaultedName extends keyof Variants,
-> = string extends keyof Variants
-  ? AnySelection
-  : VariantSelection<Variants, DefaultedName>;
-
-/** The condition of a compound variant, or any for unknown variant names. */
-type KindCompoundCondition<Variants> = string extends keyof Variants
-  ? AnySelection
-  : CompoundCondition<Variants>;
-
-/** The default variants of a recipe, or any for unknown variant names. */
-type KindDefaultVariants<
-  Variants,
-  DefaultedName extends keyof Variants,
-> = string extends keyof Variants
-  ? AnySelection
-  : DefaultVariants<Variants, DefaultedName>;
-
-/**
  * The variants of a {@link KindRecipeConfig}: for each variant name, the
  * value of each of its options.
  *
@@ -110,12 +93,21 @@ interface KindCompoundVariant<Variants, Value> {
  * @typeParam Value - The value of an option.
  * @typeParam Variants - The variant definitions, keyed by variant name.
  * @typeParam DefaultedName - The names of the variants that have a default.
+ * @typeParam Composed - The types of the recipes that the recipe composes.
  */
 interface KindRecipeConfig<
   Value,
   Variants extends KindVariants<Value>,
-  DefaultedName extends keyof Variants,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindRecipe<Value>[] = readonly [],
 > {
+  /**
+   * Recipes whose config the recipe adds to its own, in order, as if it
+   * were written in one config: their bases first, the values of each of
+   * their options before its own, and their compound variants first. A
+   * recipe composed several times counts once.
+   */
+  readonly composes?: Composed | undefined;
   /** The value that the values of every selection are added to. */
   readonly base?: Value | undefined;
   /** For each variant name, the value of each of its options. */
@@ -125,10 +117,15 @@ interface KindRecipeConfig<
    * time, applied in order after the values of the variants' options.
    */
   readonly compoundVariants?:
-    readonly KindCompoundVariant<NoInfer<Variants>, Value>[] | undefined;
+    | readonly KindCompoundVariant<
+        NoInfer<ComposedVariants<Composed, Variants>>,
+        Value
+      >[]
+    | undefined;
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
-    KindDefaultVariants<Variants, DefaultedName> | undefined;
+    | KindDefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | undefined;
   /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
   readonly cache?: boolean | undefined;
 }
@@ -140,14 +137,21 @@ interface KindRecipeConfig<
  *
  * @typeParam Selection - The variants the recipe accepts.
  * @typeParam Result - What the recipe returns.
+ * @typeParam Composition - What the recipe passes on to the recipes that
+ *   compose it, a `RecipeComposition`. Without it, the type does not
+ *   allow composing the recipe.
  */
-type KindRecipe<Selection, Result> = RecipeFunction<Selection, Result> & {
+type KindRecipe<Selection, Result, Composition = unknown> = RecipeFunction<
+  Selection,
+  Result
+> & {
   /**
    * The names of the recipe's variants, in the order of
-   * `Object.keys(config.variants)`.
+   * `Object.keys(config.variants)`, after those of the recipes it
+   * composes.
    */
   readonly variantKeys: readonly VariantKey<Selection>[];
-};
+} & Composable<Composition>;
 
 /**
  * Creates recipes of one kind, the function that {@link createRecipeKind}
@@ -161,30 +165,18 @@ type KindRecipe<Selection, Result> = RecipeFunction<Selection, Result> & {
  */
 type CreateKindRecipe<Value, Result> = <
   const Variants extends KindVariants<Value>,
-  const DefaultedName extends keyof Variants = never,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<Value>[] = readonly [],
 >(
-  config: KindRecipeConfig<Value, Variants, DefaultedName>,
-) => KindRecipe<KindSelection<Variants, DefaultedName>, Result>;
-
-interface LooseRecipeKind {
-  readonly initial: (base: unknown) => unknown;
-  readonly reduce: (accumulator: unknown, value: unknown) => unknown;
-  readonly finish?: ((accumulator: unknown) => unknown) | undefined;
-  readonly cache?: boolean | undefined;
-}
-
-interface LooseKindRecipeConfig {
-  readonly base?: unknown;
-  readonly variants: KindVariants<unknown>;
-  readonly compoundVariants?:
-    | readonly {
-        readonly variants: SelectedVariants;
-        readonly value: unknown;
-      }[]
-    | undefined;
-  readonly defaultVariants?: SelectedVariants | undefined;
-  readonly cache?: boolean | undefined;
-}
+  config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>,
+) => ComposedKindRecipe<
+  ComposedVariants<Composed, Variants>,
+  ComposedDefaultedName<Composed, DefaultedName>,
+  Value,
+  Result,
+  undefined
+>;
 
 type LooseKindRecipe = WithVariantKeys<
   (selection?: SelectedVariants | null) => unknown
@@ -217,6 +209,14 @@ type LooseKindRecipe = WithVariantKeys<
  *
  * When the variant names are not known at compile time, as in a library
  * that passes on a config it received, a recipe accepts any selection.
+ *
+ * A recipe composes the recipes listed in its config's `composes`, of any
+ * kind whose values have its type, as if their configs and its own were one:
+ * the accumulator starts from the first base, and the other bases are
+ * reduced first; every option of each is declared, with its values reduced
+ * in the order of the recipes; their compound variants come before its own;
+ * and a variant's default is the last one given. A recipe composed several
+ * times counts once.
  *
  * @typeParam Value - The value of an option, inferred from the `value`
  *   parameter of `kind.reduce` or the `base` parameter of `kind.initial`.
@@ -256,6 +256,15 @@ type LooseKindRecipe = WithVariantKeys<
  * // => { color: "black", fontSize: 24, opacity: 0.6, fontWeight: 300 }
  *
  * text.variantKeys; // => ["size", "muted"]
+ *
+ * const heading = styleRecipe({
+ *   composes: [text],
+ *   base: { fontWeight: 700 },
+ *   variants: { size: { xl: { fontSize: 32 } } },
+ * });
+ *
+ * heading({ size: "xl" });
+ * // => { color: "black", fontWeight: 700, fontSize: 32 }
  * ```
  */
 function createRecipeKind<Value, Accumulator, Result = Accumulator>(
@@ -263,38 +272,27 @@ function createRecipeKind<Value, Accumulator, Result = Accumulator>(
 ): CreateKindRecipe<Value, Result>;
 
 function createRecipeKind(kind: LooseRecipeKind): unknown {
-  const { initial, reduce, finish } = kind;
   const kindCache = kind.cache ?? true;
 
   return (config: LooseKindRecipeConfig): LooseKindRecipe => {
-    const { base } = config;
-    const compiled = compileVariants<unknown>({
-      compoundVariants: config.compoundVariants ?? [],
-      defaultVariants: config.defaultVariants ?? {},
-      noValue: undefined,
-      variants: config.variants,
-    });
-    const reducer = { initial: (): unknown => initial(base), reduce };
-    const build =
-      finish === undefined
-        ? (indexes: Int32Array): unknown =>
-            reduceValues(compiled, indexes, reducer)
-        : (indexes: Int32Array): unknown =>
-            finish(reduceValues(compiled, indexes, reducer));
+    const own = layerOf(config, []);
+    const layers = recipes.layersOf(config.composes ?? [], own);
+    const { compiled, build } =
+      layers.length === 1
+        ? compileLayer(kind, own)
+        : compileMergedLayers(kind, mergeLayers(layers));
     const options = { cache: config.cache ?? kindCache };
-    return withVariantKeys(createSelector(compiled, build, options), compiled);
+    const recipe = createSelector(compiled, build, options);
+    return recipes.withLayers(withVariantKeys(recipe, compiled), layers);
   };
 }
 
 export { createRecipeKind };
 export type {
   CreateKindRecipe,
-  KindCompoundCondition,
   KindCompoundVariant,
-  KindDefaultVariants,
   KindRecipe,
   KindRecipeConfig,
-  KindSelection,
   KindVariants,
   RecipeKind,
 };

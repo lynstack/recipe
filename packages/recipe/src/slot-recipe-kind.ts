@@ -1,16 +1,22 @@
 import type {
-  KindCompoundCondition,
-  KindDefaultVariants,
-  KindRecipe,
-  KindSelection,
-  KindVariants,
-  RecipeKind,
-} from "./recipe-kind.js";
+  ComposableKindSlotRecipe,
+  ComposedDefaultedName,
+  ComposedKindRecipe,
+  ComposedSlot,
+  ComposedVariants,
+} from "./composition.js";
+import type { KindCompoundCondition, KindDefaultVariants } from "./types.js";
+import type { KindVariants, RecipeKind } from "./recipe-kind.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
 import type { SelectedVariants, WithVariantKeys } from "./variants.js";
 import { compileVariants, withVariantKeys } from "./variants.js";
+import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { createSelector } from "./selector.js";
 import { createSlotsBuilder } from "./slots.js";
+
+const slotRecipes = createRegistry<LooseSlotValues>("slot recipe");
+
+const noSlotValues: readonly LooseSlotValues[] = Object.freeze([]);
 
 /**
  * Values for some of a slot recipe's slots, keyed by slot name.
@@ -76,14 +82,27 @@ interface KindSlotRecipeConfig<
   Slot extends string,
   Value,
   Variants extends KindSlotVariants<Value>,
-  DefaultedName extends keyof Variants,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindSlotRecipe<Value>[] = readonly [],
 > {
-  /** The names of the slots, in the order of the recipe's result. */
+  /**
+   * Slot recipes whose config the recipe adds to its own, in order, as if
+   * it were written in one config: their slots and bases first, the values
+   * of each of their options before its own, and their compound variants
+   * first. A slot recipe composed several times counts once.
+   */
+  readonly composes?: Composed | undefined;
+  /**
+   * The names of the slots, in the order of the recipe's result, after
+   * those of the slot recipes it composes.
+   */
   readonly slots: readonly Slot[];
   /** The value of each slot that the values of every selection are added to. */
-  readonly base?: SlotValues<NoInfer<Slot>, Value> | undefined;
+  readonly base?:
+    SlotValues<NoInfer<ComposedSlot<Composed, Slot>>, Value> | undefined;
   /** For each variant name, the values of each slot for each of its options. */
-  readonly variants: Variants & NoUnknownSlots<Variants, NoInfer<Slot>>;
+  readonly variants: Variants &
+    NoUnknownSlots<Variants, NoInfer<ComposedSlot<Composed, Slot>>>;
   /**
    * Values added to some slots when several variants have particular
    * options at the same time, applied in order after the values of the
@@ -91,14 +110,15 @@ interface KindSlotRecipeConfig<
    */
   readonly compoundVariants?:
     | readonly KindSlotCompoundVariant<
-        NoInfer<Variants>,
-        NoInfer<Slot>,
+        NoInfer<ComposedVariants<Composed, Variants>>,
+        NoInfer<ComposedSlot<Composed, Slot>>,
         Value
       >[]
     | undefined;
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
-    KindDefaultVariants<Variants, DefaultedName> | undefined;
+    | KindDefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | undefined;
   /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
   readonly cache?: boolean | undefined;
 }
@@ -109,19 +129,26 @@ interface KindSlotRecipeConfig<
  *
  * @typeParam Value - The value of a slot.
  * @typeParam Result - What a recipe of this kind returns for each slot.
- * @param config - The slots, base values, variants, compound variants, and
- *   default variants of the slot recipe, and whether it caches its results.
+ * @param config - The slot recipes it composes, and the slots, base values,
+ *   variants, compound variants, and default variants of the slot recipe,
+ *   and whether it caches its results.
  * @returns The slot recipe.
  */
 type CreateKindSlotRecipe<Value, Result> = <
   const Slot extends string,
   const Variants extends KindSlotVariants<Value>,
-  const DefaultedName extends keyof Variants = never,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<Value>[] =
+    readonly [],
 >(
-  config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName>,
-) => KindRecipe<
-  KindSelection<Variants, DefaultedName>,
-  Readonly<Record<Slot, Result>>
+  config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>,
+) => ComposedKindRecipe<
+  ComposedVariants<Composed, Variants>,
+  ComposedDefaultedName<Composed, DefaultedName>,
+  Value,
+  Readonly<Record<ComposedSlot<Composed, Slot>, Result>>,
+  readonly ComposedSlot<Composed, Slot>[]
 >;
 
 interface LooseRecipeKind extends SlotsKind {
@@ -129,6 +156,7 @@ interface LooseRecipeKind extends SlotsKind {
 }
 
 interface LooseSlotRecipeConfig {
+  readonly composes?: readonly unknown[] | undefined;
   readonly slots: readonly string[];
   readonly base?: LooseSlotValues | undefined;
   readonly variants: KindSlotVariants<unknown>;
@@ -170,6 +198,9 @@ type LooseSlotRecipe = WithVariantKeys<
  * Variants, default variants, boolean variants, and undeclared
  * options behave as in {@link createRecipeKind}, and the recipe's
  * `variantKeys` property lists the names of its variants.
+ *
+ * A slot recipe composes the slot recipes listed in `composes` as a recipe
+ * composes recipes, and has the slots of each, theirs first.
  *
  * @typeParam Value - The value of a slot, inferred from the `value`
  *   parameter of `kind.reduce` or the `base` parameter of `kind.initial`.
@@ -221,6 +252,14 @@ type LooseSlotRecipe = WithVariantKeys<
  * // }
  *
  * card.variantKeys; // => ["tone"]
+ *
+ * const dialog = slotStyleRecipe({
+ *   composes: [card],
+ *   slots: ["footer"],
+ *   variants: { tone: { dark: { footer: { borderColor: "white" } } } },
+ * });
+ *
+ * dialog({ tone: "dark" }).footer; // => { borderColor: "white" }
  * ```
  */
 function createSlotRecipeKind<Value, Accumulator, Result = Accumulator>(
@@ -231,15 +270,17 @@ function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
   const kindCache = kind.cache ?? true;
 
   return (config: LooseSlotRecipeConfig): LooseSlotRecipe => {
-    const compiled = compileVariants<LooseSlotValues | undefined>({
-      compoundVariants: config.compoundVariants ?? [],
-      defaultVariants: config.defaultVariants ?? {},
-      noValue: undefined,
-      variants: config.variants,
+    const own = layerOf(config, config.slots);
+    const layers = slotRecipes.layersOf(config.composes ?? [], own);
+    const merged = mergeLayers(layers);
+    const compiled = compileVariants<readonly LooseSlotValues[]>({
+      ...merged,
+      noValue: noSlotValues,
     });
-    const build = createSlotsBuilder(kind, compiled, config);
+    const build = createSlotsBuilder(kind, compiled, merged);
     const options = { cache: config.cache ?? kindCache };
-    return withVariantKeys(createSelector(compiled, build, options), compiled);
+    const recipe = createSelector(compiled, build, options);
+    return slotRecipes.withLayers(withVariantKeys(recipe, compiled), layers);
   };
 }
 

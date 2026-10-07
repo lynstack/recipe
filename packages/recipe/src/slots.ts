@@ -12,10 +12,10 @@ interface SlotsKind {
   readonly finish?: ((accumulator: unknown) => unknown) | undefined;
 }
 
-/** What a slot recipe's config gives for its slots. */
+/** The slots of a slot recipe and their bases, in the order of its layers. */
 interface SlotsConfig {
   readonly slots: readonly string[];
-  readonly base?: LooseSlotValues | undefined;
+  readonly bases: readonly LooseSlotValues[];
 }
 
 /**
@@ -46,28 +46,43 @@ function valueOfSlot(
     : undefined;
 }
 
-/** Returns the entries of `values`, or undefined when no slot has one. */
+/**
+ * Returns the entries of a list of values for some slots, the values of each
+ * slot in the order of the list, or undefined when no slot has one.
+ */
 function entriesOf(
   slots: readonly string[],
-  values: LooseSlotValues | undefined,
+  valuesList: readonly LooseSlotValues[],
 ): SlotEntries | undefined {
-  const slotIndexes: number[] = [];
-  const slotValues: unknown[] = [];
-  for (const [index, slot] of slots.entries()) {
-    const value = valueOfSlot(values, slot);
-    if (value !== undefined) {
-      slotIndexes.push(index);
-      slotValues.push(value);
-    }
-  }
+  return entriesBySlot(
+    slots.map((slot) =>
+      valuesList.flatMap((values) => listOf(valueOfSlot(values, slot))),
+    ),
+  );
+}
+
+/**
+ * Returns the entries of the values of each slot, by slot index, or
+ * undefined when no slot has one.
+ */
+function entriesBySlot(
+  valuesBySlot: readonly (readonly unknown[])[],
+): SlotEntries | undefined {
+  const slotIndexes = valuesBySlot.flatMap((values, slot) =>
+    values.map(() => slot),
+  );
   return slotIndexes.length === 0
     ? undefined
-    : { slots: slotIndexes, values: slotValues };
+    : { slots: slotIndexes, values: valuesBySlot.flat() };
+}
+
+function listOf(value: unknown): readonly unknown[] {
+  return value === undefined ? [] : [value];
 }
 
 /** Turns the slot values of each option and compound variant into entries. */
 function compileEntries(
-  compiled: CompiledVariants<LooseSlotValues | undefined>,
+  compiled: CompiledVariants<readonly LooseSlotValues[]>,
   slots: readonly string[],
 ): CompiledVariants<SlotEntries | undefined> {
   return {
@@ -134,7 +149,7 @@ const asResult = (accumulator: unknown): unknown => accumulator;
  */
 function createSlotsBuilder(
   kind: SlotsKind,
-  compiled: CompiledVariants<LooseSlotValues | undefined>,
+  compiled: CompiledVariants<readonly LooseSlotValues[]>,
   config: SlotsConfig,
 ): (indexes: Int32Array) => Readonly<Record<string, unknown>> {
   const { initial, reduce, finish = asResult } = kind;
@@ -143,11 +158,26 @@ function createSlotsBuilder(
     names,
     template: Object.fromEntries(names.map((slot) => [slot, undefined])),
   };
-  const bases = names.map((slot) => valueOfSlot(config.base, slot));
+  const basesBySlot = names.map((slot) =>
+    config.bases.flatMap((base) => listOf(valueOfSlot(base, slot))),
+  );
+  const bases = basesBySlot.map(([base]: readonly unknown[]) => base);
+  const otherBases = entriesBySlot(
+    basesBySlot.map(([, ...others]: readonly unknown[]) => others),
+  );
   const { valuesByIndex, compounds } = compileEntries(compiled, names);
 
-  return (indexes) => {
+  /** Returns the accumulator of each slot, with every base reduced. */
+  const initialAccumulators = (): SlotAccumulators => {
     const accumulators = bases.map((base) => initial(base));
+    if (otherBases !== undefined) {
+      addEntries(accumulators, otherBases, reduce);
+    }
+    return accumulators;
+  };
+
+  return (indexes) => {
+    const accumulators = initialAccumulators();
     for (let variant = 0; variant < valuesByIndex.length; variant += 1) {
       const added = valuesByIndex[variant]?.[indexes[variant] ?? noOption];
       if (added !== undefined) {

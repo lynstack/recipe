@@ -185,6 +185,7 @@ export default defineConfig({
                   "recipe/variants",
                   "recipe/caching",
                   "recipe/slot-recipes",
+                  "recipe/composing",
                 ],
                 label: "Concepts",
               },

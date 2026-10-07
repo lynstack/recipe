@@ -26,6 +26,15 @@ export type {
   SlotValues,
 } from "./slot-recipe-kind.js";
 export type {
+  Composable,
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedDefaultedName,
+  ComposedSlot,
+  ComposedVariants,
+  RecipeComposition,
+} from "./composition.js";
+export type {
   CompoundCondition,
   DefaultVariants,
   RecipeFunction,

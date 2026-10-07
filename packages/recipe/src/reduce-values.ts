@@ -46,5 +46,42 @@ function reduceValues<Value, Accumulator>(
   return accumulator;
 }
 
-export { matches, reduceValues };
-export type { Reducer };
+/**
+ * Reduces the values that apply to a selection, as {@link reduceValues}
+ * does, when each option and compound variant has a list of values, which
+ * are reduced in order.
+ */
+function reduceValueLists<Value, Accumulator>(
+  compiled: CompiledVariants<readonly Value[]>,
+  indexes: Int32Array,
+  reducer: Reducer<Value, Accumulator>,
+): Accumulator {
+  const { reduce } = reducer;
+  let accumulator = reducer.initial();
+  for (let variant = 0; variant < compiled.valuesByIndex.length; variant += 1) {
+    const values =
+      compiled.valuesByIndex[variant]?.[indexes[variant] ?? noOption];
+    accumulator = reduceEach(accumulator, values ?? [], reduce);
+  }
+  for (const compound of compiled.compounds) {
+    if (matches(compound, indexes)) {
+      accumulator = reduceEach(accumulator, compound.value, reduce);
+    }
+  }
+  return accumulator;
+}
+
+/** Reduces `values` into `accumulator`, in order. */
+function reduceEach<Value, Accumulator>(
+  accumulator: Accumulator,
+  values: readonly Value[],
+  reduce: Reducer<Value, Accumulator>["reduce"],
+): Accumulator {
+  let result = accumulator;
+  for (const value of values) {
+    result = reduce(result, value);
+  }
+  return result;
+}
+
+export { matches, reduceEach, reduceValueLists, reduceValues };

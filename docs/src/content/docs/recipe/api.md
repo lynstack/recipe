@@ -39,25 +39,32 @@ Takes a config and returns a recipe. It infers `Variants` and
 
 | Config property    | Description                                                                                        |
 | ------------------ | -------------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Recipes whose configs the recipe adds to its own, in order.                              |
 | `base`             | Optional. The value passed to `initial`.                                                           |
 | `variants`         | For each variant name, the value of each of its options.                                           |
 | `compoundVariants` | Optional. A list of `{ variants, value }`: `value` applies when every variant has a listed option. |
 | `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                             |
 | `cache`            | Optional. Whether the recipe caches its results. Defaults to the kind's `cache`.                   |
 
-See [Variants](/recipe/recipe/variants/).
+See [Variants](/recipe/recipe/variants/), and
+[Composing recipes](/recipe/recipe/composing/) for `composes`.
 
 ### The recipe
 
 ```ts
-type KindRecipe<Selection, Result> = ((selection?: Selection) => Result) & {
+type KindRecipe<Selection, Result, Composition = unknown> = ((
+  selection?: Selection,
+) => Result) & {
   readonly variantKeys: readonly VariantKey<Selection>[];
-};
+} & Composable<Composition>;
 ```
 
 Takes a selection of variants and returns its result. The selection is
 optional when every variant is. `variantKeys` lists the names of the
-variants, in the order of `variants`. See
+variants, in the order of `variants`, after those of the recipes it
+composes. `Composition` is what the recipe passes on to the recipes that
+compose it, which its type carries under a `~composition` property that
+exists in the type only. See
 [How it works](/recipe/recipe/how-it-works/) for what a call does, and
 [Caching](/recipe/recipe/caching/) for when it returns a cached result.
 
@@ -80,11 +87,13 @@ type CreateKindSlotRecipe<Value, Result> = (
 ) => KindRecipe<Selection, Readonly<Record<Slot, Result>>>;
 ```
 
-Takes a config and returns a slot recipe. It infers `Slot` from `slots`,
-and `Variants`, `DefaultedName`, and `Selection` as for a recipe.
+Takes a config and returns a slot recipe. It infers `Slot` from `slots`
+and the slot recipes it composes, and `Variants`, `DefaultedName`, and
+`Selection` as for a recipe.
 
 | Config property    | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own, in order.             |
 | `slots`            | The names of the slots, in the order of the result.                                         |
 | `base`             | Optional. The base value of each slot, keyed by slot name.                                  |
 | `variants`         | For each variant name, the values of each slot for each of its options, keyed by slot name. |

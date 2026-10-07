@@ -52,13 +52,17 @@ Native's `style` prop keeps its identity between renders.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
   `dist/index.d.ts`.
-- In `@lynstack/recipe`, `recipe-kind.ts`, `slot-recipe-kind.ts`, and
-  `types.ts` hold the public API and its types. The other modules are
-  internal: `variants.ts` compiles variants into numbered options, so a
-  selection becomes an integer key; `selector.ts` caches results by that
-  key; `reduce-values.ts` reduces the values of a selection; and
-  `slots.ts` turns the values of a slot recipe into entries by slot and
-  builds the result of each slot.
+- In `@lynstack/recipe`, `recipe-kind.ts`, `slot-recipe-kind.ts`,
+  `types.ts`, and `composition.ts`, the types of composing recipes, hold
+  the public API and its types. The other modules are internal:
+  `variants.ts` compiles variants into numbered options, so a selection
+  becomes an integer key; `selector.ts` caches results by that key;
+  `compose.ts` keeps the configs of each recipe, its layers, and merges
+  the layers of a recipe that composes others into one config;
+  `build-recipe.ts` compiles a recipe from one config or merged layers;
+  `reduce-values.ts` reduces the values of a selection; and `slots.ts`
+  turns the values of a slot recipe into entries by slot and builds the
+  result of each slot.
 - In `@lynstack/class-recipe`, `cx.ts`, `recipe.ts`, `slot-recipe.ts`,
   `create-recipes.ts`, `join.ts`, and `types.ts` hold the public API and
   its types. `types.ts` re-exports the shared types of `@lynstack/recipe`.
@@ -86,9 +90,10 @@ Native's `style` prop keeps its identity between renders.
   `*.bench.ts`. The `*.property.test.ts` tests generate configs and calls
   with fast-check and compare the results with a reference: `cx` with
   `clsx`, `cva` with `class-variance-authority`, a recipe kind with a
-  model of its documented behavior, and a slot recipe with a recipe for
-  each slot. A benchmark imports its package by its name, so it runs
-  against the built bundle, never against the sources directly. The
+  model of its documented behavior, a slot recipe with a recipe for each
+  slot, and a recipe or slot recipe that composes others with one config.
+  A benchmark imports its package by its name, so it runs against the
+  built bundle, never against the sources directly. The
   `*.compare.bench.ts` benchmarks of `@lynstack/class-recipe` measure the
   same work in other libraries (`clsx`, `classnames`,
   `class-variance-authority`, `tailwind-variants`), which are development

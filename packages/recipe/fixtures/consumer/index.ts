@@ -1,4 +1,7 @@
 import type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedVariants,
   CreateKindRecipe,
   CreateKindSlotRecipe,
   KindRecipe,
@@ -53,8 +56,41 @@ const recipe: KindRecipe<{ readonly size?: "sm" | "lg" }, Style> = text;
 const variants: VariantsOf<typeof text> = { size: "lg" };
 const textKey: VariantKey<VariantsOf<typeof text>> = "size";
 
+const emphasis = styleRecipe({
+  composes: [text],
+  compoundVariants: [{ value: { color: "red" }, variants: { size: "lg" } }],
+  variants: { size: { xl: { fontSize: 32 } } },
+});
+
+const emphasisStyle: Style = emphasis({ size: "xl" });
+const emphasisKeys: readonly "size"[] = emphasis.variantKeys;
+const composable: ComposableKindRecipe<Style> = text;
+const sizes: keyof ComposedVariants<
+  readonly [typeof text],
+  { readonly size: { readonly xl: Style } }
+>["size"] = "lg";
+
+const dialog = slotStyleRecipe({
+  base: { footer: { gap: 8 } },
+  composes: [card],
+  slots: ["footer"],
+  variants: { tone: { dark: { footer: { borderColor: "white" } } } },
+});
+
+const dialogStyles: Readonly<Record<"root" | "title" | "footer", Style>> =
+  dialog({ tone: "dark" });
+const composableSlots: ComposableKindSlotRecipe<Style> = card;
+
 export {
   card,
+  composable,
+  composableSlots,
+  dialog,
+  dialogStyles,
+  emphasis,
+  emphasisKeys,
+  emphasisStyle,
+  sizes,
   cardKeys,
   cardStyles,
   recipe,

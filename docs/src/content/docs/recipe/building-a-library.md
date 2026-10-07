@@ -178,6 +178,110 @@ names inferred from `slots` (see [Slot recipes](/recipe/recipe/slot-recipes/)).
 Apply an override prop to each slot it names: a new object for those
 slots, and the cached result when it names none.
 
+## Composing recipes
+
+The engine composes only its own recipes, so a library that wraps them
+passes `composes` on to them: it keeps the engine's recipe of each
+wrapper, and replaces each wrapper in `composes` with it. A wrapper that
+the library did not create reaches the engine, which throws a
+`TypeError`:
+
+```ts
+import type { ComposableKindRecipe } from "@lynstack/recipe";
+
+const engineRecipes = new WeakMap<object, ComposableKindRecipe<Style>>();
+
+export function sv(config: LooseConfig) {
+  const recipe = styleRecipe({
+    ...config,
+    composes: (config.composes ?? []).map(
+      (composed) => engineRecipes.get(composed) ?? composed,
+    ),
+    compoundVariants: /* as above */,
+  });
+  const styleVariants = /* as above */;
+  engineRecipes.set(styleVariants, recipe);
+  return Object.assign(styleVariants, { variantKeys: recipe.variantKeys });
+}
+```
+
+`LooseConfig` takes `composes` as a
+`readonly ComposableKindRecipe<Style>[]`. The types merge the variants of
+the recipes composed with those of the config, and mark the wrapper's type
+with what it passes on, so that it can be composed in turn:
+
+```ts
+import type {
+  Composable,
+  ComposedDefaultedName,
+  ComposedVariants,
+  RecipeComposition,
+} from "@lynstack/recipe";
+
+interface StyleVariantsConfig<
+  Variants extends KindVariants<Style>,
+  DefaultedName extends keyof ComposedVariants<Composed, Variants>,
+  Composed extends readonly ComposableKindRecipe<Style>[],
+> {
+  readonly composes?: Composed;
+  readonly base?: Style;
+  readonly variants: Variants;
+  readonly compoundVariants?: readonly {
+    readonly variants: CompoundCondition<
+      NoInfer<ComposedVariants<Composed, Variants>>
+    >;
+    readonly style: Style;
+  }[];
+  readonly defaultVariants?: DefaultVariants<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName
+  >;
+}
+
+type StyleVariants<
+  Variants,
+  DefaultedName extends keyof Variants,
+> = RecipeFunction<
+  VariantSelection<Variants, DefaultedName> & { readonly style?: Style },
+  Style
+> & {
+  readonly variantKeys: readonly VariantKey<
+    VariantSelection<Variants, DefaultedName>
+  >[];
+} & Composable<RecipeComposition<Variants, DefaultedName, Style, undefined>>;
+
+export function sv<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<Style>[] = readonly [],
+>(
+  config: StyleVariantsConfig<Variants, DefaultedName, Composed>,
+): StyleVariants<
+  ComposedVariants<Composed, Variants>,
+  Extract<
+    ComposedDefaultedName<Composed, DefaultedName>,
+    keyof ComposedVariants<Composed, Variants>
+  >
+>;
+```
+
+```ts
+const card = sv({
+  composes: [box],
+  variants: { tone: { loud: { fontWeight: 700 } } },
+  defaultVariants: { tone: "muted" },
+});
+
+card(); // => { padding: 8, opacity: 0.6, margin: 4 }
+card({ tone: "loud" }); // => { padding: 8, fontWeight: 700 }
+```
+
+A slot recipe library does the same with `ComposableKindSlotRecipe`,
+`ComposedSlot` for the slot names, and a `RecipeComposition` whose last
+type is the list of its slots. See
+[Composing recipes](/recipe/recipe/composing/).
+
 ## Expose a switch for the cache
 
 A library that lets its users turn the cache off creates its kinds for
@@ -203,3 +307,5 @@ export function createStyleRecipes(options: { readonly cache?: boolean } = {}) {
 - Overrides build a new object, and only when they are passed.
 - The library's functions infer the variants of each config with the
   engine's types, and keep `variantKeys`.
+- A library that lets its recipes be composed passes `composes` on to the
+  engine's recipes, and marks its recipes' types with `Composable`.

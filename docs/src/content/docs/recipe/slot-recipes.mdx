@@ -27,6 +27,7 @@ object of values keyed by slot name wherever a recipe takes one value:
 
 | Property           | Description                                                                           |
 | ------------------ | ------------------------------------------------------------------------------------- |
+| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own.                 |
 | `slots`            | The names of the slots, in the order of the result.                                   |
 | `base`             | Optional. The base value of each slot.                                                |
 | `variants`         | For each variant name, the values of each slot for each of its options.               |
@@ -34,7 +35,9 @@ object of values keyed by slot name wherever a recipe takes one value:
 | `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                |
 | `cache`            | Optional. Whether the slot recipe caches its results. Defaults to the kind's `cache`. |
 
-An option or compound variant gives values only to the slots it names.
+An option or compound variant gives values only to the slots it names. A
+slot recipe that composes others has their slots before its own (see
+[Composing recipes](/recipe/recipe/composing/#slot-recipes)).
 Variants, default variants, boolean variants, compound conditions, and
 undeclared options behave as in a recipe (see
 [Variants](/recipe/recipe/variants/)).
