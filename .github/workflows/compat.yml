@@ -42,6 +42,7 @@ jobs:
       node: ${{ steps.versions.outputs.node }}
       versions: ${{ steps.versions.outputs.versions }}
       typescript: ${{ steps.versions.outputs.typescript }}
+      react-native: ${{ steps.versions.outputs.react-native }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,6 +65,8 @@ jobs:
           echo "versions=$(jq -c . compat/versions.json)" >> "$GITHUB_OUTPUT"
           echo "node=$(jq -c '[.node] + .nodeRequire + ["lts/*"]' compat/versions.json)" >> "$GITHUB_OUTPUT"
           echo "typescript=$(jq -r .devDependencies.typescript package.json)" >> "$GITHUB_OUTPUT"
+          oldest="$(jq -r '.peerDependencies["react-native"] | ltrimstr(">=")' packages/native-recipe/package.json)"
+          echo "react-native=$(jq -c --arg oldest "$oldest" '[$oldest, .devDependencies["react-native"]]' compat/package.json)" >> "$GITHUB_OUTPUT"
 
   node:
     name: Node.js ${{ matrix.node }}
@@ -158,7 +161,7 @@ jobs:
         run: deno run smoke.mjs
 
   typescript:
-    name: TypeScript ${{ matrix.typescript }}
+    name: TypeScript ${{ matrix.typescript }}, React Native ${{ matrix.react-native }}
     needs: pack
     runs-on: ubuntu-latest
     strategy:
@@ -167,6 +170,7 @@ jobs:
         typescript:
           - ${{ fromJSON(needs.pack.outputs.versions).typescript }}
           - ${{ needs.pack.outputs.typescript }}
+        react-native: ${{ fromJSON(needs.pack.outputs.react-native) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -179,9 +183,19 @@ jobs:
         with:
           node-version-file: package.json
           package-manager-cache: false
-      - name: Install the types of React Native
+      - name: Install the dependencies of the fixtures
         working-directory: compat
         run: npm ci --ignore-scripts
+      # The oldest React Native installs with the versions of React that it
+      # asks for, as in an app.
+      - name: Install the types of React Native ${{ matrix.react-native }}
+        if: matrix.react-native != fromJSON(needs.pack.outputs.react-native)[1]
+        working-directory: compat
+        env:
+          REACT_NATIVE: ${{ matrix.react-native }}
+        run: |
+          read -ra peers <<< "$(npm view "react-native@$REACT_NATIVE" peerDependencies --json | jq -r 'to_entries | map("\(.key)@\(.value)") | join(" ")')"
+          npm install --no-save --ignore-scripts "react-native@$REACT_NATIVE" "${peers[@]}"
       - name: Install the packed packages
         run: *install
       # Outside their packages, the fixtures import the packed packages as an

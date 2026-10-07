@@ -64,7 +64,9 @@ it before working in that folder.
   TypeScript that the packages support, and the docs read their
   requirements from it. `smoke.mjs` imports each package and `smoke.cjs`
   requires it; the fixture of each package is compiled outside it, with
-  the types of React Native that `compat/package.json` installs with npm.
+  the types of the React Native that `compat/package.json` installs with
+  npm, and of the oldest that the peer dependency of
+  `@lynstack/native-recipe` allows.
   To support an older or newer minimum, change `versions.json`; never
   write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
