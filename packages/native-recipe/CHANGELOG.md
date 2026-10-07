@@ -5,6 +5,27 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.3.0 — 2026-10-07
+
+A recipe lists the options and defaults of its variants, so that a
+library or a story can list every selection of a recipe without reading
+its config.
+
+- Style recipes, slot style recipes, and the recipe of each theme have
+  `variantOptions`, the names of the options of each variant, as strings,
+  in the order the recipe numbers them: integer names first, in ascending
+  order, then `"false"` and `"true"`, which a variant that declares either
+  one has, then the others in the order of the config.
+- They have `defaultVariants`, the option each variant uses when the
+  recipe is called without it, as a string: its default, or `"false"` for
+  a variant whose only options are `"true"` and `"false"`. A variant
+  without a default is not in it.
+- Both are frozen and typed with the names of the options of each
+  variant. A recipe that composes others lists the variants of the one
+  config it stands for. They hold names only, never styles.
+- Depends on `@lynstack/recipe` through the range `^1.5.0`, which adds
+  them.
+
 ## 1.2.0 — 2026-10-07
 
 A recipe can build on other recipes with `composes`.
