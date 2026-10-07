@@ -111,38 +111,9 @@ order.
 ## Recipes that compose others
 
 A recipe that composes others merges their configs with its own into one,
-when it is created, and builds every result from it. Here `button`
-composes `control`, and both have a base and give values to the options of
-`size`:
-
-<RecipeExample name="recipe/how-it-works/composed-button" />
-
-The merged config has two bases, and two values for each option of
-`size`. Without the kind's
-[`combine`](/recipe/recipe/recipe-kinds/#combine), the first base is passed
-to `initial`, and the kind reduces every other base and value:
-
-<RecipeTrace
-  name="recipe/how-it-works/composed-button"
-  recipe="button"
-  call={{ size: "sm" }}
-  title="Without combine"
-/>
-
-With `combine`, here `(first, second) => ({ ...first, ...second })`, the
-recipe combines them into one when it is created, and builds results as
-the one config they stand for would:
-
-<RecipeTrace
-  name="recipe/how-it-works/composed-button"
-  recipe="button"
-  call={{ size: "sm" }}
-  combine
-  title="With combine"
-/>
-
-Both return the same result; with `combine`, a result costs what a result
-of one config costs. See [Composing recipes](/recipe/recipe/composing/).
+when it is created, and compiles that one config as above. See
+[Composing recipes](/recipe/recipe/composing/#combining-values), which
+traces a recipe built with and without the kind's `combine`.
 
 ## Slot recipes
 

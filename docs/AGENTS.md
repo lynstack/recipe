@@ -41,10 +41,18 @@ GitHub Pages at `https://lynstack.github.io/recipe/`.
 
 ## Figures of the engine
 
-"How it works", "Composing recipes", and "Slot recipes" of
-`@lynstack/recipe` draw what the engine does with `OptionNumbers`,
-`CallFlow`, `RecipeTrace`, and `SlotRecipeTrace`, from the recipes listed
-in `src/examples/traces.ts`.
+Three pages of `@lynstack/recipe` draw what the engine does, from the
+recipes listed in `src/examples/traces.ts`:
+
+- "How it works" numbers the options of a recipe with `OptionNumbers`,
+  follows a call with `CallFlow`, and traces the order of the values with
+  `RecipeTrace`.
+- "Composing recipes" traces the order of the values of a recipe that
+  composes another, and the same recipe built without and with `combine`,
+  with `RecipeTrace`.
+- "Slot recipes" traces the values of each slot with `SlotRecipeTrace`.
+
+How they are drawn:
 
 - These recipes are created with `styleRecipe` or `slotStyleRecipe` of
   `src/examples/recipes/recipe`, which keep each config for the figures.

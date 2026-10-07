@@ -34,7 +34,8 @@ Where one config has one value, the merged config can have several: the
 bases of several configs, or their values for one option. The kind adds
 each in order, or combines them into one first, when it has
 [`combine`](/recipe/recipe/recipe-kinds/#combine). Either way, a result is
-what reducing them in order gives.
+what reducing them in order gives (see
+[Combining values](#combining-values)).
 
 The order of the values stays the one of a recipe: the bases, then the
 value of each variant's option, then the matching compound variants (see
@@ -104,22 +105,51 @@ each, theirs first. Each slot merges as one config would:
 
 <RecipeExample name="recipe/composing/select" calls={[{ invalid: true }]} />
 
-## Cost
+## Combining values
 
 A recipe merges the configs it composes once, when it is created, and
 compiles the result as it would compile one config. A cached call of a
-composed recipe costs what a cached call of that one config costs.
+composed recipe costs what a cached call of that one config costs (see
+[Caching](/recipe/recipe/caching/#a-cached-call)).
 
-Building a result costs the same too when the kind has
-[`combine`](/recipe/recipe/recipe-kinds/#combine): the recipe combines the
-bases, and the values that several configs give one option, when it is
-created, and builds every result from the one config they stand for.
-Without `combine`, the kind reduces each base after the first, and each
-value of an option that several configs give values to, where one config
-would give a single value. A recipe whose configs give at most one base,
-and never two values to one option, costs nothing more either way.
-[How it works](/recipe/recipe/how-it-works/#recipes-that-compose-others)
-traces a recipe built with and without `combine`.
+Where one config has one value, the merged config can have several. Here
+`button` composes `control`, and both have a base and give values to the
+options of `size`:
+
+<RecipeExample name="recipe/composing/composed-button" />
+
+The merged config has two bases, and two values for each option of
+`size`. Without the kind's
+[`combine`](/recipe/recipe/recipe-kinds/#combine), the first base is passed
+to `initial`, and the kind reduces every other base and value on each
+call that builds a result:
+
+<RecipeTrace
+  name="recipe/composing/composed-button"
+  recipe="button"
+  call={{ size: "sm" }}
+  title="Without combine"
+/>
+
+With `combine`, here `(first, second) => ({ ...first, ...second })`, the
+recipe combines them into one when it is created, and builds results as
+the one config they stand for would:
+
+<RecipeTrace
+  name="recipe/composing/composed-button"
+  recipe="button"
+  call={{ size: "sm" }}
+  combine
+  title="With combine"
+/>
+
+Both return the same result, which is what the
+[rules of `combine`](/recipe/recipe/recipe-kinds/#combine) guarantee. With
+`combine`, a result costs what a result of one config costs. Without it,
+the kind reduces each base after the first, and each value of an option
+that several configs give values to. A recipe whose configs give at most
+one base, and never two values to one option, costs nothing more either
+way.
 
 ## Types
 

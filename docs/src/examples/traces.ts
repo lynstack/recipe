@@ -3,7 +3,7 @@ import type { TraceExample, TraceLayer } from "./trace.ts";
 import { configOf, slotConfigOf } from "./configs.ts";
 import type { SlotTraceExample } from "./slot-trace.ts";
 import { button } from "./recipes/recipe/how-it-works/button.ts";
-import { button as composedButton } from "./recipes/recipe/how-it-works/composed-button.ts";
+import { button as composedButton } from "./recipes/recipe/composing/composed-button.ts";
 import { button as composingButton } from "./recipes/recipe/composing/button.ts";
 import { field } from "./recipes/recipe/slot-recipes/field.ts";
 
@@ -22,7 +22,7 @@ interface TracedRecipe {
 const traces: ReadonlyMap<string, TracedRecipe> = new Map([
   ["recipe/how-it-works/button", { recipe: button }],
   [
-    "recipe/how-it-works/composed-button",
+    "recipe/composing/composed-button",
     { names: ["control", "button"], recipe: composedButton },
   ],
   [

@@ -1,12 +1,13 @@
 ---
 title: Recipe kinds
-description: "The contract of a recipe kind: what initial, reduce, finish, and cache do, when the engine calls them, and how they set the types of the kind's recipes."
+description: "The contract of a recipe kind: what initial, reduce, combine, finish, and cache do, when and how the engine calls them, and how they set the types of the kind's recipes."
 ---
 
 import RecipeExample from "../../../components/RecipeExample.astro";
 
-A kind is how a recipe turns the values of a selection into its result.
-`createRecipeKind` and `createSlotRecipeKind` take the same kind:
+A **kind** is how a recipe turns the values of a selection into its
+result. It is the only part of a recipe that you write; the engine does
+the rest. `createRecipeKind` and `createSlotRecipeKind` take the same kind:
 
 ```ts
 interface RecipeKind<Value, Accumulator, Result> {
@@ -24,6 +25,10 @@ interface RecipeKind<Value, Accumulator, Result> {
   built.
 - **`Result`** is what a recipe returns. Without `finish`, it is the
   accumulator.
+
+A result is built in three steps: `initial` starts an accumulator from the
+recipe's base, `reduce` adds each value that applies to the selection, and
+`finish` turns the accumulator into the result.
 
 ## `initial`
 
@@ -49,9 +54,13 @@ reduce: (accumulator: Accumulator, value: Value) => Accumulator;
 Adds one value to the accumulator and returns the accumulator: the same
 one, changed, or a new one.
 
-- It is called with each value that applies to the selection, in
-  [order of precedence](/recipe/recipe/how-it-works/#the-order-of-the-values),
-  and never with `undefined`.
+- It is called with each value that applies to the selection, from the
+  least to the most specific: the value of each variant's selected option,
+  in the order of `variants`, then the value of each matching compound
+  variant, in the order of `compoundVariants` (see
+  [The order of the values](/recipe/recipe/how-it-works/#the-order-of-the-values)).
+- It is never called with `undefined`: an option without a value adds
+  nothing.
 - It may be called no times at all, when no option or compound variant
   adds a value.
 - It must not change `value`, which every result shares.
@@ -72,7 +81,7 @@ in the same way.
 - It must not change `first` or `second`, which other recipes share.
 - Without it, a composed recipe reduces each value, which gives the same
   results, at a cost (see
-  [Composing recipes](/recipe/recipe/composing/#cost)).
+  [Composing recipes](/recipe/recipe/composing/#combining-values)).
 
 A kind with `combine` follows two more rules. In each, the two
 accumulators must be interchangeable: `finish` returns the same result for
@@ -82,6 +91,11 @@ both, and again after the same values are reduced into each.
   accumulator gives what reducing `combine(first, second)` gives.
 - **A base is the first value.** `initial(base)` gives what reducing
   `base` into `initial(undefined)` gives.
+
+In familiar terms, `combine` is to values what concatenation is to lists:
+reducing two values joined by `combine` is reducing each in turn.
+`undefined` means "no value", so `initial(undefined)` is the empty
+accumulator, and a base is reduced into it like any other value.
 
 For class names, `combine` joins two strings of classes with a space, and
 for styles, it spreads both into a new object. A kind that cannot turn two
@@ -108,6 +122,34 @@ Whether a recipe builds the result of each declared selection once and
 returns it again for the same selection. It defaults to `true`, and the
 `cache` of a recipe's config overrides it. See
 [Caching](/recipe/recipe/caching/).
+
+## How the engine calls a kind
+
+The engine calls a kind's functions at fixed times, and in a fixed way:
+
+- **As plain functions.** The engine reads `initial`, `reduce`, `combine`,
+  and `finish` from the kind when it creates each recipe, and calls them
+  apart from the kind object, as `const { initial, reduce, finish } = kind`
+  would. `this` is `undefined` in them, so a kind written as a class whose
+  methods read `this` throws. Write plain functions that close over what
+  they need.
+- **`cache`, once.** `createRecipeKind` and `createSlotRecipeKind` read
+  `cache` once, when they are called. Changing it later changes nothing.
+- **`combine`, when a recipe is created.** A recipe that composes others
+  combines the values of each base and option then, as a left fold:
+  `combine(combine(a, b), c)` for three values. It never calls `combine`
+  for a single value, so a recipe that composes nothing never calls it.
+- **`initial`, `reduce`, and `finish`, only to build a result.** None runs
+  when a recipe is created. With the cache, they run on the first call of
+  each selection; without it, on every call.
+- **When a function throws,** the call throws, and nothing is cached. The
+  next call with the same selection builds the result again.
+- **An `undefined` result is cached** like any other result.
+- **Never call a recipe from inside its own kind.** A recipe keeps the
+  options of the selection it is building in state that all of its calls
+  share. A kind that calls the same recipe while it builds a result
+  changes that state, and the outer result is built from the wrong
+  options. Calling another recipe is safe.
 
 ## The rules of a kind
 
