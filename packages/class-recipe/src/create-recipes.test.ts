@@ -109,7 +109,9 @@ describe(createRecipes, () => {
     const card = configured.sva({ slots: ["root"], variants: { size: {} } });
 
     expect(button.variantKeys).toStrictEqual(["size", "tone"]);
+    expect(button.variantOptions).toStrictEqual({ size: ["sm"], tone: [] });
     expect(card.variantKeys).toStrictEqual(["size"]);
+    expect(card.variantOptions).toStrictEqual({ size: [] });
   });
 
   it("resolves conflicts without the cache", () => {

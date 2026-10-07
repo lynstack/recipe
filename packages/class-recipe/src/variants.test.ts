@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { createRecipe, makeCreateRecipe } from "./recipe.js";
 import type { ClassJoin } from "./join.js";
+import { createSlotRecipe } from "./slot-recipe.js";
 
 describe("variants", () => {
   it("adds compound classes when every condition matches", () => {
@@ -159,5 +160,79 @@ describe("variants", () => {
     });
 
     expect(recipe({ size: "md" })).toBe("p-4");
+  });
+});
+
+describe("the options and defaults of the variants", () => {
+  it("lists the options and defaults of a recipe's variants", () => {
+    const button = createRecipe({
+      variants: {
+        tone: { neutral: "bg-surface", danger: "bg-danger" },
+        size: { sm: "h-8", md: "h-10" },
+        disabled: { true: "opacity-50" },
+      },
+      defaultVariants: { size: "md" },
+    });
+
+    expect(button.variantOptions).toStrictEqual({
+      tone: ["neutral", "danger"],
+      size: ["sm", "md"],
+      disabled: ["false", "true"],
+    });
+    expect(button.defaultVariants).toStrictEqual({
+      size: "md",
+      disabled: "false",
+    });
+    expect(Object.isFrozen(button.variantOptions)).toBe(true);
+    expect(Object.isFrozen(button.defaultVariants)).toBe(true);
+    expectTypeOf(button.variantOptions).toEqualTypeOf<{
+      readonly tone: readonly ("neutral" | "danger")[];
+      readonly size: readonly ("sm" | "md")[];
+      readonly disabled: readonly ("true" | "false")[];
+    }>();
+    expectTypeOf(button.defaultVariants).toEqualTypeOf<{
+      readonly size: "sm" | "md";
+      readonly disabled: "true" | "false";
+    }>();
+  });
+
+  it("lists the options and defaults of a slot recipe's variants", () => {
+    const card = createSlotRecipe({
+      slots: ["root", "title"],
+      variants: {
+        size: { 2: { root: "p-2" }, 1: { root: "p-1" } },
+        tone: { neutral: { root: "bg-surface" } },
+      },
+      defaultVariants: { size: 2 },
+    });
+
+    expect(card.variantOptions).toStrictEqual({
+      size: ["1", "2"],
+      tone: ["neutral"],
+    });
+    expect(card.defaultVariants).toStrictEqual({ size: "2" });
+    expectTypeOf(card.variantOptions).toEqualTypeOf<{
+      readonly size: readonly ("1" | "2")[];
+      readonly tone: readonly "neutral"[];
+    }>();
+    expectTypeOf(card.defaultVariants).toEqualTypeOf<{
+      readonly size: "1" | "2";
+    }>();
+  });
+
+  it("lists every variant when the names are not known", () => {
+    const variants: Record<string, Record<string, Record<string, string>>> = {
+      size: { sm: { root: "p-2" } },
+    };
+    const card = createSlotRecipe({ slots: ["root"], variants });
+
+    expect(card.variantOptions).toStrictEqual({ size: ["sm"] });
+    expect(card.defaultVariants).toStrictEqual({});
+    expectTypeOf(card.variantOptions).toEqualTypeOf<
+      Readonly<Record<string, readonly string[]>>
+    >();
+    expectTypeOf(card.defaultVariants).toEqualTypeOf<
+      Readonly<Record<string, string>>
+    >();
   });
 });

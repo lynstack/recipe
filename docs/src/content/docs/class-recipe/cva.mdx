@@ -140,14 +140,28 @@ to let these classes replace conflicting ones.
 - Calling a recipe without a selection, or with `undefined` or `null`, is
   the same as calling it with an empty one.
 
-## `variantKeys`
+## Listing the variants
 
-A recipe lists the names of its variants, in the order of `variants`, in
-`variantKeys`, a frozen array typed with those names:
+A recipe lists its variants in three frozen properties, typed with the
+names of its variants and options:
+
+- `variantKeys`, the names of its variants, in the order of `variants`.
+  Use it to split a component's props into the recipe's variants and the
+  rest (see [Building components](/recipe/class-recipe/building-components/)).
+- `variantOptions`, the names of the options of each variant, as strings:
+  integer names first, in ascending order, then `"false"` and `"true"`,
+  which a variant that declares either one has, then the others in the
+  order they are declared.
+- `defaultVariants`, the option each variant uses when the recipe is
+  called without it, as a string: its default, or `"false"` for a boolean
+  variant.
 
 ```ts
 badge.variantKeys; // => ["tone", "outlined"]
+badge.variantOptions;
+// => { tone: ["neutral", "success", "danger"], outlined: ["false", "true"] }
+badge.defaultVariants; // => { outlined: "false" }
 ```
 
-Use it to split a component's props into the recipe's variants and the
-rest (see [Building components](/recipe/class-recipe/building-components/)).
+Use `variantOptions` to show every look of a component, such as in a
+story of each option, and call the recipe for each selection.

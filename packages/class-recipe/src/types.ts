@@ -1,4 +1,5 @@
 import type {
+  KindRecipe,
   VariantKey as KindVariantKey,
   VariantsOf as KindVariantsOf,
   VariantSelection,
@@ -19,6 +20,24 @@ type OverrideName = "className" | "classNames";
  * @typeParam Props - The properties the recipe accepts.
  */
 type VariantKey<Props> = KindVariantKey<Omit<Props, OverrideName>>;
+
+/** A recipe of the engine whose selection is the variants of `Props`. */
+type KindRecipeOf<Props> = KindRecipe<Omit<Props, OverrideName>, unknown>;
+
+/**
+ * The names of the options of each variant in a recipe's props, as strings.
+ *
+ * @typeParam Props - The properties the recipe accepts.
+ */
+type VariantOptions<Props> = KindRecipeOf<Props>["variantOptions"];
+
+/**
+ * The option, as a string, that each variant a recipe's props may leave out
+ * uses then.
+ *
+ * @typeParam Props - The properties the recipe accepts.
+ */
+type VariantDefaults<Props> = KindRecipeOf<Props>["defaultVariants"];
 
 /**
  * The variants a recipe accepts, without its `className` or `classNames`
@@ -127,6 +146,8 @@ export type {
   SlotClasses,
   SlotClassNames,
   SlotRecipeProps,
+  VariantDefaults,
   VariantKey,
+  VariantOptions,
   VariantsOf,
 };

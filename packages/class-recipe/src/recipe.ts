@@ -12,7 +12,9 @@ import type {
   DefaultVariants,
   RecipeFunction,
   Simplify,
+  VariantDefaults,
   VariantKey,
+  VariantOptions,
   VariantSelection,
 } from "./types.js";
 import type { LooseRecipe, LooseRecipeConfig } from "./compile-recipe.js";
@@ -104,7 +106,8 @@ type RecipeProps<Variants, DefaultedName extends keyof Variants> = Simplify<
 
 /**
  * A function that returns the class name for a selection of variants, with
- * the names of those variants in `variantKeys`.
+ * the names of those variants in `variantKeys`, their options in
+ * `variantOptions`, and their defaults in `defaultVariants`.
  *
  * @typeParam Props - The properties the recipe accepts; see
  *   {@link RecipeProps}.
@@ -120,6 +123,20 @@ type Recipe<Props, Composition = unknown> = RecipeFunction<Props, string> & {
    * the recipe's variants and the rest.
    */
   readonly variantKeys: readonly VariantKey<Props>[];
+  /**
+   * The names of the options of each variant, as strings, in the order in
+   * which the recipe numbers them: integer names first, then `"false"` and
+   * `"true"`, which a variant that declares either one has, then the others
+   * in the order of the config. Use it to list every selection of the
+   * recipe, such as in a story of each option.
+   */
+  readonly variantOptions: VariantOptions<Props>;
+  /**
+   * The option, as a string, that each variant uses when the recipe is
+   * called without it: its default, or `"false"` for a variant whose only
+   * options are `"true"` and `"false"`.
+   */
+  readonly defaultVariants: VariantDefaults<Props>;
 } & Composable<Composition>;
 
 /**
@@ -190,7 +207,9 @@ function makeCreateRecipe(options: BuildOptions): unknown {
  * A variant without a default is required, except a boolean variant, whose
  * only options are `"true"` and `"false"` and which defaults to `false`. An
  * option that the config does not declare adds no classes. The recipe's
- * `variantKeys` property lists the names of its variants.
+ * `variantKeys` property lists the names of its variants, `variantOptions`
+ * the names of the options of each, and `defaultVariants` the option each
+ * uses when the recipe is called without it.
  *
  * A recipe composes the recipes listed in its config's `composes` as if
  * their configs and its own were one: their base classes first, then the
@@ -223,6 +242,8 @@ function makeCreateRecipe(options: BuildOptions): unknown {
  * // => "inline-flex items-center rounded-md bg-gray-100 h-8 px-2 w-full"
  *
  * button.variantKeys; // => ["tone", "size"]
+ * button.variantOptions; // => { tone: ["neutral", "danger"], size: ["sm", "md"] }
+ * button.defaultVariants; // => { size: "md" }
  *
  * const iconButton = createRecipe({
  *   composes: [button],

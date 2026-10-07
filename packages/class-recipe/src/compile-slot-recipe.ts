@@ -42,6 +42,8 @@ type LooseSlotRecipe = ((
   props?: LooseSlotRecipeProps | null,
 ) => LooseSlotClassNames) & {
   readonly variantKeys: readonly string[];
+  readonly variantOptions: Readonly<Record<string, readonly string[]>>;
+  readonly defaultVariants: Readonly<Record<string, string>>;
 };
 
 /**
@@ -107,7 +109,9 @@ function buildSlotRecipe(
       : withOverrides(slots, classNames, overrides);
   };
   const result = Object.assign(slotRecipe, {
+    defaultVariants: classNamesOf.defaultVariants,
     variantKeys: classNamesOf.variantKeys,
+    variantOptions: classNamesOf.variantOptions,
   });
   engineSlotRecipes.set(result, classNamesOf);
   return result;

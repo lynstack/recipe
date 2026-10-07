@@ -16,7 +16,9 @@ import type {
   SlotClassNames,
   SlotClasses,
   SlotRecipeProps,
+  VariantDefaults,
   VariantKey,
+  VariantOptions,
 } from "./types.js";
 import type {
   LooseSlotRecipe,
@@ -111,7 +113,8 @@ interface SlotRecipeConfig<
 
 /**
  * A function that returns the class name of every slot for a selection of
- * variants, with the names of those variants in `variantKeys`.
+ * variants, with the names of those variants in `variantKeys`, their
+ * options in `variantOptions`, and their defaults in `defaultVariants`.
  *
  * @typeParam Slot - The names of the slots.
  * @typeParam Props - The properties the recipe accepts; see
@@ -131,6 +134,16 @@ type SlotRecipe<
    * the recipe's variants and the rest.
    */
   readonly variantKeys: readonly VariantKey<Props>[];
+  /**
+   * The names of the options of each variant, as strings, in the order of
+   * a recipe's `variantOptions`.
+   */
+  readonly variantOptions: VariantOptions<Props>;
+  /**
+   * The option, as a string, that each variant uses when the recipe is
+   * called without it, as in a recipe's `defaultVariants`.
+   */
+  readonly defaultVariants: VariantDefaults<Props>;
 } & Composable<Composition>;
 
 /**
@@ -209,7 +222,8 @@ function makeCreateSlotRecipe(options: BuildOptions): unknown {
  * classes. A variant without a default is required, except a boolean
  * variant, whose only options are `"true"` and `"false"` and which defaults
  * to `false`. An option that the config does not declare adds no classes.
- * The recipe's `variantKeys` property lists the names of its variants.
+ * Its `variantKeys`, `variantOptions`, and `defaultVariants` properties
+ * list its variants as those of `createRecipe` do.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first.
@@ -235,7 +249,7 @@ function makeCreateSlotRecipe(options: BuildOptions): unknown {
  * const classNames = card({ classNames: { root: "shadow" } });
  * classNames.root; // => "rounded-lg border p-4 shadow"
  * classNames.title; // => "font-medium text-base"
- * card.variantKeys; // => ["size"]
+ * card.variantOptions; // => { size: ["sm", "md"] }
  *
  * const dialog = createSlotRecipe({
  *   composes: [card],

@@ -18,34 +18,34 @@ sidebar:
 
 ## Types
 
-| Export                | Description                                                                                                                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `VariantsOf`          | The variants a recipe accepts, without `className` or `classNames`.                                                                  |
-| `Recipe`              | A function that returns the class name for a selection of variants, with the names of those variants in `variantKeys`.               |
-| `RecipeConfig`        | The configuration of a recipe made by `cva`.                                                                                         |
-| `RecipeProps`         | The properties a recipe accepts: its variants and a `className` override.                                                            |
-| `RecipeVariants`      | The variants of a recipe's config: for each variant name, the classes of each of its options.                                        |
-| `CompoundVariant`     | Classes added when several variants have particular options at the same time.                                                        |
-| `CreateRecipe`        | The type of `cva` and `createRecipe`.                                                                                                |
-| `SlotRecipe`          | A function that returns the class name of every slot for a selection of variants, with the names of those variants in `variantKeys`. |
-| `SlotRecipeConfig`    | The configuration of a slot recipe made by `sva`.                                                                                    |
-| `SlotRecipeProps`     | The properties a slot recipe accepts: its variants and a `classNames` override for each slot.                                        |
-| `SlotRecipeVariants`  | The variants of a slot recipe's config: for each variant name, the classes of each slot for each of its options.                     |
-| `SlotCompoundVariant` | Classes added to some slots when several variants have particular options at the same time.                                          |
-| `SlotClasses`         | Classes for some of a slot recipe's slots, keyed by slot name.                                                                       |
-| `SlotClassNames`      | The class name of every slot, keyed by slot name, as returned by a slot recipe.                                                      |
-| `CreateSlotRecipe`    | The type of `sva` and `createSlotRecipe`.                                                                                            |
-| `Recipes`             | The functions that `createRecipes` returns, all sharing one join and cache setting.                                                  |
-| `RecipesOptions`      | The options of `createRecipes`.                                                                                                      |
-| `ClassValue`          | A value that `cx` turns into class names.                                                                                            |
-| `ClassArray`          | A list of class values, which may be nested.                                                                                         |
-| `ClassDictionary`     | An object whose keys are class names, each included when its value is truthy.                                                        |
-| `ClassJoin`           | Combines class strings into the final class name, such as `cx` or `twMerge`.                                                         |
-| `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                                                              |
-| `VariantOption`       | The values accepted for one variant.                                                                                                 |
-| `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                                                               |
-| `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                                               |
-| `RecipeFunction`      | A function that takes a selection, whose argument is optional when every variant is.                                                 |
+| Export                | Description                                                                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VariantsOf`          | The variants a recipe accepts, without `className` or `classNames`.                                                                              |
+| `Recipe`              | A function that returns the class name for a selection of variants, with its variants in `variantKeys`, `variantOptions`, and `defaultVariants`. |
+| `RecipeConfig`        | The configuration of a recipe made by `cva`.                                                                                                     |
+| `RecipeProps`         | The properties a recipe accepts: its variants and a `className` override.                                                                        |
+| `RecipeVariants`      | The variants of a recipe's config: for each variant name, the classes of each of its options.                                                    |
+| `CompoundVariant`     | Classes added when several variants have particular options at the same time.                                                                    |
+| `CreateRecipe`        | The type of `cva` and `createRecipe`.                                                                                                            |
+| `SlotRecipe`          | A function that returns the class name of every slot for a selection of variants, with its variants listed as a `Recipe` lists them.             |
+| `SlotRecipeConfig`    | The configuration of a slot recipe made by `sva`.                                                                                                |
+| `SlotRecipeProps`     | The properties a slot recipe accepts: its variants and a `classNames` override for each slot.                                                    |
+| `SlotRecipeVariants`  | The variants of a slot recipe's config: for each variant name, the classes of each slot for each of its options.                                 |
+| `SlotCompoundVariant` | Classes added to some slots when several variants have particular options at the same time.                                                      |
+| `SlotClasses`         | Classes for some of a slot recipe's slots, keyed by slot name.                                                                                   |
+| `SlotClassNames`      | The class name of every slot, keyed by slot name, as returned by a slot recipe.                                                                  |
+| `CreateSlotRecipe`    | The type of `sva` and `createSlotRecipe`.                                                                                                        |
+| `Recipes`             | The functions that `createRecipes` returns, all sharing one join and cache setting.                                                              |
+| `RecipesOptions`      | The options of `createRecipes`.                                                                                                                  |
+| `ClassValue`          | A value that `cx` turns into class names.                                                                                                        |
+| `ClassArray`          | A list of class values, which may be nested.                                                                                                     |
+| `ClassDictionary`     | An object whose keys are class names, each included when its value is truthy.                                                                    |
+| `ClassJoin`           | Combines class strings into the final class name, such as `cx` or `twMerge`.                                                                     |
+| `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                                                                          |
+| `VariantOption`       | The values accepted for one variant.                                                                                                             |
+| `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                                                                           |
+| `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                                                           |
+| `RecipeFunction`      | A function that takes a selection, whose argument is optional when every variant is.                                                             |
 
 The functions are described in [cx](/recipe/class-recipe/cx/),
 [cva](/recipe/class-recipe/cva/), [sva](/recipe/class-recipe/sva/), and

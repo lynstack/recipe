@@ -161,14 +161,17 @@ to let these classes replace conflicting ones.
 - Calling a slot recipe without a selection, or with `undefined` or
   `null`, is the same as calling it with an empty one.
 
-## `variantKeys`
+## Listing the variants
 
-A slot recipe lists the names of its variants, in the order of `variants`,
-in `variantKeys`, a frozen array typed with those names:
+A slot recipe lists its variants as a recipe does (see
+[Listing the variants](/recipe/class-recipe/cva/#listing-the-variants)),
+in `variantKeys`, `variantOptions`, and `defaultVariants`:
 
 ```ts
 card.variantKeys; // => ["size", "elevated"]
+card.variantOptions; // => { size: ["sm", "md"], elevated: ["false", "true"] }
+card.defaultVariants; // => { size: "md", elevated: "false" }
 ```
 
-Use it to split a component's props into the recipe's variants and the
-rest (see [Building components](/recipe/class-recipe/building-components/)).
+Use `variantKeys` to split a component's props into the recipe's variants
+and the rest (see [Building components](/recipe/class-recipe/building-components/)).

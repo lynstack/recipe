@@ -65,12 +65,20 @@ const className: string = button({ tone: "danger" });
 const buttonKeys: readonly ("disabled" | "size" | "tone")[] =
   button.variantKeys;
 const cardKeys: readonly "size"[] = card.variantKeys;
+const buttonOptions: { readonly size: readonly ("lg" | "md")[] } =
+  button.variantOptions;
+const buttonDefaults: { readonly disabled: "false" | "true" } =
+  button.defaultVariants;
+const cardOptions: { readonly size: readonly "md"[] } = card.variantOptions;
 
 export {
   button,
+  buttonDefaults,
   buttonKeys,
+  buttonOptions,
   card,
   cardKeys,
+  cardOptions,
   className,
   field,
   iconButton,

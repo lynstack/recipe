@@ -226,12 +226,14 @@ calls without the prop stay valid.
 A recipe without them is a type error and throws a `TypeError` when it
 is created. Pass `variants: {}`.
 
-### A recipe has only `variantKeys`
+### A recipe lists its variants, not its config
 
 tailwind-variants also exposes the config of a recipe, such as
-`button.variants` and `button.slots`. Keep the config in an object if you
-read it. `variantKeys` is a readonly array, so a function that takes it
-as `K[]` needs `readonly K[]`.
+`button.variants` and `button.slots`. A recipe here lists only the names
+of its variants in `variantKeys`, of their options in `variantOptions`,
+and their defaults in `defaultVariants`, never their classes; keep the
+config in an object if you read it. `variantKeys` is a readonly array, so
+a function that takes it as `K[]` needs `readonly K[]`.
 
 ## Behaviors that change with untyped data
 

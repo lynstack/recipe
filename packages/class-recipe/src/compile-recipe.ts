@@ -31,6 +31,8 @@ interface LooseRecipeProps extends LooseSelection {
 
 type LooseRecipe = ((props?: LooseRecipeProps | null) => string) & {
   readonly variantKeys: readonly string[];
+  readonly variantOptions: Readonly<Record<string, readonly string[]>>;
+  readonly defaultVariants: Readonly<Record<string, string>>;
 };
 
 const noProps: LooseRecipeProps = Object.freeze({});
@@ -83,7 +85,9 @@ function createRecipeBuilder(
         : classes;
     };
     const result = Object.assign(recipe, {
+      defaultVariants: classesOf.defaultVariants,
       variantKeys: classesOf.variantKeys,
+      variantOptions: classesOf.variantOptions,
     });
     engineRecipes.set(result, classesOf);
     return result;
