@@ -111,8 +111,8 @@ function createBox(variants: KindVariants<Style>) {
   return styleRecipe({ variants });
 }
 
+// Not a type error: the selection may name any variant.
 createBox({ size: { sm: { padding: 4 } } })({ size: "sm", other: 1 });
-// => { padding: 4 }
 ```
 
 ## Types for library authors
@@ -139,3 +139,12 @@ recipes take besides their variants, as `@lynstack/class-recipe` leaves
 out `className`. Slot recipes have their own config types,
 `KindSlotRecipeConfig` and `KindSlotVariants`; see
 the [API reference](/recipe/recipe/api/) for the full list.
+
+## Next steps
+
+- [Building a library](/recipe/recipe/building-a-library/#type-the-librarys-config)
+  types a library's own config with these types.
+- [Making library recipes composable](/recipe/recipe/composable-libraries/)
+  types the recipes that other recipes compose.
+- [API reference](/recipe/recipe/api/) gives the signature of each
+  export.
