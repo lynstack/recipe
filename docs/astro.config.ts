@@ -9,6 +9,28 @@ const repository = "https://github.com/lynstack/recipe";
 const site = "https://lynstack.github.io";
 const base = "/recipe";
 
+/** A sidebar link to a page outside the docs. */
+interface ExternalLink {
+  readonly attrs: { readonly rel: string; readonly target: string };
+  readonly label: string;
+  readonly link: string;
+}
+
+/** The sidebar link to the changelog of the package in `folder`. */
+function changelog(folder: string): ExternalLink {
+  return {
+    attrs: { rel: "noopener", target: "_blank" },
+    label: "Changelog",
+    link: `${repository}/blob/main/packages/${folder}/CHANGELOG.md`,
+  };
+}
+
+const changelogs = {
+  classRecipe: changelog("class-recipe"),
+  nativeRecipe: changelog("native-recipe"),
+  recipe: changelog("recipe"),
+};
+
 export default defineConfig({
   base,
   integrations: [
@@ -91,11 +113,9 @@ export default defineConfig({
               {
                 items: [
                   { label: "Overview", link: "/class-recipe/" },
-                  "class-recipe/installation",
-                  "class-recipe/editor-setup",
-                  "class-recipe/quick-start",
-                  "class-recipe/agent-skill",
                   "class-recipe/why-class-recipe",
+                  "class-recipe/installation",
+                  "class-recipe/quick-start",
                 ],
                 label: "Get started",
               },
@@ -105,27 +125,47 @@ export default defineConfig({
               },
               {
                 items: [
-                  "class-recipe/cx",
-                  "class-recipe/cva",
-                  "class-recipe/sva",
-                  "class-recipe/create-recipes",
-                ],
-                label: "API",
-              },
-              {
-                items: [
                   "class-recipe/conflict-free-recipes",
-                  "class-recipe/tailwind-merge",
+                  {
+                    label: "Merging classes",
+                    slug: "class-recipe/tailwind-merge",
+                  },
                   "class-recipe/building-components",
-                  "class-recipe/typescript",
-                  "class-recipe/migrating-from-cva",
-                  "class-recipe/migrating-from-tailwind-variants",
+                  { label: "Typing recipes", slug: "class-recipe/typescript" },
                 ],
                 label: "Guides",
               },
               {
-                items: ["class-recipe/exports", "class-recipe/performance"],
-                label: "Reference",
+                items: [
+                  {
+                    label: "From cva",
+                    slug: "class-recipe/migrating-from-cva",
+                  },
+                  {
+                    label: "From tailwind-variants",
+                    slug: "class-recipe/migrating-from-tailwind-variants",
+                  },
+                ],
+                label: "Migrate",
+              },
+              {
+                items: [
+                  "class-recipe/cva",
+                  "class-recipe/sva",
+                  "class-recipe/cx",
+                  "class-recipe/create-recipes",
+                  { label: "All exports", slug: "class-recipe/exports" },
+                ],
+                label: "API reference",
+              },
+              {
+                items: [
+                  "class-recipe/editor-setup",
+                  "class-recipe/agent-skill",
+                  { label: "Benchmarks", slug: "class-recipe/performance" },
+                  changelogs.classRecipe,
+                ],
+                label: "Resources",
               },
             ],
             label: "class-recipe",
@@ -140,7 +180,6 @@ export default defineConfig({
                   { label: "Overview", link: "/native-recipe/" },
                   "native-recipe/installation",
                   "native-recipe/quick-start",
-                  "native-recipe/agent-skill",
                 ],
                 label: "Get started",
               },
@@ -150,23 +189,31 @@ export default defineConfig({
               },
               {
                 items: [
-                  "native-recipe/create-style-recipe",
-                  "native-recipe/create-slot-style-recipe",
-                  "native-recipe/create-themed-recipes",
-                ],
-                label: "API",
-              },
-              {
-                items: [
-                  "native-recipe/themes",
+                  {
+                    label: "Theming with design tokens",
+                    slug: "native-recipe/themes",
+                  },
                   "native-recipe/building-components",
-                  "native-recipe/typescript",
+                  { label: "Typing recipes", slug: "native-recipe/typescript" },
                 ],
                 label: "Guides",
               },
               {
-                items: ["native-recipe/exports", "native-recipe/performance"],
-                label: "Reference",
+                items: [
+                  "native-recipe/create-style-recipe",
+                  "native-recipe/create-slot-style-recipe",
+                  "native-recipe/create-themed-recipes",
+                  { label: "All exports", slug: "native-recipe/exports" },
+                ],
+                label: "API reference",
+              },
+              {
+                items: [
+                  "native-recipe/agent-skill",
+                  { label: "Benchmarks", slug: "native-recipe/performance" },
+                  changelogs.nativeRecipe,
+                ],
+                label: "Resources",
               },
             ],
             label: "native-recipe",
@@ -186,12 +233,12 @@ export default defineConfig({
               },
               {
                 items: [
-                  "recipe/how-it-works",
                   "recipe/recipe-kinds",
                   "recipe/variants",
-                  "recipe/caching",
                   "recipe/slot-recipes",
                   "recipe/composing",
+                  "recipe/caching",
+                  "recipe/how-it-works",
                 ],
                 label: "Concepts",
               },
@@ -199,14 +246,24 @@ export default defineConfig({
                 items: [
                   "recipe/designing-a-kind",
                   "recipe/building-a-library",
-                  "recipe/practices",
-                  "recipe/typescript",
+                  { label: "Typing recipes", slug: "recipe/typescript" },
                 ],
                 label: "Guides",
               },
               {
-                items: ["recipe/api", "recipe/exports", "recipe/performance"],
-                label: "Reference",
+                items: [
+                  "recipe/api",
+                  { label: "All exports", slug: "recipe/exports" },
+                ],
+                label: "API reference",
+              },
+              {
+                items: [
+                  { label: "Checklist", slug: "recipe/practices" },
+                  { label: "Benchmarks", slug: "recipe/performance" },
+                  changelogs.recipe,
+                ],
+                label: "Resources",
               },
             ],
             label: "recipe",

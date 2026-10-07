@@ -2,7 +2,6 @@
 title: How native-recipe works
 description: "How native-recipe builds and caches React Native styles: compiled once, the order of styles, composed recipes, frozen styles that keep the style prop stable, a recipe per theme."
 sidebar:
-  badge: Updated
   label: How it works
 ---
 

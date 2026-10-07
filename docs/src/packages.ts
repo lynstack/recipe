@@ -99,7 +99,7 @@ const packages = {
   }),
   recipe: packageInfo("recipe", recipePackage, {
     exampleApp: stackBlitzApp("recipe", "src/recipes.ts"),
-    label: "Core engine",
+    label: "For library authors",
   }),
 } as const satisfies Readonly<Record<PackageIconName, PackageInfo>>;
 

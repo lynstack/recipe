@@ -1,23 +1,16 @@
 ---
 import { Code } from "@astrojs/starlight/components";
 import Default from "@astrojs/starlight/components/Hero.astro";
+import { exampleOf } from "../examples/examples.ts";
+import { formatCall } from "../examples/format.ts";
+import { sourceOf } from "../examples/sources.ts";
 
-const example = `import { cva } from "@lynstack/class-recipe";
-
-const button = cva({
-  base: "rounded-md",
-  variants: {
-    tone: {
-      neutral: "bg-gray-100 text-gray-900",
-      danger: "bg-red-600 text-white",
-    },
-    size: { sm: "h-8 px-3", md: "h-10 px-4" },
-  },
-  defaultVariants: { size: "md" },
-});
-
-button({ tone: "danger" });
-// => "rounded-md bg-red-600 text-white h-10 px-4"`;
+const name = "class-recipe/index/button";
+const call = { tone: "danger" };
+const [result] = exampleOf(name).valuesOf(call);
+const example = `${sourceOf(name)}
+${formatCall("button", call).text};
+// => ${JSON.stringify(result?.value)}`;
 ---
 
 <div class="landing-hero">

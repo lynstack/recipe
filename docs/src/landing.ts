@@ -40,21 +40,21 @@ interface LandingFeature {
 const landingPackages: readonly LandingPackage[] = [
   {
     description:
-      "cva for one element, sva for several, and cx, a drop-in replacement for clsx. Joins with twMerge when you need it.",
+      "For the web: Tailwind CSS, CSS Modules, or any class names. cva styles one element, sva several, and cx replaces clsx.",
     href: "/recipe/class-recipe/",
     icon: "class-recipe",
     ...packages["class-recipe"],
   },
   {
     description:
-      "Style recipes and slot style recipes for React Native, built from theme tokens when you need them, which return the same frozen style for the same variants.",
+      "For React Native and Expo: typed style objects, built from theme tokens when you need them, that stay the same between renders.",
     href: "/recipe/native-recipe/",
     icon: "native-recipe",
     ...packages["native-recipe"],
   },
   {
     description:
-      "The engine: define how a kind of value combines, and get recipes and slot recipes that select, cache, and type it.",
+      "For authors of styling libraries: say how your own type of value combines, and get typed, cached recipes for it.",
     href: "/recipe/recipe/",
     icon: "recipe",
     ...packages.recipe,
@@ -64,7 +64,7 @@ const landingPackages: readonly LandingPackage[] = [
 const landingFeatures: readonly LandingFeature[] = [
   {
     description:
-      "the calls per second of class-variance-authority. A recipe compiles its config once and caches each selection, so a call is a lookup.",
+      "the calls per second of class-variance-authority. A recipe compiles its config once and caches the result of each combination of variants, so a repeated call is a lookup.",
     stat: `${speedup}×`,
     title: "Fast",
   },
@@ -75,8 +75,8 @@ const landingFeatures: readonly LandingFeature[] = [
   },
   {
     description:
-      "Bring twMerge or any join of your own. It runs once per selection, not on every call.",
-    title: "Your join",
+      "Resolve conflicting classes with twMerge, or with any function of your own. It runs once per combination of variants, not on every call.",
+    title: "Bring your own merge",
   },
   {
     description:

@@ -2,7 +2,6 @@
 title: How class-recipe works
 description: "How class-recipe builds and caches class names: compiled once, the order of the classes, composed recipes, when the join function runs, overrides, and stable slot results."
 sidebar:
-  badge: Updated
   label: How it works
 ---
 

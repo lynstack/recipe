@@ -7,12 +7,16 @@ hero:
   title: Variants in, <span class="landing-hero-accent">styles out.</span>
   tagline: Fast, type-safe recipes that map a component's variants to its class names, its React Native styles, or any value you can combine.
   actions:
-    - text: Get started
+    - text: Class names
       link: /recipe/class-recipe/
       icon: right-arrow
-    - text: Build on the engine
-      link: /recipe/recipe/
+    - text: React Native styles
+      link: /recipe/native-recipe/
+      icon: right-arrow
       variant: secondary
+    - text: Build your own on the engine
+      link: /recipe/recipe/
+      variant: minimal
 ---
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
@@ -23,10 +27,18 @@ import PackageList from "../../components/PackageList.astro";
 <LandingSection
   id="packages"
   eyebrow="Packages"
-  title="Pick the package for your values"
-  lead="Each package makes recipes for one kind of value. They are all built on the same engine, so their variants, cache, and types work the same way."
+  title="Which package do you need?"
+  lead="Pick the one for what your components are styled with. Most apps need class-recipe or native-recipe; the engine is for authors of styling libraries."
 >
   <PackageList />
+</LandingSection>
+
+<LandingSection
+  id="why"
+  eyebrow="Why recipe"
+  title="Fast, type-safe, and the same everywhere"
+>
+  <FeatureList />
 </LandingSection>
 
 <LandingSection
@@ -54,12 +66,4 @@ npx skills add lynstack/recipe --skill native-recipe
   />
 </CardGrid>
 
-</LandingSection>
-
-<LandingSection
-  id="why"
-  eyebrow="Why recipe"
-  title="Compiled once, a lookup after that"
->
-  <FeatureList />
 </LandingSection>

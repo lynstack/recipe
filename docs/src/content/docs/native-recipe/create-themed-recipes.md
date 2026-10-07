@@ -1,8 +1,6 @@
 ---
 title: createThemedRecipes
 description: "Create style recipes and slot style recipes whose styles are built from the tokens of a theme, and get the same frozen styles for the same theme and variants."
-sidebar:
-  badge: Updated
 head:
   - tag: title
     content: "createThemedRecipes: themed React Native styles | lynstack recipe"
