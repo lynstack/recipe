@@ -20,10 +20,9 @@ import {
 
 A recipe numbers the options of each variant when it is created, so a
 selection of variants becomes one integer, under which the recipe caches
-its result (see [How it works](/recipe/recipe/how-it-works/)). A cached call
-costs one lookup per variant and one for the cache, and allocates nothing;
-an uncached call also costs the work of the kind (see
-[Designing a kind](/recipe/recipe/designing-a-kind/#what-each-design-costs)).
+its result (see [How it works](/recipe/recipe/how-it-works/)).
+[Caching](/recipe/recipe/caching/#a-cached-call) gives what a cached and an
+uncached call cost.
 
 ## The cache
 
@@ -37,7 +36,8 @@ a recipe of a kind with the cache and one without it.
 <Aside type="tip" title="Create each recipe once">
   The cache belongs to the recipe, so create each recipe at the top level of a
   module, not inside a component. It grows with the selections the recipe is
-  called with, up to one entry per combination of declared options.
+  called with, up to one entry per combination of declared options (see
+  [Caching](/recipe/recipe/caching/#what-is-cached)).
 </Aside>
 
 ## Method

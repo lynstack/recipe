@@ -29,21 +29,51 @@ The two calls select the same options, so they have the same key (see
   for each selection a program uses.
 - **Every result, for as long as the recipe exists.** A cache never drops
   a result, so it grows up to one result for each combination of declared
-  options: a recipe with three variants of four options each can store 125
-  (each variant counts five, with no option), and one with eight variants
-  of nine options each, 10⁸.
-- **Not when there are too many selections to key.** When the number of
-  possible selections is larger than `Number.MAX_SAFE_INTEGER`, which takes
-  dozens of variants, a recipe builds every result on every call.
+  options. That is an upper bound: a recipe with three variants of four
+  options each can store at most 125 results (each variant counts five:
+  its four options, or none), and one with eight variants of nine options
+  each, at most 10⁸.
+- **Not when there are too many selections to key.** See
+  [The limit of the cache](#the-limit-of-the-cache).
+
+## The limit of the cache
+
+A recipe keys each selection with an integer, which must stay below
+`Number.MAX_SAFE_INTEGER`. When it creates a recipe, the engine multiplies,
+over all variants, the number of options of the variant plus one (for a
+variant left without an option). The options counted include the
+`"false"` or `"true"` that a variant gets when it declares only the other.
+When that product exceeds `Number.MAX_SAFE_INTEGER`, the recipe has no
+cache, and builds every result on every call. It takes dozens of
+variants: 16 variants of nine options each, or 34 boolean variants.
+
+This happens silently: the recipe is created without an error, returns the
+same results, and only builds them on every call. No property of a recipe
+reports it, but a library can compute the same product from
+`variantOptions`:
+
+```ts
+function hasCacheableKeys(recipe: {
+  readonly variantOptions: Readonly<Record<string, readonly string[]>>;
+}): boolean {
+  let selections = 1;
+  for (const options of Object.values(recipe.variantOptions)) {
+    selections *= options.length + 1;
+  }
+  return selections <= Number.MAX_SAFE_INTEGER;
+}
+```
 
 ## A cached call
 
 A cached call costs one lookup per variant and one for the cache, and
 allocates nothing. Its speed does not depend on the kind, so a kind that
 does more work to build a result, such as resolving conflicts between
-values, costs that work once per selection. See
-[Performance](/recipe/recipe/performance/) for how much faster a cached call
-is.
+values, costs that work once per selection. An uncached call looks up each
+variant too, then adds the work of the kind (see
+[What each design costs](/recipe/recipe/designing-a-kind/#what-each-design-costs)).
+See [Performance](/recipe/recipe/performance/) for how much faster a cached
+call is.
 
 ## Shared results
 
