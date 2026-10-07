@@ -4,6 +4,31 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.4.0 — 2026-10-07
+
+A recipe kind can combine two values into one, so that a recipe that
+composes others builds its results as fast as the one config it stands
+for.
+
+- `RecipeKind` takes `combine(first, second)`, optional, which returns
+  one value that adds what `first` then `second` add. A recipe that
+  composes others calls it when it is created, never on a call, to
+  combine its bases and the values that several configs give one option.
+  A slot recipe combines the values of each slot in the same way.
+- A kind with `combine` must not change `first` or `second`, and follows
+  two rules, in which two accumulators must give the same results from
+  `finish`, now and after the same values are reduced into each: reducing
+  `first` then `second` gives what reducing `combine(first, second)`
+  gives, and `initial(base)` gives what reducing `base` into
+  `initial(undefined)` gives.
+- Without `combine`, a composed recipe returns what it returned before.
+  When no option or compound variant has values from several configs, it
+  now compiles as one config too, and builds its results as fast.
+- 1.3.0 said that a composed recipe is as fast as its one config. That
+  holds for cached calls; a result built without the cache cost more when
+  several configs gave values to one option or had a base. With
+  `combine`, it costs what the one config costs.
+
 ## 1.3.0 — 2026-10-07
 
 A recipe can build on other recipes with `composes`.
