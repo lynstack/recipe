@@ -39,6 +39,9 @@ interface Example {
   readonly valuesOf: (call: Call) => readonly SlotValue[];
 }
 
+/** The props, besides variants, that the recipes of the docs take. */
+type OverrideName = "className" | "classNames" | "style" | "styles";
+
 /**
  * The options of each variant of a recipe, which `Props` lists. `Props` is
  * undefined too when the recipe's argument is optional.
@@ -47,7 +50,7 @@ type OptionsOf<Props> = {
   readonly [
     Name in Exclude<
       keyof NonNullable<Props>,
-      "className" | "classNames"
+      OverrideName
     > as Name extends string ? Name : never
   ]-?: readonly `${Extract<NonNullable<NonNullable<Props>[Name]>, string | number>}`[];
 };
@@ -115,9 +118,9 @@ interface ExampleConfig<
 }
 
 /** The props, besides variants, that a recipe of each kind takes. */
-const overrides: Readonly<Record<ValueKind, readonly string[]>> = {
+const overrides: Readonly<Record<ValueKind, readonly OverrideName[]>> = {
   className: ["className", "classNames"],
-  style: [],
+  style: ["style", "styles"],
 };
 
 /** Returns the name of the option that `value` chooses, as a config declares it. */

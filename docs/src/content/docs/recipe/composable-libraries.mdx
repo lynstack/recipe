@@ -1,0 +1,99 @@
+---
+title: Making library recipes composable
+description: "Let other recipes compose the recipes of a library built on @lynstack/recipe: pass composes on to the engine's recipes, and mark their types with Composable and RecipeComposition."
+sidebar:
+  label: Composable libraries
+---
+
+import { Code } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+import svSource from "../../../examples/recipes/recipe/composable-libraries/sv.ts?raw";
+
+A recipe can [compose](/recipe/recipe/composing/) other recipes, but only
+recipes that the engine created. A library that wraps the engine's recipes,
+as `sv` of [Building a library](/recipe/recipe/building-a-library/) does,
+has two things to do so that its users can compose its recipes:
+
+- **At runtime**, pass `composes` on to the engine: keep the engine's
+  recipe of each wrapper, and replace each wrapper in `composes` with it.
+- **In the types**, mark the type of each wrapper with what it passes on
+  to the recipes that compose it, and infer the variants of a config from
+  the recipes it composes.
+
+## Pass `composes` on
+
+The engine throws a `TypeError` when `composes` lists a function that it
+did not create, such as a wrapper. `sv` keeps the engine's recipe of each
+of its recipes in a `WeakMap`, and gives the engine that recipe instead.
+A recipe that the engine created reaches it as it is, so `sv` can compose
+any recipe of a kind whose values are styles. Here is `sv` of
+[Building a library](/recipe/recipe/building-a-library/), with
+`composes`:
+
+<Code code={svSource} lang="ts" title="sv.ts" />
+
+<RecipeExample
+  name="recipe/composable-libraries/card"
+  calls={[{}, { tone: "loud" }]}
+/>
+
+`card` composes `box`, so it has the variants, options, and values of
+`box` as well as its own, and its default `tone` applies to both.
+
+## Mark the types
+
+The engine's recipe types carry what they pass on under a `~composition`
+property, which exists in the type only. A wrapper's type carries it too:
+
+- `Composed extends readonly ComposableKindRecipe<Style>[]` is the type of
+  `composes`. `ComposableKindRecipe<Style>` accepts any recipe, of the
+  engine or of a library, whose type is marked and whose values are
+  styles. A `const` type parameter infers it as a tuple.
+- `ComposedVariants<Composed, Variants>` is the variants of the config
+  together with those of the recipes it composes. The config's compound
+  variants and defaults name these, so that they can name the variants of
+  the recipes it composes.
+- `ComposedDefaultedName<Composed, DefaultedName>` is the names of the
+  variants with a default in the config or in a recipe it composes.
+  `Extract` keeps those that are variants of the merged config.
+- `Composable<RecipeComposition<…>>` marks the type of the wrapper, so
+  that other recipes can compose it in turn. Without it, `composes`
+  rejects the wrapper.
+
+### `RecipeComposition`
+
+`RecipeComposition` takes four type parameters, which describe what a
+recipe passes on to the recipes that compose it:
+
+| Parameter       | What it is                                                                           |
+| --------------- | ------------------------------------------------------------------------------------ |
+| `Variants`      | The variants of the recipe, merged with those of the recipes it composes.            |
+| `DefaultedName` | The names of its variants that have a default.                                       |
+| `Value`         | The type of its values. A recipe composes only recipes whose values have its type.   |
+| `Slots`         | The list of its slots, `readonly Slot[]`, or `undefined` for a recipe without slots. |
+
+`sv` passes on its merged variants, the names of those with a default,
+`Style`, and `undefined`.
+
+## Slot recipes
+
+A library of slot recipes does the same with the slot recipe types:
+
+- `ComposableKindSlotRecipe<Style>` instead of `ComposableKindRecipe`, as
+  the type of `composes`.
+- `ComposedSlot<Composed, Slot>` for the slot names, which adds the slots
+  of the slot recipes it composes to those of `slots`. Use it for the
+  keys of `base`, of compound variants, and of the result.
+- A `RecipeComposition` whose last type parameter is the list of its
+  slots, `readonly ComposedSlot<Composed, Slot>[]`.
+
+A recipe composes only recipes, and a slot recipe only slot recipes.
+
+## Next steps
+
+- [Composing recipes](/recipe/recipe/composing/) describes how the configs
+  of composed recipes merge.
+- [API reference](/recipe/recipe/api/#composition) lists the types of
+  composition.
+- [Checklist](/recipe/recipe/practices/) sums up what a library on the
+  engine should do, each item with a link.

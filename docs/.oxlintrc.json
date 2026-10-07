@@ -69,6 +69,19 @@
       }
     },
     {
+      // The docs show these modules of a library built on the engine as
+      // the library would write them, with each export where it is
+      // declared, overloads included.
+      "files": [
+        "src/examples/recipes/recipe/building-a-library/*.ts",
+        "src/examples/recipes/recipe/composable-libraries/*.ts"
+      ],
+      "rules": {
+        "import/exports-last": "off",
+        "import/group-exports": "off"
+      }
+    },
+    {
       // These modules export one object or function, named as every
       // module of the docs exports; examples.ts reads each registry by the
       // name of its export.
@@ -81,9 +94,11 @@
     },
     {
       // These kinds change their accumulator in place, as the docs teach:
-      // the style kind, and the kind that records it for a trace.
+      // the style kind, the kind of the library built on the engine, and
+      // the kind that records it for a trace.
       "files": [
         "src/examples/recipes/recipe/quick-start/style-kind.ts",
+        "src/examples/recipes/recipe/building-a-library/kinds.ts",
         "src/examples/traced-kind.ts"
       ],
       "rules": { "typescript/prefer-readonly-parameter-types": "off" }

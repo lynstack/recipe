@@ -254,6 +254,7 @@ export default defineConfig({
                 items: [
                   "recipe/designing-a-kind",
                   "recipe/building-a-library",
+                  "recipe/composable-libraries",
                   { label: "Typing recipes", slug: "recipe/typescript" },
                 ],
                 label: "Guides",

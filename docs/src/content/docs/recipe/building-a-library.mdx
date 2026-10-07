@@ -1,0 +1,188 @@
+---
+title: Building a library on it
+description: "Build a styling library on @lynstack/recipe: define its kinds once, type its config with the engine's types, translate it once, apply override props through the kind, wrap slot recipes, split props, and list the variants."
+sidebar:
+  label: Building a library
+---
+
+import { Code } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+import kindsSource from "../../../examples/recipes/recipe/building-a-library/kinds.ts?raw";
+import slotSvSource from "../../../examples/recipes/recipe/building-a-library/slot-sv.ts?raw";
+import svSource from "../../../examples/recipes/recipe/building-a-library/sv.ts?raw";
+import typesSource from "../../../examples/recipes/recipe/building-a-library/types.ts?raw";
+
+A styling library built on the engine owns its API, and gives the engine
+the work that does not depend on its values. This page builds `sv`, a small
+library of style recipes, the way `@lynstack/class-recipe` builds `cva` and
+`sva`. Every listing on this page compiles as it is shown.
+
+## Define the kinds once
+
+Put the kind in one module, and create the function that creates recipes
+of the kind, and the one that creates slot recipes, there, once:
+
+<Code code={kindsSource} lang="ts" title="kinds.ts" />
+
+Every recipe of the library shares these functions. Keep the kind's
+functions at the top level of the module, rather than creating them for
+each recipe. `overrideStyle` applies an override prop; see
+[Overrides](#overrides).
+
+## Type the library's config
+
+The library's config does not have to match the engine's. Here, a compound
+variant gives its style under `style` instead of `value`, and a recipe
+takes a `style` prop that overrides its result. The engine exports the
+types that infer the variants from a config, so the library's users get
+the same checks as with the engine:
+
+<Code code={typesSource} lang="ts" title="types.ts" />
+
+- `KindVariants<Style>` constrains the `variants` of a config to styles.
+- `CompoundCondition` and `DefaultVariants` check the variants and options
+  that a compound variant and the defaults name.
+- `RecipeFunction` makes the argument optional when every variant is.
+- `KindRecipe` gives the types of `variantKeys`, `variantOptions`, and
+  `defaultVariants`.
+
+## Translate the config once
+
+Translate the library's config into the engine's when a recipe is created,
+never when it is called. The overload infers the variants of each config
+with `const` type parameters, as the engine's own functions do. The
+implementation works on configs whose variant names are not known:
+
+<Code code={svSource} lang="ts" title="sv.ts" />
+
+<RecipeExample
+  name="recipe/building-a-library/box"
+  calls={[{}, { tone: "loud" }, { style: { padding: 0 } }]}
+/>
+
+## Overrides
+
+`sv` applies the `style` prop around the recipe, and only when it is
+passed, so that a call without it stays a cache lookup that returns the
+same object. Never change the recipe's result to apply an override: it is
+shared by every call with the same variants.
+
+Apply the override through the kind, not with a spread.
+`overrideStyle` runs `finish(reduce(initial(style), override))`: it starts
+an accumulator from the recipe's result, reduces the override into it, and
+finishes it. For this kind, that is a spread and a freeze. For a kind
+whose `finish` does more, such as resolving conflicts between values, a
+spread would skip that work, and the override would not win as the kind
+says it should. `@lynstack/class-recipe` handles its `className` prop the
+same way: it passes the recipe's classes and the `className` to its join,
+such as `twMerge`, which is the `finish` of its kind when it has one.
+
+This works when the kind's result is also one of its values, as a style
+or a class name is: the result becomes the base of a new accumulator.
+
+## Split props with `variantKeys`
+
+A component passes its variants to the recipe and the rest of its props to
+the element it renders. A recipe ignores props that are not variants, so it
+can take all of them, but the element should not get the variants.
+`variantKeys` lists them:
+
+```ts
+function splitProps(
+  props: Readonly<Record<string, unknown>>,
+  variantKeys: readonly string[],
+) {
+  const variants: Record<string, unknown> = {};
+  const rest: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (variantKeys.includes(key)) {
+      variants[key] = value;
+    } else {
+      rest[key] = value;
+    }
+  }
+  return { rest, variants };
+}
+```
+
+`splitProps(props, box.variantKeys)` puts `tone` in `variants`, and every
+other prop in `rest`.
+
+## List every selection with `variantOptions`
+
+A tool that shows every look of a component, such as a story or a table of
+its options, reads the options of each variant from `variantOptions`, and
+calls the recipe for each selection. `defaultVariants` tells it which
+option a selection that leaves a variant out gets:
+
+```ts
+function selectionsOf(
+  variantOptions: Readonly<Record<string, readonly string[]>>,
+) {
+  return Object.entries(variantOptions).reduce<Record<string, string>[]>(
+    (selections, [name, options]) =>
+      selections.flatMap((selection) =>
+        options.map((option) => ({ ...selection, [name]: option })),
+      ),
+    [{}],
+  );
+}
+```
+
+`selectionsOf(box.variantOptions)` returns one selection for each option
+of `tone`.
+
+## Slot recipes
+
+A component with several elements uses a slot recipe of the same kind,
+`slotStyleRecipe`, typed and translated in the same way, with the slot
+names inferred from `slots` (see [Slot recipes](/recipe/recipe/slot-recipes/)).
+Its override prop, here `styles`, applies to each slot it names: a new
+object for those slots, and the cached result when it names none.
+
+<Code code={slotSvSource} lang="ts" title="slot-sv.ts" />
+
+<RecipeExample
+  name="recipe/building-a-library/card"
+  calls={[{}, { tone: "dark", styles: { title: { color: "red" } } }]}
+/>
+
+`KindSlotVariants<Style>` accepts a value for any slot name. The engine's
+own config rejects a value for a slot that `slots` does not name, with a
+type, `NoUnknownSlots`, that the package does not export yet. A wrapper
+cannot reproduce that check: in `slotSv`, such a value is not a type
+error, and the slot recipe ignores it at runtime.
+
+## Composing recipes
+
+The engine composes only its own recipes, so a library whose recipes
+other recipes compose passes `composes` on to the engine, and marks the
+types of its recipes. See
+[Making library recipes composable](/recipe/recipe/composable-libraries/).
+
+## Expose a switch for the cache
+
+A library that lets its users turn the cache off creates its kinds for
+each setting, once, as `createRecipes` of `@lynstack/class-recipe` does:
+
+```ts
+import { createRecipeKind, createSlotRecipeKind } from "@lynstack/recipe";
+import { styleKind } from "./kinds.ts";
+
+export function createStyleRecipes(options: { readonly cache?: boolean } = {}) {
+  const kind = { ...styleKind, cache: options.cache ?? true };
+  return {
+    slotStyleRecipe: createSlotRecipeKind(kind),
+    styleRecipe: createRecipeKind(kind),
+  };
+}
+```
+
+## Next steps
+
+- [Making library recipes composable](/recipe/recipe/composable-libraries/)
+  lets other recipes compose the recipes of `sv`.
+- [Typing recipes](/recipe/recipe/typescript/) covers the types a recipe
+  infers.
+- [Checklist](/recipe/recipe/practices/) sums up what a library on the
+  engine should do, each item with a link.
