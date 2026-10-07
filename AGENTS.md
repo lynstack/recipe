@@ -4,175 +4,61 @@ This repository holds three small TypeScript libraries, each a public
 package published to npm as an ES module only, and their documentation
 site:
 
-- `@lynstack/recipe`, in `packages/recipe`, creates recipes for values
-  of any type. It exports `createRecipeKind`, which defines a kind of
-  recipe by how it reduces values, such as class names or style objects,
-  and returns the function that creates recipes of that kind, and
-  `createSlotRecipeKind`, which returns the function that creates slot
-  recipes of a kind, which reduce the values of each of several slots. It
-  has no dependencies.
+- `@lynstack/recipe`, in `packages/recipe`, the engine: it creates recipes
+  for values of any type, from a kind that says how to reduce them. It has
+  no dependencies.
 - `@lynstack/class-recipe`, in `packages/class-recipe`, builds class names
-  on that engine.
+  on that engine (`cx`, `cva`, `sva`).
 - `@lynstack/native-recipe`, in `packages/native-recipe`, builds React
   Native style objects on that engine.
+- `docs`, the documentation site of the three.
 
-`@lynstack/class-recipe` exports:
-
-- `cx`, a drop-in replacement for `clsx`.
-- `cva` (also exported as `createRecipe`), which maps variants to the class
-  name of one element.
-- `sva` (also exported as `createSlotRecipe`), which maps variants to the
-  class names of several elements (slots).
-- `createRecipes`, which returns `cx` and the recipe creators bound to a
-  custom join function, such as `twMerge`, or with the cache turned off.
-
-The docs lead with the short names, `cva` and `sva`.
-
-`@lynstack/native-recipe` exports `createStyleRecipe`, which maps variants
-to the style of one element, and `createSlotStyleRecipe`, which maps
-variants to the styles of several elements (slots), and
-`createThemedRecipes`, which returns both for recipes whose styles are
-built from the tokens of a theme, such as a light and a dark theme. A
-recipe returns the same frozen style for the same variants, so that React
-Native's `style` prop keeps its identity between renders.
+This file holds what they share. Each package and `docs` has its own
+`AGENTS.md`, with its API, its modules, and what applies only there; read
+it before working in that folder.
 
 ## Layout
 
 - The repository is a pnpm workspace with a private root. The root holds
   what the packages share: the tools, `tsconfig.base.json`, the shared
   lint rules in `.oxlintrc.json`, the formatting rules, and the scripts.
-  `docs`, the documentation site, is a private workspace package, with
-  its own `.oxlintrc.json` that extends the shared one.
+  `docs` is a private workspace package.
 - Each package in `packages` is self-contained: its own `package.json`
   with its scripts and development dependencies, `tsconfig.json`,
   `tsconfig.build.json` (the sources that tsdown builds),
   `vitest.config.ts`, `tsdown.config.ts`, `.oxlintrc.json`, README,
-  CHANGELOG, LICENSE, and fixture. A package's `.oxlintrc.json` extends
-  the shared one and holds the rules of that package only.
+  CHANGELOG, LICENSE, and fixture. A package's `.oxlintrc.json`, and that
+  of `docs`, extends the shared one and holds its own rules only.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
   `dist/index.d.ts`.
-- In `@lynstack/recipe`, `recipe-kind.ts`, `slot-recipe-kind.ts`,
-  `types.ts`, and `composition.ts`, the types of composing recipes, hold
-  the public API and its types. The other modules are internal:
-  `variants.ts` compiles variants into numbered options, so a selection
-  becomes an integer key; `selector.ts` caches results by that key;
-  `compose.ts` keeps the configs of each recipe, its layers, and merges
-  the layers of a recipe that composes others into one config;
-  `build-recipe.ts` compiles a recipe from one config or merged layers,
-  combining the values of each option with the kind's `combine`;
-  `reduce-values.ts` reduces the values of a selection; and `slots.ts`
-  turns the values of a slot recipe into entries by slot and builds the
-  result of each slot.
-- In `@lynstack/class-recipe`, `cx.ts`, `recipe.ts`, `slot-recipe.ts`,
-  `create-recipes.ts`, `join.ts`, and `types.ts` hold the public API and
-  its types. `types.ts` re-exports the shared types of `@lynstack/recipe`.
-  The other modules are internal: `compile-recipe.ts` builds the recipe
-  functions on recipe kinds of `createRecipeKind`, and
-  `compile-slot-recipe.ts` the slot recipe functions on slot recipe kinds
-  of `createSlotRecipeKind`, using only the public API of
-  `@lynstack/recipe`;
-  `join-classes.ts` joins the classes of a selection; and
-  `build-options.ts` holds the join and cache settings of a recipe.
-- In `@lynstack/native-recipe`, `style-recipe.ts`, `slot-style-recipe.ts`,
-  `themed-recipes.ts`, and `types.ts` hold the public API and its types;
-  `types.ts` checks styles against the `ViewStyle`, `TextStyle`, and
-  `ImageStyle` types of React Native and re-exports the shared types of
-  `@lynstack/recipe`. The
-  other modules are internal: `compile-style-recipe.ts` and
-  `compile-slot-style-recipe.ts` build the recipe functions with
-  `createRecipeKind` and `createSlotRecipeKind`, using only the public API
-  of `@lynstack/recipe`, on one kind that merges loose styles in place;
-  and `compile-themed-recipe.ts` keeps the recipe of each theme object in
-  a `WeakMap`, with the recipe of the last theme apart.
-  The package imports only types from React Native, which is its peer
-  dependency and a development dependency for those types.
 - Tests sit next to the code as `*.test.ts`, and benchmarks as
   `*.bench.ts`. The `*.property.test.ts` tests generate configs and calls
-  with fast-check and compare the results with a reference: `cx` with
-  `clsx`, `cva` with `class-variance-authority`, a recipe kind with a
-  model of its documented behavior, a slot recipe with a recipe for each
-  slot, and a recipe or slot recipe that composes others with one config,
-  with and without the `combine` of its kind. Arbitraries that several
-  property tests share sit in `*.arbitraries.ts`, which the build leaves
-  out.
-  A benchmark imports its package by its name, so it runs against the
-  built bundle, never against the sources directly. The
-  `*.compare.bench.ts` benchmarks of `@lynstack/class-recipe` measure the
-  same work in other libraries (`clsx`, `classnames`,
-  `class-variance-authority`, `tailwind-variants`), which are development
-  dependencies of that package only; the docs report their results.
+  with fast-check and compare the results with a reference. Arbitraries
+  that several property tests share sit in `*.arbitraries.ts`, which the
+  build leaves out. A benchmark imports its package by its name, so it
+  runs against the built bundle, never against the sources directly.
 - `fixtures/consumer` in each package uses the built package; compiling it
-  checks the published declarations. The fixture of
-  `@lynstack/native-recipe` compiles with the settings of
-  `@react-native/typescript-config`, which React Native apps extend,
-  including `skipLibCheck`, since React Native's own declarations do not
-  compile without it.
-- `packages/class-recipe/skills/class-recipe/SKILL.md` is an agent skill
-  that ships with `@lynstack/class-recipe`. It teaches agents in consuming
-  projects to write recipes whose classes never conflict.
-  `packages/native-recipe/skills/native-recipe/SKILL.md` ships with
-  `@lynstack/native-recipe`. It teaches agents to keep styles stable and
-  to build styles from theme tokens.
-- `scripts` holds Node.js programs for maintainers, written in TypeScript
-  that Node.js runs directly. `scripts/measure` runs the benchmarks of
-  each package and saves the raw results, never formatted text, in
-  `docs/src/measurements/<package>.json`. It has one module per package,
-  which names the benchmarks that package reports.
-- `docs` is the documentation site, built with Astro and Starlight and
-  served by GitHub Pages at `https://lynstack.github.io/recipe/`. Each
-  package has its own section, in `docs/src/content/docs/<package>`, and
-  its own sidebar topic in `docs/astro.config.ts`; the landing page,
-  `docs/src/content/docs/index.mdx`, lists the packages.
-  `docs/src/packages.ts` holds what the docs show of each package: its
-  version, read from its `package.json`, and the links to its npm page,
-  source, and changelog. The theme maps
-  the lynstack design system onto Starlight in
-  `docs/src/styles/lynstack.css`. The docs read the measurements through
-  the modules next to them in `docs/src/measurements`, which format them, and show them with the
-  components in `docs/src/components`. Keep logic in `.ts` files, which
-  are typechecked, and keep `.astro` files to markup.
-- The docs show a recipe with `RecipeExample`, which writes the calls a
-  page gives it and what the recipe returns for each, or with
-  `RecipePlayground`, in which a reader chooses the variants. Both run
-  the recipe while the docs build, and show its code above, unless the
-  page shows it already. Use a playground where a reader should explore
-  a recipe, as in the overview of each package and the first example of
-  each API page, and calls where a rule needs particular ones, as in the
-  quick starts; never show both for the same recipe in one place. Each
-  recipe is a module of `docs/src/examples/recipes/<package>/<page>`,
-  listed with its options in `docs/src/examples/registry`, and built from
-  the packages in the workspace, so the docs build them first. The types
-  of a registry reject an option the recipe does not declare and a list
-  that leaves one out, so a call that chooses an option the recipe does
-  not declare fails the build.
-  "How it works", "Composing recipes", and "Slot recipes" of
-  `@lynstack/recipe` draw what the engine does with `OptionNumbers`,
-  `CallFlow`, `RecipeTrace`, and `SlotRecipeTrace`, from the recipes
-  listed in `docs/src/examples/traces.ts`. These are created with
-  `styleRecipe` or `slotStyleRecipe` of `docs/src/examples/recipes/recipe`,
-  which keep each config for the figures. `OptionNumbers` and `CallFlow`
-  number options and key a call with `compileVariants` and `select` of the
-  engine's sources, so they show what the engine computes. A trace builds
-  a call with a kind that records each of its calls, and fails the build
-  when the result differs from the recipe's, or a step cannot be told
-  apart. The
-  docs depend on React Native and its React types only to typecheck the
-  recipes of `@lynstack/native-recipe`.
-- `examples` holds an example of each package that readers open in the
-  browser, from the Open in StackBlitz or Open in Snack link of its
-  overview page: `recipe` and
-  `class-recipe` are React apps, built with Vite, that StackBlitz opens
-  from the `main` branch, and `native-recipe/App.tsx` is the app of an
-  Expo Snack, whose link `docs/src/packages.ts` builds. The examples are not in the
-  workspace: they install the published packages, at the exact version of
-  their last release, with npm.
+  checks the published declarations.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each
   with its date and what changed for its users. It ships in the package.
   When it grows long, move the entries of earlier major versions to a
   file of their own, such as `CHANGELOG-1.x.md`, and link to it.
+- `scripts` holds Node.js programs for maintainers, written in TypeScript
+  that Node.js runs directly. `scripts/measure` runs the benchmarks of
+  each package and saves the raw results, never formatted text, in
+  `docs/src/measurements/<package>.json`. It has one module per package,
+  which names the benchmarks that package reports.
+- `examples` holds an example of each package that readers open in the
+  browser, from the Open in StackBlitz or Open in Snack link of its
+  overview page: `recipe` and `class-recipe` are React apps, built with
+  Vite, that StackBlitz opens from the `main` branch, and
+  `native-recipe/App.tsx` is the app of an Expo Snack, whose link
+  `docs/src/packages.ts` builds. The examples are not in the workspace:
+  they install the published packages, at the exact version of their last
+  release, with npm.
 - `.github/workflows` holds a CI and a release workflow for each package,
   named after it, `ci.yml`, which checks what the packages share and the
   docs, and `docs.yml`, which builds the docs and deploys them to GitHub
