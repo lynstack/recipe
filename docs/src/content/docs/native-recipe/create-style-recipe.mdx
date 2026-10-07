@@ -15,165 +15,144 @@ element for a selection of variants.
 <RecipePlayground name="native-recipe/create-style-recipe/badge" />
 
 Pass the result to the `style` prop of the element: `<View
-style={badge({ tone })} />`.
+style={badge({ tone })} />`. For what variants, options, and compound
+variants are, see [Variants](/recipe/native-recipe/variants/).
+
+## Signature
+
+```ts
+// Simplified: the type parameters are left out.
+function createStyleRecipe(config: StyleRecipeConfig): StyleRecipe;
+```
+
+TypeScript infers the variants, options, and style types from `config`,
+so you never write type arguments. The full types are on
+[All exports](/recipe/native-recipe/exports/).
 
 ## The config
 
-| Property           | Description                                                                                                            |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `composes`         | Optional. Recipes whose configs the recipe adds to its own; see [Composing recipes](#composing-recipes).               |
-| `base`             | Optional. The style the element always has.                                                                            |
-| `variants`         | For each variant name, the style of each of its options.                                                               |
-| `compoundVariants` | Optional. Styles added when several variants have particular options at the same time, in order.                       |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                 |
-| `cache`            | Optional. Whether the recipe caches its style. Defaults to `true`. Without the cache, every call returns a new object. |
+| Property           | Required | Description                                                                                                                            |
+| ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `variants`         | Required | For each variant name, the style of each of its options. Write `variants: {}` when the recipe has none.                                |
+| `base`             | Optional | The style the element always has.                                                                                                      |
+| `compoundVariants` | Optional | Styles added when several variants have particular options at the same time, in order. See [Compound variants](#compound-variants).    |
+| `defaultVariants`  | Optional | The option each variant uses when a call leaves it out. A variant without a default is required.                                       |
+| `composes`         | Optional | Style recipes whose configs the recipe adds before its own. See [Composing recipes](#composing-recipes).                               |
+| `cache`            | Optional | Whether the recipe caches its styles. Defaults to `true`. With `false`, every call returns a new object, so leave it on in components. |
+
+`variants` is required even when it is empty. Without it, TypeScript
+reports `Property 'variants' is missing` (TS2741):
+
+```ts
+// Error: Property 'variants' is missing.
+createStyleRecipe({ base: { padding: 8 } });
+
+createStyleRecipe({ base: { padding: 8 }, variants: {} });
+```
+
+A style that never changes does not need a recipe, though: keep it in
+`StyleSheet.create` (see
+[Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate)).
 
 Every style is checked against the styles of React Native, as in
-`StyleSheet.create` (see [TypeScript](/recipe/native-recipe/typescript/)).
+`StyleSheet.create` (see
+[Typing recipes](/recipe/native-recipe/typescript/)).
 
-## The order of styles
+## Compound variants
 
-A recipe merges `base`, then the style of each variant's option in the
-order the config declares the variants, then the matching compound
-variants. A later style overrides the properties of an earlier one, as
-`StyleSheet.flatten` does.
+Each item of `compoundVariants` is an object of type
+`StyleCompoundVariant`:
+
+| Property   | Required | Description                                                                                                      |
+| ---------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `variants` | Required | The condition: one option, or a list of options, for each variant it names. A variant it leaves out matches any. |
+| `style`    | Required | The style added when the condition matches.                                                                      |
+
+```ts
+compoundVariants: [
+  { variants: { tone: "danger", size: ["sm", "md"] }, style: { borderWidth: 2 } },
+],
+```
+
+The condition is checked after defaults apply. A compound variant that
+names an undeclared variant, or lists no declared option for a variant,
+never matches.
+
+## The result
+
+A recipe is a function. It takes a selection and returns a style:
+
+- **Frozen.** The style is a frozen object. Do not change it or spread
+  it.
+- **The same object for the same variants.** The recipe builds the style
+  of each selection once. Every later call with the same variants,
+  including variants left to their defaults, returns that same object.
+  So the `style` prop keeps its identity between renders (see
+  [How it works](/recipe/native-recipe/how-it-works/#stable-styles)).
+- **In a fixed order.** The style merges `base`, then the style of each
+  variant's option, in the order of `variants`, then each matching
+  compound variant, in the order of `compoundVariants`. A later style
+  overrides the properties of an earlier one, as `StyleSheet.flatten`
+  does. A property set to `undefined` is copied too, so it overrides an
+  earlier value.
 
 <RecipeExample
   name="native-recipe/create-style-recipe/text"
   calls={[{ size: "sm", muted: true }]}
 />
 
-A property set to `undefined` is copied too, as in `StyleSheet.flatten`,
-so it overrides an earlier value.
-
-## The same style for the same variants
-
-A recipe builds the style of each selection once, freezes it, and returns
-that object whenever it is called with the same variants, including
-variants left to their defaults.
-
 ```ts
 badge({ tone: "success" }) === badge({ tone: "success" }); // => true
 Object.isFrozen(badge({ tone: "success" })); // => true
 ```
 
-The `style` prop of a component therefore keeps its identity between
-renders. Create each recipe once, at the top level of a module, not inside
-a component, so that its cache lasts (see
-[How it works](/recipe/native-recipe/how-it-works/#stable-styles)).
+The argument is optional when every variant is optional. A call with no
+argument, `undefined`, or `null` is the same as a call with `{}`. Props
+that are not variants are ignored (see
+[Variants](/recipe/native-recipe/variants/#details)).
 
-## Required and default variants
-
-A variant listed in `defaultVariants` may be omitted, and then uses its
-default. A variant without a default is required, so a component cannot
-forget to choose it. When every variant has a default, the argument itself
-is optional.
-
-<RecipeExample
-  name="native-recipe/create-style-recipe/stack"
-  calls={[{}, { direction: "row" }, { gap: undefined }]}
-/>
-
-## Boolean variants
-
-A variant with an option named `"true"` or `"false"` also accepts the
-booleans `true` and `false`, and declares the missing one of those two
-options without a style. A variant whose only options are `"true"` and
-`"false"` is optional and defaults to `false`.
-
-<RecipeExample
-  name="native-recipe/create-style-recipe/input"
-  calls={[{}, { invalid: true, disabled: true }]}
-/>
-
-## Option names that are numbers
-
-An option whose name is a number accepts that number as well as the
-string:
-
-<RecipeExample
-  name="native-recipe/create-style-recipe/heading"
-  calls={[{ level: 1 }, { level: "2" }]}
-/>
-
-## Compound variants
-
-A compound variant adds its `style` when several variants have particular
-options at the same time. For each variant it names, it gives one option
-or a list of options; a variant it leaves out matches any option.
-
-<RecipePlayground name="native-recipe/create-style-recipe/button" />
-
-Conditions are checked after defaults are applied, which is why choosing
-only `tone: "danger"` matches the first compound variant through the
-default `size: "md"`. Matching compound variants
-are applied in the order they are declared. A compound variant that names
-an undeclared variant, or lists no declared option for one, never matches.
-
-## Composing recipes
-
-`composes` lists style recipes whose configs the recipe adds to its own,
-as if they were written in one config: their base styles first, then the
-style of each option, in the order of the recipes, then their compound
-variants before its own. The default of a variant is the last one given.
-The recipe accepts the variants of every recipe it composes, and its
-styles override theirs where they set the same property:
-
-<RecipeExample
-  name="native-recipe/create-style-recipe/icon-button"
-  calls={[{ tone: "neutral", size: "sm" }, { tone: "danger" }]}
-/>
-
-A compound variant of a composed recipe applies after every option, as
-the one of `button` that adds `paddingHorizontal` does, so the recipe's
-own options do not override it; give the recipe a compound variant with
-the same condition to override one. A recipe composed several times
-counts once, and a recipe that only composes others still declares
-`variants: {}`. A themed recipe
-composes the recipe of its theme (see
-[createThemedRecipes](/recipe/native-recipe/create-themed-recipes/#composing-themed-recipes)).
-See [Composing recipes](/recipe/recipe/composing/) in the engine's docs for
-how the configs merge.
-
-## Overriding styles
-
-A recipe takes no style to add. Pass an override next to the recipe's
-style, in a style array, only when there is one (see
-[Building components](/recipe/native-recipe/building-components/#overriding-styles)).
-
-## Undeclared options and other props
-
-- The types accept only the options the config declares. A value from
-  untyped data can still bypass them: an option that its variant does not
-  declare adds no style, and its style is built on every call instead of
-  being cached.
-- Properties of the selection that are not variants are ignored, so a
-  component can pass a recipe all of its props.
-- Calling a recipe without a selection, or with `undefined` or `null`, is
-  the same as calling it with an empty one.
+Create each recipe once, at the top level of a module, not inside a
+component, so that its cache lasts.
 
 ## Listing the variants
 
-A recipe lists its variants in three frozen properties, typed with the
-names of its variants and options:
+A recipe has three frozen properties that list its variants. They are
+typed with the names of its variants and options.
 
-- `variantKeys`, the names of its variants, in the order of `variants`.
-  Use it to split a component's props into the recipe's variants and the
-  rest (see [Building components](/recipe/native-recipe/building-components/)).
-- `variantOptions`, the names of the options of each variant, as strings:
-  integer names first, in ascending order, then `"false"` and `"true"`,
-  which a variant that declares either one has, then the others in the
-  order they are declared.
-- `defaultVariants`, the option each variant uses when the recipe is
-  called without it, as a string: its default, or `"false"` for a boolean
-  variant.
+| Property          | Description                                                                                                                                                                                                |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variantKeys`     | The names of the variants, in the order of `variants`.                                                                                                                                                     |
+| `variantOptions`  | The options of each variant, as strings. The order: integer names first, from smallest to largest; then `"false"` and `"true"` for a boolean variant; then the other names, in the order you declare them. |
+| `defaultVariants` | The option, as a string, that each optional variant uses when a call leaves it out: its default, or `"false"` for a boolean variant.                                                                       |
 
 ```ts
-button.variantKeys; // => ["tone", "size", "outlined"]
-button.variantOptions;
-// => { tone: ["neutral", "danger"], size: ["sm", "md"], outlined: ["false", "true"] }
-button.defaultVariants; // => { size: "md", outlined: "false" }
+badge.variantKeys; // => ["tone", "outlined"]
+badge.variantOptions;
+// => { tone: ["neutral", "success", "danger"], outlined: ["false", "true"] }
+badge.defaultVariants; // => { outlined: "false" }
 ```
 
-Use `variantOptions` to show every look of a component, such as in a
-story of each option, and call the recipe for each selection.
+Use `variantKeys` to split a component's props (see
+[Building components](/recipe/native-recipe/building-components/#split-props-with-variantkeys)),
+and `variantOptions` to show every look of a component.
+
+## Composing recipes
+
+`composes` lists style recipes whose configs the recipe adds before its
+own. The recipe accepts their variants too. See
+[Composing recipes](/recipe/native-recipe/composing/).
+
+## Overriding styles
+
+You cannot pass extra styles into a recipe call. Merge them in the
+`style` prop instead (see
+[Building components](/recipe/native-recipe/building-components/#overriding-styles)).
+
+## See also
+
+- [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/)
+  styles several elements.
+- [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/)
+  builds styles from theme tokens.
+- [All exports](/recipe/native-recipe/exports/) lists every function and
+  type.

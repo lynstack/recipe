@@ -1,0 +1,125 @@
+---
+title: Why native-recipe
+description: "When to use native-recipe instead of StyleSheet.create with theme objects, inline styles, or a theme library: typed variants, stable frozen styles, themes without ternaries, and a cache."
+---
+
+import { styleRecipeSpeedup } from "../../../measurements/native-recipe.ts";
+
+React Native gives you `StyleSheet.create` and the `style` prop. That is
+enough for styles that never change. A component whose styles depend on
+its props, its state, or a theme needs more, and most apps build it by
+hand. native-recipe is that missing piece, as a small library.
+
+## The usual ways
+
+A component with a `tone`, a `size`, and a dark mode is often written
+like this:
+
+```tsx
+import { StyleSheet, View } from "react-native";
+
+const styles = StyleSheet.create({
+  base: { borderRadius: 8 },
+  sm: { height: 32 },
+  md: { height: 40 },
+  danger: { backgroundColor: "#dc2626" },
+  dangerDark: { backgroundColor: "#f87171" },
+});
+
+type BoxProps = { size: "sm" | "md"; danger: boolean; isDark: boolean };
+
+function Box({ size, danger, isDark }: BoxProps) {
+  return (
+    <View
+      style={[
+        styles.base,
+        size === "sm" ? styles.sm : styles.md,
+        danger && (isDark ? styles.dangerDark : styles.danger),
+      ]}
+    />
+  );
+}
+```
+
+It works, but:
+
+- **The props are not typed from the styles.** Nothing ties `size` to
+  the `sm` and `md` styles. A new size needs a change in two places.
+- **The style is a new array on every render.** React compares it
+  property by property, and a memoized child that receives it renders
+  again.
+- **Every theme is a branch.** `isDark ? a : b` repeats in every
+  component, for every color.
+
+Inline styles, such as `style={{ height: size === "sm" ? 32 : 40 }}`,
+have the same problems, and create a new object on every render.
+
+## What native-recipe does instead
+
+```tsx
+import { createStyleRecipe, type VariantsOf } from "@lynstack/native-recipe";
+import { View } from "react-native";
+
+const box = createStyleRecipe({
+  base: { borderRadius: 8 },
+  variants: {
+    size: { sm: { height: 32 }, md: { height: 40 } },
+    danger: { true: { backgroundColor: "#dc2626" } },
+  },
+  defaultVariants: { size: "md" },
+});
+
+function Box(props: VariantsOf<typeof box>) {
+  return <View style={box(props)} />;
+}
+```
+
+- **Typed variants.** The props come from the config. `size: "lg"` is a
+  type error, and a variant without a default is required. See
+  [Variants](/recipe/native-recipe/variants/).
+- **Stable styles.** The recipe returns the same frozen object for the
+  same variants. The `style` prop keeps its identity, so a memoized child
+  skips rendering. See
+  [How it works](/recipe/native-recipe/how-it-works/#stable-styles).
+- **Themes without branches.** With
+  [`createThemedRecipes`](/recipe/native-recipe/create-themed-recipes/),
+  a recipe's styles come from theme tokens, such as
+  `theme.colors.danger`. A dark theme is one more theme object, not a
+  ternary in each component. See
+  [Theming with design tokens](/recipe/native-recipe/themes/).
+- **A cache.** After the first call, a call is a lookup, about
+  {styleRecipeSpeedup} times as fast as merging the styles again. See
+  [Benchmarks](/recipe/native-recipe/performance/).
+- **Small.** The result is a plain style object for the `style` prop. It
+  needs no provider, Babel plugin, Metro setting, or native module, and
+  it works next to any other styling code.
+
+## Theme libraries
+
+Libraries such as [Restyle](https://github.com/Shopify/restyle),
+[Unistyles](https://www.unistyl.es), and
+[NativeWind](https://www.nativewind.dev) also handle themes or variants.
+They are complete styling systems: they bring their own components, their
+own `StyleSheet`, or Tailwind CSS class names. Read their docs to compare
+them in detail.
+
+native-recipe is smaller in scope. It does one thing: it maps props to
+React Native style objects, with types, a cache, and themes. Choose it
+when you want to keep the `style` prop and plain React Native components.
+
+## When not to use it
+
+- **Static styles.** A style that depends on no prop and no theme, such
+  as a separator of a fixed height, stays in `StyleSheet.create`. A recipe
+  adds nothing to it. See
+  [Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate).
+- **Values that change continuously.** The window's width, a scroll
+  offset, or an animated value has no fixed set of options. Keep it out of
+  recipes, and merge it in the `style` prop. See
+  [FAQ](/recipe/native-recipe/faq/#can-i-use-animated-values-in-a-recipe).
+
+## Next steps
+
+- [Installation](/recipe/native-recipe/installation/) adds the package.
+- [Quick start](/recipe/native-recipe/quick-start/) creates your first
+  recipes.

@@ -5,43 +5,53 @@ sidebar:
   label: Exports
 ---
 
+Everything below is exported from `@lynstack/native-recipe`. Every export
+is documented with TSDoc, so your editor shows the full reference.
+
 ## Functions
 
-| Export                  | Description                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `createStyleRecipe`     | Creates a style recipe that returns the style of one element.                |
-| `createSlotStyleRecipe` | Creates a slot style recipe that returns the styles of several slots.        |
-| `createThemedRecipes`   | Returns the recipe creators for recipes whose styles are built from a theme. |
+| Export                  | Signature (simplified)                                    | Explained in                                                             |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `createStyleRecipe`     | `(config: StyleRecipeConfig) => StyleRecipe`              | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/)          |
+| `createSlotStyleRecipe` | `(config: SlotStyleRecipeConfig) => SlotStyleRecipe`      | [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/) |
+| `createThemedRecipes`   | `<Theme extends object>() => ThemedRecipeCreators<Theme>` | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/)      |
 
-## Types
+TypeScript infers the type parameters of `createStyleRecipe` and
+`createSlotStyleRecipe` from the config. Write only the `Theme` of
+`createThemedRecipes`.
 
-| Export                     | Description                                                                                                                                                |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VariantsOf`               | The variants a recipe accepts, a themed recipe included.                                                                                                   |
-| `NativeStyle`              | The style of a React Native element: a view, a text, or an image.                                                                                          |
-| `StyleRecipe`              | A function that returns the style of one element for a selection of variants, with its variants in `variantKeys`, `variantOptions`, and `defaultVariants`. |
-| `StyleRecipeConfig`        | The configuration of a recipe made by `createStyleRecipe`.                                                                                                 |
-| `StyleRecipeVariants`      | The variants of a style recipe's config: for each variant name, the style of each of its options.                                                          |
-| `StyleCompoundVariant`     | A style added when several variants have particular options at the same time.                                                                              |
-| `SlotStyleRecipe`          | A function that returns the style of every slot for a selection of variants, with its variants listed as a `StyleRecipe` lists them.                       |
-| `SlotStyleRecipeConfig`    | The configuration of a slot recipe made by `createSlotStyleRecipe`.                                                                                        |
-| `SlotStyleRecipeVariants`  | The variants of a slot style recipe's config: for each variant name, the styles of each slot for each of its options.                                      |
-| `SlotStyleCompoundVariant` | Styles added to some slots when several variants have particular options at the same time.                                                                 |
-| `SlotStyles`               | Styles for some of a slot recipe's slots, keyed by slot name.                                                                                              |
-| `ThemedRecipe`             | A recipe whose styles are built from a theme, which takes the theme and a selection, with `withTheme`.                                                     |
-| `ThemedRecipeCreators`     | The functions that `createThemedRecipes` returns.                                                                                                          |
-| `VariantSelection`         | The variants a selection names, with the optional ones marked optional.                                                                                    |
-| `VariantOption`            | The values accepted for one variant.                                                                                                                       |
-| `DefaultVariants`          | The option each defaulted variant uses when a selection leaves it out.                                                                                     |
-| `CompoundCondition`        | The condition of a compound variant: the options it matches for each variant it names.                                                                     |
-| `RecipeFunction`           | A function that takes a selection, whose argument is optional when every variant is.                                                                       |
+## Types for components
 
-The functions are described in
-[createStyleRecipe](/recipe/native-recipe/create-style-recipe/),
-[createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/),
-and [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/).
-Every export is documented with TSDoc, so your editor shows the full
-reference, including the types of each config.
+You use these types in your own code.
 
-The recipes are built on [`@lynstack/recipe`](/recipe/recipe/), which
-creates recipes for values of any type.
+| Export                    | Type parameters                | Description                                                                                  | Explained in                                                                      |
+| ------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `VariantsOf`              | `Recipe`: the type of a recipe | The variants a recipe accepts, a themed recipe included. Use it to type a component's props. | [Typing recipes](/recipe/native-recipe/typescript/#typing-component-props)        |
+| `NativeStyle`             | None                           | The style of a React Native element: a view, a text, or an image.                            | [Typing recipes](/recipe/native-recipe/typescript/#any-style)                     |
+| `StyleRecipeVariants`     | None                           | The variants of a style recipe's config, for variant names not known at compile time.        | [Typing recipes](/recipe/native-recipe/typescript/#variants-from-a-cms-or-an-api) |
+| `SlotStyleRecipeVariants` | None                           | The variants of a slot style recipe's config, for variant names not known at compile time.   | [Typing recipes](/recipe/native-recipe/typescript/#variants-from-a-cms-or-an-api) |
+
+## Types of recipes and configs
+
+TypeScript infers these types. You rarely write them, but your editor
+shows them.
+
+| Export                     | Type parameters                                                      | Description                                                                                                                    | Explained in                                                                                |
+| -------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `StyleRecipe`              | `Props`, `Style`, `Composition`                                      | A function that returns the style of one element for a selection, with `variantKeys`, `variantOptions`, and `defaultVariants`. | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-result)                  |
+| `StyleRecipeConfig`        | `Variants`, `Base`, `Compounds`, `DefaultedName`, `Composed`         | The config of `createStyleRecipe`.                                                                                             | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-config)                  |
+| `StyleCompoundVariant`     | `Variants`, `Style`                                                  | A compound variant of a style recipe: `variants` and `style`.                                                                  | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#compound-variants)           |
+| `SlotStyleRecipe`          | `Props`, `Styles`, `Composition`                                     | A function that returns the style of every slot for a selection, with its variants listed as a `StyleRecipe` lists them.       | [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/#the-result)         |
+| `SlotStyleRecipeConfig`    | `Slot`, `Variants`, `Base`, `Compounds`, `DefaultedName`, `Composed` | The config of `createSlotStyleRecipe`.                                                                                         | [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/#the-config)         |
+| `SlotStyleCompoundVariant` | `Variants`, `Styles`                                                 | A compound variant of a slot style recipe: `variants` and `styles`.                                                            | [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/#compound-variants)  |
+| `SlotStyles`               | `Slot`                                                               | Styles for some of a slot recipe's slots, keyed by slot name.                                                                  | [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/#the-config)         |
+| `ThemedRecipe`             | `Theme`, `Props`, `Result`, `Composition`                            | A recipe whose styles are built from a theme. It takes the theme and a selection, and has `withTheme`.                         | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/#calling-a-themed-recipe) |
+| `ThemedRecipeCreators`     | `Theme`                                                              | The functions that `createThemedRecipes` returns.                                                                              | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/#signature)               |
+| `VariantSelection`         | `Variants`, `DefaultedName`                                          | The variants a selection names, with the optional ones marked optional.                                                        | [Variants](/recipe/native-recipe/variants/#required-and-default-variants)                   |
+| `VariantOption`            | `Options`                                                            | The values accepted for one variant: its option names, numbers for number names, and booleans for a boolean variant.           | [Variants](/recipe/native-recipe/variants/#boolean-variants)                                |
+| `DefaultVariants`          | `Variants`, `DefaultedName`                                          | The option each variant with a default uses when a selection leaves it out.                                                    | [Variants](/recipe/native-recipe/variants/#required-and-default-variants)                   |
+| `CompoundCondition`        | `Variants`                                                           | The condition of a compound variant: the options it matches for each variant it names.                                         | [Variants](/recipe/native-recipe/variants/#compound-variants)                               |
+| `RecipeFunction`           | `Props`, `Result`                                                    | A function that takes a selection, whose argument is optional when every variant is.                                           | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-result)                  |
+
+The `Composition` parameter carries what a recipe passes on to the
+recipes that compose it. It exists in the types only.

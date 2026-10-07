@@ -178,13 +178,18 @@ export default defineConfig({
               {
                 items: [
                   { label: "Overview", link: "/native-recipe/" },
+                  "native-recipe/why-native-recipe",
                   "native-recipe/installation",
                   "native-recipe/quick-start",
                 ],
                 label: "Get started",
               },
               {
-                items: ["native-recipe/how-it-works"],
+                items: [
+                  "native-recipe/variants",
+                  "native-recipe/composing",
+                  "native-recipe/how-it-works",
+                ],
                 label: "Concepts",
               },
               {
@@ -209,8 +214,11 @@ export default defineConfig({
               },
               {
                 items: [
+                  "native-recipe/cookbook",
                   "native-recipe/agent-skill",
                   { label: "Benchmarks", slug: "native-recipe/performance" },
+                  "native-recipe/faq",
+                  "native-recipe/glossary",
                   changelogs.nativeRecipe,
                 ],
                 label: "Resources",

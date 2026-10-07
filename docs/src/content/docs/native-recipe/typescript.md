@@ -159,3 +159,12 @@ function createCard(variants: SlotStyleRecipeVariants) {
 
 `NativeStyle` is the style of any React Native element: a view, a text, or
 an image. Use it to type a style that can come from any recipe.
+
+## Next steps
+
+- [All exports](/recipe/native-recipe/exports/) lists every type, with
+  its type parameters.
+- [Building components](/recipe/native-recipe/building-components/) uses
+  `VariantsOf` in real components.
+- [FAQ](/recipe/native-recipe/faq/#why-do-i-get-type-errors-from-react-native-outside-expo)
+  fixes tsconfig errors outside Expo.

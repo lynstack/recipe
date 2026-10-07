@@ -1,0 +1,204 @@
+---
+title: createThemedRecipes
+description: "Create style recipes and slot style recipes whose styles are built from the tokens of a theme, and get the same frozen styles for the same theme and variants."
+head:
+  - tag: title
+    content: "createThemedRecipes: themed React Native styles | lynstack recipe"
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+<Aside type="tip" title="New to themes?">
+  Start with [Theming with design tokens](/recipe/native-recipe/themes/). It
+  builds a light and a dark theme step by step. This page is the reference.
+</Aside>
+
+`createThemedRecipes` returns `createStyleRecipe` and
+`createSlotStyleRecipe` for a theme type. Each takes a function that
+returns the config of the recipe for a theme. Each returns a themed
+recipe, which takes the theme first, then the selection.
+
+<RecipeExample name="native-recipe/create-themed-recipes/button" />
+
+`button(light, { tone: "surface" })` returns the style of the light
+theme, and `button(dark, { tone: "surface" })` the style of the dark one.
+They are the styles that the recipe of each theme returns, which
+[`withTheme`](#withtheme) gives:
+
+<RecipeExample
+  name="native-recipe/create-themed-recipes/button"
+  source={false}
+  calls={[{ tone: "surface" }]}
+/>
+
+<RecipeExample
+  name="native-recipe/create-themed-recipes/dark-button"
+  source={false}
+  calls={[{ tone: "surface" }]}
+/>
+
+Call `createThemedRecipes` once, in a module of your own, and import its
+recipe creators wherever you create recipes (see
+[Theming with design tokens](/recipe/native-recipe/themes/#2-create-the-recipe-creators)).
+At runtime it only returns the two functions. Its value is the type
+parameter: every recipe they create takes that theme type.
+
+## Signature
+
+```ts
+// Simplified: the type parameters of each creator are left out.
+function createThemedRecipes<Theme extends object>(): {
+  createStyleRecipe(
+    config: (theme: Theme) => StyleRecipeConfig,
+  ): ThemedRecipe<Theme>;
+  createSlotStyleRecipe(
+    config: (theme: Theme) => SlotStyleRecipeConfig,
+  ): ThemedRecipe<Theme>;
+};
+```
+
+`Theme` is the type of your theme objects. The return type is
+`ThemedRecipeCreators<Theme>`.
+
+## The config function
+
+The function receives a theme and returns the config of a
+[style recipe](/recipe/native-recipe/create-style-recipe/#the-config) or
+of a [slot style recipe](/recipe/native-recipe/create-slot-style-recipe/#the-config).
+It has the same properties and the same checks, `variants` included.
+TypeScript infers the variants, options, and slots from what it returns.
+A token is typed as the theme type declares it.
+
+Every theme must give the same variants, options, and slots. Only the
+styles may change with the theme. So when you branch on a token, branch
+inside a style. Never add or remove a variant or an option for one
+theme. For a theme with a `highContrast` flag:
+
+```ts
+// Right: the branch is inside the style.
+createStyleRecipe((theme) => ({
+  variants: {
+    outlined: { true: { borderWidth: theme.highContrast ? 2 : 1 } },
+  },
+}));
+
+// Wrong: the branch is around the variant, so one theme has no `outlined`.
+// TypeScript reports an error here.
+createStyleRecipe((theme) => ({
+  variants: theme.highContrast
+    ? {}
+    : { outlined: { true: { borderWidth: 1 } } },
+}));
+```
+
+## Calling a themed recipe
+
+A themed recipe takes the theme, then the selection. The selection is
+optional when every variant is optional:
+
+```ts
+button(light) === button(light, { tone: "primary" }); // => true
+```
+
+It returns the same frozen style for the same theme object and the same
+variants.
+
+## Theme identity
+
+A themed recipe keeps one recipe, with its own cache, for each theme
+object:
+
+- The first call with a theme object builds the config for that theme,
+  and creates a recipe from it. Later calls with the same object reuse
+  that recipe and its cache.
+- Each theme has its own cache. Switching to another theme and back
+  returns the cached styles of the first theme.
+- A new object is a new theme, even with the same tokens. It builds a new
+  recipe with an empty cache. So create each theme once, at the top level
+  of a module, or memoize a theme that you build at runtime (see
+  [Keep each theme stable](/recipe/native-recipe/themes/#keep-each-theme-stable)).
+- A theme object that nothing references anymore is released, with its
+  recipe.
+
+```ts
+const surface = button(light, { tone: "surface" });
+button(dark, { tone: "surface" });
+button(light, { tone: "surface" }) === surface; // => true
+```
+
+## `withTheme`
+
+`withTheme(theme)` returns the recipe of one theme. It is a plain recipe:
+it takes only a selection, and it has `variantKeys`, `variantOptions`, and
+`defaultVariants`. It returns the same recipe for the same theme object.
+
+```ts
+const lightButton = button.withTheme(light);
+
+lightButton({ tone: "surface" }) === button(light, { tone: "surface" }); // => true
+lightButton.variantKeys; // => ["tone"]
+lightButton.variantOptions; // => { tone: ["primary", "surface"] }
+lightButton.defaultVariants; // => { tone: "primary" }
+```
+
+Use it to:
+
+- Read the lists of the variants. A themed recipe has no `variantKeys` of
+  its own, since it needs a theme to build its config.
+- Pass a recipe to code that takes a plain recipe, such as a child
+  component that does not know about themes.
+- Compose a themed recipe in another one (see below).
+
+## Composing themed recipes
+
+To compose a themed recipe, list `withTheme(theme)` in `composes`. Use
+the `theme` that your config function receives. Then each theme composes
+the recipe of the same theme:
+
+```ts
+const iconButton = createStyleRecipe((theme) => ({
+  composes: [button.withTheme(theme)],
+  base: { width: 40, height: 40 },
+  variants: {},
+}));
+```
+
+A themed recipe can also compose recipes without a theme. A themed slot
+recipe composes the `withTheme(theme)` of another themed slot recipe in
+the same way. See
+[Composing recipes](/recipe/native-recipe/composing/#compose-themed-recipes)
+for an example with its output.
+
+## Slot recipes
+
+`createSlotStyleRecipe` works the same way for slot recipes:
+
+```ts
+const { createSlotStyleRecipe } = createThemedRecipes<Theme>();
+
+const card = createSlotStyleRecipe((theme) => ({
+  slots: ["root", "title"],
+  base: { root: { borderRadius: theme.radius }, title: { fontSize: 16 } },
+  variants: {
+    raised: { true: { root: { backgroundColor: theme.colors.surface } } },
+  },
+}));
+
+card(dark, { raised: true }).root; // the root style of the dark theme
+```
+
+## Types
+
+`VariantsOf` returns the variants of a themed recipe, as of any recipe:
+
+```ts
+import type { VariantsOf } from "@lynstack/native-recipe";
+
+type ButtonVariants = VariantsOf<typeof button>;
+// => { readonly tone?: "primary" | "surface" | undefined }
+```
+
+`ThemedRecipe` is the type of a themed recipe, and `ThemedRecipeCreators`
+the type of what `createThemedRecipes` returns (see
+[All exports](/recipe/native-recipe/exports/)).

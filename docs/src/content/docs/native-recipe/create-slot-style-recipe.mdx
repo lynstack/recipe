@@ -12,7 +12,8 @@ import RecipePlayground from "../../../components/RecipePlayground.astro";
 `createSlotStyleRecipe` creates a slot style recipe, which returns the
 style of each element of a component, its slots, for a selection of
 variants. React Native styles do not cascade, so a component of several
-elements, such as a button with a label, needs a style for each.
+elements, such as a button with a label, needs a style for each. The slot
+names are your own: name them after the parts of your component.
 
 <RecipePlayground name="native-recipe/create-slot-style-recipe/card" />
 
@@ -23,72 +24,97 @@ elements, such as a button with a label, needs a style for each.
 </View>
 ```
 
-## The config
-
-A slot recipe takes the config of a
-[style recipe](/recipe/native-recipe/create-style-recipe/), with `slots`,
-and with an object of styles keyed by slot name wherever a style recipe
-takes a style:
-
-| Property           | Description                                                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `composes`         | Optional. Slot recipes whose configs the slot recipe adds to its own; see [Composing slot recipes](#composing-slot-recipes). |
-| `slots`            | The names of the slots, in the order of the result.                                                                          |
-| `base`             | Optional. The style each slot always has.                                                                                    |
-| `variants`         | For each variant name, the style of each slot for each of its options.                                                       |
-| `compoundVariants` | Optional. Styles added to some slots, under `styles`, when several variants match.                                           |
-| `defaultVariants`  | Optional. The option each variant uses when a selection leaves it out.                                                       |
-| `cache`            | Optional. Whether the slot recipe caches its styles. Defaults to `true`. Without the cache, every call returns a new object. |
-
-An option or compound variant gives styles only to the slots it names.
-Each slot's style is merged in the order of a style recipe: its base
-style, then its style for each variant's option, then for each matching
-compound variant. Variants, default variants, boolean variants, compound
-conditions, undeclared options, `variantKeys`, `variantOptions`, and
-`defaultVariants` behave as in a style
-recipe.
-
-## The same styles for the same variants
-
-A slot recipe builds the styles of each selection once, and returns the
-same frozen object for it, holding the same frozen style for each slot.
+## Signature
 
 ```ts
-card({ tone: "inverted", compact: true }) ===
-  card({ tone: "inverted", compact: true }); // => true
+// Simplified: the type parameters are left out.
+function createSlotStyleRecipe(config: SlotStyleRecipeConfig): SlotStyleRecipe;
 ```
 
-## Slots without styles
+TypeScript infers the slots, variants, options, and style types from
+`config`, so you never write type arguments.
 
-Every slot is present in the result. A slot that the selection gives no
-style is an empty style, so its element can always receive it.
+## The config
 
-<RecipeExample
-  name="native-recipe/create-slot-style-recipe/icon-button"
-  calls={[{ size: "md" }]}
-/>
+The config is the config of a
+[style recipe](/recipe/native-recipe/create-style-recipe/#the-config),
+with `slots`. Wherever a style recipe takes a style, a slot recipe takes
+an object of styles keyed by slot name.
 
+| Property           | Required | Description                                                                                                                             |
+| ------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `slots`            | Required | The names of the slots, in the order of the result.                                                                                     |
+| `variants`         | Required | For each variant name, the styles of the slots for each option. Write `variants: {}` when the recipe has none.                          |
+| `base`             | Optional | The style each slot always has.                                                                                                         |
+| `compoundVariants` | Optional | Styles added to some slots when several variants have particular options at the same time. See [Compound variants](#compound-variants). |
+| `defaultVariants`  | Optional | The option each variant uses when a call leaves it out. A variant without a default is required.                                        |
+| `composes`         | Optional | Slot style recipes whose configs the recipe adds before its own. See [Composing slot recipes](#composing-slot-recipes).                 |
+| `cache`            | Optional | Whether the recipe caches its styles. Defaults to `true`. With `false`, every call returns a new object, so leave it on in components.  |
+
+An option or a compound variant gives styles only to the slots it names.
 A style for a slot that `slots` does not declare is a type error.
+Variants, defaults, boolean variants, and undeclared options work as in a
+style recipe (see [Variants](/recipe/native-recipe/variants/)).
 
 ## Compound variants
 
-A compound variant gives the style to add to each slot it names, under
-`styles`.
+Each item of `compoundVariants` is an object of type
+`SlotStyleCompoundVariant`. It uses `styles`, with a style for each slot,
+where a style recipe uses `style`:
+
+| Property   | Required | Description                                                                                                      |
+| ---------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `variants` | Required | The condition: one option, or a list of options, for each variant it names. A variant it leaves out matches any. |
+| `styles`   | Required | The style to add to each slot it names when the condition matches.                                               |
 
 <RecipeExample
   name="native-recipe/create-slot-style-recipe/field"
   calls={[{ invalid: true, disabled: true }]}
 />
 
-## Composing slot recipes
+## The result
 
-`composes` lists slot style recipes whose configs the slot recipe adds to
-its own, as a style recipe does (see
-[Composing recipes](/recipe/native-recipe/create-style-recipe/#composing-recipes)).
-The slot recipe has the slots of each, theirs first, and gives styles to
-any of them:
+A slot recipe returns an object with the style of each slot.
+
+- **Frozen.** The object and the style of each slot are frozen.
+- **The same object for the same variants.** The recipe builds the
+  styles of each selection once, and returns the same object, with the
+  same style for each slot, on every later call with the same variants.
+- **In a fixed order.** Each slot's style merges its base style, then its
+  style for each variant's option, then its style for each matching
+  compound variant, as in a
+  [style recipe](/recipe/native-recipe/create-style-recipe/#the-result).
+- **Every slot.** Every slot is in the result. A slot that gets no style
+  is an empty style, so its element can always receive it.
+
+```ts
+card({ tone: "inverted", compact: true }) ===
+  card({ tone: "inverted", compact: true }); // => true
+```
 
 <RecipeExample
-  name="native-recipe/create-slot-style-recipe/dialog"
-  calls={[{ tone: "inverted", compact: true }]}
+  name="native-recipe/create-slot-style-recipe/icon-button"
+  calls={[{ size: "md" }]}
 />
+
+## Listing the variants
+
+A slot recipe has the same `variantKeys`, `variantOptions`, and
+`defaultVariants` as a style recipe (see
+[createStyleRecipe](/recipe/native-recipe/create-style-recipe/#listing-the-variants)).
+
+## Composing slot recipes
+
+`composes` lists slot style recipes whose configs the slot recipe adds
+before its own. The slot recipe has the slots of each, theirs first, and
+can style any of them. See
+[Composing recipes](/recipe/native-recipe/composing/#compose-slot-recipes).
+
+## See also
+
+- [createStyleRecipe](/recipe/native-recipe/create-style-recipe/) styles
+  one element.
+- [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/)
+  builds styles from theme tokens.
+- [All exports](/recipe/native-recipe/exports/) lists every function and
+  type.

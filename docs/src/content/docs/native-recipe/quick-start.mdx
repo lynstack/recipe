@@ -1,26 +1,39 @@
 ---
 title: Quick start with native-recipe
-description: "Style a badge with createStyleRecipe and a button with createSlotStyleRecipe, use them in React Native components, and type their props with VariantsOf."
+description: "Style a badge with createStyleRecipe, a button and a card with createSlotStyleRecipe, use them in React Native components, type their props with VariantsOf, and build styles from a theme."
 sidebar:
   label: Quick start
 ---
 
 import RecipeExample from "../../../components/RecipeExample.astro";
+import { packages } from "../../../packages.ts";
 
-This page styles a badge and a button. Install the package first (see
-[Installation](/recipe/native-recipe/installation/)).
+This page styles a badge, a button, and a card. Install the package first
+(see [Installation](/recipe/native-recipe/installation/)).
 
 ## 1. Create a recipe
 
-`createStyleRecipe` takes the styles of an element: the style it always
-has, in `base`, and the style of each option of each variant. Create it
-once, at the top level of a module, as you would call `StyleSheet.create`:
+A [recipe](/recipe/native-recipe/glossary/#recipe) is a function made from
+your style config. `createStyleRecipe` takes the styles of one element:
+
+- `base`: the style it always has.
+- `variants`: for each [variant](/recipe/native-recipe/glossary/#variant),
+  a prop such as `tone`, the style of each
+  [option](/recipe/native-recipe/glossary/#option), a value such as
+  `"success"`.
+- `compoundVariants`: styles for combinations of options.
+- `defaultVariants`: the option each variant uses when you leave it out.
+
+Create it once, at the top level of a module, as you would call
+`StyleSheet.create`:
 
 <RecipeExample name="native-recipe/quick-start/badge" />
 
 ## 2. Call it
 
-A recipe takes a selection of variants and returns the style:
+Call the recipe with a
+[selection](/recipe/native-recipe/glossary/#selection), the variants you
+choose. It returns the style:
 
 <RecipeExample
   name="native-recipe/quick-start/badge"
@@ -32,12 +45,13 @@ A recipe takes a selection of variants and returns the style:
   ]}
 />
 
-- `tone` and `size` have defaults, so a selection may leave them out.
-- `outlined` declares only `true`, so it is a boolean variant: optional,
-  and `false` by default.
+- `tone` and `size` have defaults, so you can leave them out.
+- `outlined` has only a `true` option. That makes it a
+  [boolean variant](/recipe/native-recipe/glossary/#boolean-variant). You
+  can leave it out, and then it is `false`.
 - The compound variant adds its style when `tone` is `danger` and
-  `outlined` is `true`, after the styles of the variants, so its border
-  color wins.
+  `outlined` is `true`. It applies after the styles of the variants, so
+  its border color wins.
 
 Calling it again with the same variants returns the same frozen object:
 
@@ -70,8 +84,9 @@ style overrides and memoized components.
 ## 4. Style several elements with a slot recipe
 
 React Native styles do not cascade, so a component of several elements,
-such as a button and its label, needs a style for each. A slot recipe
-returns the style of every element, its slots:
+such as a button and its label, needs a style for each. A
+[slot recipe](/recipe/native-recipe/glossary/#slot-recipe) returns one
+style for each element, its [slots](/recipe/native-recipe/glossary/#slot):
 
 <RecipeExample
   name="native-recipe/quick-start/button"
@@ -97,14 +112,45 @@ export function Button({ title, onPress, ...variants }: ButtonProps) {
 }
 ```
 
+The slot names are your own. `root` and `label` are only names: name the
+slots after the parts of your component. A card can have a `container`, a
+`title`, and a `body`:
+
+<RecipeExample
+  name="native-recipe/quick-start/card"
+  calls={[{ tone: "inverted" }]}
+/>
+
+```tsx
+import type { ReactNode } from "react";
+import type { VariantsOf } from "@lynstack/native-recipe";
+import { Text, View } from "react-native";
+
+type CardProps = VariantsOf<typeof card> & {
+  title: string;
+  children: ReactNode;
+};
+
+export function Card({ title, children, ...variants }: CardProps) {
+  const styles = card(variants);
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.body}>{children}</Text>
+    </View>
+  );
+}
+```
+
 See [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/).
 
 ## 5. Build styles from a theme
 
 The colors above are written in each recipe. A design system keeps them
-in a theme instead, with one theme for light and one for dark.
-`createThemedRecipes` returns recipe creators whose config is built from
-a theme, and its recipes take the theme first:
+in a [theme](/recipe/native-recipe/glossary/#theme) instead, with one
+theme for light and one for dark. `createThemedRecipes` returns recipe
+creators whose config is a function of the theme. Their recipes take the
+theme first, then the variants:
 
 ```ts
 import { createThemedRecipes } from "@lynstack/native-recipe";
@@ -125,7 +171,14 @@ export const themedButton = createSlotStyleRecipe((theme) => ({
     },
     label: { color: theme.colors.onPrimary },
   },
-  variants: {},
+  // Required, even when a recipe has no variants: then write `variants: {}`.
+  variants: {
+    size: {
+      sm: { root: { height: 32 }, label: { fontSize: 14 } },
+      md: { root: { height: 40 }, label: { fontSize: 16 } },
+    },
+  },
+  defaultVariants: { size: "md" },
 }));
 
 const light: Theme = {
@@ -133,9 +186,21 @@ const light: Theme = {
   radius: { md: 8 },
 };
 
-themedButton(light).root; // => { borderRadius: 8, backgroundColor: "#2563eb" }
+// The theme first, then the variants.
+const styles = themedButton(light, { size: "sm" });
+styles.root; // borderRadius 8, the light primary color, and height 32
 ```
 
-[Themes and design tokens](/recipe/native-recipe/themes/) builds a light
-and a dark theme, provides them with a theme provider, and switches with
-the color scheme.
+## Next steps
+
+- [Theming with design tokens](/recipe/native-recipe/themes/) builds a
+  light and a dark theme, provides them with a theme provider, and
+  switches with the color scheme.
+- [Variants](/recipe/native-recipe/variants/) explains required, boolean,
+  and compound variants.
+- [Cookbook](/recipe/native-recipe/cookbook/) has recipes for common
+  components.
+- <a href={packages["native-recipe"].exampleApp.url}>
+    Open the example in Snack
+  </a>
+  to edit the badge and the button in the browser.

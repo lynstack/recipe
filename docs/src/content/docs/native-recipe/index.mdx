@@ -3,29 +3,41 @@ title: native-recipe
 description: "Fast, type-safe React Native style recipes with variants, compound variants, slots, and theme tokens, which return the same frozen style for the same variants."
 ---
 
+import { Aside } from "@astrojs/starlight/components";
 import PackageMeta from "../../../components/PackageMeta.astro";
-import { styleRecipeSpeedup } from "../../../measurements/native-recipe.ts";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
+import { styleRecipeSpeedup } from "../../../measurements/native-recipe.ts";
+import { packages } from "../../../packages.ts";
 
 <PackageMeta folder="native-recipe" />
 
-`@lynstack/native-recipe` maps a component's variants to its React Native
-styles. It has three functions:
-
-- [`createStyleRecipe`](/recipe/native-recipe/create-style-recipe/) creates
-  a recipe for the style of one element.
-- [`createSlotStyleRecipe`](/recipe/native-recipe/create-slot-style-recipe/)
-  creates a slot recipe for the styles of several elements, such as a
-  button's container and label.
-- [`createThemedRecipes`](/recipe/native-recipe/create-themed-recipes/)
-  returns both, for recipes whose styles are built from the tokens of a
-  theme.
+`@lynstack/native-recipe` maps a component's props to its React Native
+styles. You write the styles of each prop value once, in a
+[recipe](/recipe/native-recipe/glossary/#recipe), and call it with the
+props to get the style.
 
 <RecipePlayground name="native-recipe/index/badge" />
 
 ```ts
 badge({ tone: "danger" }) === badge({ tone: "danger" }); // => true
 ```
+
+<Aside title="Words used here">
+  A **[variant](/recipe/native-recipe/glossary/#variant)** is a prop that
+  changes the style, such as `tone`. An
+  **[option](/recipe/native-recipe/glossary/#option)** is one of its values,
+  such as `"danger"`. A **[slot](/recipe/native-recipe/glossary/#slot)** is one
+  element of a component. The [glossary](/recipe/native-recipe/glossary/)
+  defines every term.
+</Aside>
+
+## Which function to use
+
+| You want to style                                | Use                                                                                                |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| One element, such as a badge                     | [`createStyleRecipe`](/recipe/native-recipe/create-style-recipe/)                                  |
+| Several elements, such as a button and its label | [`createSlotStyleRecipe`](/recipe/native-recipe/create-slot-style-recipe/)                         |
+| Elements whose styles come from theme tokens     | [`createThemedRecipes`](/recipe/native-recipe/create-themed-recipes/), which returns both creators |
 
 ## What it gives you
 
@@ -35,35 +47,44 @@ badge({ tone: "danger" }) === badge({ tone: "danger" }); // => true
   child skips rendering (see
   [How it works](/recipe/native-recipe/how-it-works/)).
 - **Type-safe.** Every style is checked against the styles of React
-  Native, as in `StyleSheet.create`, and the result keeps the types of the
-  properties the config declares: a text style passed to a `View` is a
+  Native, as in `StyleSheet.create`. The result keeps the types of the
+  properties the config declares, so a text style passed to a `View` is a
   type error. Variant names, options, and slots are inferred from the
   config, and a variant without a default is required.
 - **Themes.** Build styles from the tokens of a design system, and switch
-  between light and dark, or any theme, without declaring each theme's
+  between light and dark, or any theme, without writing each theme's
   styles in every recipe (see
-  [Themes and design tokens](/recipe/native-recipe/themes/)).
+  [Theming with design tokens](/recipe/native-recipe/themes/)).
 - **Fast.** A call with the cache is a lookup, about {styleRecipeSpeedup}
   times as fast as merging the styles again (see
-  [Performance](/recipe/native-recipe/performance/)).
+  [Benchmarks](/recipe/native-recipe/performance/)).
 - **Small.** ES modules only, with no code from React Native at runtime.
-  Its one dependency is [`@lynstack/recipe`](/recipe/recipe/), the engine
-  it is built on.
+  It needs no provider, Babel plugin, or native module.
+
+## Try it
+
+<a href={packages["native-recipe"].exampleApp.url}>
+  Open the example in Expo Snack
+</a>
+to edit a badge and a button in the browser. The Snack runs as JavaScript (see
+[FAQ](/recipe/native-recipe/faq/#why-is-the-snack-in-javascript)).
 
 ## When to use it
 
 Use it to style React Native components whose styles depend on their
-props or state. To style components on the web with class names, use
-[`@lynstack/class-recipe`](/recipe/class-recipe/); to map variants to
-other values, use [`@lynstack/recipe`](/recipe/recipe/).
+props, their state, or a theme. Keep styles that never change in
+`StyleSheet.create` (see
+[Why native-recipe](/recipe/native-recipe/why-native-recipe/)). To style
+components on the web with class names, use
+[`@lynstack/class-recipe`](/recipe/class-recipe/).
 
 ## Next steps
 
-- [Quick start](/recipe/native-recipe/quick-start/) styles a badge and a
-  button, and types their props.
-- [How it works](/recipe/native-recipe/how-it-works/) explains the cache,
-  the order of styles, and stable styles.
-- [Themes and design tokens](/recipe/native-recipe/themes/) builds a light
-  and a dark theme with a theme provider.
-- [Agent skill](/recipe/native-recipe/agent-skill/) teaches coding agents
-  to keep styles stable and to build them from theme tokens.
+- [Why native-recipe](/recipe/native-recipe/why-native-recipe/) compares
+  it with `StyleSheet.create` and theme objects.
+- [Quick start](/recipe/native-recipe/quick-start/) styles a badge, a
+  button, and a card, and types their props.
+- [Theming with design tokens](/recipe/native-recipe/themes/) builds a
+  light and a dark theme with a theme provider.
+- <a href={packages["native-recipe"].exampleApp.url}>Open in Snack</a>
+  runs the example in the browser, without installing anything.

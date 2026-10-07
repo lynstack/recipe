@@ -1,5 +1,5 @@
 ---
-title: Themes and design tokens
+title: Theming with design tokens
 description: "Build React Native styles from design tokens: define a light and a dark theme, provide them with a provider, follow the color scheme, and keep styles cached."
 ---
 
@@ -178,6 +178,10 @@ export function useTheme(): Theme {
 }
 ```
 
+`use(ThemeContext)` and `<ThemeContext value={...}>` are React 19 APIs.
+They do the same as `useContext(ThemeContext)` and
+`<ThemeContext.Provider value={...}>` in earlier versions of React.
+
 The provider passes `light` or `dark` themselves, never a copy, so each
 theme keeps its identity, and with it the cache of every recipe (see
 [Keep each theme stable](#keep-each-theme-stable)). Wrap the app in it:
@@ -251,11 +255,8 @@ export const button = createSlotStyleRecipe((theme) => ({
 The same recipe returns the styles of each theme:
 
 ```ts
-button(light, { tone: "outline" }).label;
-// => { fontWeight: "600", color: "#111827", fontSize: 16 }
-
-button(dark, { tone: "outline" }).label;
-// => { fontWeight: "600", color: "#f9fafb", fontSize: 16 }
+button(light, { tone: "outline" }).label; // color is light.colors.text
+button(dark, { tone: "outline" }).label; // color is dark.colors.text
 ```
 
 A style that no theme changes, such as `fontWeight` here, is written as
@@ -294,12 +295,10 @@ of that theme: built on the first switch, from the cache after that.
 
 ## Keep each theme stable
 
-A themed recipe keeps one compiled recipe, with its cache, for each theme
-object. A new object, even with the same tokens, compiles a new recipe
-and starts with an empty cache, so it costs as much as a first call on
-every render.
-
-Pass the theme objects themselves:
+A themed recipe keeps one cache for each theme object, so a new object
+starts with an empty cache, even with the same tokens (see
+[Theme identity](/recipe/native-recipe/create-themed-recipes/#theme-identity)).
+Pass the theme objects themselves, never a copy:
 
 ```tsx
 // Wrong: a new object on every render.
@@ -312,8 +311,7 @@ const theme = { ...use(ThemeContext) };
 ```
 
 A theme built at runtime, such as one with a brand color loaded from a
-server, is fine as long as it is built once for each set of inputs.
-Memoize it on what it is built from:
+server, is fine. Build it once for each set of inputs, with `useMemo`:
 
 ```tsx
 const theme = useMemo(
@@ -321,8 +319,6 @@ const theme = useMemo(
   [base, brandColor],
 );
 ```
-
-A theme that is no longer referenced is released with its recipe.
 
 ## More than two themes
 
@@ -345,20 +341,14 @@ the color scheme, the brand, and the density in the theme, and the tone,
 the size, and the state of a component in its variants. Compound variants
 combine variants as usual, with styles built from the theme.
 
-The config of every theme must declare the same variants and options;
-only the styles depend on the theme.
+Every theme must give the same variants and options (see
+[The config function](/recipe/native-recipe/create-themed-recipes/#the-config-function)).
 
 ## Passing a theme's recipe down
 
-`withTheme` returns the recipe of one theme, a plain recipe, which a
-child can call without knowing about themes:
-
-```ts
-const outline = button.withTheme(light);
-
-outline({ tone: "outline" }) === button(light, { tone: "outline" }); // => true
-outline.variantKeys; // => ["tone", "size"]
-```
+`button.withTheme(theme)` returns the plain recipe of one theme, which a
+child can call without knowing about themes (see
+[`withTheme`](/recipe/native-recipe/create-themed-recipes/#withtheme)).
 
 ## Values that do not fit a theme
 
@@ -366,3 +356,12 @@ A value that varies continuously, such as the window's width or an
 animated value, fits neither a variant nor a theme. Pass it in a style
 next to the recipe's (see
 [Building components](/recipe/native-recipe/building-components/#overriding-styles)).
+
+## Next steps
+
+- [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/) is
+  the reference of themed recipes and `withTheme`.
+- [Building components](/recipe/native-recipe/building-components/)
+  covers style overrides and memoized children.
+- [Composing recipes](/recipe/native-recipe/composing/#compose-themed-recipes)
+  shares styles between themed recipes.

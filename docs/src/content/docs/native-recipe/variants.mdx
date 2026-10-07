@@ -1,0 +1,165 @@
+---
+title: Variants in native-recipe
+description: "What variants, options, and selections are in native-recipe: required and default variants, boolean variants, number options, compound variants, and how to list them."
+sidebar:
+  label: Variants
+---
+
+import RecipeExample from "../../../components/RecipeExample.astro";
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+
+This page explains how a recipe turns props into styles. It uses a few
+words:
+
+- A **recipe** is a function made from your style config. You call it
+  with props, and it returns a style.
+- A **variant** is a prop that changes the style, such as `size`.
+- An **option** is one value of a variant, such as `"sm"`.
+- A **selection** is the variants you pass in one call, such as
+  `{ size: "sm" }`.
+- A **slot** is one element of a component, such as the `label` of a
+  button. A slot recipe returns one style for each slot. You choose the
+  slot names.
+
+The [glossary](/recipe/native-recipe/glossary/) has every term.
+
+## Required and default variants
+
+A variant with a default in `defaultVariants` is optional. When a call
+leaves it out, or passes `undefined`, the recipe uses the default.
+
+A variant without a default is required. TypeScript reports an error when
+a call leaves it out, so a component cannot forget to choose it. When
+every variant is optional, you can call the recipe with no argument.
+
+<RecipeExample
+  name="native-recipe/variants/avatar"
+  calls={[
+    { size: "sm" },
+    { size: "lg", shape: "square" },
+    { size: "sm", shape: undefined },
+  ]}
+/>
+
+```ts
+// Error: size is required.
+avatar({ shape: "square" });
+```
+
+## Boolean variants
+
+A variant with an option named `true` or `false` is a boolean variant. It
+takes the booleans `true` and `false`, as well as the strings.
+
+If you declare only `true`, the recipe adds an empty `false` option. If
+the variant has only these two options, it is optional, and its default
+is `false`.
+
+<RecipeExample
+  name="native-recipe/variants/input"
+  calls={[{}, { invalid: true, disabled: true }]}
+/>
+
+Here `invalid` declares both options, so `false` has a style of its own.
+`disabled` declares only `true`.
+
+## Option names that are numbers
+
+An option whose name is a number accepts that number as well as the
+string:
+
+<RecipeExample
+  name="native-recipe/variants/heading"
+  calls={[{ level: 1 }, { level: "2" }]}
+/>
+
+## Compound variants
+
+A compound variant adds a style when several variants have particular
+options at the same time. Each one is an object with two properties:
+
+```ts
+{
+  // The condition: one option, or a list of options, for each variant
+  // it names. A variant it leaves out matches any option.
+  variants: { tone: "danger", size: ["sm", "md"] },
+  // The style to add when the condition matches.
+  style: { paddingHorizontal: 20 },
+}
+```
+
+A slot recipe uses `styles` instead of `style`, with a style for each slot
+it changes: `styles: { label: { opacity: 0.5 } }`.
+
+<RecipePlayground name="native-recipe/variants/button" />
+
+The recipe checks the condition after it applies the defaults. So
+`{ tone: "danger" }` matches the first compound variant: `size` is `md`
+by default. When several compound variants match, they apply in the order
+you declare them, after the styles of the variants.
+
+## In a slot recipe
+
+A slot recipe works the same way. The only difference is the shape of
+each style: an option gives a style for each slot it changes, and a slot
+it leaves out gets nothing from that option.
+
+```ts
+const field = createSlotStyleRecipe({
+  slots: ["label", "input"],
+  variants: {
+    invalid: {
+      true: { label: { color: "#b91c1c" }, input: { borderColor: "#dc2626" } },
+    },
+  },
+});
+```
+
+The result always has every slot. A slot with no style is an empty
+object. See
+[createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/).
+
+## Listing the variants
+
+Every recipe has three properties that list its variants. Use them to
+split a component's props, or to show every look of a component, such as
+in a story for each option:
+
+- `variantKeys`: the names of the variants.
+- `variantOptions`: the options of each variant, as strings.
+- `defaultVariants`: the option each optional variant uses.
+
+```ts
+button.variantKeys; // => ["tone", "size", "outlined"]
+button.variantOptions;
+// => { tone: ["neutral", "danger"], size: ["sm", "md"], outlined: ["false", "true"] }
+button.defaultVariants; // => { size: "md", outlined: "false" }
+```
+
+The [reference](/recipe/native-recipe/create-style-recipe/#listing-the-variants)
+gives the exact order of the options.
+
+## Details
+
+You can stop reading here. These rules matter only for untyped data and
+edge cases.
+
+- **Undeclared options.** The types accept only the options that the
+  config declares. A value from untyped data, such as JSON, can still get
+  through. An option that the variant does not declare adds no style.
+  The recipe does not cache its style, so it builds a new object on every
+  call.
+- **Other props.** The recipe ignores props that are not variants. So a
+  component can pass all of its props to the recipe.
+- **`null` and `undefined`.** Calling a recipe with no argument, with
+  `undefined`, or with `null` is the same as calling it with `{}`. A
+  variant set to `undefined` uses its default.
+
+## Next steps
+
+- [Composing recipes](/recipe/native-recipe/composing/) reuses the
+  variants and styles of one recipe in another.
+- [How it works](/recipe/native-recipe/how-it-works/) explains the cache
+  and the order of styles.
+- [Cookbook](/recipe/native-recipe/cookbook/) has ready-made recipes to
+  copy.

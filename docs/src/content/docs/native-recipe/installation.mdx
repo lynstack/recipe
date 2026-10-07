@@ -40,8 +40,39 @@ nothing from it at runtime.
 
 <Requirements folder="native-recipe" />
 
+## TypeScript setup
+
+In an Expo app, `tsconfig.json` extends `expo/tsconfig.base`, which works
+as it is. A React Native CLI app extends `@react-native/typescript-config`,
+which works too.
+
+A tsconfig that you write by hand can report errors inside React Native's
+own type declarations. Some, such as `Duplicate identifier 'FormData'`,
+come from the DOM types, which declare the same globals as React Native.
+Others come from React Native's declarations themselves, which do not
+compile without `skipLibCheck`. Set `skipLibCheck`, and leave the DOM out
+of `lib`:
+
+```jsonc title="tsconfig.json"
+{
+  "compilerOptions": {
+    // Next to your other options, such as "jsx" and "module".
+    "lib": ["ES2022"],
+    "skipLibCheck": true,
+    "strict": true,
+  },
+}
+```
+
 <Aside type="tip" title="Using a coding agent?">
   Install the [agent skill](/recipe/native-recipe/agent-skill/) too. It teaches
   Claude Code, Codex, Cursor, and other agents to keep styles stable and to
   build them from theme tokens.
 </Aside>
+
+## Next steps
+
+- [Quick start](/recipe/native-recipe/quick-start/) creates your first
+  recipes.
+- [Why native-recipe](/recipe/native-recipe/why-native-recipe/) explains
+  when a recipe helps.

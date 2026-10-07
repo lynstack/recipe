@@ -1,0 +1,158 @@
+---
+title: native-recipe cookbook
+description: "Ready-made React Native style recipes to copy: a badge, a button, a card, a form field, and a dialog, with variants, slots, and compound variants."
+sidebar:
+  label: Cookbook
+---
+
+import RecipePlayground from "../../../components/RecipePlayground.astro";
+
+Each recipe below is ready to copy into your app. Change the colors and
+sizes to match your design. In an app with a theme, write each one with
+the creators of
+[`createThemedRecipes`](/recipe/native-recipe/create-themed-recipes/), and
+replace the literal values with tokens (see
+[Theming with design tokens](/recipe/native-recipe/themes/)).
+
+## Badge
+
+One element, so a style recipe. React Native has no inline box with text,
+so the badge is a `Text` with a background. `overflow: "hidden"` lets
+iOS round its corners.
+
+<RecipePlayground name="native-recipe/cookbook/badge" />
+
+```tsx
+<Text style={badge({ tone: "success" })}>Paid</Text>
+```
+
+## Button
+
+A pressable and its label: two slots. `disabled` and `fullWidth` are
+boolean variants. A compound variant gives a disabled ghost button a
+border, so it stays visible.
+
+<RecipePlayground name="native-recipe/cookbook/button" />
+
+```tsx
+import type { VariantsOf } from "@lynstack/native-recipe";
+import { Pressable, Text } from "react-native";
+
+type ButtonProps = VariantsOf<typeof button> & {
+  title: string;
+  onPress: () => void;
+  disabled?: boolean;
+};
+
+export function Button({ title, onPress, ...variants }: ButtonProps) {
+  const styles = button(variants);
+  return (
+    <Pressable
+      style={styles.root}
+      onPress={onPress}
+      disabled={variants.disabled}
+    >
+      <Text style={styles.label}>{title}</Text>
+    </Pressable>
+  );
+}
+```
+
+`disabled` is both a variant of the recipe and a prop of `Pressable`, so
+the component passes it to both. The variant also accepts the strings
+`"true"` and `"false"`, so the props type it as a boolean only:
+`disabled?: boolean`.
+
+## Card
+
+A container, a title, a body, and a footer for actions. The slot names
+are your own; these follow the parts of the card.
+
+<RecipePlayground name="native-recipe/cookbook/card" />
+
+```tsx
+const styles = card({ elevated: true });
+
+<View style={styles.container}>
+  <Text style={styles.title}>{title}</Text>
+  <Text style={styles.body}>{body}</Text>
+  <View style={styles.footer}>{actions}</View>
+</View>;
+```
+
+## Field
+
+A label, a text input, and a hint or error message. A compound variant
+hides the error colors when the field is disabled, since the user cannot
+fix it.
+
+<RecipePlayground name="native-recipe/cookbook/field" />
+
+```tsx
+import type { VariantsOf } from "@lynstack/native-recipe";
+import { Text, TextInput, View } from "react-native";
+
+type FieldProps = VariantsOf<typeof field> & {
+  disabled?: boolean;
+  label: string;
+  hint?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+};
+
+export function Field({
+  label,
+  hint,
+  value,
+  onChangeText,
+  ...variants
+}: FieldProps) {
+  const styles = field(variants);
+  return (
+    <View style={styles.root}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
+        editable={!variants.disabled}
+      />
+      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+    </View>
+  );
+}
+```
+
+## Dialog
+
+An overlay, the content box, a title, a description, and the actions.
+`placement` shows it in the center or as a bottom sheet. The compound
+variant takes a list of sizes, so a bottom sheet spans the screen at
+every size.
+
+<RecipePlayground name="native-recipe/cookbook/dialog" />
+
+```tsx
+import { Modal, Text, View } from "react-native";
+
+const styles = dialog({ placement: "bottom" });
+
+<Modal transparent visible={visible} onRequestClose={onClose}>
+  <View style={styles.overlay}>
+    <View style={styles.content}>
+      <Text style={styles.title}>Delete this file?</Text>
+      <Text style={styles.description}>You cannot undo this.</Text>
+      <View style={styles.actions}>{actions}</View>
+    </View>
+  </View>
+</Modal>;
+```
+
+## Next steps
+
+- [Composing recipes](/recipe/native-recipe/composing/) shares the sizes
+  of the button and the field in one recipe.
+- [Building components](/recipe/native-recipe/building-components/) lets
+  users override a style.
+- [Variants](/recipe/native-recipe/variants/) explains boolean and
+  compound variants.

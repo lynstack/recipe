@@ -1,0 +1,132 @@
+---
+title: Composing recipes in native-recipe
+description: "Reuse the styles and variants of one React Native style recipe in another with composes: the order of styles, defaults, compound variants, slot recipes, and themed recipes."
+sidebar:
+  label: Composing recipes
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+Several components often share styles and variants. For example, a button
+and an icon button share the same tones and sizes. Instead of copying the
+config, put the shared part in one recipe, and list it in `composes`.
+
+## Compose a recipe
+
+Here is a shared `button` recipe:
+
+<RecipeExample name="native-recipe/composing/button" />
+
+The recipe below composes `button`. It gets every variant of `button`,
+and adds its own styles:
+
+<RecipeExample
+  name="native-recipe/composing/icon-button"
+  calls={[{ tone: "neutral", size: "sm" }, { tone: "danger" }]}
+/>
+
+`iconButton` accepts `tone`, `size`, and `outlined`, the variants of
+`button`. TypeScript knows them too, so `VariantsOf<typeof iconButton>`
+includes them.
+
+## Which style wins
+
+Composing works as if you wrote both configs in one. The composed
+recipe's styles come first, so the recipe that composes it wins when both
+set the same property:
+
+1. The `base` of each composed recipe, then its own `base`.
+2. For each variant, the composed recipe's style for the option, then
+   its own.
+3. The compound variants of each composed recipe, then its own.
+
+When several recipes give a default to the same variant, the last one
+wins.
+
+### Compound variants come last
+
+A compound variant always applies after every option. So a compound
+variant of `button` wins over the options of `iconButton`.
+
+In the example, `button` adds `paddingHorizontal: 20` when `tone` is
+`danger` and `size` is `md`. An option of `iconButton` cannot override
+it. To override it, give `iconButton` its own compound variant with the
+same condition:
+
+```ts
+const iconButton = createStyleRecipe({
+  composes: [button],
+  variants: {},
+  compoundVariants: [
+    {
+      variants: { tone: "danger", size: "md" },
+      style: { paddingHorizontal: 0 },
+    },
+  ],
+});
+```
+
+## Rules
+
+- `variants` is still required. A recipe that only composes others
+  declares `variants: {}`.
+- A recipe that appears several times in `composes`, directly or through
+  another recipe, counts once.
+- Compose recipes of the same type: style recipes in a style recipe, and
+  slot recipes in a slot recipe.
+- The composed recipes keep their own configs and caches. Composing does
+  not change them.
+
+## Compose slot recipes
+
+A slot recipe composes other slot recipes in the same way. It has the
+slots of each, theirs first, then its own, and it can style any of them.
+Here is a `card` slot recipe:
+
+<RecipeExample name="native-recipe/composing/card" />
+
+`dialog` composes it:
+
+<RecipeExample
+  name="native-recipe/composing/dialog"
+  calls={[{ tone: "inverted", compact: true }]}
+/>
+
+`dialog` adds a `footer` slot to the slots of `card`, and changes the
+`root` of `card`.
+
+## Compose themed recipes
+
+A [themed recipe](/recipe/native-recipe/create-themed-recipes/) builds
+its styles from a theme. It composes a themed recipe through `withTheme`.
+`withTheme(theme)` returns the plain recipe of one theme.
+
+The config function receives the theme. Pass that same theme to
+`withTheme`. Then the light icon button composes the light button, and
+the dark icon button composes the dark button:
+
+<RecipeExample
+  name="native-recipe/composing/themed-icon-button"
+  calls={[{ tone: "surface" }]}
+/>
+
+The call above is the same as `iconButton(dark, { tone: "surface" })`.
+A themed recipe can also compose a recipe without a theme, such as
+`composes: [shadow]`.
+
+<Aside title="Under the hood">
+  Composing merges the configs once, when you create the recipe. So a composed
+  recipe costs the same as one recipe written with the merged config. The
+  engine's [Composing recipes](/recipe/recipe/composing/) page shows the
+  details.
+</Aside>
+
+## Next steps
+
+- [createStyleRecipe](/recipe/native-recipe/create-style-recipe/) lists
+  every property of the config.
+- [Theming with design tokens](/recipe/native-recipe/themes/) builds a
+  design system with themed recipes.
+- [Cookbook](/recipe/native-recipe/cookbook/) has ready-made recipes to
+  copy.

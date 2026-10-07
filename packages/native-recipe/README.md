@@ -52,7 +52,7 @@ button({ size: "sm" }) === styles; // => true
 
 Pass each style to the `style` prop of its element. See the
 [Quick start](https://lynstack.github.io/recipe/native-recipe/quick-start/),
-and [Themes and design tokens](https://lynstack.github.io/recipe/native-recipe/themes/)
+and [Theming with design tokens](https://lynstack.github.io/recipe/native-recipe/themes/)
 to build styles from a light and a dark theme with `createThemedRecipes`.
 
 ## Agent skill

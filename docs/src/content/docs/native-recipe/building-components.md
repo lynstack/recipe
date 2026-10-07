@@ -59,8 +59,9 @@ to build its config; read them from the recipe of the theme,
 
 ## Overriding styles
 
-A recipe takes no style to add. To let a component's user override its
-style, pass both in a style array, and only when there is an override, so
+You cannot pass extra styles into a recipe call. Merge them in the
+`style` prop instead. To let a component's user override its style, pass
+both in a style array, and only when there is an override, so
 that the prop keeps the recipe's object otherwise:
 
 ```tsx
@@ -100,9 +101,28 @@ const styles = StyleSheet.create({ separator: { height: 12 } });
 ```
 
 In an app with a theme, a static style that uses a token, such as
-`theme.space.md`, does depend on the theme, so it is a themed recipe with
-no variants. Pass a recipe's own style straight to the `style` prop;
-`StyleSheet.create` adds nothing to it.
+`theme.space.md`, does depend on the theme. Make it a themed recipe with
+no variants. `variants: {}` is still required:
+
+```tsx
+import type { ReactNode } from "react";
+import { View } from "react-native";
+import { createStyleRecipe } from "../theme/recipes";
+import { useTheme } from "../theme/provider";
+
+const screen = createStyleRecipe((theme) => ({
+  base: { backgroundColor: theme.colors.background, flex: 1 },
+  variants: {},
+}));
+
+export function Screen({ children }: { children: ReactNode }) {
+  return <View style={screen(useTheme())}>{children}</View>;
+}
+```
+
+`screen(theme)` returns the same object for the same theme. Pass a
+recipe's own style straight to the `style` prop; `StyleSheet.create` adds
+nothing to it.
 
 ## Pass styles to memoized children
 
@@ -134,7 +154,15 @@ styles, which makes new objects.
 ## Agent skill
 
 These practices, with those of
-[Themes and design tokens](/recipe/native-recipe/themes/), ship with the
+[Theming with design tokens](/recipe/native-recipe/themes/), ship with the
 package as an [agent skill](/recipe/native-recipe/agent-skill/), which
 teaches coding agents to keep styles stable and to build them from theme
 tokens.
+
+## Next steps
+
+- [Cookbook](/recipe/native-recipe/cookbook/) has recipes for common
+  components.
+- [Typing recipes](/recipe/native-recipe/typescript/) covers the types of
+  styles and props.
+- [FAQ](/recipe/native-recipe/faq/) answers common questions.

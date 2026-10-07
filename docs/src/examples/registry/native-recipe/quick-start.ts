@@ -2,6 +2,7 @@ import { defineExample, elementValue, slotValues } from "../../example.ts";
 import type { Example } from "../../example.ts";
 import { badge } from "../../recipes/native-recipe/quick-start/badge.ts";
 import { button } from "../../recipes/native-recipe/quick-start/button.ts";
+import { card } from "../../recipes/native-recipe/quick-start/card.ts";
 
 /** The examples of the page quick-start of the docs of native-recipe, by recipe. */
 const examples = {
@@ -22,6 +23,14 @@ const examples = {
     name: "button",
     options: { size: ["sm", "md"], tone: ["primary", "ghost"] },
     recipe: button,
+    required: [],
+    valuesOf: slotValues,
+  }),
+  card: defineExample({
+    kind: "style",
+    name: "card",
+    options: { tone: ["light", "inverted"] },
+    recipe: card,
     required: [],
     valuesOf: slotValues,
   }),
