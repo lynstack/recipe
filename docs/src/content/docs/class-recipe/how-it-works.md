@@ -1,7 +1,8 @@
 ---
 title: How class-recipe works
-description: "How class-recipe builds and caches class names: compiled once, the order of the classes, when the join function runs, overrides, and stable slot results."
+description: "How class-recipe builds and caches class names: compiled once, the order of the classes, composed recipes, when the join function runs, overrides, and stable slot results."
 sidebar:
+  badge: Updated
   label: How it works
 ---
 
@@ -34,6 +35,17 @@ A class name lists its classes from the least to the most specific:
 
 Defaults apply before compound variants match, so a compound variant can
 match a default option.
+
+## Composed recipes
+
+A recipe that composes others merges their configs with its own when it is
+created, theirs first: their base classes come before its own, their
+classes for an option before its own for that option, and their compound
+variants before its own (see
+[Composing recipes](/recipe/class-recipe/cva/#composing-recipes)). It joins
+the classes that several recipes give one option into one string, and
+compiles the result as one config, so it costs what that one config costs,
+with or without the cache.
 
 ## The join function
 
