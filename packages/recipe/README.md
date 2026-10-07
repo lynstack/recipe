@@ -25,8 +25,8 @@ package to create recipes for other values.
 npm install @lynstack/recipe
 ```
 
-Requires TypeScript 5.4 or newer for its types, and an ES2022 runtime. It
-ships as an ES module only.
+Requires TypeScript 5.4 or newer for its types, and Node.js 16.9, Bun 1.0,
+Deno 2.0, or another ES2022 runtime. It ships as an ES module only.
 
 ## Usage
 

@@ -28,6 +28,12 @@ const requirements = requirementsOf(Astro.props.folder);
   </tbody>
 </table>
 
+<p>
+  Every change runs each package on the oldest and the newest Node.js, Bun, and
+  Deno in this table, and compiles its types with the oldest and the newest
+  TypeScript.
+</p>
+
 <Aside type="caution" title={`TypeScript ${typeScriptVersion} or newer`}>
   Older versions cannot read the types: before 5.0 they fail to parse them, and
   from 5.0 to 5.3 they report <code>Cannot find name 'NoInfer'</code>. With

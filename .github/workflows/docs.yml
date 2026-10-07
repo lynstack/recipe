@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - docs/**
+      - compat/versions.json
       - examples/**
       - packages/class-recipe/src/**
       - packages/recipe/src/**

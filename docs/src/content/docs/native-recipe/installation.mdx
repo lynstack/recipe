@@ -9,24 +9,31 @@ import { Aside, TabItem, Tabs } from "@astrojs/starlight/components";
 import Requirements from "../../../components/Requirements.astro";
 
 <Tabs syncKey="package-manager">
-  <TabItem label="npm">
+  <TabItem label="npm" icon="npm">
 
 ```sh
 npm install @lynstack/native-recipe
 ```
 
   </TabItem>
-  <TabItem label="pnpm">
+  <TabItem label="pnpm" icon="pnpm">
 
 ```sh
 pnpm add @lynstack/native-recipe
 ```
 
   </TabItem>
-  <TabItem label="yarn">
+  <TabItem label="yarn" icon="seti:yarn">
 
 ```sh
 yarn add @lynstack/native-recipe
+```
+
+  </TabItem>
+  <TabItem label="bun" icon="bun">
+
+```sh
+bun add @lynstack/native-recipe
 ```
 
   </TabItem>

@@ -1,6 +1,6 @@
 ---
 title: Installing class-recipe
-description: "Install @lynstack/class-recipe with npm, pnpm, or Yarn, and check its requirements: TypeScript 5.4 or newer, ES2022, and ES modules."
+description: "Install @lynstack/class-recipe with npm, pnpm, Yarn, Bun, or Deno, and check its requirements: TypeScript 5.4 or newer, an ES2022 runtime or browser, and ES modules."
 sidebar:
   label: Installation
 ---
@@ -9,24 +9,38 @@ import { Aside, TabItem, Tabs } from "@astrojs/starlight/components";
 import Requirements from "../../../components/Requirements.astro";
 
 <Tabs syncKey="package-manager">
-  <TabItem label="npm">
+  <TabItem label="npm" icon="npm">
 
 ```sh
 npm install @lynstack/class-recipe
 ```
 
   </TabItem>
-  <TabItem label="pnpm">
+  <TabItem label="pnpm" icon="pnpm">
 
 ```sh
 pnpm add @lynstack/class-recipe
 ```
 
   </TabItem>
-  <TabItem label="yarn">
+  <TabItem label="yarn" icon="seti:yarn">
 
 ```sh
 yarn add @lynstack/class-recipe
+```
+
+  </TabItem>
+  <TabItem label="bun" icon="bun">
+
+```sh
+bun add @lynstack/class-recipe
+```
+
+  </TabItem>
+  <TabItem label="deno" icon="deno">
+
+```sh
+deno add npm:@lynstack/class-recipe
 ```
 
   </TabItem>
