@@ -1120,6 +1120,29 @@ mark.example-part * {
 }
 
 /*
+ * Sidebar badges: "New" in the success hue, any other badge neutral. The
+ * brand stays for focus and the current item.
+ */
+:root,
+:root[data-theme="light"] {
+  --sl-badge-default-border: var(--lyn-border);
+  --sl-badge-default-bg: var(--lyn-muted);
+  --sl-badge-default-text: var(--lyn-muted-foreground);
+  --sl-badge-success-border: var(--lyn-success);
+  --sl-badge-success-bg: var(--lyn-success-subtle);
+  --sl-badge-success-text: var(--lyn-success);
+}
+
+.sidebar-content .sl-badge {
+  margin-inline-start: 0.375rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
  * Engine figures: how a recipe numbers options, keys a call, and builds a
  * result. The functions of a kind take the hues of the code tokens.
  */
