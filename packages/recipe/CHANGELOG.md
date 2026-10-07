@@ -4,6 +4,28 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.5.0 — 2026-10-07
+
+A recipe lists the options and defaults of its variants, so that a
+library can list every selection of a recipe, as a story or a table of
+every option does, without reading its config.
+
+- Every recipe and slot recipe has `variantOptions`, the names of the
+  options of each variant, as strings, in the order the recipe numbers
+  them: integer names first, in ascending order, then `"false"` and
+  `"true"`, which a variant that declares either one has, then the others
+  in the order of the config.
+- Every recipe and slot recipe has `defaultVariants`, the option each
+  variant uses when a selection leaves it out, as a string: its default,
+  or `"false"` for a variant whose only options are `"true"` and
+  `"false"`. A variant without a default is not in it.
+- Both are frozen, keyed in the order of `variantKeys`, and typed with
+  the names of the options of each variant. A recipe that composes others
+  lists the variants, options, and defaults of the one config it stands
+  for.
+- `KindRecipe` has the two properties, so a type that implements it by
+  hand needs them too.
+
 ## 1.4.0 — 2026-10-07
 
 A recipe kind can combine two values into one, so that a recipe that
