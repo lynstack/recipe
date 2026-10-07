@@ -14,7 +14,7 @@ export const button = styleRecipe({
   base: { fontWeight: 500 },
   variants: {
     tone: { primary: { color: "white" }, neutral: { color: "black" } },
-    size: { lg: { height: 48 } },
+    size: { md: { paddingInline: 16 }, lg: { height: 48 } },
   },
   compoundVariants: [
     { variants: { tone: "primary", disabled: true }, value: { color: "gray" } },

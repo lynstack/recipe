@@ -143,7 +143,18 @@ Native's `style` prop keeps its identity between renders.
   recipe is a module of `docs/src/examples/recipes/<package>/<page>`,
   listed with its options in `docs/src/examples/registry`, and built from
   the packages in the workspace, so the docs build them first. A call
-  that chooses an option the recipe does not declare fails the build. The
+  that chooses an option the recipe does not declare fails the build.
+  "How it works", "Composing recipes", and "Slot recipes" of
+  `@lynstack/recipe` draw what the engine does with `OptionNumbers`,
+  `CallFlow`, `RecipeTrace`, and `SlotRecipeTrace`, from the recipes
+  listed in `docs/src/examples/traces.ts`. These are created with
+  `styleRecipe` or `slotStyleRecipe` of `docs/src/examples/recipes/recipe`,
+  which keep each config for the figures. `OptionNumbers` and `CallFlow`
+  number options and key a call with `compileVariants` and `select` of the
+  engine's sources, so they show what the engine computes. A trace builds
+  a call with a kind that records each of its calls, and fails the build
+  when the result differs from the recipe's, or a step cannot be told
+  apart. The
   docs depend on React Native and its React types only to typecheck the
   recipes of `@lynstack/native-recipe`.
 - `examples` holds an example of each package that readers open in the

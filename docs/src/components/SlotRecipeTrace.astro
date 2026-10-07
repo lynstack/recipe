@@ -1,0 +1,23 @@
+---
+import type { FigureCall } from "../examples/figures.ts";
+import TraceSteps from "./TraceSteps.astro";
+import { slotRecipeTraceOf } from "../examples/figures.ts";
+
+type Props = FigureCall;
+
+const { callHtml, slots } = slotRecipeTraceOf(Astro.props);
+---
+
+<figure class="engine-figure trace slot-trace not-content">
+  <figcaption class="trace-head">
+    <code class="trace-call" set:html={callHtml} />
+  </figcaption>
+  {slots.map(({ slot, steps }) => (
+    <section class="slot-trace-lane">
+      <span class="trace-label">
+        Slot <code>{slot}</code>
+      </span>
+      <TraceSteps steps={steps} />
+    </section>
+  ))}
+</figure>

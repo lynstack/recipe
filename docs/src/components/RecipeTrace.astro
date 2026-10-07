@@ -1,0 +1,43 @@
+---
+import type { FigureCall } from "../examples/figures.ts";
+import TraceSteps from "./TraceSteps.astro";
+import { recipeTraceOf } from "../examples/figures.ts";
+
+interface Props extends FigureCall {
+  /** Whether the kind has `combine`. */
+  readonly combine?: boolean;
+  /** What the trace shows, above the call. */
+  readonly title?: string;
+}
+
+const { combine = false, title } = Astro.props;
+const { callHtml, reduces, combinations, steps } = recipeTraceOf(Astro.props, {
+  combine,
+});
+---
+
+<figure class="engine-figure trace not-content">
+  <figcaption class="trace-head">
+    {title !== undefined && <span class="trace-title">{title}</span>}
+    <code class="trace-call" set:html={callHtml} />
+    <span class="trace-count">{reduces}</span>
+  </figcaption>
+  {combinations.length > 0 && (
+    <div class="trace-created">
+      <span class="trace-label">When the recipe is created</span>
+      <ul>
+        {combinations.map(({ origin, valueHtml }) => (
+          <li>
+            <span class="trace-operation" data-operation="combine">
+              combine
+            </span>
+            <span class="trace-origin">{origin}</span>
+            <code set:html={valueHtml} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+  <span class="trace-label">On the call, without the cache</span>
+  <TraceSteps steps={steps} />
+</figure>

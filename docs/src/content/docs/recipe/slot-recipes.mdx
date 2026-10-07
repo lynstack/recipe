@@ -3,7 +3,9 @@ title: Slot recipes
 description: "Create slot recipes with createSlotRecipeKind, which map variants to the result of each element of a component, such as a card's root and title."
 ---
 
+import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
+import SlotRecipeTrace from "../../../components/SlotRecipeTrace.astro";
 
 A component often has several elements, its slots, each with its own
 result, such as a card's root and title. `createSlotRecipeKind` takes the
@@ -57,6 +59,23 @@ slot's values only:
 A slot without any value gets the result of `initial` for an `undefined`
 base, so every slot is in the result: an empty style here, an empty string
 for class names.
+
+This slot recipe has three slots, and `hint` has no value:
+
+<RecipeExample name="recipe/slot-recipes/field" />
+
+Here is each call of the kind for each slot while `field` builds a result,
+with the value it adds and the accumulator after it:
+
+<SlotRecipeTrace
+  name="recipe/slot-recipes/field"
+  recipe="field"
+  call={{ size: "sm", invalid: true }}
+/>
+
+`size: "sm"` gives a value to `label` only, so it adds nothing to `root`.
+The compound variant applies to `label` after every option, and `hint`
+goes from `initial` to `finish` without a value.
 
 `initial` is called for each slot of each result, so `reduce` can change
 the accumulator in place, as `Object.assign` does in `styleKind`.

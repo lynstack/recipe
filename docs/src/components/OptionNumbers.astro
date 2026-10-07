@@ -1,0 +1,83 @@
+---
+import { optionNumbersFigureOf } from "../examples/figures.ts";
+
+interface Props {
+  /** The path of the recipe's module in `recipes`. */
+  readonly name: string;
+}
+
+const { variants, compounds } = optionNumbersFigureOf(Astro.props.name);
+---
+
+<figure class="engine-figure option-numbers not-content">
+  <div
+    class="figure-scroll"
+    tabindex="0"
+    role="region"
+    aria-label="Option numbers"
+  >
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Variant</th>
+          <th scope="col">Options, numbered</th>
+          <th scope="col">Place value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {variants.map((variant) => (
+          <tr>
+            <th scope="row">
+              <code>{variant.name}</code>
+            </th>
+            <td>
+              <ul class="option-chips">
+                {variant.options.map((option) => (
+                  <li
+                    class:list={[
+                      "option-chip",
+                      {
+                        "is-default": option.isDefault,
+                        "is-added": option.isAdded,
+                      },
+                    ]}
+                  >
+                    <span class="option-number">{option.number}</span>
+                    <code>{option.name}</code>
+                    {option.isDefault && (
+                      <span class="option-note">default</span>
+                    )}
+                    {option.isAdded && <span class="option-note">added</span>}
+                  </li>
+                ))}
+              </ul>
+            </td>
+            <td class="number">×{variant.placeValue}</td>
+          </tr>
+        ))}
+      </tbody>
+      {compounds.length > 0 && (
+        <tbody>
+          {compounds.map(({ label, conditions }) => (
+            <tr>
+              <th scope="row">{label}</th>
+              <td colspan="2">
+                <ul class="option-chips">
+                  {conditions.map((condition) => (
+                    <li class="option-chip">
+                      <code>{condition.variant}</code>
+                      <span class="option-note">is</span>
+                      {condition.options.map((option) => (
+                        <span class="option-number">{option.number}</span>
+                      ))}
+                    </li>
+                  ))}
+                </ul>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      )}
+    </table>
+  </div>
+</figure>

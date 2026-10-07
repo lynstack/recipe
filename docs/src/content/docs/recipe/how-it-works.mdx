@@ -1,0 +1,151 @@
+---
+title: How the recipe engine works
+description: "What the engine does when it creates and calls a recipe: compiling the config, turning a selection into an integer key, the cache, and the order of reduction."
+sidebar:
+  label: How it works
+---
+
+import CallFlow from "../../../components/CallFlow.astro";
+import OptionNumbers from "../../../components/OptionNumbers.astro";
+import RecipeExample from "../../../components/RecipeExample.astro";
+import RecipeTrace from "../../../components/RecipeTrace.astro";
+
+A recipe does its work in two phases: once when it is created, and on each
+call. The kind takes part only when a result is built. This page follows
+one recipe through both, with the style kind of the
+[Quick start](/recipe/recipe/quick-start/):
+
+<RecipeExample name="recipe/how-it-works/button" />
+
+## When a recipe is created
+
+The function that `createRecipeKind` returns compiles the config into a
+recipe, once. A recipe that composes others first merges their configs
+with its own into one (see [Recipes that compose others](#recipes-that-compose-others)),
+and compiles that:
+
+1. It numbers the options of each variant from 1, in the order of
+   `Object.keys`: options whose names are integers first, in ascending
+   order, then the others in the order they are declared. A variant that
+   declares an option named `"true"` or `"false"` also declares the other
+   one, without a value, and numbers `"false"`, then `"true"`, before its
+   other options.
+2. It sets the default of each variant: the option in `defaultVariants`, or
+   `"false"` for a boolean variant, whose only options are `"true"` and
+   `"false"`.
+3. It turns each compound variant into the option numbers it matches. A
+   compound variant that names an undeclared variant or option, or lists no
+   option for a variant, can never match, and is dropped.
+4. It keeps the value of each option and compound variant, by reference.
+   A recipe that composes others with the kind's `combine` keeps instead
+   the new value that `combine` returns for its bases, and for each option
+   that several configs give values to.
+
+For `button`, that gives:
+
+<OptionNumbers name="recipe/how-it-works/button" />
+
+`disabled` declares only `true`, so the recipe adds `false`, without a
+value, as its default. The place value of each variant is what its option
+number counts for in a key, as the next section shows.
+
+The recipe reads the config's objects of variants and options only here,
+so changing them later does not change the recipe. It keeps the values
+themselves, so treat them as immutable.
+
+## When a recipe is called
+
+<CallFlow
+  name="recipe/how-it-works/button"
+  recipe="button"
+  call={{ size: "lg", disabled: true }}
+/>
+
+1. **Select.** For each variant, the recipe takes the option the selection
+   names, or the variant's default when the selection leaves it out or
+   passes `undefined`. Numbers and booleans name the option of the same
+   string. A selection of `undefined` or `null` is an empty one, and
+   properties that are not variants are ignored.
+2. **Key.** Each option number, times the place value of its variant,
+   adds up to the selection's key. The option numbers are the digits of
+   one number, so every declared selection has its own integer.
+3. **Look up.** If the recipe has built the result of this key before, it
+   returns that result. A cached call stops here: one lookup per variant
+   and one for the cache, with no allocation.
+4. **Build.** Otherwise the kind builds the result: `initial` returns the
+   accumulator for the recipe's base, `reduce` adds each value that applies
+   to the selection, and `finish` turns the accumulator into the result.
+5. **Store.** The recipe caches the result under the key and returns it.
+
+A selection with an option that its variant does not declare has no key:
+it is built on every call, and that option adds no value. See
+[Caching](/recipe/recipe/caching/) for when a recipe caches.
+
+## The order of the values
+
+`reduce` receives the values that apply to a selection in a fixed order,
+from the least to the most specific:
+
+1. The value of each variant's selected option, in the order of
+   `variants`.
+2. The value of each compound variant that matches, in the order of
+   `compoundVariants`.
+
+The base is not reduced: it is passed to `initial`. A value that is
+`undefined` is skipped, so an option without a value adds nothing. Here is
+each call of the kind while `button` builds a result, with the value it
+adds and the accumulator after it:
+
+<RecipeTrace
+  name="recipe/how-it-works/button"
+  recipe="button"
+  call={{ size: "lg", disabled: true }}
+/>
+
+The order is all the engine decides; what a later value does to an
+earlier one is up to the kind. This kind merges objects with
+`Object.assign`, so the compound variant, which comes last, overrides the
+`color` of `tone`. A kind that concatenates class names keeps them all, in
+order.
+
+## Recipes that compose others
+
+A recipe that composes others merges their configs with its own into one,
+when it is created, and builds every result from it. Here `button`
+composes `control`, and both have a base and give values to the options of
+`size`:
+
+<RecipeExample name="recipe/how-it-works/composed-button" />
+
+The merged config has two bases, and two values for each option of
+`size`. Without the kind's
+[`combine`](/recipe/recipe/recipe-kinds/#combine), the first base is passed
+to `initial`, and the kind reduces every other base and value:
+
+<RecipeTrace
+  name="recipe/how-it-works/composed-button"
+  recipe="button"
+  call={{ size: "sm" }}
+  title="Without combine"
+/>
+
+With `combine`, here `(first, second) => ({ ...first, ...second })`, the
+recipe combines them into one when it is created, and builds results as
+the one config they stand for would:
+
+<RecipeTrace
+  name="recipe/how-it-works/composed-button"
+  recipe="button"
+  call={{ size: "sm" }}
+  combine
+  title="With combine"
+/>
+
+Both return the same result; with `combine`, a result costs what a result
+of one config costs. See [Composing recipes](/recipe/recipe/composing/).
+
+## Slot recipes
+
+A slot recipe selects, keys, and caches in the same way, and builds the
+result of each slot as a recipe would, from that slot's values only. See
+[Slot recipes](/recipe/recipe/slot-recipes/).

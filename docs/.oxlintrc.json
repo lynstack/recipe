@@ -72,12 +72,20 @@
       // These modules export one object or function, named as every
       // module of the docs exports; examples.ts reads each registry by the
       // name of its export.
-      "files": ["src/examples/playground.ts", "src/examples/registry/**/*.ts"],
+      "files": [
+        "src/examples/playground.ts",
+        "src/examples/registry/**/*.ts",
+        "src/examples/traced-kind.ts"
+      ],
       "rules": { "import/prefer-default-export": "off" }
     },
     {
-      // This kind changes its accumulator in place, as the docs teach.
-      "files": ["src/examples/recipes/recipe/quick-start/style-kind.ts"],
+      // These kinds change their accumulator in place, as the docs teach:
+      // the style kind, and the kind that records it for a trace.
+      "files": [
+        "src/examples/recipes/recipe/quick-start/style-kind.ts",
+        "src/examples/traced-kind.ts"
+      ],
       "rules": { "typescript/prefer-readonly-parameter-types": "off" }
     }
   ]

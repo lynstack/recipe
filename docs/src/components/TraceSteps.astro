@@ -1,0 +1,24 @@
+---
+import type { StepFigure } from "../examples/figures.ts";
+
+interface Props {
+  readonly steps: readonly StepFigure[];
+}
+
+const { steps } = Astro.props;
+---
+
+<ol class="trace-steps">
+  {steps.map((step) => (
+    <li class="trace-step" data-operation={step.operation}>
+      <span class="trace-operation" data-operation={step.operation}>
+        {step.operation}
+      </span>
+      <span class="trace-origin">{step.origin}</span>
+      {step.valueHtml !== undefined && (
+        <code class="trace-value" set:html={step.valueHtml} />
+      )}
+      <code class="trace-accumulator" set:html={step.accumulatorHtml} />
+    </li>
+  ))}
+</ol>

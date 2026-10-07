@@ -1,0 +1,77 @@
+---
+import type { FigureCall } from "../examples/figures.ts";
+import { callFlowOf } from "../examples/figures.ts";
+
+type Props = FigureCall;
+
+const { callHtml, options, key, reduces } = callFlowOf(Astro.props);
+---
+
+<figure class="engine-figure call-flow not-content">
+  <ol class="flow">
+    <li class="flow-node">
+      <span class="flow-step">Call</span>
+      <code set:html={callHtml} />
+    </li>
+    <li class="flow-node">
+      <span class="flow-step">Select</span>
+      <ul class="option-chips">
+        {options.map(({ variant, option, number, isDefaulted }) => (
+          <li class:list={["option-chip", { "is-default": isDefaulted }]}>
+            <code>{variant}</code>
+            <span class="flow-operator">:</span>
+            <code>{option}</code>
+            {isDefaulted && <span class="option-note">default</span>}
+            <span class="option-number">{number}</span>
+          </li>
+        ))}
+      </ul>
+    </li>
+    <li class="flow-node">
+      <span class="flow-step">Key</span>
+      <span class="flow-key">
+        {options.map(({ number, placeValue, isFirst }) => (
+          <>
+            {!isFirst && <span class="flow-operator">+</span>}
+            <span class="flow-term">
+              <span class="option-number">{number}</span>
+              <span class="flow-operator">×</span>
+              {placeValue}
+            </span>
+          </>
+        ))}
+        <span class="flow-operator">=</span>
+        <strong>{key}</strong>
+      </span>
+    </li>
+    <li class="flow-node flow-decision">
+      <span class="flow-step">Look up</span>
+      <span>Has the recipe built the result of key {key}?</span>
+      <span class="flow-branch">
+        <span class="flow-answer">Yes</span>
+        Return that result. A cached call stops here.
+      </span>
+    </li>
+    <li class="flow-node">
+      <span class="flow-step">Build</span>
+      <span class="flow-kind">
+        <span class="trace-operation" data-operation="initial">
+          initial
+        </span>
+        <span class="flow-operator">→</span>
+        <span class="trace-operation" data-operation="reduce">
+          reduce
+        </span>
+        <span class="flow-operator">× {reduces}</span>
+        <span class="flow-operator">→</span>
+        <span class="trace-operation" data-operation="finish">
+          finish
+        </span>
+      </span>
+    </li>
+    <li class="flow-node">
+      <span class="flow-step">Store</span>
+      <span>Cache the result under key {key}, and return it.</span>
+    </li>
+  </ol>
+</figure>

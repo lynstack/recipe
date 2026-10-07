@@ -5,6 +5,7 @@ description: "Build a recipe on others with composes: how their configs merge in
 
 import RecipeExample from "../../../components/RecipeExample.astro";
 import RecipePlayground from "../../../components/RecipePlayground.astro";
+import RecipeTrace from "../../../components/RecipeTrace.astro";
 
 A recipe can build on other recipes: list them in its config's `composes`,
 and it has their variants, options, and values as well as its own. Here,
@@ -39,18 +40,20 @@ The order of the values stays the one of a recipe: the bases, then the
 value of each variant's option, then the matching compound variants (see
 [How it works](/recipe/recipe/how-it-works/#the-order-of-the-values)).
 Within a variant, the values of the recipes it composes come before its
-own:
+own. Here is each call of the kind while `button` builds a result, with
+the value it adds and the accumulator after it:
 
-<RecipeExample
+<RecipeTrace
   name="recipe/composing/button"
-  source={false}
-  calls={[{}, { size: "lg" }, { disabled: true }]}
+  recipe="button"
+  call={{ size: "md", disabled: true }}
 />
 
-`size: "lg"` is an option that only `button` declares, and `control` adds
-no value for it. With `disabled: true`, the compound variant of `button`
-applies after every option, as it would in one config: a compound variant
-can name the variants of the recipes it composes.
+The bases of `control` and `button` come first. `size: "md"` has a value in
+both configs, and the value of `control` comes first. Both apply where
+`size` does, before `disabled`, a variant of `control`. The compound
+variant of `button` applies after every option, as it would in one config:
+a compound variant can name the variants of the recipes it composes.
 
 A recipe's own variant does not override a compound variant of a recipe it
 composes, since compound variants apply last. To override one, give the
@@ -115,6 +118,8 @@ Without `combine`, the kind reduces each base after the first, and each
 value of an option that several configs give values to, where one config
 would give a single value. A recipe whose configs give at most one base,
 and never two values to one option, costs nothing more either way.
+[How it works](/recipe/recipe/how-it-works/#recipes-that-compose-others)
+traces a recipe built with and without `combine`.
 
 ## Types
 

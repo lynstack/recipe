@@ -1119,6 +1119,385 @@ mark.example-part * {
   }
 }
 
+/*
+ * Engine figures: how a recipe numbers options, keys a call, and builds a
+ * result. The functions of a kind take the hues of the code tokens.
+ */
+
+.engine-figure {
+  margin: 1.5rem 0 0;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-lg);
+  background-color: var(--lyn-background);
+  font-size: 0.875rem;
+}
+
+.engine-figure code {
+  font-family: var(--lyn-font-mono);
+  font-size: 0.8125rem;
+}
+
+.engine-figure [data-operation] {
+  --operation: var(--lyn-muted-foreground);
+}
+
+.engine-figure [data-operation="initial"] {
+  --operation: var(--lyn-code-keyword);
+}
+
+.engine-figure [data-operation="reduce"] {
+  --operation: var(--lyn-code-function);
+}
+
+.engine-figure [data-operation="finish"] {
+  --operation: var(--lyn-code-string);
+}
+
+.engine-figure [data-operation="combine"] {
+  --operation: var(--lyn-code-constant);
+}
+
+.trace-operation {
+  display: inline-block;
+  min-width: 4.25rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--operation);
+}
+
+.option-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.375rem 0.125rem 0.25rem;
+  border: 1px solid var(--lyn-border);
+  border-radius: var(--lyn-radius-md);
+  background-color: var(--lyn-muted);
+  white-space: nowrap;
+}
+
+.option-chip.is-default {
+  border-color: var(--lyn-input);
+}
+
+.option-chip.is-added code {
+  color: var(--lyn-muted-foreground);
+}
+
+.option-number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: 0.25rem;
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-active);
+  font-family: var(--lyn-font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--lyn-foreground);
+}
+
+.option-note {
+  font-size: 0.75rem;
+  color: var(--lyn-muted-foreground);
+}
+
+/* Option numbers: a table of the variants, their options, and compounds. */
+
+.figure-scroll {
+  overflow-x: auto;
+}
+
+.option-numbers table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.option-numbers :is(th, td) {
+  padding: 0.625rem 0.875rem;
+  border: 0;
+  border-bottom: 1px solid var(--lyn-border);
+  vertical-align: middle;
+  text-align: left;
+}
+
+.option-numbers tbody:last-child tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.option-numbers tbody + tbody tr:first-child :is(th, td) {
+  border-top: 1px solid var(--lyn-border);
+}
+
+.sl-markdown-content .option-numbers th:has(code) {
+  font-size: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.option-numbers thead th:last-child {
+  text-align: end;
+}
+
+.option-numbers .number {
+  text-align: right;
+  font-family: var(--lyn-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-muted-foreground);
+}
+
+/* Call flow: the steps of a call, joined by a line, with the cached exit. */
+
+.flow {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  list-style: none;
+}
+
+.flow-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.625rem 0 0.625rem 1rem;
+  --dot-top: 1.0625rem;
+}
+
+.flow-node::before {
+  content: "";
+  position: absolute;
+  top: var(--dot-top);
+  left: 0;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background-color: var(--lyn-input);
+}
+
+.flow-node > :not(.flow-step) {
+  grid-column: 2;
+}
+
+/* A line from each step's dot to the next one's. */
+.flow-node:not(:last-child)::after,
+.trace-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--dot-top) + 0.4375rem);
+  bottom: calc(0px - var(--dot-top));
+  left: 0.1875rem;
+  border-left: 1px solid var(--lyn-border);
+}
+
+.flow-step {
+  grid-row: 1 / span 2;
+  align-self: start;
+  padding-top: 0.125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.option-chip .flow-operator {
+  margin-inline: -0.25rem;
+}
+
+.flow-key,
+.flow-kind {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-term {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.flow-operator {
+  font-family: var(--lyn-font-mono);
+  color: var(--lyn-muted-foreground);
+}
+
+.flow-kind .trace-operation {
+  min-width: 0;
+}
+
+.flow-branch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed var(--lyn-input);
+  border-radius: var(--lyn-radius-md);
+  color: var(--lyn-muted-foreground);
+}
+
+.flow-answer {
+  padding: 0 0.375rem;
+  border-radius: var(--lyn-radius-sm);
+  background-color: var(--lyn-success-subtle);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lyn-success);
+}
+
+/* Trace: each call of the kind's functions while a result is built. */
+
+.trace-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.375rem 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--lyn-border);
+  background-color: var(--lyn-muted);
+  border-radius: var(--lyn-radius-lg) var(--lyn-radius-lg) 0 0;
+}
+
+.trace-title {
+  font-weight: 600;
+  color: var(--lyn-foreground);
+}
+
+.trace-count {
+  margin-left: auto;
+  font-family: var(--lyn-font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--lyn-muted-foreground);
+}
+
+.trace-label {
+  display: block;
+  padding: 0.75rem 1.25rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--lyn-muted-foreground);
+}
+
+.trace-created {
+  border-bottom: 1px solid var(--lyn-border);
+}
+
+.trace-created ul {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0.5rem 1.25rem 0.875rem;
+  list-style: none;
+}
+
+.trace-created li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.125rem 0.75rem;
+  margin: 0;
+}
+
+.trace-created li code {
+  grid-column: 2;
+  overflow-wrap: anywhere;
+}
+
+.trace-created li code::before {
+  content: "= ";
+  color: var(--lyn-muted-foreground);
+}
+
+.trace-steps {
+  margin: 0;
+  padding: 0.5rem 1.25rem 1rem;
+  list-style: none;
+}
+
+.trace-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.125rem 0.75rem;
+  margin: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  --dot-top: 0.9rem;
+}
+
+.trace-step::before {
+  content: "";
+  position: absolute;
+  top: var(--dot-top);
+  left: 0;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background-color: var(--operation);
+}
+
+.trace-origin {
+  align-self: baseline;
+  color: var(--lyn-foreground);
+}
+
+.trace-value,
+.trace-accumulator {
+  grid-column: 2;
+  overflow-wrap: anywhere;
+}
+
+.trace-value::before {
+  content: "+ ";
+  color: var(--lyn-muted-foreground);
+}
+
+.trace-accumulator::before {
+  content: "= ";
+  color: var(--lyn-muted-foreground);
+}
+
+.trace-accumulator {
+  color: var(--lyn-muted-foreground);
+}
+
+/* Slot trace: the steps of each slot, one slot after the other. */
+
+.slot-trace-lane + .slot-trace-lane {
+  border-top: 1px solid var(--lyn-border);
+}
+
+.slot-trace-lane .trace-label code {
+  font-size: 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--lyn-foreground);
+}
+
 /* Landing page. */
 
 .landing-hero {
