@@ -39,34 +39,78 @@ interface Example {
   readonly valuesOf: (call: Call) => readonly SlotValue[];
 }
 
-/** The options of each variant of a recipe, which `Props` lists. */
+/**
+ * The options of each variant of a recipe, which `Props` lists. `Props` is
+ * undefined too when the recipe's argument is optional.
+ */
 type OptionsOf<Props> = {
   readonly [
     Name in Exclude<
-      keyof Props,
+      keyof NonNullable<Props>,
       "className" | "classNames"
     > as Name extends string ? Name : never
-  ]-?: readonly `${Extract<NonNullable<Props[Name]>, string | number>}`[];
+  ]-?: readonly `${Extract<NonNullable<NonNullable<Props>[Name]>, string | number>}`[];
 };
 
 /** The variants of `Props` that a selection cannot leave out. */
 type RequiredVariant<Props> = Extract<
   {
-    [Name in keyof Props]-?: undefined extends Props[Name] ? never : Name;
-  }[keyof Props],
+    [
+      Name in keyof NonNullable<Props>
+    ]-?: undefined extends NonNullable<Props>[Name] ? never : Name;
+  }[keyof NonNullable<Props>],
   string
 >;
 
+/** The options of the variants of `Props` that `Listed` leaves out. */
+type UnlistedOption<Props, Listed extends OptionsOf<Props>> = {
+  readonly [Name in keyof OptionsOf<Props>]: Exclude<
+    OptionsOf<Props>[Name][number],
+    Listed[Name][number]
+  >;
+}[keyof OptionsOf<Props>];
+
+/**
+ * Accepts `Listed` when it lists every option of each variant, and names
+ * the options it leaves out otherwise.
+ */
+type EveryOption<Props, Listed extends OptionsOf<Props>> = [
+  UnlistedOption<Props, Listed>,
+] extends [never]
+  ? unknown
+  : { readonly unlistedOptions: UnlistedOption<Props, Listed> };
+
+/**
+ * Accepts `Listed` when it lists every variant that a selection cannot
+ * leave out, and names those it leaves out otherwise.
+ */
+type EveryRequired<Props, Listed extends readonly RequiredVariant<Props>[]> = [
+  Exclude<RequiredVariant<Props>, Listed[number]>,
+] extends [never]
+  ? unknown
+  : {
+      readonly unlistedVariants: Exclude<
+        RequiredVariant<Props>,
+        Listed[number]
+      >;
+    };
+
 /** A recipe, the options a reader can choose, and how to read its result. */
-interface ExampleConfig<Props, Result> {
+interface ExampleConfig<
+  Props,
+  Result,
+  Listed extends OptionsOf<Props>,
+  Required extends readonly RequiredVariant<Props>[],
+> {
   readonly name: string;
   readonly kind: ValueKind;
   readonly recipe: ((props: Props) => Result) & {
     readonly variantKeys: readonly string[];
   };
-  readonly options: OptionsOf<Props>;
+  /** Every option of each variant, in the order the playground shows. */
+  readonly options: Listed & EveryOption<Props, Listed>;
   /** The variants without a default, which start at their first option. */
-  readonly required: readonly RequiredVariant<Props>[];
+  readonly required: readonly [...Required] & EveryRequired<Props, Required>;
   readonly valuesOf: (result: Result) => readonly SlotValue[];
 }
 
@@ -106,14 +150,19 @@ function isCallOf<Props>(
   );
 }
 
-function defineExample<Props, Result>({
+function defineExample<
+  Props,
+  Result,
+  const Listed extends OptionsOf<Props>,
+  const Required extends readonly RequiredVariant<Props>[],
+>({
   name,
   kind,
   recipe,
   options,
   required,
   valuesOf,
-}: ExampleConfig<Props, Result>): Example {
+}: ExampleConfig<Props, Result, Listed, Required>): Example {
   const optionsByVariant: Readonly<
     Record<string, readonly string[] | undefined>
   > = options;

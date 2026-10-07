@@ -142,8 +142,10 @@ Native's `style` prop keeps its identity between renders.
   quick starts; never show both for the same recipe in one place. Each
   recipe is a module of `docs/src/examples/recipes/<package>/<page>`,
   listed with its options in `docs/src/examples/registry`, and built from
-  the packages in the workspace, so the docs build them first. A call
-  that chooses an option the recipe does not declare fails the build.
+  the packages in the workspace, so the docs build them first. The types
+  of a registry reject an option the recipe does not declare and a list
+  that leaves one out, so a call that chooses an option the recipe does
+  not declare fails the build.
   "How it works", "Composing recipes", and "Slot recipes" of
   `@lynstack/recipe` draw what the engine does with `OptionNumbers`,
   `CallFlow`, `RecipeTrace`, and `SlotRecipeTrace`, from the recipes
