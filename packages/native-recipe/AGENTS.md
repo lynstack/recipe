@@ -14,10 +14,14 @@ dependency and a development dependency for those types.
 
 ## Modules
 
-- `style-recipe.ts`, `slot-style-recipe.ts`, `themed-recipes.ts`, and
-  `types.ts` hold the public API and its types. `types.ts` checks styles
-  against the `ViewStyle`, `TextStyle`, and `ImageStyle` types of React
-  Native and re-exports the shared types of `@lynstack/recipe`.
+- `style-recipe.ts`, `slot-style-recipe.ts`, `themed-recipes.ts`,
+  `recipe-of.ts`, `themed-recipe-of.ts`, and `types.ts` hold the public
+  API and its types. `recipe-of.ts` holds `StyleRecipeOf` and
+  `SlotStyleRecipeOf`, and `themed-recipe-of.ts` their themed forms, which
+  type a recipe from the type of its config.
+  `types.ts` checks styles against the `ViewStyle`, `TextStyle`, and
+  `ImageStyle` types of React Native and re-exports the shared types of
+  `@lynstack/recipe`.
 - The other modules are internal, and use only the public API of
   `@lynstack/recipe`:
   - `compile-style-recipe.ts` and `compile-slot-style-recipe.ts` build the
@@ -31,10 +35,10 @@ dependency and a development dependency for those types.
 
 ## App
 
-`consumers/native-recipe`, at the root, compiles with the settings of
-`@react-native/typescript-config`, which React Native apps extend,
-including `skipLibCheck`, since React Native's own declarations do not
-compile without it.
+`consumers/native-recipe` and `consumers/native-recipe-isolated`, at the
+root, compile with the settings of `@react-native/typescript-config`,
+which React Native apps extend, including `skipLibCheck`, since React
+Native's own declarations do not compile without it.
 
 ## Skill
 

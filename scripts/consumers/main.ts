@@ -12,9 +12,9 @@
  *   packages are packed first.
  * - `--typescript <version>`: the TypeScript to compile with. Defaults to
  *   the one of the repository.
- * - `--react-native <version>`: the React Native of the app of
- *   `@lynstack/native-recipe`, with the React and React types it asks for.
- *   Defaults to the one of that app.
+ * - `--react-native <version>`: the React Native of the apps that depend on
+ *   it, with the React and React types it asks for. Defaults to the one each
+ *   app lists.
  */
 import {
   cpSync,
@@ -99,21 +99,24 @@ function reactNativeAt(version: string): Dependencies {
 }
 
 /**
- * The React Native of the app of `@lynstack/native-recipe`, if the options
- * replace the one it lists.
+ * The React Native of the apps that depend on it, if the options replace
+ * the one they list.
  */
 const reactNative: Dependencies =
   options["react-native"] === undefined
     ? {}
     : reactNativeAt(options["react-native"]);
 
-/** Returns `dependencies` with the React Native of the options, if any. */
+/**
+ * Returns `dependencies` with the React Native of the options, if any, for
+ * an app whose `manifest` depends on React Native.
+ */
 function withReactNative(
-  name: string,
+  manifest: Manifest,
   dependencies: Dependencies,
   names: readonly string[],
 ): Dependencies {
-  if (name !== "native-recipe") {
+  if (manifest.dependencies["react-native"] === undefined) {
     return dependencies;
   }
   return {
@@ -126,9 +129,8 @@ function withReactNative(
   };
 }
 
-/** The dependencies of the app `name`, with `@lynstack` from `tarballs`. */
+/** The dependencies of an app, with `@lynstack` from `tarballs`. */
 function dependenciesOf(
-  name: string,
   manifest: Manifest,
   tarballs: ReadonlyMap<string, string>,
 ): Dependencies {
@@ -140,7 +142,7 @@ function dependenciesOf(
       ],
     ),
   );
-  return withReactNative(name, dependencies, ["react", "react-native"]);
+  return withReactNative(manifest, dependencies, ["react", "react-native"]);
 }
 
 /** The TypeScript that the apps compile with. */
@@ -149,11 +151,13 @@ const typescript =
   readManifest(path.join(root, "package.json")).devDependencies["typescript"] ??
   "";
 
-/** The development dependencies of the app `name`. */
-function devDependenciesOf(name: string, manifest: Manifest): Dependencies {
-  return withReactNative(name, { ...manifest.devDependencies, typescript }, [
-    "@types/react",
-  ]);
+/** The development dependencies of an app. */
+function devDependenciesOf(manifest: Manifest): Dependencies {
+  return withReactNative(
+    manifest,
+    { ...manifest.devDependencies, typescript },
+    ["@types/react"],
+  );
 }
 
 /** The pnpm settings of an app that takes every package from `tarballs`. */
@@ -180,8 +184,8 @@ function install(
   writeFileSync(
     path.join(app, "package.json"),
     JSON.stringify({
-      dependencies: dependenciesOf(name, manifest, tarballs),
-      devDependencies: devDependenciesOf(name, manifest),
+      dependencies: dependenciesOf(manifest, tarballs),
+      devDependencies: devDependenciesOf(manifest),
       private: true,
       type: "module",
     }),

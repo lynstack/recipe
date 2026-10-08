@@ -261,4 +261,4 @@ function createThemedRecipes(): {
 }
 
 export { createThemedRecipes };
-export type { ThemedRecipe, ThemedRecipeCreators };
+export type { ComposedThemedRecipe, ThemedRecipe, ThemedRecipeCreators };

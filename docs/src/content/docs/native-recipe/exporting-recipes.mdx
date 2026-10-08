@@ -1,0 +1,119 @@
+---
+title: Exporting recipes from a library
+description: "Export native-recipe recipes from a library that emits declarations, and annotate them with StyleRecipeOf, SlotStyleRecipeOf, and their themed forms under isolatedDeclarations."
+sidebar:
+  label: Exporting recipes
+head:
+  - tag: title
+    content: "Exporting recipes from a library with native-recipe | lynstack recipe"
+---
+
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+A library of components often keeps a recipe in one module and composes
+it in others. Each module then exports a recipe, and the library's
+declarations hold its type.
+
+## With `declaration`
+
+A module that exports a recipe needs nothing more than
+`"declaration": true`. TypeScript writes the type of the recipe with the
+types that native-recipe exports, such as `RecipeComposition`. The
+library depends on `@lynstack/native-recipe` only, even when its package
+manager, such as pnpm, keeps `@lynstack/recipe` out of its reach.
+
+## With `isolatedDeclarations`
+
+With `"isolatedDeclarations": true`, TypeScript requires that the
+declarations of each file can be written from that file alone, without
+the type checker, as oxc and the tools built on it, such as tsdown, write
+them. Without the type checker, a tool cannot know what a call returns,
+so each recipe that a module exports needs a type annotation; without
+one, TypeScript reports TS9010.
+
+`StyleRecipeOf` and `SlotStyleRecipeOf` give that type from the type of
+the config. Declare the config `as const`, which isolated declarations
+can read, and annotate the recipe with `typeof` the config:
+
+<RecipeExample
+  name="native-recipe/exporting-recipes/box"
+  calls={[{}, { size: "sm" }]}
+/>
+
+`StyleRecipeOf<typeof boxConfig>` is the type that
+`createStyleRecipe(boxConfig)` returns, the same that TypeScript infers,
+with the style it returns. `SlotStyleRecipeOf` does the same for
+`createSlotStyleRecipe`. A recipe that a module keeps to itself needs no
+annotation.
+
+### Compose an exported recipe
+
+Isolated declarations cannot read the type of a recipe that a config
+lists, so leave `composes` out of the config. Spread the config into the
+call with `composes`, and pass the types of the recipes it composes, in
+the same order, as the second type parameter:
+
+<RecipeExample
+  name="native-recipe/exporting-recipes/card"
+  calls={[{ raised: true }]}
+/>
+
+The helpers reject a config that lists `composes`, so that the type
+cannot leave out the recipes it composes.
+
+### Themed recipes
+
+`ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` take the type of the
+config function of a themed recipe. Isolated declarations cannot infer a
+value read from the theme, so give each one its type, and return the
+config `as const`:
+
+```ts
+const { createStyleRecipe } = createThemedRecipes<Theme>();
+
+const chipConfig = (theme: Theme) =>
+  ({
+    base: { borderRadius: theme.radius as Theme["radius"] },
+    variants: {
+      tone: {
+        primary: { backgroundColor: theme.primary as Theme["primary"] },
+        muted: { opacity: 0.6 },
+      },
+    },
+  }) as const;
+
+export const chip: ThemedStyleRecipeOf<typeof chipConfig> =
+  createStyleRecipe(chipConfig);
+```
+
+A themed recipe composes the recipe of its theme, which `withTheme`
+returns. Spread the config into a function that adds `composes`, and pass
+the themed recipes it composes as the second type parameter:
+
+```ts
+const badgeConfig = (theme: Theme) =>
+  ({
+    variants: { size: { sm: { padding: theme.gap as Theme["gap"] } } },
+  }) as const;
+
+export const badge: ThemedStyleRecipeOf<
+  typeof badgeConfig,
+  readonly [typeof chip]
+> = createStyleRecipe((theme: Theme) => ({
+  ...badgeConfig(theme),
+  composes: [chip.withTheme(theme)],
+}));
+```
+
+A lint rule such as `no-unnecessary-type-assertion` may report these
+assertions as unneeded, since the type checker knows the type of each
+token. Isolated declarations need them: keep them, and turn the rule off
+for the files that declare themed recipes.
+
+## Next steps
+
+- [Composing recipes](/recipe/native-recipe/composing/) explains how the
+  configs of composed recipes merge.
+- [Typing recipes](/recipe/native-recipe/typescript/) types component
+  props from a recipe.
+- [All exports](/recipe/native-recipe/exports/) lists every type.

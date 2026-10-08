@@ -265,7 +265,7 @@ function createStyleRecipe<
   config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
 ): ComposedStyleRecipe<
   ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>,
+  NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
   RecipeStyle<Variants, Base, Compounds, Composed>
 >;
 
@@ -275,6 +275,7 @@ function createStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
 
 export { createStyleRecipe };
 export type {
+  ComposedStyleRecipe,
   RecipeStyle,
   StyleCompoundVariant,
   StyleRecipe,

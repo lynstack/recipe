@@ -28,6 +28,16 @@ type InheritedDefaultedName<
   keyof ComposedVariants<Composed, Variants>
 >;
 
+/**
+ * The names of the variants with a default in a config of type `Config`:
+ * the keys of its `defaultVariants`.
+ */
+type DefaultedNameOf<Config> = Config extends {
+  readonly defaultVariants: infer Defaults;
+}
+  ? keyof Defaults
+  : never;
+
 /** The keys of every style in the union `Style`. */
 type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
 
@@ -207,6 +217,7 @@ export type {
   ComposedStyle,
   CompoundStyles,
   DeclaredStyle,
+  DefaultedNameOf,
   InheritedDefaultedName,
   KeyOfEach,
   NativeStyle,

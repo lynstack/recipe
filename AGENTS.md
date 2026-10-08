@@ -38,19 +38,20 @@ it before working in that folder.
   that several property tests share sit in `*.arbitraries.ts`, which the
   build leaves out. A benchmark imports its package by its name, so it
   runs against the built bundle, never against the sources directly.
-- `consumers` holds an app of each package, `consumers/<package>`, and
-  `consumers/class-recipe-isolated`, a library that emits the
-  declarations of each file on its own, with `isolatedDeclarations`.
-  Each is a private workspace package, with its own `package.json`,
-  `tsconfig.json`, and `.oxlintrc.json`, that depends on its package
-  only, as an app does, and exports what it builds with it. Compiling it
-  with declarations checks the published types. In the workspace, pnpm
-  links the package folder, whose types TypeScript can always name;
-  `scripts/consumers` installs the packed packages in a copy of each
-  app outside the repository, where an app can name only the types that
-  its dependencies export. A type of `@lynstack/recipe` that the type of
-  a recipe names, such as `RecipeComposition`, must therefore be exported
-  by the package too.
+- `consumers` holds the apps that check the published types: an app of
+  each package, `consumers/<package>`, and a library of
+  `@lynstack/class-recipe` and of `@lynstack/native-recipe` that sets
+  `isolatedDeclarations`, `consumers/<package>-isolated`. Each is a
+  private workspace package, with its own `package.json`,
+  `tsconfig.json`, and `.oxlintrc.json`, that depends on its package and
+  on no other package of the workspace, as an app does, and exports what
+  it builds with it, so that compiling it with declarations checks the
+  published types. In the workspace, pnpm links the package folder, whose
+  types TypeScript can always name; `scripts/consumers` installs the
+  packed packages in a copy of each app outside the repository, where an
+  app can name only the types that its dependencies export. A type of
+  `@lynstack/recipe` that the type of a recipe names, such as
+  `RecipeComposition`, must therefore be exported by the package too.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each
@@ -76,8 +77,9 @@ it before working in that folder.
   TypeScript that the packages support, and the docs read their
   requirements from it. `smoke.mjs` imports each package and `smoke.cjs`
   requires it. The apps of `consumers` are compiled with the packed
-  packages, with the React Native of the app of `@lynstack/native-recipe`
-  and the oldest that its peer dependency allows.
+  packages, with the React Native that the apps of
+  `@lynstack/native-recipe` list and the oldest that its peer dependency
+  allows.
   To support an older or newer minimum, change `versions.json`; never
   write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
@@ -101,7 +103,7 @@ checks its formatting, and runs its tests. The `check` of an app of
 
 Run a package's scripts with `pnpm --filter <name> <script>`, such as
 `pnpm --filter @lynstack/recipe test`, or from its folder. To check a
-package with its app, run
+package with its apps, run
 `pnpm --filter @lynstack/class-recipe --filter "./consumers/class-recipe*" check`.
 
 - `pnpm test` runs the tests of every package.
@@ -119,8 +121,8 @@ package with its app, run
   app of `consumers` outside the repository, and compiles it. It also
   checks that the declarations of the slot recipes of each app's
   `chain.ts`, each of which composes the one before, grow linearly with
-  the level of composition. With a TypeScript older than 5.5, which has
-  no `isolatedDeclarations`, it compiles an app that sets it without it. Pass
+  the level of composition. A TypeScript older than 5.5, which has no
+  `isolatedDeclarations`, compiles an app that sets it without it. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
   those. Run it after a change to a public type, or to the dependencies
   between the packages; CI runs it on the oldest and newest TypeScript

@@ -162,6 +162,8 @@ an image. Use it to type a style that can come from any recipe.
 
 ## Next steps
 
+- [Exporting recipes from a library](/recipe/native-recipe/exporting-recipes/)
+  annotates exported recipes for `isolatedDeclarations`.
 - [All exports](/recipe/native-recipe/exports/) lists every type, with
   its type parameters.
 - [Building components](/recipe/native-recipe/building-components/) uses

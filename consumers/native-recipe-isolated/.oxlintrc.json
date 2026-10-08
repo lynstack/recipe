@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "overrides": [
+    {
+      // With isolatedDeclarations, a value read from the theme needs its
+      // type asserted, which this rule, unaware of the option, reports as
+      // unneeded.
+      "files": ["theme.ts", "badge.ts"],
+      "rules": { "typescript/no-unnecessary-type-assertion": "off" }
+    }
+  ],
+  "rules": {
+    // React Native does not type its styles as read-only, so a function
+    // of an app that takes them cannot take read-only types.
+    "typescript/prefer-readonly-parameter-types": "off"
+  }
+}

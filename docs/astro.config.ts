@@ -209,6 +209,7 @@ export default defineConfig({
                   },
                   "native-recipe/building-components",
                   { label: "Typing recipes", slug: "native-recipe/typescript" },
+                  "native-recipe/exporting-recipes",
                 ],
                 label: "Guides",
               },

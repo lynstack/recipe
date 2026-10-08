@@ -231,6 +231,22 @@ importers:
         specifier: 19.3.0
         version: 19.3.0
 
+  consumers/native-recipe-isolated:
+    dependencies:
+      '@lynstack/native-recipe':
+        specifier: workspace:^
+        version: link:../../packages/native-recipe
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-native:
+        specifier: 0.87.1
+        version: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+
   consumers/recipe:
     dependencies:
       '@lynstack/recipe':

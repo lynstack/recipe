@@ -259,7 +259,7 @@ function createSlotStyleRecipe<
   // Not ComposedSlot, which declarations print with each composed type.
   Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
   ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>,
+  NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
   RecipeSlotStyles<
     | Slot
     | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
@@ -278,6 +278,7 @@ function createSlotStyleRecipe(
 
 export { createSlotStyleRecipe };
 export type {
+  ComposedSlotStyleRecipe,
   SlotStyleCompoundVariant,
   SlotStyleRecipe,
   SlotStyleRecipeConfig,

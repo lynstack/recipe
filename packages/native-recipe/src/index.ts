@@ -6,6 +6,7 @@
  * @packageDocumentation
  */
 
+export type { SlotStyleRecipeOf, StyleRecipeOf } from "./recipe-of.js";
 export { createSlotStyleRecipe } from "./slot-style-recipe.js";
 export type {
   SlotStyleCompoundVariant,
@@ -20,6 +21,10 @@ export type {
   StyleRecipeConfig,
   StyleRecipeVariants,
 } from "./style-recipe.js";
+export type {
+  ThemedSlotStyleRecipeOf,
+  ThemedStyleRecipeOf,
+} from "./themed-recipe-of.js";
 export { createThemedRecipes } from "./themed-recipes.js";
 export type { ThemedRecipe, ThemedRecipeCreators } from "./themed-recipes.js";
 export type {
