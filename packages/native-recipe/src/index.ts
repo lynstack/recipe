@@ -23,9 +23,12 @@ export type {
 export { createThemedRecipes } from "./themed-recipes.js";
 export type { ThemedRecipe, ThemedRecipeCreators } from "./themed-recipes.js";
 export type {
+  ComposedSlot,
   CompoundCondition,
   DefaultVariants,
+  KindRecipe,
   NativeStyle,
+  RecipeComposition,
   RecipeFunction,
   SlotStyles,
   VariantOption,

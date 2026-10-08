@@ -154,8 +154,10 @@ type SlotRecipeProps<
 >;
 
 export type {
+  ComposedSlot,
   CompoundCondition,
   DefaultVariants,
+  RecipeComposition,
   RecipeFunction,
   VariantOption,
   VariantSelection,

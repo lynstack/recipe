@@ -28,9 +28,11 @@ export type {
   SlotRecipeVariants,
 } from "./slot-recipe.js";
 export type {
+  ComposedSlot,
   CompoundCondition,
   DefaultVariants,
   PropsOf,
+  RecipeComposition,
   RecipeFunction,
   SlotClasses,
   SlotClassNames,

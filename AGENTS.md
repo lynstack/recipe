@@ -46,7 +46,9 @@ it before working in that folder.
   links the package folder, whose types TypeScript can always name;
   `scripts/consumers.ts` installs the packed packages in a copy of each
   app outside the repository, where an app can name only the types that
-  its dependencies export.
+  its dependencies export. A type of `@lynstack/recipe` that the type of
+  a recipe names, such as `RecipeComposition`, must therefore be exported
+  by the package too.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each

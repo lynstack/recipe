@@ -8,6 +8,8 @@ import {
   sva,
 } from "@lynstack/class-recipe";
 
+import { look } from "./look.js";
+
 const button = createRecipe({
   base: "inline-flex",
   compoundVariants: [
@@ -58,6 +60,16 @@ const select = sva({
   variants: { invalid: { true: { label: "text-red-700" } } },
 });
 
+const toggle = sva({
+  composes: [look],
+  defaultVariants: { size: "md" },
+  slots: ["icon"],
+  variants: { pressed: { true: { icon: "opacity-100" } } },
+});
+
+const toggleClassNames = toggle({ pressed: true });
+const toggleRoot: string = toggleClassNames.root;
+
 const iconClassName: string = iconButton({ shape: "round", tone: "danger" });
 const selectClassNames: Readonly<
   Record<"input" | "label" | "trigger", string>
@@ -95,5 +107,8 @@ export {
   pill,
   select,
   selectClassNames,
+  toggle,
+  toggleClassNames,
+  toggleRoot,
 };
 export type { ButtonProps, ButtonVariants };
