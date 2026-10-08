@@ -14,5 +14,11 @@
     "outDir": "out",
     "types": []
   },
-  "files": ["index.ts", "chain.ts", "themed-chain.ts"]
+  "files": [
+    "index.ts",
+    "chain.ts",
+    "style-chain.ts",
+    "themed-chain.ts",
+    "themed-use.ts"
+  ]
 }
