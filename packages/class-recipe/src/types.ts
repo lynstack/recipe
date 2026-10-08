@@ -2,9 +2,11 @@ import type {
   ComposableKindSlotRecipe,
   ComposedDefaultedName,
   ComposedVariants,
+  DefaultVariants,
   KindRecipe,
   VariantKey as KindVariantKey,
   VariantsOf as KindVariantsOf,
+  VariantOption,
   VariantSelection,
 } from "@lynstack/recipe";
 
@@ -135,7 +137,10 @@ type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 /**
  * Rejects the slots of each option's classes that neither `Slot` nor
  * `Inherited` names, unless the option's slot names are not known at
- * compile time. A recipe's own slots are matched first, so that they are
+ * compile time, and lists every slot, so that an editor completes their
+ * names, but those named as a property of every object, such as
+ * `toString`, which an option that does not give them would have with
+ * another type. A recipe's own slots are matched first, so that they are
  * accepted even when the inherited slots are generic.
  */
 type NoUnknownSlots<
@@ -153,9 +158,25 @@ type NoUnknownSlots<
             Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>,
             never
           >
-        >;
+        > &
+          SlotClasses<Exclude<Slot | Inherited, keyof typeof Object.prototype>>;
   };
 };
+
+/**
+ * The type of `defaultVariants`: the defaults as written, checked. While an
+ * editor completes them, TypeScript has not inferred their names and takes
+ * `never`, which would allow no name; then it is a default for any variant.
+ */
+type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [
+  DefaultedName,
+] extends [never]
+  ? {
+      readonly [Name in keyof Variants]?: VariantOption<
+        NoInfer<Variants>[Name]
+      >;
+    }
+  : DefaultVariants<Variants, DefaultedName>;
 
 /**
  * The slots of the slot recipes of `Composed`, as indexed access rather
@@ -227,4 +248,5 @@ export type {
   VariantKey,
   VariantOptions,
   VariantsOf,
+  WrittenDefaults,
 };

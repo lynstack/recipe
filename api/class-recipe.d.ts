@@ -1,4 +1,4 @@
-import { Composable, ComposableKindRecipe, ComposableKindRecipe as ComposableKindRecipe$1, ComposableKindSlotRecipe, ComposableKindSlotRecipe as ComposableKindSlotRecipe$1, ComposedDefaultedName, ComposedSlot, ComposedVariants, ComposedVariants as ComposedVariants$1, CompoundCondition, DefaultVariants, KindRecipe, KindVariants, RecipeComposition, RecipeComposition as RecipeComposition$1, RecipeFunction, VariantKey, VariantOption, VariantSelection, VariantSelection as VariantSelection$1, VariantsOf as VariantsOf$1 } from "@lynstack/recipe";
+import { Composable, ComposableKindRecipe, ComposableKindRecipe as ComposableKindRecipe$1, ComposableKindSlotRecipe, ComposableKindSlotRecipe as ComposableKindSlotRecipe$1, ComposedDefaultedName, ComposedSlot, ComposedVariants, ComposedVariants as ComposedVariants$1, CompoundCondition, DefaultVariants, DefaultVariants as DefaultVariants$1, KindRecipe, KindVariants, RecipeComposition, RecipeComposition as RecipeComposition$1, RecipeFunction, VariantKey, VariantOption, VariantOption as VariantOption$1, VariantSelection, VariantSelection as VariantSelection$1, VariantsOf as VariantsOf$1 } from "@lynstack/recipe";
 //#region src/cx.d.ts
 type ClassValue = ClassArray | ClassDictionary | string | number | boolean | null | undefined;
 type ClassDictionary = Readonly<Record<string, unknown>>;
@@ -24,7 +24,8 @@ type PropsOf<Recipe extends (props: never) => unknown> = Simplify<NonNullable<Pa
 type OptionsOnly<Variants> = { [Name in keyof Variants]: Exclude<Variants[Name], object>; };
 type SlotClasses<Slot extends string> = { readonly [Name in Slot]?: string | undefined; };
 type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
-type NoUnknownSlots<Variants, Slot extends string, Inherited extends string = never> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Record<Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>, never>>; }; };
+type NoUnknownSlots<Variants, Slot extends string, Inherited extends string = never> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Record<Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>, never>> & SlotClasses<Exclude<Slot | Inherited, keyof typeof Object.prototype>>; }; };
+type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [DefaultedName] extends [never] ? { readonly [Name in keyof Variants]?: VariantOption$1<NoInfer<Variants>[Name]>; } : DefaultVariants$1<Variants, DefaultedName>;
 type InheritedSlot<Composed extends readonly ComposableKindSlotRecipe$1<string>[]> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 type WideSelection<Slot extends string> = Readonly<Record<string, string | SlotClasses<Slot> | undefined>>;
 type SlotRecipeProps<Slot extends string, Variants, DefaultedName extends keyof Variants> = Simplify<(string extends keyof Variants ? WideSelection<Slot> : VariantSelection$1<Variants, DefaultedName>) & {
@@ -45,7 +46,7 @@ interface RecipeConfig<Variants extends RecipeVariants, DefaultedName extends ke
     readonly classNames?: never;
   };
   readonly compoundVariants?: readonly CompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] | undefined;
-  readonly defaultVariants?: DefaultVariants<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
+  readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }
 type RecipeProps<Variants, DefaultedName extends keyof Variants> = Simplify<VariantSelection<Variants, DefaultedName> & {
@@ -76,7 +77,7 @@ interface SlotRecipeConfig<Slot extends string, Variants extends SlotRecipeVaria
     readonly classNames?: never;
   };
   readonly compoundVariants?: readonly SlotCompoundVariant<NoInfer<Slot> | InheritedSlot<Composed>, NoInfer<ComposedVariants$1<Composed, Variants>>>[] | undefined;
-  readonly defaultVariants?: DefaultVariants<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
+  readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }
 type SlotRecipe<Slot extends string, Props, Composition = unknown> = RecipeFunction<Props, SlotClassNames<Slot>> & {

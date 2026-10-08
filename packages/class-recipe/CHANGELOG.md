@@ -4,6 +4,12 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## Unreleased
+
+- An editor completes the variant names of `defaultVariants` of `cva`
+  and `sva`, and the slot names of the options of an `sva` recipe's
+  variants. It completed neither before.
+
 ## 1.7.0 — 2026-10-08
 
 A recipe warns about the names its config gives without declaring them,

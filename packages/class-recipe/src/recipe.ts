@@ -8,7 +8,6 @@ import type {
 
 import type {
   CompoundCondition,
-  DefaultVariants,
   InheritedDefaultedName,
   RecipeFunction,
   Simplify,
@@ -16,6 +15,7 @@ import type {
   VariantKey,
   VariantOptions,
   VariantSelection,
+  WrittenDefaults,
 } from "./types.js";
 import type { LooseRecipe, LooseRecipeConfig } from "./compile-recipe.js";
 import type { BuildOptions } from "./build-options.js";
@@ -82,7 +82,7 @@ interface RecipeConfig<
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /**
    * Whether the recipe caches the class names of each declared selection.

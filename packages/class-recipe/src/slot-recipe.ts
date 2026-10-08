@@ -8,7 +8,6 @@ import type {
 
 import type {
   CompoundCondition,
-  DefaultVariants,
   InheritedDefaultedName,
   InheritedSlot,
   NoUnknownSlots,
@@ -19,6 +18,7 @@ import type {
   VariantDefaults,
   VariantKey,
   VariantOptions,
+  WrittenDefaults,
 } from "./types.js";
 import type {
   LooseSlotRecipe,
@@ -102,7 +102,7 @@ interface SlotRecipeConfig<
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /**
    * Whether the recipe caches the class names of each declared selection.
