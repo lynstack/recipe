@@ -82,9 +82,7 @@ interface SlotStyleRecipeConfig<
   readonly slots: readonly Slot[];
   /** The style of each slot whatever the variants. */
   readonly base?:
-    | (Base &
-        SlotStyles<string> &
-        NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>)
+    | (Base & NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>)
     | undefined;
   /** For each variant name, the style of each slot for each of its options. */
   readonly variants: Variants &

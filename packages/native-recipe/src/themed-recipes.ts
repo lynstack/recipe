@@ -10,6 +10,7 @@ import type {
   InheritedDefaultedName,
   NativeStyle,
   RecipeSlotStyles,
+  SlotStyles,
   VariantSelection,
 } from "./types.js";
 import type {
@@ -145,7 +146,7 @@ interface ThemedRecipeCreators<Theme extends object> {
   readonly createSlotStyleRecipe: <
     const Slot extends string,
     const Variants,
-    const Base = never,
+    const Base extends SlotStyles<string> = never,
     const Compounds = readonly [],
     const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
       never,

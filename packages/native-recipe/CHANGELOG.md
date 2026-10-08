@@ -7,6 +7,11 @@ published on npm and as a
 
 ## Unreleased
 
+- A slot style recipe, plain or themed, accepts styles whose slot names
+  are not known at compile time, such as a `base` typed
+  `SlotStyles<string>`, in `base` and in compound variants, as it already
+  did in its variants. They were rejected as "not assignable to type
+  'undefined'".
 - A function generic over the slot recipe that a slot style recipe
   composes, plain or themed, can name its own slots.
 - The recipe creators warn, once, with `console.warn`, about a default, a

@@ -123,19 +123,25 @@ type InheritedSlot<
 
 /**
  * Rejects the slots and style properties of the compound variants' styles,
- * given as a union, that the slot recipe does not have.
+ * given as a union, that the slot recipe does not have, unless the slot
+ * names of the styles are not known at compile time.
  */
 type NoUnknownCompoundStyles<
   Styles,
   Slot extends string,
   Inherited extends string = never,
-> = Readonly<
-  Partial<Record<Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>, never>>
-> & {
-  readonly [Name in Slot | Inherited]?: NoUnknownProperties<
-    DeclaredStyle<Styles, Name>
-  >;
-};
+> =
+  string extends KeyOfEach<Styles>
+    ? SlotStyles<string>
+    : Readonly<
+        Partial<
+          Record<Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>, never>
+        >
+      > & {
+        readonly [Name in Slot | Inherited]?: NoUnknownProperties<
+          DeclaredStyle<Styles, Name>
+        >;
+      };
 
 /** Every style that a slot recipe's config declares for `Slot`, as a union. */
 type DeclaredStyle<Styles, Slot> = Styles extends unknown
