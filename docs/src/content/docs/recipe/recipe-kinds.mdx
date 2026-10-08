@@ -11,11 +11,11 @@ the rest. `createRecipeKind` and `createSlotRecipeKind` take the same kind:
 
 ```ts
 interface RecipeKind<Value, Accumulator, Result> {
-  initial: (base: Value | undefined) => Accumulator;
-  reduce: (accumulator: Accumulator, value: Value) => Accumulator;
-  combine?: (first: Value, second: Value) => Value;
-  finish?: (accumulator: Accumulator) => Result;
-  cache?: boolean;
+  readonly initial: (base: Value | undefined) => Accumulator;
+  readonly reduce: (accumulator: Accumulator, value: Value) => Accumulator;
+  readonly combine?: ((first: Value, second: Value) => Value) | undefined;
+  readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
+  readonly cache?: boolean | undefined;
 }
 ```
 
@@ -33,7 +33,7 @@ recipe's base, `reduce` adds each value that applies to the selection, and
 ## `initial`
 
 ```ts
-initial: (base: Value | undefined) => Accumulator;
+readonly initial: (base: Value | undefined) => Accumulator;
 ```
 
 Returns the accumulator a result starts from, given the recipe's `base`,
@@ -48,7 +48,7 @@ or `undefined` when the recipe has none.
 ## `reduce`
 
 ```ts
-reduce: (accumulator: Accumulator, value: Value) => Accumulator;
+readonly reduce: (accumulator: Accumulator, value: Value) => Accumulator;
 ```
 
 Adds one value to the accumulator and returns the accumulator: the same
@@ -68,7 +68,7 @@ one, changed, or a new one.
 ## `combine`
 
 ```ts
-combine?: (first: Value, second: Value) => Value;
+readonly combine?: ((first: Value, second: Value) => Value) | undefined;
 ```
 
 Returns one value that adds what `first` then `second` add. Only a recipe
@@ -104,7 +104,7 @@ values into one, such as one that counts its values, leaves it out.
 ## `finish`
 
 ```ts
-finish?: (accumulator: Accumulator) => Result;
+readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
 ```
 
 Turns the accumulator into the result, once for each result built. Use it
@@ -115,7 +115,7 @@ between them. Without it, the result is the accumulator.
 ## `cache`
 
 ```ts
-cache?: boolean;
+readonly cache?: boolean | undefined;
 ```
 
 Whether a recipe builds the result of each declared selection once and
