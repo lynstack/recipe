@@ -18,6 +18,7 @@ import { createSlotsBuilder, noSlotValues } from "./slots.js";
 import type { KindVariants } from "./recipe-kind.js";
 import { checkSlotRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
+import { warnUnknownNames } from "./check-names.js";
 
 const slotRecipes = createRegistry<LooseSlotValues>("slot recipe");
 
@@ -191,9 +192,11 @@ type LooseSlotRecipe = WithVariants<
  * in the order of `slots`. With the cache, a slot recipe builds it once for
  * each declared selection and returns the same object for the same
  * variants. The `cache` of a slot recipe's config overrides the kind's.
- * Variants, boolean variants, undeclared options, and the `variantKeys`,
- * `variantOptions`, and `defaultVariants` properties are as in
- * {@link createRecipeKind}.
+ * Variants, boolean variants, undeclared options, the warning about
+ * undeclared names, and the `variantKeys`, `variantOptions`, and
+ * `defaultVariants` properties are as in {@link createRecipeKind}. It also
+ * warns about a value for a slot that no config lists in `slots`, which is
+ * ignored.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first. With
@@ -270,6 +273,7 @@ function createSlotRecipeKind(kind: LooseRecipeKind): unknown {
   return (config: LooseSlotRecipeConfig): LooseSlotRecipe => {
     const own = layerOf(checkSlotRecipeConfig(config), config.slots);
     const layers = slotRecipes.layersOf(config.composes ?? [], own);
+    warnUnknownNames(own, layers, true);
     const merged = mergeLayers(layers);
     const compiled = compileVariants<readonly LooseSlotValues[]>({
       ...merged,

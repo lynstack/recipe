@@ -34,9 +34,12 @@ and compiles that:
 2. It sets the default of each variant: the option in `defaultVariants`, or
    `"false"` for a boolean variant, whose only options are `"true"` and
    `"false"`.
-3. It turns each compound variant into the option numbers it matches. A
-   compound variant that names an undeclared variant or option, or lists no
-   option for a variant, can never match, and is dropped.
+3. It turns each compound variant into the option numbers it matches,
+   leaving out the options that a variant does not declare. A compound
+   variant that names an undeclared variant, or is left without an option
+   for a variant, can never match, and is dropped. Creating the recipe
+   warns about each undeclared name (see
+   [Names that a config does not declare](/recipe/recipe/api/#names-that-a-config-does-not-declare)).
 4. It keeps the value of each option and compound variant, by reference.
    A recipe that composes others may combine several values into one
    first (see

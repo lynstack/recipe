@@ -268,7 +268,16 @@ function isBooleanName(option: string): boolean {
   return option === "true" || option === "false";
 }
 
-export { compileVariants, noOption, noProps, select, undeclared, withVariants };
+export {
+  compileVariants,
+  noOption,
+  noProps,
+  select,
+  toOptionName,
+  toOptionNames,
+  undeclared,
+  withVariants,
+};
 export type {
   CompiledVariants,
   Compound,

@@ -4,6 +4,15 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## Unreleased
+
+- Creating a recipe or a slot recipe warns, once, with `console.warn`,
+  about a default or a compound variant that names a variant or an option
+  that no config of the recipe declares, and, in a slot recipe, about a
+  value for a slot that no config lists in `slots`. The recipe ignores
+  such names, as before; TypeScript does not report every one in a config
+  declared before the call, as `isolatedDeclarations` requires.
+
 ## 1.7.0 — 2026-10-08
 
 A library can type its own functions and exported recipes: a function

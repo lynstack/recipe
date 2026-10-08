@@ -26,6 +26,7 @@ import { compileLayer, compileMergedLayers } from "./build-recipe.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { checkRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
+import { warnUnknownNames } from "./check-names.js";
 import { withVariants } from "./variants.js";
 
 const recipes = createRegistry<unknown>("recipe");
@@ -185,6 +186,11 @@ type LooseKindRecipe = WithVariants<
  * each, and `defaultVariants` the option each uses when a selection leaves
  * it out, so that a library can list every selection of a recipe.
  *
+ * Creating a recipe warns once, with `console.warn`, about a default or a
+ * compound variant's condition that names a variant or an option that no
+ * config of the recipe declares. Such a default is ignored, and such a
+ * condition never matches.
+ *
  * With the cache, a recipe builds the result of each declared selection
  * once, and calling it again with the same variants returns the same
  * result. Freeze an object result in `kind.finish` so that callers cannot
@@ -268,6 +274,7 @@ function createRecipeKind(kind: LooseRecipeKind): unknown {
   return (config: LooseKindRecipeConfig): LooseKindRecipe => {
     const own = layerOf(checkRecipeConfig(config), []);
     const layers = recipes.layersOf(config.composes ?? [], own);
+    warnUnknownNames(own, layers, false);
     const { compiled, build } =
       layers.length === 1
         ? compileLayer(kind, own)

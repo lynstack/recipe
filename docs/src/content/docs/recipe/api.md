@@ -238,6 +238,37 @@ function throws a `TypeError` that names the part that is wrong:
 The check runs once, when the recipe is created, so it costs nothing on
 a call.
 
+### Names that a config does not declare
+
+A default, a compound variant, or a slot's value can name a variant, an
+option, or a slot that no config of the recipe declares. TypeScript
+rejects such a name in a config written in the call, but not every such
+name in a config declared before it (see
+[A config declared before the call](/recipe/recipe/typescript/#a-config-declared-before-the-call)),
+and not in untyped code. The recipe then leaves the name out:
+
+- A default of an undeclared variant, or an option that its variant does
+  not declare, is ignored.
+- A compound variant's condition on an undeclared variant never matches.
+  An undeclared option in its list is ignored, so a condition left
+  without a declared option never matches either.
+- In a slot recipe, a value for a slot that no config lists in `slots` is
+  ignored.
+
+When the recipe is created, it checks these names against its own config
+and those of the recipes it composes, and warns about the ones it does
+not declare with `console.warn`, in one message:
+
+```text
+A recipe's config names variants, options, or slots that it does not declare, so they add nothing:
+- Compound variant 0 names the variant "tonne".
+- `base` gives a value to the slot "lable".
+```
+
+A recipe created again from a config with the same mistakes, such as a
+themed recipe for each theme, does not repeat the warning. Like the
+check of the shape, it runs only when the recipe is created.
+
 ## Types for apps
 
 An app that uses recipes names their variants with these:

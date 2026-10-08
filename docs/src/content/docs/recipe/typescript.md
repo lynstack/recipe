@@ -53,23 +53,28 @@ button({ tone: "primary" });
 button({ size: "lg" });
 ```
 
+## A config declared before the call
+
 A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
-variants stay literal types.
+variants stay literal types. The same holds for the `slots` of a slot
+recipe: a list declared without `as const` is a `string[]`, so the slot
+recipe takes any slot name, and a misspelled slot in `base`, in the
+variants, or in the result is not a type error.
 
-The same holds for the `slots` of a slot recipe. A list declared before
-the call without `as const` is a `string[]`, so the slot recipe takes any
-slot name: a misspelled slot in `base`, in the variants, or in the result
-is not an error.
+TypeScript also checks a declared config less than one written in the
+call, since it reports a name that a type does not declare only in an
+object written where that type is expected. In a declared config, a
+misspelled name next to a correct one is not a type error in these
+places:
 
-TypeScript checks a declared config less than one written in the call:
-it reports a name that a type does not declare only in an object written
-where that type is expected. In a declared config, a misspelled name next
-to a correct one is not an error, and adds no value, in the variants that
-a compound variant names, the slots of `base`, and the slots of a
-compound variant's value. A library whose users declare their configs,
-as `isolatedDeclarations` requires, can check these names when it
-creates a recipe.
+- the variants that a compound variant names;
+- the slots of `base`;
+- the slots of a compound variant's value.
+
+The recipe warns about such a name when it is created, and leaves it
+out; see
+[Names that a config does not declare](/recipe/recipe/api/#names-that-a-config-does-not-declare).
 
 ## Composed recipes
 

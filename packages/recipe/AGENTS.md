@@ -23,6 +23,10 @@ that API.
   - `check-config.ts` checks the shape of a config when a recipe is
     created, so that a config from untyped code fails with a message
     that names what is wrong.
+  - `check-names.ts` warns, once, about the variants, options, and slots
+    that a config names without declaring, which the types do not catch
+    in a config declared before the call. It is the only place that
+    writes to the console.
   - `variants.ts` compiles variants into numbered options, so a selection
     becomes an integer key, and lists the variants, options, and defaults
     of a recipe.

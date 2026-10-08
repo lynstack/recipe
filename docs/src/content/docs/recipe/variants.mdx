@@ -70,8 +70,11 @@ list matches any of its options:
 
 A compound condition matches against the selected options after defaults
 are applied, so it can match a default variant, including the `false` of a
-boolean variant. A compound variant that names an undeclared variant or
-option never matches; its config is a type error.
+boolean variant. A condition on an undeclared variant never matches, and
+an undeclared option in a list is ignored. TypeScript rejects both in a
+config written in the call, and the recipe warns about them when it is
+created (see
+[Names that a config does not declare](/recipe/recipe/api/#names-that-a-config-does-not-declare)).
 
 Compound variants apply after the values of the options, in the order of
 `compoundVariants`, so the kind can let them override the options.
