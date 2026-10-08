@@ -1,4 +1,6 @@
 import type {
+  ComposedDefaultedName,
+  ComposedVariants,
   KindRecipe,
   VariantKey as KindVariantKey,
   VariantsOf as KindVariantsOf,
@@ -10,6 +12,21 @@ import type {
  * its properties instead of the types it was built from.
  */
 type Simplify<Type> = { [Key in keyof Type]: Type[Key] };
+
+/**
+ * The names of the variants that the recipes of `Composed` give a default,
+ * among the variants of a recipe that composes them with its own
+ * `Variants`. Kept apart from the recipe's own defaulted names, so that a
+ * recipe that composes nothing has exactly those, even when they are
+ * generic.
+ */
+type InheritedDefaultedName<
+  Composed extends readonly unknown[],
+  Variants,
+> = Extract<
+  ComposedDefaultedName<Composed, never>,
+  keyof ComposedVariants<Composed, Variants>
+>;
 
 /** The props of a recipe that override its classes, which are not variants. */
 type OverrideName = "className" | "classNames";
@@ -163,6 +180,7 @@ export type {
   VariantSelection,
 } from "@lynstack/recipe";
 export type {
+  InheritedDefaultedName,
   NoUnknownSlots,
   PropsOf,
   Simplify,

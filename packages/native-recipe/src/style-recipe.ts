@@ -1,6 +1,5 @@
 import type {
   ComposableKindRecipe,
-  ComposedDefaultedName,
   ComposedVariants,
   KindRecipe,
   KindVariants,
@@ -11,6 +10,7 @@ import type {
   ComposedStyle,
   CompoundCondition,
   DefaultVariants,
+  InheritedDefaultedName,
   KeyOfEach,
   NativeStyle,
   NoUnknownProperties,
@@ -153,15 +153,14 @@ type StyleRecipe<Props, Style, Composition = unknown> = KindRecipe<
  * composes, are `Variants`, whose variants with a default are
  * `DefaultedName`, and which returns `Style`.
  */
-type ComposedStyleRecipe<Variants, DefaultedName, Style> = StyleRecipe<
-  VariantSelection<Variants, Extract<DefaultedName, keyof Variants>>,
+type ComposedStyleRecipe<
+  Variants,
+  DefaultedName extends keyof Variants,
   Style,
-  RecipeComposition<
-    Variants,
-    Extract<DefaultedName, keyof Variants>,
-    NativeStyle,
-    undefined
-  >
+> = StyleRecipe<
+  VariantSelection<Variants, DefaultedName>,
+  Style,
+  RecipeComposition<Variants, DefaultedName, NativeStyle, undefined>
 >;
 
 /**
@@ -266,7 +265,7 @@ function createStyleRecipe<
   config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
 ): ComposedStyleRecipe<
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>,
+  DefaultedName | InheritedDefaultedName<Composed, Variants>,
   RecipeStyle<Variants, Base, Compounds, Composed>
 >;
 

@@ -8,6 +8,7 @@ import {
   sva,
 } from "@lynstack/class-recipe";
 
+import { define, defineSlots } from "./define.js";
 import { look } from "./look.js";
 
 const button = createRecipe({
@@ -60,6 +61,19 @@ const select = sva({
   variants: { invalid: { true: { label: "text-red-700" } } },
 });
 
+const badge = define({
+  defaultVariants: { tone: "neutral" },
+  variants: { tone: { danger: "bg-red-100", neutral: "bg-gray-100" } },
+});
+const badgeClassName: string = badge({});
+const alert = defineSlots({
+  slots: ["root", "title"],
+  variants: { tone: { danger: { root: "bg-red-100" } } },
+});
+const alertClassNames: Readonly<Record<"root" | "title", string>> = alert({
+  tone: "danger",
+});
+
 const toggle = sva({
   composes: [look],
   defaultVariants: { size: "md" },
@@ -90,6 +104,10 @@ const cardProps: PropsOf<typeof card> = {
 };
 
 export {
+  alert,
+  alertClassNames,
+  badge,
+  badgeClassName,
   button,
   buttonDefaults,
   buttonProps,

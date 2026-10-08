@@ -1,6 +1,18 @@
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import type { NativeStyle, SlotStyles, VariantSelection } from "./types.js";
+import type {
+  SlotStyleRecipe,
+  SlotStyleRecipeConfig,
+  SlotStyleRecipeVariants,
+} from "./slot-style-recipe.js";
+import type {
+  StyleRecipe,
+  StyleRecipeConfig,
+  StyleRecipeVariants,
+} from "./style-recipe.js";
+import { createSlotStyleRecipe } from "./slot-style-recipe.js";
 import { createStyleRecipe } from "./style-recipe.js";
 
 const badge = createStyleRecipe({
@@ -127,5 +139,64 @@ describe("the styles of createStyleRecipe", () => {
     });
 
     expect(recipe).toBeTypeOf("function");
+  });
+});
+
+/** Creates a recipe from any config, as a library's own helper does. */
+function defineStyleRecipe<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
+): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
+  return createStyleRecipe(config);
+}
+
+/** Creates a slot recipe from any config, as a library's own helper does. */
+function defineSlotStyleRecipe<
+  const Slot extends string,
+  const Variants extends SlotStyleRecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: SlotStyleRecipeConfig<
+    Slot,
+    Variants,
+    SlotStyles<Slot>,
+    readonly [],
+    DefaultedName
+  >,
+): SlotStyleRecipe<
+  VariantSelection<Variants, DefaultedName>,
+  SlotStyles<Slot>
+> {
+  return createSlotStyleRecipe(config);
+}
+
+describe("a function generic over a config", () => {
+  it("returns the recipe of its config as a StyleRecipe", () => {
+    const chip = defineStyleRecipe({
+      variants: { tone: { neutral: { opacity: 0.5 }, danger: { opacity: 1 } } },
+      defaultVariants: { tone: "neutral" },
+    });
+
+    expect(chip()).toStrictEqual({ opacity: 0.5 });
+    expectTypeOf<Parameters<typeof chip>[0]>().toEqualTypeOf<
+      { readonly tone?: "neutral" | "danger" | undefined } | undefined
+    >();
+  });
+
+  it("returns the slot recipe of its config as a SlotStyleRecipe", () => {
+    const field = defineSlotStyleRecipe({
+      slots: ["label", "input"],
+      variants: { size: { sm: { input: { height: 24 } } } },
+    });
+
+    expect(field({ size: "sm" })).toStrictEqual({
+      label: {},
+      input: { height: 24 },
+    });
+    expectTypeOf<Parameters<typeof field>[0]>().toEqualTypeOf<{
+      readonly size: "sm";
+    }>();
   });
 });

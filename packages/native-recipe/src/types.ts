@@ -1,5 +1,9 @@
+import type {
+  ComposedDefaultedName,
+  ComposedVariants,
+  VariantsOf as RecipeVariantsOf,
+} from "@lynstack/recipe";
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
-import type { VariantsOf as RecipeVariantsOf } from "@lynstack/recipe";
 
 /**
  * The style of a React Native element: a view, a text, or an image, as
@@ -8,6 +12,21 @@ import type { VariantsOf as RecipeVariantsOf } from "@lynstack/recipe";
 type NativeStyle = ViewStyle | TextStyle | ImageStyle;
 
 type StyleKey = keyof ViewStyle | keyof TextStyle | keyof ImageStyle;
+
+/**
+ * The names of the variants that the recipes of `Composed` give a default,
+ * among the variants of a recipe that composes them with its own
+ * `Variants`. Kept apart from the recipe's own defaulted names, so that a
+ * recipe that composes nothing has exactly those, even when they are
+ * generic.
+ */
+type InheritedDefaultedName<
+  Composed extends readonly unknown[],
+  Variants,
+> = Extract<
+  ComposedDefaultedName<Composed, never>,
+  keyof ComposedVariants<Composed, Variants>
+>;
 
 /** The keys of every style in the union `Style`. */
 type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
@@ -188,6 +207,7 @@ export type {
   ComposedStyle,
   CompoundStyles,
   DeclaredStyle,
+  InheritedDefaultedName,
   KeyOfEach,
   NativeStyle,
   NoUnknownCompoundStyles,

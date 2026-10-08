@@ -1,7 +1,6 @@
 import type {
   Composable,
   ComposableKindSlotRecipe,
-  ComposedDefaultedName,
   ComposedSlot,
   ComposedVariants,
   KindVariants,
@@ -11,6 +10,7 @@ import type {
 import type {
   CompoundCondition,
   DefaultVariants,
+  InheritedDefaultedName,
   NoUnknownSlots,
   RecipeFunction,
   SlotClassNames,
@@ -173,23 +173,18 @@ type CreateSlotRecipe = <
 ) => ComposedSlotRecipe<
   ComposedSlot<Composed, Slot>,
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>
+  DefaultedName | InheritedDefaultedName<Composed, Variants>
 >;
 
 /** The slot recipe of a config with the slot recipes it composes. */
 type ComposedSlotRecipe<
   Slot extends string,
   Variants,
-  DefaultedName,
+  DefaultedName extends keyof Variants,
 > = SlotRecipe<
   Slot,
-  SlotRecipeProps<Slot, Variants, Extract<DefaultedName, keyof Variants>>,
-  RecipeComposition<
-    Variants,
-    Extract<DefaultedName, keyof Variants>,
-    string,
-    readonly Slot[]
-  >
+  SlotRecipeProps<Slot, Variants, DefaultedName>,
+  RecipeComposition<Variants, DefaultedName, string, readonly Slot[]>
 >;
 
 /**

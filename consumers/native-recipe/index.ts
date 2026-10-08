@@ -1,5 +1,6 @@
 import type {
   NativeStyle,
+  SlotStyles,
   ThemedRecipe,
   VariantsOf,
 } from "@lynstack/native-recipe";
@@ -9,6 +10,8 @@ import {
   createStyleRecipe,
   createThemedRecipes,
 } from "@lynstack/native-recipe";
+
+import { define, defineSlots } from "./define.js";
 
 const box = createStyleRecipe({
   base: { borderRadius: 8 },
@@ -100,6 +103,17 @@ const anyChip: ThemedRecipe<
   { readonly backgroundColor?: string }
 > = chip;
 
+const fade = define({
+  defaultVariants: { tone: "neutral" },
+  variants: { tone: { danger: { opacity: 1 }, neutral: { opacity: 0.5 } } },
+});
+const fadeStyle: NativeStyle = fade();
+const field = defineSlots({
+  slots: ["label", "input"],
+  variants: { size: { sm: { input: { height: 24 } } } },
+});
+const fieldStyles: SlotStyles<"label" | "input"> = field({ size: "sm" });
+
 /** Configs whose styles are arrays of styles, which the types reject. */
 function createArrayStyleRecipes(): void {
   const styles = [{ padding: 8 }];
@@ -124,6 +138,10 @@ export {
   chipOptions,
   chipStyle,
   createArrayStyleRecipes,
+  fade,
+  fadeStyle,
+  field,
+  fieldStyles,
   iconBox,
   iconBoxStyle,
   iconChip,

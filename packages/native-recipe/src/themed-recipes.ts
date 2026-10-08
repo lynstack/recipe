@@ -1,13 +1,18 @@
 import type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
-  ComposedDefaultedName,
   ComposedSlot,
   ComposedVariants,
   KindRecipe,
   RecipeComposition,
 } from "@lynstack/recipe";
 
+import type {
+  InheritedDefaultedName,
+  NativeStyle,
+  RecipeSlotStyles,
+  VariantSelection,
+} from "./types.js";
 import type {
   LooseSlotStyleRecipe,
   LooseSlotStyleRecipeConfig,
@@ -16,11 +21,6 @@ import type {
   LooseStyleRecipe,
   LooseStyleRecipeConfig,
 } from "./compile-style-recipe.js";
-import type {
-  NativeStyle,
-  RecipeSlotStyles,
-  VariantSelection,
-} from "./types.js";
 import type { RecipeStyle, StyleRecipeConfig } from "./style-recipe.js";
 import type { LooseThemedRecipe } from "./compile-themed-recipe.js";
 import type { SlotStyleRecipeConfig } from "./slot-style-recipe.js";
@@ -64,18 +64,18 @@ type ThemedRecipe<
  * `DefaultedName`, and which returns `Result`. `Slots` lists the slots of a
  * slot recipe, or is `undefined` for a recipe without slots.
  */
-type ComposedThemedRecipe<Theme, Variants, DefaultedName, Result, Slots> =
-  ThemedRecipe<
-    Theme,
-    VariantSelection<Variants, Extract<DefaultedName, keyof Variants>>,
-    Result,
-    RecipeComposition<
-      Variants,
-      Extract<DefaultedName, keyof Variants>,
-      NativeStyle,
-      Slots
-    >
-  >;
+type ComposedThemedRecipe<
+  Theme,
+  Variants,
+  DefaultedName extends keyof Variants,
+  Result,
+  Slots,
+> = ThemedRecipe<
+  Theme,
+  VariantSelection<Variants, DefaultedName>,
+  Result,
+  RecipeComposition<Variants, DefaultedName, NativeStyle, Slots>
+>;
 
 /**
  * The functions that {@link createThemedRecipes} returns, which create
@@ -115,7 +115,7 @@ interface ThemedRecipeCreators<Theme extends object> {
   ) => ComposedThemedRecipe<
     Theme,
     ComposedVariants<Composed, Variants>,
-    ComposedDefaultedName<Composed, DefaultedName>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
     RecipeStyle<Variants, Base, Compounds, Composed>,
     undefined
   >;
@@ -159,7 +159,7 @@ interface ThemedRecipeCreators<Theme extends object> {
   ) => ComposedThemedRecipe<
     Theme,
     ComposedVariants<Composed, Variants>,
-    ComposedDefaultedName<Composed, DefaultedName>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
     RecipeSlotStyles<
       ComposedSlot<Composed, Slot>,
       Variants,

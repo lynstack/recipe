@@ -1,6 +1,17 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { PropsOf, SlotClasses } from "./types.js";
+import type { PropsOf, SlotClasses, SlotRecipeProps } from "./types.js";
+import type {
+  Recipe,
+  RecipeConfig,
+  RecipeProps,
+  RecipeVariants,
+} from "./recipe.js";
+import type {
+  SlotRecipe,
+  SlotRecipeConfig,
+  SlotRecipeVariants,
+} from "./slot-recipe.js";
 import { createRecipe } from "./recipe.js";
 import { createSlotRecipe } from "./slot-recipe.js";
 
@@ -50,6 +61,58 @@ describe("the props of a recipe", () => {
     expectTypeOf<PropsOf<typeof card>>().toEqualTypeOf<{
       readonly size: "sm" | "md";
       readonly classNames?: SlotClasses<"root" | "title"> | undefined;
+    }>();
+  });
+});
+
+/** Creates a recipe from any config, as a library's own helper does. */
+function defineRecipe<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: RecipeConfig<Variants, DefaultedName>,
+): Recipe<RecipeProps<Variants, DefaultedName>> {
+  return createRecipe(config);
+}
+
+/** Creates a slot recipe from any config, as a library's own helper does. */
+function defineSlotRecipe<
+  const Slot extends string,
+  const Variants extends SlotRecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: SlotRecipeConfig<Slot, Variants, DefaultedName>,
+): SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>> {
+  return createSlotRecipe(config);
+}
+
+describe("a function generic over a config", () => {
+  it("returns the recipe of its config as a Recipe", () => {
+    const badge = defineRecipe({
+      variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-600" } },
+      defaultVariants: { tone: "neutral" },
+    });
+
+    expect(badge({})).toBe("bg-gray-100");
+    expectTypeOf<PropsOf<typeof badge>>().toEqualTypeOf<{
+      readonly tone?: "neutral" | "danger" | undefined;
+      readonly className?: string | undefined;
+    }>();
+  });
+
+  it("returns the slot recipe of its config as a SlotRecipe", () => {
+    const field = defineSlotRecipe({
+      slots: ["label", "input"],
+      variants: { invalid: { true: { input: "border-red-600" } } },
+    });
+
+    expect(field({ invalid: true })).toStrictEqual({
+      label: "",
+      input: "border-red-600",
+    });
+    expectTypeOf<PropsOf<typeof field>>().toEqualTypeOf<{
+      readonly invalid?: boolean | "true" | "false" | undefined;
+      readonly classNames?: SlotClasses<"label" | "input"> | undefined;
     }>();
   });
 });
