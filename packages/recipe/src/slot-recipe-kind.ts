@@ -83,7 +83,8 @@ interface KindSlotRecipeConfig<
   readonly composes?: Composed | undefined;
   /**
    * The names of the slots, in the order of the recipe's result, after
-   * those of the slot recipes it composes.
+   * those of the slot recipes it composes. A name of a property that every
+   * object has, such as `toString`, is not supported.
    */
   readonly slots: readonly Slot[];
   /** The value of each slot that the values of every selection are added to. */

@@ -73,8 +73,8 @@ interface SlotRecipeConfig<
    */
   readonly composes?: Composed | undefined;
   /**
-   * The names of the elements the recipe styles, after those of the slot
-   * recipes it composes.
+   * The names of the elements it styles, after those of the slot recipes it
+   * composes; not of a property that every object has, such as `toString`.
    */
   readonly slots: readonly Slot[];
   /** Classes applied to each slot whatever the variants. */

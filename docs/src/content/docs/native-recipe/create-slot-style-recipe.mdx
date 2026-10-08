@@ -59,6 +59,11 @@ ignored, and the recipe warns about it when it is created (see
 Variants, defaults, boolean variants, and undeclared options work as in a
 style recipe (see [Variants](/recipe/native-recipe/variants/)).
 
+A slot named after a property that every object has, such as `toString`
+or `constructor`, is not supported: the types reject an object of slot
+styles that leaves it out, since every object has that property with
+another type.
+
 ## Compound variants
 
 Each item of `compoundVariants` is an object of type

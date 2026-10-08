@@ -220,6 +220,11 @@ declaration many times the size of its config.
 A value for a slot that `slots` does not name is a type error. See
 [Slot recipes](/recipe/recipe/slot-recipes/).
 
+A slot named after a property that every object has, such as `toString`
+or `constructor`, is not supported: the types reject an object of slot
+values that leaves it out, since every object has that property with
+another type.
+
 ### A config with the wrong shape
 
 The types reject a config with the wrong shape. A config from untyped
