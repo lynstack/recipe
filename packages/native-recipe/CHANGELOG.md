@@ -14,6 +14,10 @@ published on npm and as a
 - An editor completes the variant names of `defaultVariants`, and the
   slot names and style properties of a slot style recipe's `base` and of
   the options of its variants. It completed none of them before.
+- A themed style recipe and a themed slot style recipe reject a style
+  property with a value that it does not take in a compound variant, such
+  as `flexDirection: "sideways"`, as recipes without a theme do. Before,
+  such a value passed the types.
 
 ## 1.7.0 — 2026-10-08
 

@@ -21,9 +21,16 @@ import type {
   LooseStyleRecipe,
   LooseStyleRecipeConfig,
 } from "./compile-style-recipe.js";
-import type { RecipeStyle, StyleRecipeConfig } from "./style-recipe.js";
+import type {
+  RecipeStyle,
+  StyleCompoundVariant,
+  StyleRecipeConfig,
+} from "./style-recipe.js";
+import type {
+  SlotStyleCompoundVariant,
+  SlotStyleRecipeConfig,
+} from "./slot-style-recipe.js";
 import type { LooseThemedRecipe } from "./compile-themed-recipe.js";
-import type { SlotStyleRecipeConfig } from "./slot-style-recipe.js";
 import { buildSlotStyleRecipe } from "./compile-slot-style-recipe.js";
 import { buildStyleRecipe } from "./compile-style-recipe.js";
 import { buildThemedRecipe } from "./compile-themed-recipe.js";
@@ -110,7 +117,9 @@ interface ThemedRecipeCreators<Theme extends object> {
   readonly createStyleRecipe: <
     const Variants,
     const Base = never,
-    const Compounds = readonly [],
+    const Compounds extends readonly StyleCompoundVariant<
+      NoInfer<ComposedVariants<Composed, Variants>>
+    >[] = readonly [],
     const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
       never,
     const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
@@ -147,7 +156,9 @@ interface ThemedRecipeCreators<Theme extends object> {
     const Slot extends string,
     const Variants,
     const Base extends SlotStyles<string> = never,
-    const Compounds = readonly [],
+    const Compounds extends readonly SlotStyleCompoundVariant<
+      NoInfer<ComposedVariants<Composed, Variants>>
+    >[] = readonly [],
     const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
       never,
     const Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[] =
