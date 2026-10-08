@@ -17,6 +17,7 @@ import {
   defineComposed,
   defineComposedSlots,
   defineSlots,
+  withFooter,
 } from "./define.js";
 
 type Style = Readonly<Record<string, string | number>>;
@@ -125,6 +126,10 @@ const sheetStyles: Readonly<Record<"root" | "title" | "footer", Style>> = sheet(
   { tone: "dark" },
 );
 
+const footedCard = withFooter(card);
+const footedCardStyles: Readonly<Record<"root" | "title" | "footer", Style>> =
+  footedCard({ dense: true });
+
 export {
   bigText,
   bigTextStyle,
@@ -138,6 +143,8 @@ export {
   dialogStyles,
   emphasis,
   emphasisKeys,
+  footedCard,
+  footedCardStyles,
   emphasisStyle,
   field,
   fieldStyles,

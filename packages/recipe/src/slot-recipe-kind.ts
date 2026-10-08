@@ -1,16 +1,16 @@
 import type {
   ComposableKindSlotRecipe,
   ComposedKindRecipe,
-  ComposedSlot,
   ComposedVariants,
   InheritedDefaultedName,
+  InheritedSlot,
 } from "./composition.js";
 import type {
   KindCompoundCondition,
   KindDefaultVariants,
 } from "./kind-selection.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
-import type { NoUnknownSlots, RecipeKind } from "./types.js";
+import type { NoUnknownComposedSlots, RecipeKind } from "./types.js";
 import type { SelectedVariants, WithVariants } from "./variants.js";
 import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
@@ -28,9 +28,9 @@ const slotRecipes = createRegistry<LooseSlotValues>("slot recipe");
  * @typeParam Slot - The names of the slots.
  * @typeParam Value - The value of a slot.
  */
-type SlotValues<Slot extends string, Value> = Readonly<
-  Partial<Record<Slot, Value | undefined>>
->;
+type SlotValues<Slot extends string, Value> = {
+  readonly [Name in Slot]?: Value | undefined;
+};
 
 /**
  * The variants of a {@link KindSlotRecipeConfig}: for each variant name,
@@ -87,10 +87,10 @@ interface KindSlotRecipeConfig<
   readonly slots: readonly Slot[];
   /** The value of each slot that the values of every selection are added to. */
   readonly base?:
-    SlotValues<NoInfer<ComposedSlot<Composed, Slot>>, Value> | undefined;
+    SlotValues<NoInfer<Slot> | InheritedSlot<Composed>, Value> | undefined;
   /** For each variant name, the values of each slot for each of its options. */
   readonly variants: Variants &
-    NoUnknownSlots<Variants, NoInfer<ComposedSlot<Composed, Slot>>>;
+    NoUnknownComposedSlots<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
   /**
    * Values added to some slots when several variants have particular
    * options at the same time, applied in order after the values of the
@@ -99,7 +99,7 @@ interface KindSlotRecipeConfig<
   readonly compoundVariants?:
     | readonly KindSlotCompoundVariant<
         NoInfer<ComposedVariants<Composed, Variants>>,
-        NoInfer<ComposedSlot<Composed, Slot>>,
+        NoInfer<Slot> | InheritedSlot<Composed>,
         Value
       >[]
     | undefined;

@@ -114,6 +114,15 @@ type InheritedDefaultedName<
 type ComposedSlot<Composed extends readonly unknown[], Slot extends string> =
   Slot | SlotOf<ComposedPart<Composed, "slots">>;
 
+/**
+ * The slots of the slot recipes of `Composed`, as indexed access rather
+ * than a conditional type, so that TypeScript relates a config to them
+ * while `Composed` is generic.
+ */
+type InheritedSlot<
+  Composed extends readonly ComposableKindSlotRecipe<unknown>[],
+> = NonNullable<Composed[number]["~composition"]>["slots"][number];
+
 type SlotOf<Slots> = Slots extends readonly (infer Slot extends string)[]
   ? Slot
   : never;
@@ -164,5 +173,6 @@ export type {
   ComposedSlot,
   ComposedVariants,
   InheritedDefaultedName,
+  InheritedSlot,
   RecipeComposition,
 };

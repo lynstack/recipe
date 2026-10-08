@@ -76,4 +76,27 @@ function defineComposedSlots<
   return slotStyleRecipe(config);
 }
 
-export { define, defineComposed, defineComposedSlots, defineSlots };
+/** Adds a footer to any slot recipe, as a library's own helper does. */
+function withFooter<const Base extends ComposableKindSlotRecipe<Style>>(
+  base: Base,
+): ReturnType<
+  typeof slotStyleRecipe<
+    "footer",
+    {
+      readonly dense: {
+        readonly true: { readonly footer: { readonly borderStyle: "dashed" } };
+      };
+    },
+    never,
+    readonly [Base]
+  >
+> {
+  return slotStyleRecipe({
+    base: { footer: { borderStyle: "solid" } },
+    composes: [base],
+    slots: ["footer"],
+    variants: { dense: { true: { footer: { borderStyle: "dashed" } } } },
+  });
+}
+
+export { define, defineComposed, defineComposedSlots, defineSlots, withFooter };

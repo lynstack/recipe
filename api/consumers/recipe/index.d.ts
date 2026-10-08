@@ -458,4 +458,92 @@ declare const sheet: ((props?: {
     }, "tone", Readonly<Record<string, string | number>>, readonly ("footer" | "root" | "title")[]> | undefined;
 };
 declare const sheetStyles: Readonly<Record<"root" | "title" | "footer", Style>>;
-export { bigText, bigTextStyle, badge, badgeStyle, card, composable, composableSlots, dialog, dialogOptions, dialogStyles, emphasis, emphasisKeys, emphasisStyle, field, fieldStyles, knownSlots, sizes, cardKeys, cardStyles, recipe, sheet, sheetStyles, slotStyleRecipe, style, styleRecipe, text, textDefaults, textKey, textKeys, textOptions, variants, };
+declare const footedCard: ((props?: {
+    readonly dense?: import("@lynstack/recipe").VariantOption<{
+        readonly true: {
+            readonly footer: {
+                readonly borderStyle: "dashed";
+            };
+        };
+    }> | undefined;
+    readonly tone?: import("@lynstack/recipe").VariantOption<{
+        readonly dark: {
+            readonly root: {
+                readonly backgroundColor: "black";
+            };
+            readonly title: {
+                readonly color: "white";
+            };
+        };
+        readonly light: {
+            readonly root: {
+                readonly backgroundColor: "white";
+            };
+        };
+    }> | undefined;
+} | undefined) => Readonly<Record<"footer" | "root" | "title", Readonly<Record<string, string | number>>>>) & {
+    readonly variantKeys: readonly ("dense" | "tone")[];
+    readonly variantOptions: {
+        readonly dense: readonly ("false" | "true")[];
+        readonly tone: readonly import("@lynstack/recipe").VariantOption<{
+            readonly dark: {
+                readonly root: {
+                    readonly backgroundColor: "black";
+                };
+                readonly title: {
+                    readonly color: "white";
+                };
+            };
+            readonly light: {
+                readonly root: {
+                    readonly backgroundColor: "white";
+                };
+            };
+        }>[];
+    };
+    readonly defaultVariants: {
+        readonly dense: "false" | "true";
+        readonly tone: import("@lynstack/recipe").VariantOption<{
+            readonly dark: {
+                readonly root: {
+                    readonly backgroundColor: "black";
+                };
+                readonly title: {
+                    readonly color: "white";
+                };
+            };
+            readonly light: {
+                readonly root: {
+                    readonly backgroundColor: "white";
+                };
+            };
+        }>;
+    };
+} & {
+    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
+        readonly dense: {
+            readonly true: {
+                readonly footer: {
+                    readonly borderStyle: "dashed";
+                };
+            };
+        };
+        readonly tone: {
+            readonly dark: {
+                readonly root: {
+                    readonly backgroundColor: "black";
+                };
+                readonly title: {
+                    readonly color: "white";
+                };
+            };
+            readonly light: {
+                readonly root: {
+                    readonly backgroundColor: "white";
+                };
+            };
+        };
+    }, "tone", Readonly<Record<string, string | number>>, readonly ("footer" | "root" | "title")[]> | undefined;
+};
+declare const footedCardStyles: Readonly<Record<"root" | "title" | "footer", Style>>;
+export { bigText, bigTextStyle, badge, badgeStyle, card, composable, composableSlots, dialog, dialogOptions, dialogStyles, emphasis, emphasisKeys, footedCard, footedCardStyles, emphasisStyle, field, fieldStyles, knownSlots, sizes, cardKeys, cardStyles, recipe, sheet, sheetStyles, slotStyleRecipe, style, styleRecipe, text, textDefaults, textKey, textKeys, textOptions, variants, };

@@ -10,4 +10,14 @@ declare function defineSlots<const Slot extends string, const Variants extends K
 declare function defineComposed<const Variants extends KindVariants<Style>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe<Style>[] = readonly []>(config: KindRecipeConfig<Style, Variants, DefaultedName, Composed>): ReturnType<typeof styleRecipe<Variants, DefaultedName, Composed>>;
 /** Creates a slot recipe that may compose others, as a library's helper does. */
 declare function defineComposedSlots<const Slot extends string, const Variants extends KindSlotVariants<Style>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe<Style>[] = readonly []>(config: KindSlotRecipeConfig<Slot, Style, Variants, DefaultedName, Composed>): ReturnType<typeof slotStyleRecipe<Slot, Variants, DefaultedName, Composed>>;
-export { define, defineComposed, defineComposedSlots, defineSlots };
+/** Adds a footer to any slot recipe, as a library's own helper does. */
+declare function withFooter<const Base extends ComposableKindSlotRecipe<Style>>(base: Base): ReturnType<typeof slotStyleRecipe<"footer", {
+    readonly dense: {
+        readonly true: {
+            readonly footer: {
+                readonly borderStyle: "dashed";
+            };
+        };
+    };
+}, never, readonly [Base]>>;
+export { define, defineComposed, defineComposedSlots, defineSlots, withFooter };

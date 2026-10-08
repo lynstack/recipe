@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import type { ComposableKindSlotRecipe } from "./composition.js";
 import type { VariantsOf } from "./types.js";
 import { createRecipeKind } from "./recipe-kind.js";
 import { createSlotRecipeKind } from "./slot-recipe-kind.js";
@@ -108,4 +109,66 @@ describe("a slot recipe that composes slot recipes", () => {
 
     expect(Object.keys(labeled())).toStrictEqual(["root", "label"]);
   });
+
+  it("accepts its own slots in a function generic over the slot recipe it composes", () => {
+    const footed = withFooter(field);
+
+    expect(footed({ dense: true })).toStrictEqual({
+      root: ["field", "field-sm"],
+      label: ["field-label"],
+      footer: ["footer", "footer-dense"],
+    });
+    expectTypeOf<VariantsOf<typeof footed>>().toEqualTypeOf<{
+      readonly size?: "sm" | "md" | undefined;
+      readonly invalid?: boolean | "true" | "false" | undefined;
+      readonly dense?: boolean | "true" | "false" | undefined;
+    }>();
+  });
+
+  it("rejects a slot that it does not declare in a function generic over the slot recipe it composes", () => {
+    expect(Object.keys(withIcon(field)())).toStrictEqual([
+      "root",
+      "label",
+      "footer",
+    ]);
+  });
 });
+
+/** Adds a footer to any slot recipe, as a library's own helper does. */
+function withFooter<const Base extends ComposableKindSlotRecipe<string>>(
+  base: Base,
+): ReturnType<
+  typeof slotListRecipe<
+    "footer",
+    { readonly dense: { readonly true: { readonly footer: "footer-dense" } } },
+    never,
+    readonly [Base]
+  >
+> {
+  return slotListRecipe({
+    composes: [base],
+    slots: ["footer"],
+    base: { footer: "footer" },
+    variants: { dense: { true: { footer: "footer-dense" } } },
+  });
+}
+
+/** Adds a footer, and a value for a slot that no recipe declares. */
+function withIcon<const Base extends ComposableKindSlotRecipe<string>>(
+  base: Base,
+): ReturnType<
+  typeof slotListRecipe<
+    "footer",
+    { readonly dense: { readonly true: { readonly footer: "footer-dense" } } },
+    never,
+    readonly [Base]
+  >
+> {
+  return slotListRecipe({
+    composes: [base],
+    slots: ["footer"],
+    // @ts-expect-error: icon is not a slot of the recipe.
+    base: { icon: "icon" },
+    variants: { dense: { true: { footer: "footer-dense" } } },
+  });
+}

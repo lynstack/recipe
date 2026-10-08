@@ -23,7 +23,8 @@ interface RecipeKind<Value, Accumulator, Result> {
   readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
   readonly cache?: boolean | undefined;
 }
-type NoUnknownSlots<Variants, Slot extends string> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Partial<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>>; }; };
+type NoUnknownSlots<Variants, Slot extends string> = NoUnknownComposedSlots<Variants, Slot, never>;
+type NoUnknownComposedSlots<Variants, Slot extends string, InheritedSlot extends string> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Partial<Record<Exclude<Exclude<keyof Variants[Name][Option], Slot>, InheritedSlot>, never>>>; }; };
 //#endregion
 //#region src/kind-selection.d.ts
 type AnySelection = Readonly<Record<string, unknown>>;
@@ -53,6 +54,7 @@ type MergeVariants<Union> = { readonly [Name in KeyOfEach<Union>]: MergeEach<Val
 type ComposedDefaultedName<Composed extends readonly unknown[], DefaultedName> = DefaultedName | ComposedPart<Composed, "defaultedName">;
 type InheritedDefaultedName<Composed extends readonly unknown[], Variants> = Extract<ComposedPart<Composed, "defaultedName">, keyof ComposedVariants<Composed, Variants>>;
 type ComposedSlot<Composed extends readonly unknown[], Slot extends string> = Slot | SlotOf<ComposedPart<Composed, "slots">>;
+type InheritedSlot<Composed extends readonly ComposableKindSlotRecipe<unknown>[]> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 type SlotOf<Slots> = Slots extends readonly (infer Slot extends string)[] ? Slot : never;
 type ComposableKindRecipe<Value> = Composable<RecipeComposition<object, PropertyKey, Value, undefined>>;
 type ComposableKindSlotRecipe<Value> = Composable<RecipeComposition<object, PropertyKey, Value, readonly string[]>>;
@@ -84,7 +86,7 @@ type CreateKindRecipe<Value, Result> = <const Variants extends KindVariants<Valu
 declare function createRecipeKind<Value, Accumulator, Result = Accumulator>(kind: RecipeKind<Value, Accumulator, Result>): CreateKindRecipe<Value, Result>;
 //#endregion
 //#region src/slot-recipe-kind.d.ts
-type SlotValues<Slot extends string, Value> = Readonly<Partial<Record<Slot, Value | undefined>>>;
+type SlotValues<Slot extends string, Value> = { readonly [Name in Slot]?: Value | undefined; };
 type KindSlotVariants<Value> = KindVariants<SlotValues<string, Value>>;
 interface KindSlotCompoundVariant<Variants, Slot extends string, Value> {
   readonly variants: KindCompoundCondition<Variants>;
@@ -93,9 +95,9 @@ interface KindSlotCompoundVariant<Variants, Slot extends string, Value> {
 interface KindSlotRecipeConfig<Slot extends string, Value, Variants extends KindSlotVariants<Value>, DefaultedName extends keyof ComposedVariants<Composed, Variants>, Composed extends readonly ComposableKindSlotRecipe<Value>[] = readonly []> {
   readonly composes?: Composed | undefined;
   readonly slots: readonly Slot[];
-  readonly base?: SlotValues<NoInfer<ComposedSlot<Composed, Slot>>, Value> | undefined;
-  readonly variants: Variants & NoUnknownSlots<Variants, NoInfer<ComposedSlot<Composed, Slot>>>;
-  readonly compoundVariants?: readonly KindSlotCompoundVariant<NoInfer<ComposedVariants<Composed, Variants>>, NoInfer<ComposedSlot<Composed, Slot>>, Value>[] | undefined;
+  readonly base?: SlotValues<NoInfer<Slot> | InheritedSlot<Composed>, Value> | undefined;
+  readonly variants: Variants & NoUnknownComposedSlots<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
+  readonly compoundVariants?: readonly KindSlotCompoundVariant<NoInfer<ComposedVariants<Composed, Variants>>, NoInfer<Slot> | InheritedSlot<Composed>, Value>[] | undefined;
   readonly defaultVariants?: KindDefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }

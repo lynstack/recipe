@@ -21,5 +21,14 @@
         ]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      // TypeScript relates an object to one mapped type over slots that
+      // are generic, as in a function generic over the slot recipe that a
+      // recipe composes, but not to a Record nested in Partial and Readonly.
+      "files": ["src/slot-recipe-kind.ts"],
+      "rules": { "typescript/consistent-indexed-object-style": "off" }
+    }
+  ]
 }

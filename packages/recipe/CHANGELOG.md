@@ -6,6 +6,11 @@ tagged `recipe@<version>`.
 
 ## Unreleased
 
+- A slot recipe's config types the slots of the slot recipes it composes
+  apart from its own, so that a function generic over the slot recipe it
+  composes can name its own slots, and declarations print the slots of
+  `base` and of compound variants by name. Making library recipes
+  composable advises the same for a library's types.
 - Creating a recipe or a slot recipe warns, once, with `console.warn`,
   about a default or a compound variant that names a variant or an option
   that no config of the recipe declares, and, in a slot recipe, about a

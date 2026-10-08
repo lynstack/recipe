@@ -241,14 +241,37 @@ interface RecipeKind<Value, Accumulator, Result> {
  * }
  * ```
  */
-type NoUnknownSlots<Variants, Slot extends string> = {
+type NoUnknownSlots<Variants, Slot extends string> = NoUnknownComposedSlots<
+  Variants,
+  Slot,
+  never
+>;
+
+/**
+ * Rejects the slots of the variants' options that are neither `Slot` nor
+ * `InheritedSlot`. A recipe's own slots are excluded first, so that they
+ * are accepted even when the inherited slots are generic.
+ */
+type NoUnknownComposedSlots<
+  Variants,
+  Slot extends string,
+  InheritedSlot extends string,
+> = {
   readonly [Name in keyof Variants]: {
     readonly [
       Option in keyof Variants[Name]
     ]: string extends keyof Variants[Name][Option]
       ? unknown
       : Readonly<
-          Partial<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>
+          Partial<
+            Record<
+              Exclude<
+                Exclude<keyof Variants[Name][Option], Slot>,
+                InheritedSlot
+              >,
+              never
+            >
+          >
         >;
   };
 };
@@ -256,6 +279,7 @@ type NoUnknownSlots<Variants, Slot extends string> = {
 export type {
   CompoundCondition,
   DefaultVariants,
+  NoUnknownComposedSlots,
   NoUnknownSlots,
   RecipeFunction,
   RecipeKind,
