@@ -229,6 +229,31 @@ public type has a type test (`expectTypeOf`, or `@ts-expect-error` for
 input that must be rejected). A test that only exercises the types still
 asserts the runtime outcome.
 
+**Test types the way users use them.** A type that works on one inline
+call can still fail in a user's project. Check each public type, in a
+test or in an app of `consumers`, in each way users reach it:
+
+- inferred from an inline argument, and from a value declared before the
+  call;
+- passed through a function of the user's that is generic over it, and
+  returned from that function;
+- exported from one module and used in another, with declarations
+  emitted, as an app that installs the packed package compiles it;
+- with `isolatedDeclarations`;
+- nested or composed several levels deep, where its declarations must
+  grow linearly;
+- with the oldest and the newest TypeScript that the packages support.
+
+When a feature adds a way to use a type, add that way to every type it
+applies to, and to this list.
+
+**Fix a bug everywhere it lives.** The packages and the docs share
+patterns: the same type helper, the same check, the same example. When
+you fix a bug, find the pattern that caused it, then search every
+package, the docs, the skills, and the READMEs for that pattern. Fix
+each place in the same change, with a test for each, or say why a place
+is not affected. List in the commit body where you looked.
+
 **Performance comes first.** A recipe and a slot recipe of any kind, a
 class name recipe and slot recipe, and a style recipe and slot style
 recipe must be faster with the cache than without it. The benchmarks
