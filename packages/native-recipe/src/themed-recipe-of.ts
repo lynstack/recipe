@@ -1,4 +1,4 @@
-import type { ComposedSlot, ComposedVariants } from "@lynstack/recipe";
+import type { ComposedVariants } from "@lynstack/recipe";
 
 import type {
   BaseOf,
@@ -13,6 +13,20 @@ import type {
 } from "./types.js";
 import type { ComposedThemedRecipe } from "./themed-recipes.js";
 import type { RecipeStyle } from "./style-recipe.js";
+
+/**
+ * The slots of each slot recipe of the union `Recipe`. A conditional type,
+ * which declarations print as the names of the slots.
+ */
+type SlotOfEach<Recipe> = Recipe extends {
+  readonly "~composition"?: infer Composition;
+}
+  ? Exclude<Composition, undefined> extends {
+      readonly slots: readonly (infer Slot extends string)[];
+    }
+    ? Slot
+    : never
+  : never;
 
 /**
  * The recipe that a themed config composes for each of `Composed`: the
@@ -133,17 +147,19 @@ type ThemedSlotStyleRecipeOf<
       RecipesOfTheme<Composed>,
       ReturnType<Config>["variants"]
     >,
+  // Not ComposedSlot, which declarations print with each composed type.
   RecipeSlotStyles<
-    ComposedSlot<RecipesOfTheme<Composed>, ReturnType<Config>["slots"][number]>,
+    | ReturnType<Config>["slots"][number]
+    | SlotOfEach<RecipesOfTheme<Composed>[number]>,
     ReturnType<Config>["variants"],
     BaseOf<ReturnType<Config>>,
     CompoundsOf<ReturnType<Config>>,
     RecipesOfTheme<Composed>
   >,
-  readonly ComposedSlot<
-    RecipesOfTheme<Composed>,
-    ReturnType<Config>["slots"][number]
-  >[]
+  readonly (
+    | ReturnType<Config>["slots"][number]
+    | SlotOfEach<RecipesOfTheme<Composed>[number]>
+  )[]
 >;
 
 export type { ThemedSlotStyleRecipeOf, ThemedStyleRecipeOf };

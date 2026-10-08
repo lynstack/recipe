@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -58,23 +58,27 @@ function declarationOf(text: string, name: string): string {
 }
 
 /**
- * Whether the declarations of the recipes of `chain.ts`, if the app has
- * one, each of which composes the one before, grow linearly with their
- * level. The recipe four
- * levels deep then takes less than twice the declaration of the one two
- * levels deep; a type that repeats the types of the recipes it composes
- * takes at least four times.
+ * Whether the declarations of the recipes of each chain of `app`, a module
+ * named `chain.ts` or ending in `-chain.ts`, each of whose recipes composes
+ * the one before, grow linearly with their level. The recipe four levels
+ * deep then takes less than twice the declaration of the one two levels
+ * deep; a type that repeats the types of the recipes it composes takes at
+ * least four times.
  */
 function growsLinearly(app: string): boolean {
-  const file = path.join(app, "out", "chain.d.ts");
-  if (!existsSync(file)) {
+  const out = path.join(app, "out");
+  if (!existsSync(out)) {
     return true;
   }
-  const text = readFileSync(file, "utf8");
-  return (
-    declarationOf(text, "level4").length <
-    LINEAR_GROWTH * declarationOf(text, "level2").length
-  );
+  return readdirSync(out)
+    .filter((file: string) => /(?:^|-)chain\.d\.ts$/u.test(file))
+    .every((file: string) => {
+      const text = readFileSync(path.join(out, file), "utf8");
+      return (
+        declarationOf(text, "level4").length <
+        LINEAR_GROWTH * declarationOf(text, "level2").length
+      );
+    });
 }
 
 export {

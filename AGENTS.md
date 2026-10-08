@@ -131,12 +131,13 @@ package with its apps, run
   it takes a few minutes. Commit the results with the change.
 - `pnpm consumers` packs the packages, installs them in a copy of each
   app of `consumers` outside the repository, and compiles it. It also
-  checks that the declarations of the slot recipes of each app's
-  `chain.ts`, each of which composes the one before, grow linearly with
-  the level of composition, and, with the TypeScript and React Native of
-  the repository, that each app emits the declarations that
-  `api/consumers/<app>` keeps. A TypeScript older than 5.5, which has no
-  `isolatedDeclarations`, compiles an app that sets it without it. Pass
+  checks that the declarations of the recipes of each chain of an app,
+  `chain.ts` or a module ending in `-chain.ts`, each of which composes
+  the one before, grow linearly with the level of composition, and,
+  with the TypeScript and React Native of the repository, that each app
+  emits the declarations that `api/consumers/<app>` keeps. A TypeScript
+  older than 5.5, which has no `isolatedDeclarations`, compiles an app
+  that sets it without it. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
   those, and `--update` to write the declarations of the apps to `api`.
   Run it after a change to a public type, or to the dependencies between
