@@ -1,5 +1,6 @@
 import { createRecipes, createSlotRecipe } from "@lynstack/class-recipe";
 import { describe, expect, it } from "vitest";
+import type { PropsOf } from "@lynstack/class-recipe";
 import type { TestContext } from "vitest";
 
 const base = {
@@ -127,23 +128,21 @@ describe("slot recipe", () => {
   });
 });
 
-type Selection = (typeof selections)[number];
+const recipe = createSlotRecipe(config);
+
+type Props = PropsOf<typeof recipe>;
 
 type ClassNames = Readonly<Partial<Record<"root" | "icon" | "label", string>>>;
 
-function withClassNames(
-  selection: Selection,
-  classNames: ClassNames,
-): Selection & { readonly classNames: ClassNames } {
+function withClassNames(selection: Props, classNames: ClassNames): Props {
   return { ...selection, classNames };
 }
 
 describe("slot recipe with classNames", () => {
-  const recipe = createSlotRecipe(config);
   const variantSelections = selections.slice(0, 4);
   const oneSlot = { root: "w-full" };
   const twoSlots = { root: "w-full", label: "uppercase" };
-  const cases: Readonly<Record<string, readonly Selection[]>> = {
+  const cases: Readonly<Record<string, readonly Props[]>> = {
     "variants only": variantSelections,
     "classNames without classes": variantSelections.map((selection) =>
       withClassNames(selection, {}),
@@ -180,7 +179,7 @@ describe("slot recipe with classNames", () => {
     let length = 0;
     await bench.compare(
       ...Object.entries(cases).map(
-        ([name, caseSelections]: readonly [string, readonly Selection[]]) =>
+        ([name, caseSelections]: readonly [string, readonly Props[]]) =>
           bench(name, () => {
             for (const selection of caseSelections) {
               const { root, icon, label } = recipe(selection);
