@@ -4,7 +4,11 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
-## Unreleased
+## 1.7.0 — 2026-10-08
+
+A recipe warns about the names its config gives without declaring them,
+which TypeScript lets through in a config declared before the call, and
+the classes of each slot print by name.
 
 - Declarations and error messages print the classes of each slot as
   `SlotClasses<…>`, and a function generic over the slot recipe it
@@ -14,6 +18,7 @@ tagged `class-recipe@<version>`.
   that the config does not declare, such as a misspelled name in a config
   declared before the call, which TypeScript does not always report. Such
   a name still adds no classes.
+- Depends on `@lynstack/recipe` through the range `^1.8.0`.
 
 ## 1.6.0 — 2026-10-08
 
