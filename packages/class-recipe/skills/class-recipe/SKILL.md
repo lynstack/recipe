@@ -214,6 +214,11 @@ type AlertVariants = VariantsOf<typeof alert>;
 export type AlertTone = NonNullable<AlertVariants["tone"]>; // "info" | "danger"
 ```
 
+Write the config inside `cva(…)` or `sva(…)`. A config declared before
+the call must be `as const`, and TypeScript checks it less: a misspelled
+name next to a correct one in a compound variant or in `base` is not an
+error, and adds no classes.
+
 ### Use `cx` only to add classes that set new properties
 
 `cx` is fine for a class that sets a property the recipe leaves alone,
@@ -290,3 +295,5 @@ const panel = cva({
   recipe already sets?
 - Is any class chosen by a lookup object or a conditional instead of a
   recipe?
+- Is any config declared before its call where it could be written in
+  the call, or declared without `as const`?

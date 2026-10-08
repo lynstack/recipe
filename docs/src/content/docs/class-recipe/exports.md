@@ -68,9 +68,12 @@ compose it; it exists in the types only.
 These types come from `@lynstack/recipe`, which class-recipe re-exports
 so that you need not install it. `RecipeComposition` is part of the type
 of a recipe: a module that exports a recipe and emits declarations names
-it through class-recipe. `ComposedVariants`, `ComposableKindRecipe`, and
+it through class-recipe. `ComposedSlot` names the slots of a slot recipe
+that composes others. `ComposedVariants`, `ComposableKindRecipe`, and
 `ComposableKindSlotRecipe` type a function that takes a config that
-composes recipes, with `ComposableKindRecipe<string>` for `composes`, or
+composes recipes, as
+[When the configs compose recipes](/recipe/class-recipe/exporting-recipes/#when-the-configs-compose-recipes)
+shows, with `ComposableKindRecipe<string>` for `composes`, or
 `ComposableKindSlotRecipe<string>` for a slot recipe.
 
 | Export                     | Type parameters                           | Description                                                                              |

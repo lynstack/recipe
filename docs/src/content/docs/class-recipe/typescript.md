@@ -32,6 +32,11 @@ button({ tone: "danger" });
 button({ size: "sm" });
 ```
 
+A library that exports its recipes, or sets `isolatedDeclarations`,
+also needs [Exporting and wrapping recipes](/recipe/class-recipe/exporting-recipes/).
+
+## A config declared before the call
+
 A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
 variants stay literal types.
@@ -40,6 +45,18 @@ The same holds for the `slots` of `sva`. A list declared before the call
 without `as const` is a `string[]`, so the slot recipe takes any slot
 name: a misspelled slot in `base`, in the variants, in `classNames`, or
 in the result is not an error.
+
+TypeScript checks a declared config less than one written in the call:
+it reports a name that a type does not declare only in an object written
+where that type is expected. In a declared config, a misspelled name next
+to a correct one is not an error, and adds no classes, in these places:
+
+- the variants that a compound variant names;
+- the slots of `base`;
+- the slots of a compound variant's `classNames`.
+
+Write the config in the call when nothing needs it declared, and test the
+classes of a declared config.
 
 ## Typing component props
 
@@ -170,62 +187,9 @@ Such a recipe checks less:
 
 ## A function generic over a config
 
-A library's own helper can take any config and return its recipe. Type
-the variants and the names with a default as `const` type parameters,
-and the recipe as a `Recipe` of their `RecipeProps`:
-
-```ts
-import { cva } from "@lynstack/class-recipe";
-import type {
-  Recipe,
-  RecipeConfig,
-  RecipeProps,
-  RecipeVariants,
-} from "@lynstack/class-recipe";
-
-function define<
-  const Variants extends RecipeVariants,
-  const DefaultedName extends keyof Variants = never,
->(
-  config: RecipeConfig<Variants, DefaultedName>,
-): Recipe<RecipeProps<Variants, DefaultedName>> {
-  return cva(config);
-}
-```
-
-A slot recipe's helper does the same with `SlotRecipeConfig`, and returns
-a `SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>>`.
-
-`define` takes no `composes`: its `Recipe` has the variants of its own
-config only, and other recipes cannot compose it. A helper whose configs
-compose recipes takes the recipes as a third type parameter, and returns
-the type of `cva` for its type parameters, which has the variants and
-defaults of the recipes it composes:
-
-```ts
-import { cva } from "@lynstack/class-recipe";
-import type {
-  ComposableKindRecipe,
-  ComposedVariants,
-  RecipeConfig,
-  RecipeVariants,
-} from "@lynstack/class-recipe";
-
-function defineComposed<
-  const Variants extends RecipeVariants,
-  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
-    never,
-  const Composed extends readonly ComposableKindRecipe<string>[] = readonly [],
->(
-  config: RecipeConfig<Variants, DefaultedName, Composed>,
-): ReturnType<typeof cva<Variants, DefaultedName, Composed>> {
-  return cva(config);
-}
-```
-
-A slot recipe's helper does the same with `SlotRecipeConfig`,
-`ComposableKindSlotRecipe<string>`, and
-`ReturnType<typeof sva<Slot, Variants, DefaultedName, Composed>>`.
+A function of yours that takes a config and returns its recipe is typed
+in
+[Exporting and wrapping recipes](/recipe/class-recipe/exporting-recipes/#a-function-generic-over-a-config).
 
 ## A function that takes any recipe
 
@@ -268,8 +232,8 @@ recipes of other values, build on the types of
 
 - [Building components](/recipe/class-recipe/building-components/) uses
   these types in components.
-- [Exporting recipes from a library](/recipe/class-recipe/exporting-recipes/)
+- [Exporting and wrapping recipes](/recipe/class-recipe/exporting-recipes/)
   annotates exported recipes with `RecipeOf` and `SlotRecipeOf`, for
-  `isolatedDeclarations`.
+  `isolatedDeclarations`, and types a function that creates recipes.
 - [All exports](/recipe/class-recipe/exports/) lists every type.
 - [FAQ](/recipe/class-recipe/faq/) answers common type errors.
