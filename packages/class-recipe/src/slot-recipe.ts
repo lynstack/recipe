@@ -171,7 +171,8 @@ type CreateSlotRecipe = <
 >(
   config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
 ) => ComposedSlotRecipe<
-  ComposedSlot<Composed, Slot>,
+  // Not ComposedSlot, which declarations print with each composed type.
+  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
   ComposedVariants<Composed, Variants>,
   DefaultedName | InheritedDefaultedName<Composed, Variants>
 >;

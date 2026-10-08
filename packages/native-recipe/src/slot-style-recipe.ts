@@ -256,11 +256,13 @@ function createSlotStyleRecipe<
     Composed
   >,
 ): ComposedSlotStyleRecipe<
-  ComposedSlot<Composed, Slot>,
+  // Not ComposedSlot, which declarations print with each composed type.
+  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
   ComposedVariants<Composed, Variants>,
   DefaultedName | InheritedDefaultedName<Composed, Variants>,
   RecipeSlotStyles<
-    ComposedSlot<Composed, Slot>,
+    | Slot
+    | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
     Variants,
     Base,
     Compounds,

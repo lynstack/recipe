@@ -38,6 +38,12 @@ interface Manifest {
   readonly devDependencies: Dependencies;
 }
 
+/**
+ * How much larger a declaration two levels of composition deeper may be,
+ * at most, when declarations grow linearly with the level.
+ */
+const LINEAR_GROWTH = 2;
+
 const root = fileURLToPath(new URL("../", import.meta.url));
 const consumers = path.join(root, "consumers");
 
@@ -232,17 +238,60 @@ function compiles(app: string): boolean {
   );
 }
 
+/** The declaration of the constant `name` in the declarations `text`. */
+function declarationOf(text: string, name: string): string {
+  const declaration = text
+    .split(/^(?=declare const |export )/mu)
+    .find((part: string) => part.startsWith(`declare const ${name}:`));
+  if (declaration === undefined) {
+    throw new Error(`The declarations have no constant named ${name}.`);
+  }
+  return declaration;
+}
+
+/**
+ * Whether the declarations of the recipes of `chain.ts`, each of which
+ * composes the one before, grow linearly with their level. The recipe four
+ * levels deep then takes less than twice the declaration of the one two
+ * levels deep; a type that repeats the types of the recipes it composes
+ * takes at least four times.
+ */
+function growsLinearly(app: string): boolean {
+  const text = readFileSync(path.join(app, "out", "chain.d.ts"), "utf8");
+  return (
+    declarationOf(text, "level4").length <
+    LINEAR_GROWTH * declarationOf(text, "level2").length
+  );
+}
+
+/**
+ * Installs the app `name` into `folder` from `tarballs` and checks it, and
+ * returns what fails, if anything.
+ */
+function failureOf(
+  name: string,
+  folder: string,
+  tarballs: ReadonlyMap<string, string>,
+): string | undefined {
+  const app = install(name, folder, tarballs);
+  if (!compiles(app)) {
+    return `the app of ${name} does not compile`;
+  }
+  if (!growsLinearly(app)) {
+    return `the declarations of the app of ${name} grow faster than the levels of composition`;
+  }
+  return undefined;
+}
+
 const folder = mkdtempSync(path.join(os.tmpdir(), "lynstack-consumers-"));
 const tarballs = tarballsIn(
   options.packages ?? pack(path.join(folder, "packages")),
 );
-const failed = readdirSync(consumers, { withFileTypes: true })
+const failures = readdirSync(consumers, { withFileTypes: true })
   .filter((entry: Readonly<Dirent>) => entry.isDirectory())
-  .map((entry: Readonly<Dirent>) => entry.name)
-  .filter((name: string) => !compiles(install(name, folder, tarballs)));
-if (failed.length > 0) {
-  throw new Error(
-    `These apps do not compile: ${failed.join(", ")}. They are in ${folder}.`,
-  );
+  .map((entry: Readonly<Dirent>) => failureOf(entry.name, folder, tarballs))
+  .filter((failure: string | undefined) => failure !== undefined);
+if (failures.length > 0) {
+  throw new Error(`${failures.join("; ")}. The apps are in ${folder}.`);
 }
 rmSync(folder, { force: true, recursive: true });

@@ -135,8 +135,17 @@ type CreateKindSlotRecipe<Value, Result> = <
   ComposedVariants<Composed, Variants>,
   ComposedDefaultedName<Composed, DefaultedName>,
   Value,
-  Readonly<Record<ComposedSlot<Composed, Slot>, Result>>,
-  readonly ComposedSlot<Composed, Slot>[]
+  // Not ComposedSlot, which declarations print with each composed type.
+  Readonly<
+    Record<
+      | Slot
+      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
+      Result
+    >
+  >,
+  readonly (
+    Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
+  )[]
 >;
 
 interface LooseRecipeKind extends SlotsKind {

@@ -58,6 +58,6 @@ shows them.
 
 The `Composition` parameter carries what a recipe passes on to the
 recipes that compose it. It exists in the types only. `KindRecipe`,
-`RecipeComposition`, and `ComposedSlot` come from `@lynstack/recipe`:
-they are part of the type of a recipe, so a module that exports a recipe
-and emits declarations names them through native-recipe.
+`RecipeComposition`, and `ComposedSlot` come from `@lynstack/recipe`.
+The first two are part of the type of a recipe, so a module that exports
+a recipe and emits declarations names them through native-recipe.

@@ -114,7 +114,10 @@ package with its app, run
   those. Run it before a release, and after a change that affects speed;
   it takes a few minutes. Commit the results with the change.
 - `pnpm consumers` packs the packages, installs them in a copy of each
-  app of `consumers` outside the repository, and compiles it. Pass
+  app of `consumers` outside the repository, and compiles it. It also
+  checks that the declarations of the slot recipes of each app's
+  `chain.ts`, each of which composes the one before, grow linearly with
+  the level of composition. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
   those. Run it after a change to a public type, or to the dependencies
   between the packages; CI runs it on the oldest and newest TypeScript

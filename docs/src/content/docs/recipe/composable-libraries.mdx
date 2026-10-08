@@ -83,9 +83,14 @@ A library of slot recipes does the same with the slot recipe types:
   the type of `composes`.
 - `ComposedSlot<Composed, Slot>` for the slot names, which adds the slots
   of the slot recipes it composes to those of `slots`. Use it for the
-  keys of `base`, of compound variants, and of the result.
-- A `RecipeComposition` whose last type parameter is the list of its
-  slots, `readonly ComposedSlot<Composed, Slot>[]`.
+  keys of `base` and of compound variants.
+- The same slots written out for the keys of the result and in its
+  `RecipeComposition`, whose last type parameter is the list of its
+  slots:
+  `Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]`.
+  A declaration file prints `ComposedSlot` with the types of the recipes
+  it composes, which hold the types of those they compose, so its size
+  would multiply with each level of composition.
 
 A recipe composes only recipes, and a slot recipe only slot recipes.
 

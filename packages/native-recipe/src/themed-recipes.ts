@@ -1,7 +1,6 @@
 import type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
-  ComposedSlot,
   ComposedVariants,
   KindRecipe,
   RecipeComposition,
@@ -160,14 +159,19 @@ interface ThemedRecipeCreators<Theme extends object> {
     Theme,
     ComposedVariants<Composed, Variants>,
     DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    // Not ComposedSlot, which declarations print with each composed type.
     RecipeSlotStyles<
-      ComposedSlot<Composed, Slot>,
+      | Slot
+      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
       Variants,
       Base,
       Compounds,
       Composed
     >,
-    readonly ComposedSlot<Composed, Slot>[]
+    readonly (
+      | Slot
+      | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
+    )[]
   >;
 }
 

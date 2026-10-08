@@ -180,8 +180,16 @@ type CreateKindSlotRecipe<Value, Result> = <
   ComposedVariants<Composed, Variants>,
   ComposedDefaultedName<Composed, DefaultedName>,
   Value,
-  Readonly<Record<ComposedSlot<Composed, Slot>, Result>>,
-  readonly ComposedSlot<Composed, Slot>[]
+  Readonly<
+    Record<
+      | Slot
+      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
+      Result
+    >
+  >,
+  readonly (
+    Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
+  )[]
 >;
 ```
 
@@ -189,6 +197,13 @@ Takes a config and returns a slot recipe: a [`KindRecipe`](#kindrecipe)
 whose result is a frozen object of each slot's result, keyed by slot name.
 It infers `Slot` from `slots`, and the slots of the slot recipes it
 composes are added to it. Its `Composition` lists the slots too.
+
+The slots are the same as
+[`ComposedSlot<Composed, Slot>`](#composition), written out: a
+declaration file prints `ComposedSlot` with the type of each recipe that
+`Composed` lists, which holds the types of the recipes that recipe
+composes, so a recipe several levels of composition deep would take a
+declaration many times the size of its config.
 
 | Config property    | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |

@@ -64,9 +64,9 @@ only.
 ## Types shared with the engine
 
 These types come from `@lynstack/recipe`, which class-recipe re-exports
-so that you need not install it. `RecipeComposition` and `ComposedSlot`
-are part of the type of a recipe: a module that exports a recipe and
-emits declarations names them through class-recipe.
+so that you need not install it. `RecipeComposition` is part of the type
+of a recipe: a module that exports a recipe and emits declarations names
+it through class-recipe.
 
 | Export              | Type parameters                           | Description                                                                              |
 | ------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------- |
