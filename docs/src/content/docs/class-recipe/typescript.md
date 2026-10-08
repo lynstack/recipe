@@ -36,6 +36,11 @@ A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
 variants stay literal types.
 
+The same holds for the `slots` of `sva`. A list declared before the call
+without `as const` is a `string[]`, so the slot recipe takes any slot
+name: a misspelled slot in `base`, in the variants, in `classNames`, or
+in the result is not an error.
+
 ## Typing component props
 
 `VariantsOf` returns the variants a recipe or slot recipe accepts, without
@@ -221,6 +226,35 @@ function defineComposed<
 A slot recipe's helper does the same with `SlotRecipeConfig`,
 `ComposableKindSlotRecipe<string>`, and
 `ReturnType<typeof sva<Slot, Variants, DefaultedName, Composed>>`.
+
+## A function that takes any recipe
+
+A function that takes any recipe, such as one that lists the options of
+each variant for a story, cannot take it as a recipe of any selection:
+that type can be called without variants, which a recipe with a required
+variant cannot, so TypeScript rejects such a recipe. Type it as a function
+of `never`, which the function does not call, with the properties it
+reads:
+
+```ts
+import type {
+  Recipe,
+  RecipeProps,
+  RecipeVariants,
+} from "@lynstack/class-recipe";
+
+type AnyRecipe = ((props: never) => string) &
+  Pick<
+    Recipe<RecipeProps<RecipeVariants, never>>,
+    "variantKeys" | "variantOptions" | "defaultVariants"
+  >;
+```
+
+For a slot recipe, use `(props: never) => Readonly<Record<string, string>>`
+with the same properties of
+`SlotRecipe<string, SlotRecipeProps<string, SlotRecipeVariants, never>>`.
+A function that calls the recipe is generic over it instead, so that it
+keeps the recipe's own props.
 
 ## Other types
 
