@@ -5,6 +5,38 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## 1.6.0 — 2026-10-08
+
+A library of components can export and wrap its recipes: their
+declarations compile under pnpm and with `isolatedDeclarations`, stay
+small when slot recipes compose each other, and a function generic over a
+config returns its recipe again.
+
+- `StyleRecipeOf<Config, Composed>`, `SlotStyleRecipeOf`,
+  `ThemedStyleRecipeOf`, and `ThemedSlotStyleRecipeOf` are the types that
+  `createStyleRecipe`, `createSlotStyleRecipe`, and their themed forms
+  return for a config declared `as const`, which annotate an exported
+  recipe where `isolatedDeclarations` cannot infer the type of a call. A
+  recipe that composes others lists their types as the second parameter.
+- `RecipeComposition`, `ComposedSlot`, and `KindRecipe`, which
+  `withTheme` returns, are exported. Since 1.2.0, the type of a recipe
+  names them, and a module that exported a recipe and emitted
+  declarations failed with TS2883 (TS2742 before TypeScript 7) in an app
+  installed with pnpm, which cannot import `@lynstack/recipe`.
+- `ComposableKindRecipe`, `ComposableKindSlotRecipe`, and
+  `ComposedVariants` are exported, to type a function that takes a config
+  that composes recipes.
+- A function generic over a config returns the recipe of its config
+  again, as a `StyleRecipe` or a `SlotStyleRecipe`, which failed with
+  TS2322, and TS2590 for a slot recipe, since 1.2.0. One whose configs
+  compose recipes returns the type of `createStyleRecipe` for its type
+  parameters.
+- The declaration of a slot recipe that composes others lists the names
+  of its slots, instead of the types of the slot recipes it composes, so
+  that it grows linearly with the level of composition. Before, it grew
+  faster than linearly.
+- Depends on `@lynstack/recipe` through the range `^1.7.0`.
+
 ## 1.5.0 — 2026-10-07
 
 Runs with React Native 0.76 and later, and its types reject more configs
