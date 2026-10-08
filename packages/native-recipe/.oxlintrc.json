@@ -3,6 +3,13 @@
   "extends": ["../../.oxlintrc.json"],
   "overrides": [
     {
+      // TypeScript relates an object to one mapped type over slots that
+      // are generic, as in a function generic over the slot recipe that a
+      // recipe composes, but not to a Record nested in Partial and Readonly.
+      "files": ["src/types.ts"],
+      "rules": { "typescript/consistent-indexed-object-style": "off" }
+    },
+    {
       // prefer-readonly-parameter-types allows StyleAccumulator by its name,
       // which an alias of Record loses, so it is an interface with an index
       // signature, which consistent-indexed-object-style would make a Record.

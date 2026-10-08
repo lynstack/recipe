@@ -5,6 +5,16 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## Unreleased
+
+- An editor completes the compound variants of a style recipe and a slot
+  style recipe, plain or themed: the variant names of a condition, the
+  style properties, and the slot names of a slot style recipe that is not
+  themed. It completed none of them before.
+- An editor completes the variant names of `defaultVariants`, and the
+  slot names and style properties of a slot style recipe's `base` and of
+  the options of its variants. It completed none of them before.
+
 ## 1.7.0 — 2026-10-08
 
 A recipe warns about the names its config gives without declaring them,

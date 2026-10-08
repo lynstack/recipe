@@ -9,7 +9,6 @@ import type {
 import type {
   ComposedStyle,
   CompoundCondition,
-  DefaultVariants,
   InheritedDefaultedName,
   KeyOfEach,
   NativeStyle,
@@ -22,6 +21,7 @@ import type {
   LooseStyleRecipe,
   LooseStyleRecipeConfig,
 } from "./compile-style-recipe.js";
+import type { WrittenCompounds, WrittenDefaults } from "./written-config.js";
 import { buildStyleRecipe } from "./compile-style-recipe.js";
 
 /**
@@ -87,15 +87,20 @@ interface StyleRecipeConfig<
    * time, applied in order after the styles of the variants' options.
    */
   readonly compoundVariants?:
-    | (Compounds &
+    | WrittenCompounds<
+        Compounds,
         readonly StyleCompoundVariant<
           NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownProperties<CompoundStyle<Compounds>>
-        >[])
+        >[],
+        readonly StyleCompoundVariant<
+          NoInfer<ComposedVariants<Composed, Variants>>
+        >[]
+      >
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /**
    * Whether the recipe caches the style of each declared selection.

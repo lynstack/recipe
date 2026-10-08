@@ -15,13 +15,15 @@ dependency and a development dependency for those types.
 ## Modules
 
 - `style-recipe.ts`, `slot-style-recipe.ts`, `themed-recipes.ts`,
-  `recipe-of.ts`, `themed-recipe-of.ts`, and `types.ts` hold the public
-  API and its types. `recipe-of.ts` holds `StyleRecipeOf` and
-  `SlotStyleRecipeOf`, and `themed-recipe-of.ts` their themed forms, which
-  type a recipe from the type of its config.
+  `recipe-of.ts`, `themed-recipe-of.ts`, `types.ts`, and
+  `written-config.ts` hold the public API and its types. `recipe-of.ts`
+  holds `StyleRecipeOf` and `SlotStyleRecipeOf`, and `themed-recipe-of.ts`
+  their themed forms, which type a recipe from the type of its config.
   `types.ts` checks styles against the `ViewStyle`, `TextStyle`, and
   `ImageStyle` types of React Native and re-exports the shared types of
-  `@lynstack/recipe`.
+  `@lynstack/recipe`. `written-config.ts` types `defaultVariants` and
+  `compoundVariants` so that an editor completes them before TypeScript
+  has inferred them.
 - The other modules are internal, and use only the public API of
   `@lynstack/recipe`:
   - `compile-style-recipe.ts` and `compile-slot-style-recipe.ts` build the

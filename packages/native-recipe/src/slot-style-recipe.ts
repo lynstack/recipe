@@ -9,7 +9,6 @@ import type {
 import type {
   CompoundCondition,
   CompoundStyles,
-  DefaultVariants,
   InheritedDefaultedName,
   InheritedSlot,
   NativeStyle,
@@ -24,6 +23,7 @@ import type {
   LooseSlotStyleRecipe,
   LooseSlotStyleRecipeConfig,
 } from "./compile-slot-style-recipe.js";
+import type { WrittenCompounds, WrittenDefaults } from "./written-config.js";
 import { buildSlotStyleRecipe } from "./compile-slot-style-recipe.js";
 
 /**
@@ -94,7 +94,8 @@ interface SlotStyleRecipeConfig<
    * variants' options.
    */
   readonly compoundVariants?:
-    | (Compounds &
+    | WrittenCompounds<
+        Compounds,
         readonly SlotStyleCompoundVariant<
           NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownCompoundStyles<
@@ -102,11 +103,16 @@ interface SlotStyleRecipeConfig<
             NoInfer<Slot>,
             InheritedSlot<Composed>
           >
-        >[])
+        >[],
+        readonly SlotStyleCompoundVariant<
+          NoInfer<ComposedVariants<Composed, Variants>>,
+          SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>
+        >[]
+      >
     | undefined;
   /** The option each variant uses when a recipe is called without it. */
   readonly defaultVariants?:
-    | DefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /**
    * Whether the recipe caches the styles of each declared selection.
