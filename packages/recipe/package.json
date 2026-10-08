@@ -1,6 +1,6 @@
 {
   "name": "@lynstack/recipe",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Fast, type-safe recipes for values of any type: define how a kind of recipe combines values, such as class names or styles, then create recipes of that kind.",
   "keywords": [
     "recipe",

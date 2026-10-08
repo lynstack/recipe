@@ -3,12 +3,12 @@
   "date": "2026-10-08",
   "node": "24.21.0",
   "cache": [
-    { "hz": 15073997.105791543, "name": "cached" },
-    { "hz": 1748826.2347776853, "name": "uncached" }
+    { "hz": 15119011.235364432, "name": "cached" },
+    { "hz": 1760177.5234305721, "name": "uncached" }
   ],
   "slotCache": [
-    { "hz": 14876228.557002474, "name": "cached" },
-    { "hz": 1469124.6136199543, "name": "uncached" }
+    { "hz": 14986664.040854346, "name": "cached" },
+    { "hz": 1433331.4582380634, "name": "uncached" }
   ],
-  "versions": { "recipe": "1.7.0" }
+  "versions": { "recipe": "1.8.0" }
 }

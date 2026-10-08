@@ -4,7 +4,12 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
-## Unreleased
+## 1.8.0 — 2026-10-08
+
+A recipe warns about the names its config gives without declaring them,
+which TypeScript lets through in a config declared before the call, and
+a library's function generic over the slot recipe it composes can name
+its own slots.
 
 - A slot recipe's config types the slots of the slot recipes it composes
   apart from its own, so that a function generic over the slot recipe it
