@@ -25,6 +25,9 @@ interface RecipeConfigParts {
  * `isolatedDeclarations`, which cannot infer the type of a call. A config
  * that lists `composes` is rejected, so that the type cannot leave out the
  * recipes it composes.
+ * It applies to a config whose type is known, not in a function generic
+ * over the whole config, from which `cva` cannot infer the variants;
+ * make such a function generic over the variants instead.
  *
  * @typeParam Config - The type of the config without `composes`: declare
  *   the config `as const`, and annotate the recipe with its `typeof`.
@@ -80,6 +83,9 @@ interface SlotRecipeConfigParts {
  * on its own, as with `isolatedDeclarations`, which cannot infer the type
  * of a call. A config that lists `composes` is rejected, so that the type
  * cannot leave out the slot recipes it composes.
+ * It applies to a config whose type is known, not in a function generic
+ * over the whole config, from which `sva` cannot infer the variants;
+ * make such a function generic over the variants instead.
  *
  * @typeParam Config - The type of the config without `composes`: declare
  *   the config `as const`, and annotate the slot recipe with its `typeof`.

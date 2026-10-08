@@ -75,6 +75,15 @@ the same order, as the second type parameter:
 both. `RecipeOf` and `SlotRecipeOf` reject a config that lists
 `composes`, so that the type cannot leave out the recipes it composes.
 
+Both types are for a config whose type is known where the recipe is
+declared. They do not apply in a function generic over the whole config,
+such as one that takes `config: Config` and returns `RecipeOf<Config>`:
+`cva` infers the variants from its config, and TypeScript cannot infer
+them from a config whose type is a type parameter. Make such a function
+generic over the variants instead, as
+[A function generic over a config](/recipe/class-recipe/typescript/#a-function-generic-over-a-config)
+shows.
+
 ## Next steps
 
 - [Composing recipes](/recipe/class-recipe/composing/) explains how the
