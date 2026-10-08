@@ -92,18 +92,21 @@ function splitProps(
   props: Readonly<Record<string, unknown>>,
   variantKeys: readonly string[],
 ) {
-  const variants: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(props)) {
-    if (variantKeys.includes(key)) {
-      variants[key] = value;
-    } else {
-      rest[key] = value;
-    }
-  }
-  return { rest, variants };
+  const entries = Object.entries(props);
+  return {
+    rest: Object.fromEntries(
+      entries.filter(([key]) => !variantKeys.includes(key)),
+    ),
+    variants: Object.fromEntries(
+      entries.filter(([key]) => variantKeys.includes(key)),
+    ),
+  };
 }
 ```
+
+`Object.fromEntries` gives each object a property for every key, even one
+named `__proto__`, which assigning to a new object would turn into its
+prototype.
 
 `splitProps(props, box.variantKeys)` puts `tone` in `variants`, and every
 other prop in `rest`.
