@@ -7,6 +7,7 @@ on:
       - packages/*/src/**
       - consumers/**
       - scripts/consumers/**
+      - scripts/sources/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -20,6 +21,7 @@ on:
       - packages/*/src/**
       - consumers/**
       - scripts/consumers/**
+      - scripts/sources/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -161,6 +163,25 @@ jobs:
       - name: Import the packages
         working-directory: compat
         run: deno run smoke.mjs
+
+  sources:
+    name: Package sources on TypeScript ${{ fromJSON(needs.pack.outputs.versions).typescript }}
+    needs: pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          cache: true
+          require-lockfile: true
+      # Builds the packages, then compiles each one's sources, tests, and
+      # benchmarks with the oldest TypeScript that the packages support.
+      - name: Compile the sources of the packages
+        env:
+          TYPESCRIPT: ${{ fromJSON(needs.pack.outputs.versions).typescript }}
+        run: pnpm sources --typescript "$TYPESCRIPT"
 
   typescript:
     name: TypeScript ${{ matrix.typescript }}, React Native ${{ matrix.react-native }}

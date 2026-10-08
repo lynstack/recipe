@@ -17,6 +17,7 @@
     "measure": "pnpm build && node scripts/measure/main.ts",
     "api": "node scripts/api/main.ts",
     "consumers": "node scripts/consumers/main.ts",
+    "sources": "node scripts/sources/main.ts",
     "docs:dev": "pnpm --filter docs dev",
     "docs:build": "pnpm --filter docs build"
   },

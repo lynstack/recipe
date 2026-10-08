@@ -69,8 +69,10 @@ it before working in that folder.
   each package and saves the raw results, never formatted text, in
   `docs/src/measurements/<package>.json`. It has one module per package,
   which names the benchmarks that package reports. `scripts/consumers`
-  compiles the apps of `consumers` with the packed packages, and
-  `scripts/api` compares the public API of each package with `api`.
+  compiles the apps of `consumers` with the packed packages,
+  `scripts/sources` compiles the sources of each package, tests and
+  benchmarks included, with a given TypeScript, and `scripts/api`
+  compares the public API of each package with `api`.
 - `examples` holds an example of each package that readers open in the
   browser, from the Open in StackBlitz or Open in Snack link of its
   overview page: `recipe` and `class-recipe` are React apps, built with
@@ -86,7 +88,8 @@ it before working in that folder.
   requires it. The apps of `consumers` are compiled with the packed
   packages, with the React Native that the apps of
   `@lynstack/native-recipe` list and the oldest that its peer dependency
-  allows.
+  allows. The sources of each package are compiled with the oldest
+  TypeScript.
   To support an older or newer minimum, change `versions.json`; never
   write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
@@ -143,6 +146,11 @@ package with its apps, run
   Run it after a change to a public type, or to the dependencies between
   the packages, and commit `api` with the change; CI runs it on the
   oldest and newest TypeScript and React Native.
+- `pnpm sources --typescript <version>` builds the packages and compiles
+  the sources of each, tests and benchmarks included, with that
+  TypeScript, without the options of `tsconfig.base.json` that it does not
+  have yet. CI runs it with the oldest TypeScript in `compat/versions.json`;
+  run it after a change to a type that a test exercises in a new way.
 - `pnpm docs:dev` serves the docs locally, and `pnpm docs:build` builds
   them into `docs/dist`.
 - `pnpm format` formats every file.
