@@ -29,4 +29,6 @@ jobs:
       - run: pnpm format:check
       - name: Build the packages that the docs import
         run: pnpm --filter "docs^..." build
+      - name: Check the public API of the packages
+        run: pnpm api
       - run: pnpm --filter docs check

@@ -1,0 +1,14 @@
+import type { NativeStyle, SlotStyles, VariantsOf } from "@lynstack/native-recipe";
+import { badge } from "./badge";
+import { card } from "./card";
+type CardVariants = VariantsOf<typeof card>;
+type BadgeVariants = VariantsOf<typeof badge>;
+declare const cardVariants: CardVariants;
+declare const cardStyle: NativeStyle;
+declare const searchStyles: SlotStyles<"icon" | "label" | "root">;
+declare const badgeVariants: BadgeVariants;
+declare const badgeStyle: NativeStyle;
+declare const pillStyles: SlotStyles<"icon" | "label" | "root">;
+declare const raisedCardStyle: NativeStyle;
+export { badgeStyle, badgeVariants, cardStyle, cardVariants, pillStyles, raisedCardStyle, searchStyles, };
+export type { BadgeVariants, CardVariants };

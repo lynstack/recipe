@@ -5,7 +5,9 @@
  * package folders, whose types TypeScript can always name; an app that
  * installs the packages can name only the types that its own dependencies
  * export. It also checks that the declarations of the slot recipes of an
- * app's `chain.ts` grow linearly with the level of composition.
+ * app's `chain.ts` grow linearly with the level of composition, and,
+ * with the TypeScript and React Native of the repository, that the app
+ * emits the declarations that `api/consumers/<app>` keeps.
  *
  * Options:
  * - `--packages <folder>`: the tarballs to install. Without it, the
@@ -15,6 +17,8 @@
  * - `--react-native <version>`: the React Native of the apps that depend on
  *   it, with the React and React types it asks for. Defaults to the one each
  *   app lists.
+ * - `--update`: replaces the declarations that `api/consumers` keeps with
+ *   those the apps emit, instead of comparing them.
  */
 import {
   cpSync,
@@ -38,15 +42,18 @@ import {
   withoutIsolatedDeclarations,
 } from "./compile.ts";
 import { isDependencies, parseJson, readManifest } from "./manifest.ts";
+import { matchesDeclarations, updateDeclarations } from "./declarations.ts";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const consumers = path.join(root, "consumers");
+const keptDeclarations = path.join(root, "api", "consumers");
 
 const { values: options } = parseArgs({
   options: {
     packages: { type: "string" },
     "react-native": { type: "string" },
     typescript: { type: "string" },
+    update: { type: "boolean" },
   },
 });
 
@@ -145,11 +152,37 @@ function dependenciesOf(
   return withReactNative(manifest, dependencies, ["react", "react-native"]);
 }
 
-/** The TypeScript that the apps compile with. */
-const typescript =
-  options.typescript ??
+/** The TypeScript of the repository. */
+const repositoryTypescript =
   readManifest(path.join(root, "package.json")).devDependencies["typescript"] ??
   "";
+
+/** The TypeScript that the apps compile with. */
+const typescript = options.typescript ?? repositoryTypescript;
+
+if (
+  options.update === true &&
+  (typescript !== repositoryTypescript || options["react-native"] !== undefined)
+) {
+  throw new Error(
+    "--update keeps the declarations of the TypeScript and React Native of the repository only.",
+  );
+}
+
+/**
+ * Whether an app whose `manifest` is that of the repository compiles with
+ * the TypeScript and React Native of the repository, with which it emits
+ * the declarations it keeps.
+ */
+function keepsDeclarations(manifest: Manifest): boolean {
+  const listed = manifest.dependencies["react-native"];
+  return (
+    typescript === repositoryTypescript &&
+    (listed === undefined ||
+      options["react-native"] === undefined ||
+      options["react-native"] === listed)
+  );
+}
 
 /** The development dependencies of an app. */
 function devDependenciesOf(manifest: Manifest): Dependencies {
@@ -202,6 +235,27 @@ function install(
 }
 
 /**
+ * Checks the declarations that the installed `app` of `name` emits against
+ * those it keeps, or keeps them with `--update`, and returns what fails, if
+ * anything.
+ */
+function declarationsFailureOf(name: string, app: string): string | undefined {
+  const manifest = readManifest(path.join(consumers, name, "package.json"));
+  if (!keepsDeclarations(manifest)) {
+    return undefined;
+  }
+  const kept = path.join(keptDeclarations, name);
+  if (options.update === true) {
+    updateDeclarations(app, kept);
+    return undefined;
+  }
+  if (!matchesDeclarations(app, kept)) {
+    return `the app of ${name} emits other declarations than api/consumers/${name}: review the difference above, then run pnpm consumers --update`;
+  }
+  return undefined;
+}
+
+/**
  * Installs the app `name` into `folder` from `tarballs` and checks it, and
  * returns what fails, if anything.
  */
@@ -217,7 +271,7 @@ function failureOf(
   if (!growsLinearly(app)) {
     return `the declarations of the app of ${name} grow faster than the levels of composition`;
   }
-  return undefined;
+  return declarationsFailureOf(name, app);
 }
 
 const folder = mkdtempSync(path.join(os.tmpdir(), "lynstack-consumers-"));

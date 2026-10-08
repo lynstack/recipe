@@ -51,6 +51,13 @@ it before working in that folder.
   app can name only the types that its dependencies export. A type of
   `@lynstack/recipe` that the type of a recipe names, such as
   `RecipeComposition`, must therefore be exported by the package too.
+- `api` keeps the declarations that show every change to a public type
+  in a diff: `api/<package>.d.ts`, the public API of each package, which
+  is its `dist/index.d.ts` without comments, and `api/consumers/<app>`,
+  the declarations that each app of `consumers` emits when it installs
+  the packed packages, which show how the types of the apps' recipes
+  print. Only `pnpm api --update` and `pnpm consumers --update` write
+  them.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each
@@ -62,7 +69,8 @@ it before working in that folder.
   each package and saves the raw results, never formatted text, in
   `docs/src/measurements/<package>.json`. It has one module per package,
   which names the benchmarks that package reports. `scripts/consumers`
-  compiles the apps of `consumers` with the packed packages.
+  compiles the apps of `consumers` with the packed packages, and
+  `scripts/api` compares the public API of each package with `api`.
 - `examples` holds an example of each package that readers open in the
   browser, from the Open in StackBlitz or Open in Snack link of its
   overview page: `recipe` and `class-recipe` are React apps, built with
@@ -91,7 +99,8 @@ it before working in that folder.
 
 Run `pnpm check` at the root before every commit. It runs the `check`
 script of each package and of the docs, dependencies first, then
-typechecks and lints the scripts and checks formatting. The docs' `check`
+checks the public API of each package with `pnpm api`, typechecks and
+lints the scripts, and checks formatting. The docs' `check`
 typechecks them, lints them, checks their formatting, and builds them. A
 package's `check` builds it
 (which runs publint and Are the Types Wrong), typechecks it, lints it,
@@ -106,6 +115,10 @@ package with its apps, run
 `pnpm --filter @lynstack/class-recipe --filter "./consumers/class-recipe*" check`.
 
 - `pnpm test` runs the tests of every package.
+- `pnpm api` checks that the public API of each built package is the one
+  that `api/<package>.d.ts` keeps, and writes how they differ. After a
+  change to a public type, run `pnpm api --update` and commit `api` with
+  the change.
 - `test:coverage`, in a package, runs its tests and reports coverage. Use
   it to find behavior without a test; it sets no threshold, and a test
   written only to cover a line adds nothing.
@@ -120,12 +133,15 @@ package with its apps, run
   app of `consumers` outside the repository, and compiles it. It also
   checks that the declarations of the slot recipes of each app's
   `chain.ts`, each of which composes the one before, grow linearly with
-  the level of composition. A TypeScript older than 5.5, which has no
+  the level of composition, and, with the TypeScript and React Native of
+  the repository, that each app emits the declarations that
+  `api/consumers/<app>` keeps. A TypeScript older than 5.5, which has no
   `isolatedDeclarations`, compiles an app that sets it without it. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
-  those. Run it after a change to a public type, or to the dependencies
-  between the packages; CI runs it on the oldest and newest TypeScript
-  and React Native.
+  those, and `--update` to write the declarations of the apps to `api`.
+  Run it after a change to a public type, or to the dependencies between
+  the packages, and commit `api` with the change; CI runs it on the
+  oldest and newest TypeScript and React Native.
 - `pnpm docs:dev` serves the docs locally, and `pnpm docs:build` builds
   them into `docs/dist`.
 - `pnpm format` formats every file.
@@ -171,6 +187,13 @@ behavior of an export without a major version. Keep internals out of
 `@lynstack/class-recipe` and `@lynstack/native-recipe` use only the public
 API of `@lynstack/recipe`; when they need more, extend that API instead of
 reaching into its internals.
+
+**Review every change to `api`.** A change to `api` is a change to the
+types that users compile with, and its diff is the review of that change.
+Read it before you commit, and check that it changes only what the change
+means to: a change that adds a feature adds declarations and leaves the
+existing ones as they were, or it changes the types of code that does not
+use the feature. Never update `api` only to make a check pass.
 
 **Document every public export with TSDoc.** Describe what it does, its
 parameters (`@param`), its type parameters (`@typeParam`), and its return
