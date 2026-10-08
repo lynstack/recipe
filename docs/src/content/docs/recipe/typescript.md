@@ -57,6 +57,11 @@ A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
 variants stay literal types.
 
+The same holds for the `slots` of a slot recipe. A list declared before
+the call without `as const` is a `string[]`, so the slot recipe takes any
+slot name: a misspelled slot in `base`, in the variants, or in the result
+is not an error.
+
 ## Composed recipes
 
 A recipe that composes others infers its selection from every config, and
@@ -170,6 +175,35 @@ function defineComposedStyle<
 
 A slot recipe's helper does the same with `KindSlotRecipeConfig` and
 `ComposableKindSlotRecipe<Style>`.
+
+## A function that takes any recipe
+
+A function that takes any recipe, such as one that lists the options of
+each variant for a story, cannot take it as a recipe of any selection:
+that type can be called without variants, which a recipe with a required
+variant cannot, so TypeScript rejects such a recipe. Type it as a function
+of `never`, which the function does not call, with the properties it
+reads:
+
+```ts
+import type { KindRecipe, KindSelection, KindVariants } from "@lynstack/recipe";
+
+type AnyStyleRecipe = ((props: never) => Style) &
+  Pick<
+    KindRecipe<KindSelection<KindVariants<Style>, never>, Style>,
+    "variantKeys" | "variantOptions" | "defaultVariants"
+  >;
+
+function listOptions(recipe: AnyStyleRecipe): readonly string[] {
+  return recipe.variantKeys.flatMap((key) => recipe.variantOptions[key] ?? []);
+}
+```
+
+For a slot recipe, use `(props: never) => Readonly<Record<string, Style>>`
+with the same properties of
+`KindRecipe<KindSelection<KindSlotVariants<Style>, never>, Readonly<Record<string, Style>>>`.
+A function that calls the recipe is generic over it instead, so that it
+keeps the recipe's own selection.
 
 ## Exporting recipes with `isolatedDeclarations`
 
