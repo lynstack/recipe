@@ -193,8 +193,9 @@ do a slot without classes, `cn`, and `cx`:
 The types of tailwind-variants accept a compound condition on a prop
 that is not a variant, which matches when a call passes that prop, as a
 component that spreads its props into the recipe does. The types of
-class-recipe reject it. Declare the prop as a variant whose options add
-no classes, and the condition matches as before:
+class-recipe reject it, and the recipe warns about it when it is
+created, since it never matches. Declare the prop as a variant whose
+options add no classes, and the condition matches as before:
 
 <CodeComparison name="tailwind-variants/undeclared-variant" />
 

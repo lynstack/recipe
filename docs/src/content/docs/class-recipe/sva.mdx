@@ -55,8 +55,9 @@ object of the classes of each slot, or a compound variant without
 `variants` or `classNames`.
 
 An option or a compound variant gives classes only to the slots it names.
-A slot that `slots` does not name is a type error, and its classes are
-ignored.
+A slot that `slots` does not name is a type error. Its classes are
+ignored, and the slot recipe warns about it when it is created (see
+[Names the config does not declare](/recipe/class-recipe/cva/#names-the-config-does-not-declare)).
 
 ### A compound variant
 

@@ -177,9 +177,10 @@ class-variance-authority uses the default instead:
 
 class-variance-authority matches a condition on a prop that is not a
 variant when a call passes that prop, as a component that spreads its
-props into the recipe does. class-recipe ignores such a condition.
-Declare the prop as a variant whose options add no classes, and the
-condition matches as before:
+props into the recipe does. class-recipe never matches such a condition,
+and warns about it when the recipe is created. Declare the prop as a
+variant whose options add no classes, and the condition matches as
+before:
 
 <CodeComparison name="class-variance-authority/undeclared-variant" />
 

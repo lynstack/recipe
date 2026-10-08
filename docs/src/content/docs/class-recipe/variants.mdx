@@ -124,9 +124,11 @@ The `button` recipe above has two compound variants:
   that leaves the variant out selects.
 - The recipe adds the classes of the matching compound variants in the
   order of `compoundVariants`, after the classes of the variants.
-- A compound variant that names a variant or an option that the config
-  does not declare never matches. TypeScript reports its config as an
-  error.
+- A condition on a variant that the config does not declare never
+  matches, and an undeclared option in a list is ignored. TypeScript
+  reports both in a config written in the call, and the recipe warns
+  about them when it is created (see
+  [Names the config does not declare](/recipe/class-recipe/cva/#names-the-config-does-not-declare)).
 
 In a slot recipe, a compound variant gives classes to the slots it names.
 Here the header gets a border only when the card is both `md` and

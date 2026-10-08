@@ -4,6 +4,14 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## Unreleased
+
+- `cva` and `sva` warn, once, with `console.warn`, about a default, a
+  compound variant, or classes that name a variant, an option, or a slot
+  that the config does not declare, such as a misspelled name in a config
+  declared before the call, which TypeScript does not always report. Such
+  a name still adds no classes.
+
 ## 1.6.0 — 2026-10-08
 
 A library of components can export and wrap its recipes: their

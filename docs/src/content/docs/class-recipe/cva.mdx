@@ -46,6 +46,33 @@ creating the recipe throws a `TypeError` that names what is wrong: no
 `variants`, classes that are not a string, or a compound variant without
 `variants` or `className`.
 
+### Names the config does not declare
+
+A default or a compound variant can name a variant or an option that the
+config does not declare, such as a misspelled one. TypeScript rejects it
+in a config written in the call, but a config declared before the call
+lets some through (see
+[A config declared before the call](/recipe/class-recipe/typescript/#a-config-declared-before-the-call)),
+and so does JavaScript. The recipe then adds no classes for that name:
+
+- A default of an undeclared variant, or an option that its variant does
+  not declare, is ignored.
+- A compound variant's condition on an undeclared variant never matches.
+  An undeclared option in its list is ignored, so a condition left
+  without a declared option never matches either.
+- In `sva`, classes for a slot that `slots` does not name are ignored.
+
+When it is created, the recipe warns about each such name with
+`console.warn`, in one message:
+
+```text
+A recipe's config names variants, options, or slots that it does not declare, so they add nothing:
+- Compound variant 0 names the variant "tonne".
+```
+
+The names of the recipes it composes count as declared. A recipe created
+again from a config with the same mistakes does not repeat the warning.
+
 ### A compound variant
 
 Each entry of `compoundVariants` is an object with these properties:

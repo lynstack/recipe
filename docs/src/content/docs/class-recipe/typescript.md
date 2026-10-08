@@ -39,24 +39,26 @@ also needs [Exporting and wrapping recipes](/recipe/class-recipe/exporting-recip
 
 A config written inline is inferred as it is. Declare a config before the
 call `as const`, so that the options named in its compound and default
-variants stay literal types.
+variants stay literal types. The same holds for the `slots` of `sva`: a
+list declared without `as const` is a `string[]`, so the slot recipe
+takes any slot name, and a misspelled slot in `base`, in the variants, in
+`classNames`, or in the result is not a type error.
 
-The same holds for the `slots` of `sva`. A list declared before the call
-without `as const` is a `string[]`, so the slot recipe takes any slot
-name: a misspelled slot in `base`, in the variants, in `classNames`, or
-in the result is not an error.
-
-TypeScript checks a declared config less than one written in the call:
-it reports a name that a type does not declare only in an object written
-where that type is expected. In a declared config, a misspelled name next
-to a correct one is not an error, and adds no classes, in these places:
+TypeScript also checks a declared config less than one written in the
+call, since it reports a name that a type does not declare only in an
+object written where that type is expected. In a declared config, a
+misspelled name next to a correct one is not a type error in these
+places:
 
 - the variants that a compound variant names;
 - the slots of `base`;
 - the slots of a compound variant's `classNames`.
 
-Write the config in the call when nothing needs it declared, and test the
-classes of a declared config.
+The recipe warns about such a name when it is created, and adds no
+classes for it; see
+[Names the config does not declare](/recipe/class-recipe/cva/#names-the-config-does-not-declare).
+Write the config in the call when nothing needs it declared, so that
+TypeScript reports these names as you type.
 
 ## Typing component props
 

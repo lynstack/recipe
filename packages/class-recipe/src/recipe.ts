@@ -201,7 +201,10 @@ function makeCreateRecipe(options: BuildOptions): unknown {
  *
  * A variant without a default is required, except a boolean variant, whose
  * only options are `"true"` and `"false"` and which defaults to `false`. An
- * option that the config does not declare adds no classes. The recipe's
+ * option that the config does not declare adds no classes. Creating the
+ * recipe warns once, with `console.warn`, about a default or a compound
+ * variant that names a variant or an option that the config does not
+ * declare, which adds no classes. The recipe's
  * `variantKeys` property lists the names of its variants, `variantOptions`
  * the names of the options of each, and `defaultVariants` the option each
  * uses when the recipe is called without it.

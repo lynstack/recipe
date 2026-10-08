@@ -36,6 +36,15 @@ The message names the part to fix. The most common ones:
 See [cva](/recipe/class-recipe/cva/#the-config) and
 [Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/#configs-that-throw-without-types).
 
+## Why does the console warn that a recipe's config names what it does not declare?
+
+A default, a compound variant, or the classes of a slot name a variant,
+an option, or a slot that the config does not declare, usually a typo in
+a config declared before the call, where TypeScript does not catch every
+one. The recipe adds no classes for that name. The message lists each
+one; fix the name, or declare it. See
+[Names the config does not declare](/recipe/class-recipe/cva/#names-the-config-does-not-declare).
+
 ## Which merge library for Tailwind CSS v3 or v4?
 
 On Tailwind CSS v4, use tailwind-merge v3, or `cn`. On Tailwind CSS v3,
