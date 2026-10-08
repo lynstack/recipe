@@ -1,25 +1,9 @@
 import type { NativeStyle, SlotStyles, ThemedRecipe, VariantsOf } from "@lynstack/native-recipe";
 import type { StyleProp, TextStyle, ViewStyle } from "react-native";
 declare const box: ((props: {
-    readonly disabled?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly opacity: 0.5;
-        };
-    }> | undefined;
-    readonly size?: import("@lynstack/native-recipe").VariantOption<{
-        readonly lg: {
-            readonly height: 48;
-        };
-        readonly md: {
-            readonly height: 40;
-        };
-    }> | undefined;
-    readonly tone: import("@lynstack/native-recipe").VariantOption<{
-        readonly danger: {
-            readonly backgroundColor: "#dc2626";
-        };
-        readonly neutral: {};
-    }>;
+    readonly disabled?: "false" | "true" | boolean | undefined;
+    readonly size?: "lg" | "md" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => {
     readonly backgroundColor?: "#dc2626" | undefined;
     readonly borderRadius?: 8 | undefined;
@@ -30,31 +14,12 @@ declare const box: ((props: {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-        }>[];
-        readonly tone: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly danger: {
-                readonly backgroundColor: "#dc2626";
-            };
-            readonly neutral: {};
-        }>[];
+        readonly size: readonly ("lg" | "md")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-        }>;
+        readonly size: "lg" | "md";
     };
 } & {
     readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
@@ -81,29 +46,9 @@ declare const box: ((props: {
 };
 type BoxVariants = VariantsOf<typeof box>;
 declare const iconBox: ((props: {
-    readonly disabled?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly opacity: 0.5;
-        };
-    }> | undefined;
-    readonly size?: import("@lynstack/native-recipe").VariantOption<{
-        readonly lg: {
-            readonly height: 48;
-        };
-        readonly md: {
-            readonly height: 40;
-        };
-        readonly sm: {
-            readonly height: 32;
-            readonly width: 32;
-        };
-    }> | undefined;
-    readonly tone: import("@lynstack/native-recipe").VariantOption<{
-        readonly danger: {
-            readonly backgroundColor: "#dc2626";
-        };
-        readonly neutral: {};
-    }>;
+    readonly disabled?: "false" | "true" | boolean | undefined;
+    readonly size?: "lg" | "md" | "sm" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => {
     readonly backgroundColor?: "#dc2626" | undefined;
     readonly borderRadius?: 8 | undefined;
@@ -115,39 +60,12 @@ declare const iconBox: ((props: {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-            readonly sm: {
-                readonly height: 32;
-                readonly width: 32;
-            };
-        }>[];
-        readonly tone: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly danger: {
-                readonly backgroundColor: "#dc2626";
-            };
-            readonly neutral: {};
-        }>[];
+        readonly size: readonly ("lg" | "md" | "sm")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-            readonly sm: {
-                readonly height: 32;
-                readonly width: 32;
-            };
-        }>;
+        readonly size: "lg" | "md" | "sm";
     };
 } & {
     readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
@@ -334,14 +252,7 @@ declare const anyChip: ThemedRecipe<Theme, ChipVariants, {
     readonly backgroundColor?: string;
 }>;
 declare const fade: import("@lynstack/native-recipe").StyleRecipe<{
-    readonly tone?: import("@lynstack/native-recipe").VariantOption<{
-        readonly danger: {
-            readonly opacity: 1;
-        };
-        readonly neutral: {
-            readonly opacity: 0.5;
-        };
-    }> | undefined;
+    readonly tone?: "danger" | "neutral" | undefined;
 }, NativeStyle>;
 declare const fadeStyle: NativeStyle;
 declare const field: import("@lynstack/native-recipe").SlotStyleRecipe<{
@@ -351,28 +262,9 @@ declare const fieldStyles: SlotStyles<"label" | "input">;
 /** Configs whose styles are arrays of styles, which the types reject. */
 declare function createArrayStyleRecipes(): void;
 declare const compactBox: ((props: {
-    readonly disabled?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly opacity: 0.5;
-        };
-    }> | undefined;
-    readonly size?: import("@lynstack/native-recipe").VariantOption<{
-        readonly lg: {
-            readonly height: 48;
-        };
-        readonly md: {
-            readonly height: 40;
-        };
-        readonly xs: {
-            readonly height: 24;
-        };
-    }> | undefined;
-    readonly tone: import("@lynstack/native-recipe").VariantOption<{
-        readonly danger: {
-            readonly backgroundColor: "#dc2626";
-        };
-        readonly neutral: {};
-    }>;
+    readonly disabled?: "false" | "true" | boolean | undefined;
+    readonly size?: "lg" | "md" | "xs" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => {
     readonly backgroundColor?: "#dc2626" | undefined;
     readonly borderRadius?: 8 | undefined;
@@ -383,37 +275,12 @@ declare const compactBox: ((props: {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-            readonly xs: {
-                readonly height: 24;
-            };
-        }>[];
-        readonly tone: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly danger: {
-                readonly backgroundColor: "#dc2626";
-            };
-            readonly neutral: {};
-        }>[];
+        readonly size: readonly ("lg" | "md" | "xs")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/native-recipe").VariantOption<{
-            readonly lg: {
-                readonly height: 48;
-            };
-            readonly md: {
-                readonly height: 40;
-            };
-            readonly xs: {
-                readonly height: 24;
-            };
-        }>;
+        readonly size: "lg" | "md" | "xs";
     };
 } & {
     readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
@@ -443,13 +310,7 @@ declare const compactBox: ((props: {
 };
 declare const compactBoxStyle: NativeStyle;
 declare const footedButton: ((props: {
-    readonly dense?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly footer: {
-                readonly borderStyle: "dashed";
-            };
-        };
-    }> | undefined;
+    readonly dense?: "false" | "true" | boolean | undefined;
     readonly size: "md";
 }) => {
     readonly footer: {

@@ -1,23 +1,14 @@
 import type { PropsOf, VariantsOf } from "@lynstack/class-recipe";
 declare const pill: ((props?: {
     readonly className?: string | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: "px-3";
-        readonly sm: "px-2";
-    }> | undefined;
+    readonly size?: "md" | "sm" | undefined;
 } | undefined) => string) & {
     readonly variantKeys: readonly "size"[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>;
+        readonly size: "md" | "sm";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -29,31 +20,16 @@ declare const pill: ((props?: {
 };
 declare const chip: ((props: {
     readonly className?: string | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: "px-3";
-        readonly sm: "px-2";
-    }> | undefined;
-    readonly tone: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-100";
-        readonly neutral: "bg-gray-100";
-    }>;
+    readonly size?: "md" | "sm" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => string) & {
     readonly variantKeys: readonly ("size" | "tone")[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>[];
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-100";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>;
+        readonly size: "md" | "sm";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -69,40 +45,20 @@ declare const chip: ((props: {
 };
 declare const tag: ((props?: {
     readonly className?: string | undefined;
-    readonly muted?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: "opacity-50";
-    }> | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: "px-3";
-        readonly sm: "px-2";
-    }> | undefined;
-    readonly tone?: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-100";
-        readonly neutral: "bg-gray-100";
-    }> | undefined;
+    readonly muted?: "false" | "true" | boolean | undefined;
+    readonly size?: "md" | "sm" | undefined;
+    readonly tone?: "danger" | "neutral" | undefined;
 } | undefined) => string) & {
     readonly variantKeys: readonly ("muted" | "size" | "tone")[];
     readonly variantOptions: {
         readonly muted: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>[];
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-100";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly muted: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly md: "px-3";
-            readonly sm: "px-2";
-        }>;
-        readonly tone: import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-100";
-            readonly neutral: "bg-gray-100";
-        }>;
+        readonly size: "md" | "sm";
+        readonly tone: "danger" | "neutral";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -121,25 +77,11 @@ declare const tag: ((props?: {
 };
 declare const look: NoInfer<((props: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root"> | undefined;
-    readonly size: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: {
-            readonly root: "h-8";
-        };
-        readonly sm: {
-            readonly root: "h-6";
-        };
-    }>;
+    readonly size: "md" | "sm";
 }) => Readonly<Record<"root", string>>) & {
     readonly variantKeys: readonly "size"[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {};
 } & {
@@ -156,32 +98,13 @@ declare const look: NoInfer<((props: {
 }>;
 declare const field: NoInfer<((props: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"label" | "root"> | undefined;
-    readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly label: "text-red-700";
-            readonly root: "border-2";
-        };
-    }> | undefined;
-    readonly size: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: {
-            readonly root: "h-8";
-        };
-        readonly sm: {
-            readonly root: "h-6";
-        };
-    }>;
+    readonly invalid?: "false" | "true" | boolean | undefined;
+    readonly size: "md" | "sm";
 }) => Readonly<Record<"label" | "root", string>>) & {
     readonly variantKeys: readonly ("invalid" | "size")[];
     readonly variantOptions: {
         readonly invalid: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {
         readonly invalid: "false" | "true";
@@ -206,50 +129,20 @@ declare const field: NoInfer<((props: {
 }>;
 declare const select: NoInfer<((props?: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"label" | "root" | "trigger"> | undefined;
-    readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly label: "text-red-700";
-            readonly root: "border-2";
-        };
-    }> | undefined;
-    readonly open?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly trigger: "ring";
-        };
-    }> | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: {
-            readonly root: "h-8";
-        };
-        readonly sm: {
-            readonly root: "h-6";
-        };
-    }> | undefined;
+    readonly invalid?: "false" | "true" | boolean | undefined;
+    readonly open?: "false" | "true" | boolean | undefined;
+    readonly size?: "md" | "sm" | undefined;
 } | undefined) => Readonly<Record<"label" | "root" | "trigger", string>>) & {
     readonly variantKeys: readonly ("size" | ("invalid" | "open"))[];
     readonly variantOptions: {
         readonly invalid: readonly ("false" | "true")[];
         readonly open: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {
         readonly invalid: "false" | "true";
         readonly open: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>;
+        readonly size: "md" | "sm";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{

@@ -14,7 +14,7 @@ type BooleanOption<Name extends string> = [Extract<Name, BooleanName>] extends [
   never,
 ]
   ? never
-  : BooleanName | boolean;
+  : "true" | "false" | boolean;
 
 type BooleanVariantName<Variants> = {
   [Name in keyof Variants]: [OptionName<Variants[Name]>] extends [never]
@@ -29,12 +29,17 @@ type BooleanVariantName<Variants> = {
  * strings or, for numeric names, as numbers, plus `true`, `false`, `"true"`,
  * and `"false"` when it declares an option named `"true"` or `"false"`.
  *
+ * @remarks
+ * Written as a conditional type so that editors and errors show the names,
+ * such as `"sm" | "md"`, rather than the options they come from.
+ *
  * @typeParam Options - The options of the variant, keyed by option name.
  */
-type VariantOption<Options> =
-  | OptionName<Options>
-  | NumberOption<Options>
-  | BooleanOption<OptionName<Options>>;
+type VariantOption<Options> = [Options] extends [unknown]
+  ? | OptionName<Options>
+    | NumberOption<Options>
+    | BooleanOption<OptionName<Options>>
+  : never;
 
 /**
  * The variants a selection names. A variant with a default may be omitted,

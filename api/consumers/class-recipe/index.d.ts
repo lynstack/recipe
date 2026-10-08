@@ -1,36 +1,19 @@
 import type { PropsOf, VariantsOf } from "@lynstack/class-recipe";
 declare const button: ((props: {
     readonly className?: string | undefined;
-    readonly disabled?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: "opacity-50";
-    }> | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly lg: "h-12";
-        readonly md: "h-10";
-    }> | undefined;
-    readonly tone: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-600";
-        readonly neutral: "bg-gray-100";
-    }>;
+    readonly disabled?: "false" | "true" | boolean | undefined;
+    readonly size?: "lg" | "md" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => string) & {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-        }>[];
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-600";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly size: readonly ("lg" | "md")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-        }>;
+        readonly size: "lg" | "md";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -70,17 +53,11 @@ declare const card: NoInfer<((props: {
 }>;
 declare const pill: ((props: {
     readonly className?: string | undefined;
-    readonly tone: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-100";
-        readonly neutral: "bg-gray-100";
-    }>;
+    readonly tone: "danger" | "neutral";
 }) => string) & {
     readonly variantKeys: readonly "tone"[];
     readonly variantOptions: {
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-100";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {};
 } & {
@@ -93,11 +70,7 @@ declare const pill: ((props: {
 };
 declare const field: NoInfer<((props?: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"input" | "label"> | undefined;
-    readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly input: "border-red-600";
-        };
-    }> | undefined;
+    readonly invalid?: "false" | "true" | boolean | undefined;
 } | undefined) => Readonly<Record<"input" | "label", string>>) & {
     readonly variantKeys: readonly "invalid"[];
     readonly variantOptions: {
@@ -118,38 +91,21 @@ declare const field: NoInfer<((props?: {
 declare const merged: import("@lynstack/class-recipe").Recipes;
 declare const iconButton: ((props: {
     readonly className?: string | undefined;
-    readonly disabled?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: "opacity-50";
-    }> | undefined;
+    readonly disabled?: "false" | "true" | boolean | undefined;
     readonly shape: "round";
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly lg: "h-12";
-        readonly md: "h-10";
-    }> | undefined;
-    readonly tone: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-600";
-        readonly neutral: "bg-gray-100";
-    }>;
+    readonly size?: "lg" | "md" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => string) & {
     readonly variantKeys: readonly ("disabled" | "shape" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
         readonly shape: readonly "round"[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-        }>[];
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-600";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly size: readonly ("lg" | "md")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-        }>;
+        readonly size: "lg" | "md";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -171,13 +127,7 @@ declare const iconButton: ((props: {
 };
 declare const select: NoInfer<((props?: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"input" | "label" | "trigger"> | undefined;
-    readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly input: "border-red-600";
-        } | {
-            readonly label: "text-red-700";
-        };
-    }> | undefined;
+    readonly invalid?: "false" | "true" | boolean | undefined;
 } | undefined) => Readonly<Record<"input" | "label" | "trigger", string>>) & {
     readonly variantKeys: readonly "invalid"[];
     readonly variantOptions: {
@@ -199,47 +149,24 @@ declare const select: NoInfer<((props?: {
 }>;
 declare const badge: import("@lynstack/class-recipe").Recipe<{
     readonly className?: string | undefined;
-    readonly tone?: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-100";
-        readonly neutral: "bg-gray-100";
-    }> | undefined;
+    readonly tone?: "danger" | "neutral" | undefined;
 }>;
 declare const badgeClassName: string;
 declare const compactButton: ((props: {
     readonly className?: string | undefined;
-    readonly disabled?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: "opacity-50";
-    }> | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly lg: "h-12";
-        readonly md: "h-10";
-        readonly xs: "h-6";
-    }> | undefined;
-    readonly tone: import("@lynstack/class-recipe").VariantOption<{
-        readonly danger: "bg-red-600";
-        readonly neutral: "bg-gray-100";
-    }>;
+    readonly disabled?: "false" | "true" | boolean | undefined;
+    readonly size?: "lg" | "md" | "xs" | undefined;
+    readonly tone: "danger" | "neutral";
 }) => string) & {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
         readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-            readonly xs: "h-6";
-        }>[];
-        readonly tone: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly danger: "bg-red-600";
-            readonly neutral: "bg-gray-100";
-        }>[];
+        readonly size: readonly ("lg" | "md" | "xs")[];
+        readonly tone: readonly ("danger" | "neutral")[];
     };
     readonly defaultVariants: {
         readonly disabled: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly lg: "h-12";
-            readonly md: "h-10";
-            readonly xs: "h-6";
-        }>;
+        readonly size: "lg" | "md" | "xs";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -265,42 +192,17 @@ declare const alert: import("@lynstack/class-recipe").SlotRecipe<"root" | "title
 declare const alertClassNames: Readonly<Record<"root" | "title", string>>;
 declare const toggle: NoInfer<((props?: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"icon" | "root"> | undefined;
-    readonly pressed?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly icon: "opacity-100";
-        };
-    }> | undefined;
-    readonly size?: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: {
-            readonly root: "h-8";
-        };
-        readonly sm: {
-            readonly root: "h-6";
-        };
-    }> | undefined;
+    readonly pressed?: "false" | "true" | boolean | undefined;
+    readonly size?: "md" | "sm" | undefined;
 } | undefined) => Readonly<Record<"icon" | "root", string>>) & {
     readonly variantKeys: readonly ("pressed" | "size")[];
     readonly variantOptions: {
         readonly pressed: readonly ("false" | "true")[];
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {
         readonly pressed: "false" | "true";
-        readonly size: import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
-        }>;
+        readonly size: "md" | "sm";
     };
 } & {
     readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
@@ -339,27 +241,11 @@ declare const buttonProps: ButtonProps;
 declare const cardProps: PropsOf<typeof card>;
 declare const panel: NoInfer<((props: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"footer" | "root" | "title"> | undefined;
-    readonly size: import("@lynstack/class-recipe").VariantOption<{
-        readonly md: {
-            readonly root: "p-4";
-            readonly title: "text-base";
-        };
-        readonly sm: {
-            readonly footer: "gap-2";
-        };
-    }>;
+    readonly size: "md" | "sm";
 }) => Readonly<Record<"footer" | "root" | "title", string>>) & {
     readonly variantKeys: readonly "size"[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/class-recipe").VariantOption<{
-            readonly md: {
-                readonly root: "p-4";
-                readonly title: "text-base";
-            };
-            readonly sm: {
-                readonly footer: "gap-2";
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {};
 } & {
@@ -378,11 +264,7 @@ declare const panel: NoInfer<((props: {
 declare const panelClassNames: Readonly<Record<"root" | "title" | "footer", string>>;
 declare const footedCard: NoInfer<((props: {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"footer" | "root" | "title"> | undefined;
-    readonly dense?: import("@lynstack/class-recipe").VariantOption<{
-        readonly true: {
-            readonly footer: "pt-2";
-        };
-    }> | undefined;
+    readonly dense?: "false" | "true" | boolean | undefined;
     readonly size: "md";
 }) => Readonly<Record<"footer" | "root" | "title", string>>) & {
     readonly variantKeys: readonly ("dense" | "size")[];

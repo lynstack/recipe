@@ -190,13 +190,7 @@ declare const level3: ((theme: Theme, props: {
     }, never, import("@lynstack/native-recipe").NativeStyle, readonly ("badge" | "footer" | "icon" | "label" | "root")[]>>;
 };
 declare const level4: ((theme: Theme, props: {
-    readonly muted?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly hint: {
-                readonly gap: number;
-            };
-        };
-    }> | undefined;
+    readonly muted?: "false" | "true" | boolean | undefined;
     readonly shape: "round";
     readonly size: "md";
     readonly tone: "danger";
@@ -220,13 +214,7 @@ declare const level4: ((theme: Theme, props: {
     };
 }) & {
     readonly withTheme: (theme: Theme) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly muted?: import("@lynstack/native-recipe").VariantOption<{
-            readonly true: {
-                readonly hint: {
-                    readonly gap: number;
-                };
-            };
-        }> | undefined;
+        readonly muted?: "false" | "true" | boolean | undefined;
         readonly shape: "round";
         readonly size: "md";
         readonly tone: "danger";

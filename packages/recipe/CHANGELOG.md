@@ -9,6 +9,9 @@ tagged `recipe@<version>`.
 - An editor completes the variant names of `defaultVariants`, and the
   slot names of the options of a slot recipe's variants. It completed
   neither before.
+- Editors and error messages show the values a variant accepts by name,
+  such as `"sm" | "md"`, rather than as `VariantOption<…>` of its
+  options' values, and so do the declarations of exported recipes.
 
 ## 1.8.0 — 2026-10-08
 

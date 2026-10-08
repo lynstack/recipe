@@ -18,6 +18,9 @@ published on npm and as a
   property with a value that it does not take in a compound variant, such
   as `flexDirection: "sideways"`, as recipes without a theme do. Before,
   such a value passed the types.
+- Editors and error messages show the values a variant accepts by name,
+  such as `"sm" | "md"`, rather than as `VariantOption<…>` of its
+  options' styles, and so do the declarations of exported recipes.
 
 ## 1.7.0 — 2026-10-08
 

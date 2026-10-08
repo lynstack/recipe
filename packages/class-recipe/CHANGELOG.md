@@ -9,6 +9,9 @@ tagged `class-recipe@<version>`.
 - An editor completes the variant names of `defaultVariants` of `cva`
   and `sva`, and the slot names of the options of an `sva` recipe's
   variants. It completed neither before.
+- Editors and error messages show the values a variant accepts by name,
+  such as `"sm" | "md"`, rather than as `VariantOption<…>` of its
+  options' classes, and so do the declarations of exported recipes.
 
 ## 1.7.0 — 2026-10-08
 

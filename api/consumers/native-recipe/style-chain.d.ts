@@ -1,26 +1,12 @@
 declare const level0: ((props: {
-    readonly size: import("@lynstack/native-recipe").VariantOption<{
-        readonly md: {
-            readonly height: 32;
-        };
-        readonly sm: {
-            readonly height: 24;
-        };
-    }>;
+    readonly size: "md" | "sm";
 }) => {
     readonly flexDirection?: "row" | undefined;
     readonly height?: 24 | 32 | undefined;
 }) & {
     readonly variantKeys: readonly "size"[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly md: {
-                readonly height: 32;
-            };
-            readonly sm: {
-                readonly height: 24;
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
     };
     readonly defaultVariants: {};
 } & {
@@ -36,14 +22,7 @@ declare const level0: ((props: {
     }, never, import("@lynstack/native-recipe").NativeStyle, undefined> | undefined;
 };
 declare const level1: ((props: {
-    readonly size: import("@lynstack/native-recipe").VariantOption<{
-        readonly md: {
-            readonly height: 32;
-        };
-        readonly sm: {
-            readonly height: 24;
-        };
-    }>;
+    readonly size: "md" | "sm";
     readonly tone: "danger";
 }) => {
     readonly backgroundColor?: "red" | undefined;
@@ -53,14 +32,7 @@ declare const level1: ((props: {
 }) & {
     readonly variantKeys: readonly ("size" | "tone")[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly md: {
-                readonly height: 32;
-            };
-            readonly sm: {
-                readonly height: 24;
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
         readonly tone: readonly "danger"[];
     };
     readonly defaultVariants: {};
@@ -82,14 +54,7 @@ declare const level1: ((props: {
     }, never, import("@lynstack/native-recipe").NativeStyle, undefined> | undefined;
 };
 declare const level2: ((props: {
-    readonly size: import("@lynstack/native-recipe").VariantOption<{
-        readonly md: {
-            readonly height: 32;
-        };
-        readonly sm: {
-            readonly height: 24;
-        };
-    }>;
+    readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
 }) => {
@@ -101,14 +66,7 @@ declare const level2: ((props: {
 }) & {
     readonly variantKeys: readonly ("size" | "tone" | "weight")[];
     readonly variantOptions: {
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly md: {
-                readonly height: 32;
-            };
-            readonly sm: {
-                readonly height: 24;
-            };
-        }>[];
+        readonly size: readonly ("md" | "sm")[];
         readonly tone: readonly "danger"[];
         readonly weight: readonly "bold"[];
     };
@@ -136,22 +94,8 @@ declare const level2: ((props: {
     }, never, import("@lynstack/native-recipe").NativeStyle, undefined> | undefined;
 };
 declare const level3: ((props: {
-    readonly shape?: import("@lynstack/native-recipe").VariantOption<{
-        readonly round: {
-            readonly borderRadius: 999;
-        };
-        readonly square: {
-            readonly borderRadius: 0;
-        };
-    }> | undefined;
-    readonly size: import("@lynstack/native-recipe").VariantOption<{
-        readonly md: {
-            readonly height: 32;
-        };
-        readonly sm: {
-            readonly height: 24;
-        };
-    }>;
+    readonly shape?: "round" | "square" | undefined;
+    readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
 }) => {
@@ -164,34 +108,13 @@ declare const level3: ((props: {
 }) & {
     readonly variantKeys: readonly ("shape" | "size" | "tone" | "weight")[];
     readonly variantOptions: {
-        readonly shape: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly round: {
-                readonly borderRadius: 999;
-            };
-            readonly square: {
-                readonly borderRadius: 0;
-            };
-        }>[];
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly md: {
-                readonly height: 32;
-            };
-            readonly sm: {
-                readonly height: 24;
-            };
-        }>[];
+        readonly shape: readonly ("round" | "square")[];
+        readonly size: readonly ("md" | "sm")[];
         readonly tone: readonly "danger"[];
         readonly weight: readonly "bold"[];
     };
     readonly defaultVariants: {
-        readonly shape: import("@lynstack/native-recipe").VariantOption<{
-            readonly round: {
-                readonly borderRadius: 999;
-            };
-            readonly square: {
-                readonly borderRadius: 0;
-            };
-        }>;
+        readonly shape: "round" | "square";
     };
 } & {
     readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
@@ -224,27 +147,9 @@ declare const level3: ((props: {
     }, "shape", import("@lynstack/native-recipe").NativeStyle, undefined> | undefined;
 };
 declare const level4: ((props: {
-    readonly muted?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly opacity: 0.5;
-        };
-    }> | undefined;
-    readonly shape?: import("@lynstack/native-recipe").VariantOption<{
-        readonly round: {
-            readonly borderRadius: 999;
-        };
-        readonly square: {
-            readonly borderRadius: 0;
-        };
-    }> | undefined;
-    readonly size: import("@lynstack/native-recipe").VariantOption<{
-        readonly md: {
-            readonly height: 32;
-        };
-        readonly sm: {
-            readonly height: 24;
-        };
-    }>;
+    readonly muted?: "false" | "true" | boolean | undefined;
+    readonly shape?: "round" | "square" | undefined;
+    readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
 }) => {
@@ -258,35 +163,14 @@ declare const level4: ((props: {
     readonly variantKeys: readonly ("muted" | "shape" | "size" | "tone" | "weight")[];
     readonly variantOptions: {
         readonly muted: readonly ("false" | "true")[];
-        readonly shape: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly round: {
-                readonly borderRadius: 999;
-            };
-            readonly square: {
-                readonly borderRadius: 0;
-            };
-        }>[];
-        readonly size: readonly import("@lynstack/native-recipe").VariantOption<{
-            readonly md: {
-                readonly height: 32;
-            };
-            readonly sm: {
-                readonly height: 24;
-            };
-        }>[];
+        readonly shape: readonly ("round" | "square")[];
+        readonly size: readonly ("md" | "sm")[];
         readonly tone: readonly "danger"[];
         readonly weight: readonly "bold"[];
     };
     readonly defaultVariants: {
         readonly muted: "false" | "true";
-        readonly shape: import("@lynstack/native-recipe").VariantOption<{
-            readonly round: {
-                readonly borderRadius: 999;
-            };
-            readonly square: {
-                readonly borderRadius: 0;
-            };
-        }>;
+        readonly shape: "round" | "square";
     };
 } & {
     readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{

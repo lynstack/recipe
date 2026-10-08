@@ -2,14 +2,7 @@ import type { NativeStyle, SlotStyles, VariantsOf } from "@lynstack/native-recip
 import type { StyleProp, ViewStyle } from "react-native";
 import type { Palette } from "./themed-define";
 declare const badge: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
-    readonly tone?: import("@lynstack/native-recipe").VariantOption<{
-        readonly primary: {
-            backgroundColor: string;
-        };
-        readonly surface: {
-            backgroundColor: string;
-        };
-    }> | undefined;
+    readonly tone?: "primary" | "surface" | undefined;
 }, NativeStyle>;
 declare const chip: ((theme: Palette, props: {
     readonly size: "md";
@@ -32,13 +25,7 @@ declare const chip: ((theme: Palette, props: {
     }, never, NativeStyle, undefined>>;
 };
 declare const card: ((theme: Palette, props?: {
-    readonly raised?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly root: {
-                readonly elevation: 2;
-            };
-        };
-    }> | undefined;
+    readonly raised?: "false" | "true" | boolean | undefined;
 } | undefined) => {
     readonly root: {
         readonly borderRadius?: number | undefined;
@@ -47,13 +34,7 @@ declare const card: ((theme: Palette, props?: {
     readonly title: {};
 }) & {
     readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly raised?: import("@lynstack/native-recipe").VariantOption<{
-            readonly true: {
-                readonly root: {
-                    readonly elevation: 2;
-                };
-            };
-        }> | undefined;
+        readonly raised?: "false" | "true" | boolean | undefined;
     }, {
         readonly root: {
             readonly borderRadius?: number | undefined;
@@ -71,11 +52,7 @@ declare const card: ((theme: Palette, props?: {
     }, never, NativeStyle, readonly ("root" | "title")[]>>;
 };
 declare const lightChip: ((props: {
-    readonly round?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly borderRadius: 999;
-        };
-    }> | undefined;
+    readonly round?: "false" | "true" | boolean | undefined;
     readonly size: "md";
 }) => {
     readonly borderRadius?: number | undefined;
@@ -105,13 +82,7 @@ declare const lightChip: ((props: {
     }, never, NativeStyle, undefined> | undefined;
 };
 declare const lightCard: ((props?: {
-    readonly raised?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly root: {
-                readonly elevation: 2;
-            };
-        };
-    }> | undefined;
+    readonly raised?: "false" | "true" | boolean | undefined;
 } | undefined) => {
     readonly footer: {
         readonly paddingTop?: 8 | undefined;
@@ -141,23 +112,8 @@ declare const lightCard: ((props?: {
     }, never, NativeStyle, readonly ("footer" | "root" | "title")[]> | undefined;
 };
 declare const panel: ((props?: {
-    readonly dense?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly body: {
-                readonly padding: 4;
-            };
-            readonly root: {
-                readonly margin: 0;
-            };
-        };
-    }> | undefined;
-    readonly raised?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly root: {
-                readonly elevation: 2;
-            };
-        };
-    }> | undefined;
+    readonly dense?: "false" | "true" | boolean | undefined;
+    readonly raised?: "false" | "true" | boolean | undefined;
 } | undefined) => {
     readonly body: {
         readonly padding?: 4 | undefined;
@@ -203,32 +159,16 @@ declare const panel: ((props?: {
     }, never, NativeStyle, readonly ("body" | "footer" | "root" | "title")[]> | undefined;
 };
 declare const denseChip: ((theme: Palette, props: {
-    readonly dense?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly borderRadius: number;
-        };
-    }> | undefined;
-    readonly round?: import("@lynstack/native-recipe").VariantOption<{
-        readonly true: {
-            readonly borderRadius: 999;
-        };
-    }> | undefined;
+    readonly dense?: "false" | "true" | boolean | undefined;
+    readonly round?: "false" | "true" | boolean | undefined;
     readonly size: "md";
 }) => {
     readonly borderRadius?: number | undefined;
     readonly height?: 40 | undefined;
 }) & {
     readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly dense?: import("@lynstack/native-recipe").VariantOption<{
-            readonly true: {
-                readonly borderRadius: number;
-            };
-        }> | undefined;
-        readonly round?: import("@lynstack/native-recipe").VariantOption<{
-            readonly true: {
-                readonly borderRadius: 999;
-            };
-        }> | undefined;
+        readonly dense?: "false" | "true" | boolean | undefined;
+        readonly round?: "false" | "true" | boolean | undefined;
         readonly size: "md";
     }, {
         readonly borderRadius?: number | undefined;
