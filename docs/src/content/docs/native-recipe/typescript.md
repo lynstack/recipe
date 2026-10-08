@@ -6,7 +6,11 @@ sidebar:
 ---
 
 The types are inferred from the config: write the config inline, or
-declare it with `as const`, and pass it to the recipe creator.
+declare it with `as const`, and pass it to the recipe creator. This holds
+for the `slots` of a slot recipe too: a list declared before the call
+without `as const` is a `string[]`, so the slot recipe takes any slot
+name, and a misspelled slot in `base`, in the variants, or in the result
+is not an error.
 
 ## Checked styles
 
@@ -228,6 +232,37 @@ function defineComposed<
   return createStyleRecipe(config);
 }
 ```
+
+## A function that takes any recipe
+
+A function that takes any recipe, such as one that lists the options of
+each variant for a story, cannot take it as a recipe of any selection:
+that type can be called without variants, which a recipe with a required
+variant cannot, so TypeScript rejects such a recipe. Type it as a function
+of `never`, which the function does not call, with the properties it
+reads:
+
+```ts
+import type {
+  NativeStyle,
+  StyleRecipe,
+  StyleRecipeVariants,
+  VariantSelection,
+} from "@lynstack/native-recipe";
+
+type AnyRecipe = ((props: never) => NativeStyle) &
+  Pick<
+    StyleRecipe<VariantSelection<StyleRecipeVariants, never>, NativeStyle>,
+    "variantKeys" | "variantOptions" | "defaultVariants"
+  >;
+```
+
+For a slot recipe, use
+`(props: never) => Readonly<Record<string, NativeStyle>>` with the same
+properties of
+`SlotStyleRecipe<VariantSelection<SlotStyleRecipeVariants, never>, SlotStyles<string>>`.
+A function that calls the recipe is generic over it instead, so that it
+keeps the recipe's own selection.
 
 ## Any style
 
