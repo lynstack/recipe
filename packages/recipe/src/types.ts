@@ -169,33 +169,6 @@ type VariantsOf<Recipe extends (props: never) => unknown> = Simplify<
 >;
 
 /**
- * Any selection, for variants whose names are not known at compile time,
- * such as `Record<string, Record<string, string>>`.
- */
-type AnySelection = Readonly<Record<string, unknown>>;
-
-/** The selection of a recipe, or any selection for unknown variant names. */
-type KindSelection<
-  Variants,
-  DefaultedName extends keyof Variants,
-> = string extends keyof Variants
-  ? AnySelection
-  : VariantSelection<Variants, DefaultedName>;
-
-/** The condition of a compound variant, or any for unknown variant names. */
-type KindCompoundCondition<Variants> = string extends keyof Variants
-  ? AnySelection
-  : CompoundCondition<Variants>;
-
-/** The default variants of a recipe, or any for unknown variant names. */
-type KindDefaultVariants<
-  Variants,
-  DefaultedName extends keyof Variants,
-> = string extends keyof Variants
-  ? AnySelection
-  : DefaultVariants<Variants, DefaultedName>;
-
-/**
  * How a kind of recipe turns the values of a selection into its result,
  * such as by joining class names or merging style objects.
  *
@@ -281,10 +254,6 @@ type NoUnknownSlots<Variants, Slot extends string> = {
 };
 
 export type {
-  AnySelection,
-  KindCompoundCondition,
-  KindDefaultVariants,
-  KindSelection,
   CompoundCondition,
   DefaultVariants,
   NoUnknownSlots,

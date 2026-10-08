@@ -1,17 +1,16 @@
 import type {
   ComposableKindSlotRecipe,
-  ComposedDefaultedName,
   ComposedKindRecipe,
   ComposedSlot,
   ComposedVariants,
+  InheritedDefaultedName,
 } from "./composition.js";
 import type {
   KindCompoundCondition,
   KindDefaultVariants,
-  NoUnknownSlots,
-  RecipeKind,
-} from "./types.js";
+} from "./kind-selection.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
+import type { NoUnknownSlots, RecipeKind } from "./types.js";
 import type { SelectedVariants, WithVariants } from "./variants.js";
 import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
@@ -133,7 +132,7 @@ type CreateKindSlotRecipe<Value, Result> = <
   config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>,
 ) => ComposedKindRecipe<
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>,
+  DefaultedName | InheritedDefaultedName<Composed, Variants>,
   Value,
   // Not ComposedSlot, which declarations print with each composed type.
   Readonly<

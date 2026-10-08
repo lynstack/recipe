@@ -1,5 +1,5 @@
 import type { KindRecipe } from "./recipe-kind.js";
-import type { KindSelection } from "./types.js";
+import type { KindSelection } from "./kind-selection.js";
 
 /**
  * What a recipe passes on, in its type only, to the recipes that compose
@@ -90,6 +90,21 @@ type ComposedDefaultedName<Composed extends readonly unknown[], DefaultedName> =
   DefaultedName | ComposedPart<Composed, "defaultedName">;
 
 /**
+ * The names of the variants that the recipes of `Composed` give a default,
+ * among the variants of a recipe that composes them with its own
+ * `Variants`. Kept apart from the recipe's own defaulted names, so that a
+ * recipe that composes nothing has exactly those, even when they are
+ * generic.
+ */
+type InheritedDefaultedName<
+  Composed extends readonly unknown[],
+  Variants,
+> = Extract<
+  ComposedPart<Composed, "defaultedName">,
+  keyof ComposedVariants<Composed, Variants>
+>;
+
+/**
  * The slots of a slot recipe that composes the slot recipes of `Composed`:
  * those of each, and `Slot`.
  *
@@ -128,17 +143,17 @@ type ComposableKindSlotRecipe<Value> = Composable<
  * The recipe of a config whose variants, once composed, are `Variants`, and
  * whose variants with a default are `DefaultedName`.
  */
-type ComposedKindRecipe<Variants, DefaultedName, Value, Result, Slots> =
-  KindRecipe<
-    KindSelection<Variants, Extract<DefaultedName, keyof Variants>>,
-    Result,
-    RecipeComposition<
-      Variants,
-      Extract<DefaultedName, keyof Variants>,
-      Value,
-      Slots
-    >
-  >;
+type ComposedKindRecipe<
+  Variants,
+  DefaultedName extends keyof Variants,
+  Value,
+  Result,
+  Slots,
+> = KindRecipe<
+  KindSelection<Variants, DefaultedName>,
+  Result,
+  RecipeComposition<Variants, DefaultedName, Value, Slots>
+>;
 
 export type {
   Composable,
@@ -148,5 +163,6 @@ export type {
   ComposedKindRecipe,
   ComposedSlot,
   ComposedVariants,
+  InheritedDefaultedName,
   RecipeComposition,
 };

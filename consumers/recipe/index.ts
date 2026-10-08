@@ -12,6 +12,8 @@ import type {
 } from "@lynstack/recipe";
 import { createRecipeKind, createSlotRecipeKind } from "@lynstack/recipe";
 
+import { define, defineSlots } from "./define.js";
+
 type Style = Readonly<Record<string, string | number>>;
 
 const styleKind: RecipeKind<Style, Style, Style> = {
@@ -91,7 +93,22 @@ const knownSlots: NoUnknownSlots<
 const dialogOptions: { readonly tone: readonly ("dark" | "light")[] } =
   dialog.variantOptions;
 
+const badge = define({
+  defaultVariants: { tone: "neutral" },
+  variants: { tone: { danger: { color: "red" }, neutral: { color: "gray" } } },
+});
+const badgeStyle: Style = badge({});
+const field = defineSlots({
+  slots: ["input", "label"],
+  variants: { invalid: { true: { input: { borderColor: "red" } } } },
+});
+const fieldStyles: Readonly<Record<"input" | "label", Style>> = field({
+  invalid: true,
+});
+
 export {
+  badge,
+  badgeStyle,
   card,
   composable,
   composableSlots,
@@ -101,6 +118,8 @@ export {
   emphasis,
   emphasisKeys,
   emphasisStyle,
+  field,
+  fieldStyles,
   knownSlots,
   sizes,
   cardKeys,

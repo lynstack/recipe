@@ -44,3 +44,4 @@ export type {
   VariantSelection,
   VariantsOf,
 } from "./types.js";
+export type { KindSelection } from "./kind-selection.js";

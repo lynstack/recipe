@@ -47,7 +47,7 @@ type CreateKindRecipe<Value, Result> = <
   config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>,
 ) => ComposedKindRecipe<
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>,
+  DefaultedName | InheritedDefaultedName<Composed, Variants>,
   Value,
   Result,
   undefined
@@ -62,10 +62,12 @@ the option names of each variant as literal types:
   gives a default.
 - `Composed`, the recipes that `composes` lists, as a tuple.
 
-`ComposedKindRecipe` is not exported. It is a [`KindRecipe`](#kindrecipe)
-whose selection is the
-[`VariantSelection`](#variantselection) of the variants of the config and
-of the recipes it composes, and whose `Composition` is a
+`ComposedKindRecipe` and `InheritedDefaultedName` are not exported.
+`InheritedDefaultedName` is the names of the variants that the recipes of
+`composes` give a default. `ComposedKindRecipe` is a
+[`KindRecipe`](#kindrecipe) whose selection is the
+[`KindSelection`](#kindselection) of the variants of the config and of the
+recipes it composes, and whose `Composition` is a
 [`RecipeComposition`](#recipecomposition) of those variants. When the
 variant names are not literal types, such as in a function that passes on
 a config it received, the recipe accepts any selection.
@@ -178,7 +180,7 @@ type CreateKindSlotRecipe<Value, Result> = <
   config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>,
 ) => ComposedKindRecipe<
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>,
+  DefaultedName | InheritedDefaultedName<Composed, Variants>,
   Value,
   Readonly<
     Record<
@@ -262,6 +264,7 @@ shows:
 | `KindVariants`        | The variants of a recipe's config: for each variant name, the value of each of its options.                         |
 | `KindCompoundVariant` | A value added when several variants have particular options at the same time.                                       |
 | `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                                             |
+| `KindSelection`       | The selection a recipe of a kind accepts: its `VariantSelection`, or any selection for unknown variant names.       |
 | `VariantOption`       | The values accepted for one variant.                                                                                |
 | `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                                              |
 | `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                              |
@@ -275,6 +278,15 @@ boolean variant, is optional; every other variant is required. Each
 accepts its `VariantOption`: the names of its options as strings, a
 number for a name that is a number, and `true` and `false` for a variant
 that declares `"true"` or `"false"`.
+
+### `KindSelection`
+
+`KindSelection<Variants, DefaultedName>` is the selection that a recipe of
+a kind accepts: the `VariantSelection` of its variants, or any selection
+when the variant names are not literal types. A function generic over a
+config annotates the recipe it returns with it, as
+[A function generic over a config](/recipe/recipe/typescript/#a-function-generic-over-a-config)
+shows.
 
 ### `RecipeFunction`
 

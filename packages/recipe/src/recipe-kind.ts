@@ -1,25 +1,27 @@
 import type {
   Composable,
   ComposableKindRecipe,
-  ComposedDefaultedName,
   ComposedKindRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
 } from "./composition.js";
 import type {
   KindCompoundCondition,
   KindDefaultVariants,
-  RecipeFunction,
-  RecipeKind,
-  SelectionDefaults,
-  VariantKey,
-  VariantOptions,
-} from "./types.js";
+} from "./kind-selection.js";
 import type { LooseKindRecipeConfig, LooseRecipeKind } from "./build-recipe.js";
 import type {
   LooseVariants,
   SelectedVariants,
   WithVariants,
 } from "./variants.js";
+import type {
+  RecipeFunction,
+  RecipeKind,
+  SelectionDefaults,
+  VariantKey,
+  VariantOptions,
+} from "./types.js";
 import { compileLayer, compileMergedLayers } from "./build-recipe.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { checkRecipeConfig } from "./check-config.js";
@@ -154,7 +156,7 @@ type CreateKindRecipe<Value, Result> = <
   config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>,
 ) => ComposedKindRecipe<
   ComposedVariants<Composed, Variants>,
-  ComposedDefaultedName<Composed, DefaultedName>,
+  DefaultedName | InheritedDefaultedName<Composed, Variants>,
   Value,
   Result,
   undefined

@@ -115,6 +115,34 @@ function createBox(variants: KindVariants<Style>) {
 createBox({ size: { sm: { padding: 4 } } })({ size: "sm", other: 1 });
 ```
 
+## A function generic over a config
+
+A library's own helper can take any config and return its recipe. Type
+its variants and default names as `const` type parameters, and its result
+as a `KindRecipe` of their `KindSelection`, which is any selection when
+the variant names are not literal types:
+
+```ts
+import type {
+  KindRecipe,
+  KindRecipeConfig,
+  KindSelection,
+  KindVariants,
+} from "@lynstack/recipe";
+
+function defineStyle<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: KindRecipeConfig<Style, Variants, DefaultedName>,
+): KindRecipe<KindSelection<Variants, DefaultedName>, Style> {
+  return styleRecipe(config);
+}
+```
+
+A slot recipe's helper does the same with `KindSlotRecipeConfig`, and
+returns a `KindRecipe` whose result is `Readonly<Record<Slot, Style>>`.
+
 ## Types for library authors
 
 A library with its own config shape builds its types on the engine's, as
@@ -125,6 +153,7 @@ shows:
 | ------------------- | ------------------------------------------------------------------------------------ |
 | `KindVariants`      | The `variants` of a config, to constrain the variants a function infers.             |
 | `VariantSelection`  | The selection a recipe accepts, from the variants and the names that have a default. |
+| `KindSelection`     | The selection of a recipe that a function generic over a config returns.             |
 | `DefaultVariants`   | The `defaultVariants` of a config.                                                   |
 | `CompoundCondition` | The `variants` of a compound variant.                                                |
 | `VariantOption`     | The values one variant accepts.                                                      |

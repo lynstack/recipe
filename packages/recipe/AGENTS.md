@@ -13,9 +13,10 @@ that API.
 
 ## Modules
 
-- `recipe-kind.ts`, `slot-recipe-kind.ts`, `types.ts`, and
-  `composition.ts`, the types of composing recipes, hold the public API
-  and its types.
+- `recipe-kind.ts`, `slot-recipe-kind.ts`, `types.ts`,
+  `composition.ts`, the types of composing recipes, and
+  `kind-selection.ts`, the types that accept any selection when the
+  variant names are not known, hold the public API and its types.
 - The other modules are internal:
   - `check-config.ts` checks the shape of a config when a recipe is
     created, so that a config from untyped code fails with a message

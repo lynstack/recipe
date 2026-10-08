@@ -1,11 +1,33 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { NoUnknownSlots, VariantKey, VariantsOf } from "./types.js";
+import type {
+  KindRecipe,
+  KindRecipeConfig,
+  KindVariants,
+} from "./recipe-kind.js";
+import type {
+  KindSlotRecipeConfig,
+  KindSlotVariants,
+} from "./slot-recipe-kind.js";
+import type {
+  NoUnknownSlots,
+  VariantKey,
+  VariantSelection,
+  VariantsOf,
+} from "./types.js";
+import type { KindSelection } from "./kind-selection.js";
 import { createRecipeKind } from "./recipe-kind.js";
+import { createSlotRecipeKind } from "./slot-recipe-kind.js";
 
 type Style = Readonly<Record<string, string | number>>;
 
 const styleRecipe = createRecipeKind({
+  initial: (base: Style | undefined): Style => ({ ...base }),
+  reduce: (style: Style, value: Style): Style => ({ ...style, ...value }),
+  finish: (style: Style): Style => Object.freeze(style),
+});
+
+const slotStyleRecipe = createSlotRecipeKind({
   initial: (base: Style | undefined): Style => ({ ...base }),
   reduce: (style: Style, value: Style): Style => ({ ...style, ...value }),
   finish: (style: Style): Style => Object.freeze(style),
@@ -98,6 +120,89 @@ describe("the slots a slot recipe's variants name", () => {
       readonly size: {
         readonly sm: Readonly<Partial<Record<"title", never>>>;
       };
+    }>();
+  });
+});
+
+/** Creates a recipe from any config, as a library's own helper does. */
+function defineStyle<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: KindRecipeConfig<Style, Variants, DefaultedName>,
+): KindRecipe<KindSelection<Variants, DefaultedName>, Style> {
+  return styleRecipe(config);
+}
+
+/** Creates a slot recipe from any config, as a library's own helper does. */
+function defineSlotStyles<
+  const Slot extends string,
+  const Variants extends KindSlotVariants<Style>,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: KindSlotRecipeConfig<Slot, Style, Variants, DefaultedName>,
+): KindRecipe<
+  KindSelection<Variants, DefaultedName>,
+  Readonly<Record<Slot, Style>>
+> {
+  return slotStyleRecipe(config);
+}
+
+describe("the selection of a recipe", () => {
+  it("is the selection of its variants when their names are known", () => {
+    expect(box({ tone: "neutral" })).toStrictEqual({
+      padding: 8,
+      color: "gray",
+    });
+    expectTypeOf<
+      KindSelection<{ size: { sm: Style }; muted: { true: Style } }, never>
+    >().toEqualTypeOf<
+      VariantSelection<{ size: { sm: Style }; muted: { true: Style } }, never>
+    >();
+  });
+
+  it("is any selection when the variant names are not known", () => {
+    const looseVariants: Readonly<
+      Record<string, Readonly<Record<string, Style>>>
+    > = { size: { sm: { padding: 4 } } };
+    const loose = styleRecipe({
+      variants: looseVariants,
+    });
+
+    expect(loose({ size: "sm" })).toStrictEqual({ padding: 4 });
+    expectTypeOf<
+      KindSelection<Readonly<Record<string, Record<string, Style>>>, never>
+    >().toEqualTypeOf<Readonly<Record<string, unknown>>>();
+  });
+});
+
+describe("a function generic over a config", () => {
+  it("returns the recipe of its config as a KindRecipe", () => {
+    const badge = defineStyle({
+      variants: {
+        tone: { neutral: { color: "gray" }, danger: { color: "red" } },
+      },
+      defaultVariants: { tone: "neutral" },
+    });
+
+    expect(badge({})).toStrictEqual({ color: "gray" });
+    expectTypeOf<VariantsOf<typeof badge>>().toEqualTypeOf<{
+      readonly tone?: "neutral" | "danger" | undefined;
+    }>();
+  });
+
+  it("returns the slot recipe of its config as a KindRecipe", () => {
+    const field = defineSlotStyles({
+      slots: ["label", "input"],
+      variants: { invalid: { true: { input: { borderColor: "red" } } } },
+    });
+
+    expect(field({ invalid: true })).toStrictEqual({
+      label: {},
+      input: { borderColor: "red" },
+    });
+    expectTypeOf<VariantsOf<typeof field>>().toEqualTypeOf<{
+      readonly invalid?: boolean | "true" | "false" | undefined;
     }>();
   });
 });
