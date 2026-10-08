@@ -1,8 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
+import type {
+  CreateRecipe,
+  Recipe,
+  RecipeConfig,
+  RecipeProps,
+  RecipeVariants,
+} from "./recipe.js";
+import type { PropsOf, SlotClasses, VariantsOf } from "./types.js";
 import { createRecipe, cva } from "./recipe.js";
 import { createSlotRecipe, sva } from "./slot-recipe.js";
 import type { ClassJoin } from "./join.js";
+import type { CreateSlotRecipe } from "./slot-recipe.js";
+import type { RecipeOf } from "./recipe-of.js";
+import type { Recipes } from "./create-recipes.js";
 import { createRecipes } from "./create-recipes.js";
 import { cx } from "./cx.js";
 
@@ -174,5 +185,101 @@ describe(createRecipes, () => {
       root: "p-2",
       title: "text-lg",
     });
+  });
+});
+
+const configured = createRecipes({ cache: false, join: keepLastOfEachPrefix });
+
+/** Creates a recipe with the configured creator, as a library does. */
+function define<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: RecipeConfig<Variants, DefaultedName>,
+): Recipe<RecipeProps<Variants, DefaultedName>> {
+  return configured.cva(config);
+}
+
+describe("the types of configured recipes", () => {
+  it("are the types of the default creators", () => {
+    expectTypeOf(merged.cva).toEqualTypeOf(cva);
+    expectTypeOf(merged.sva).toEqualTypeOf(sva);
+    expectTypeOf(configured.createRecipe).toEqualTypeOf(createRecipe);
+    expectTypeOf(configured.createSlotRecipe).toEqualTypeOf(createSlotRecipe);
+    expectTypeOf(configured.cx).toEqualTypeOf(cx);
+    expectTypeOf<Recipes["cva"]>().toEqualTypeOf<CreateRecipe>();
+    expectTypeOf<Recipes["sva"]>().toEqualTypeOf<CreateSlotRecipe>();
+
+    expect(configured.cx("px-4", "px-2")).toBe("px-2");
+  });
+
+  it("type a recipe as the default creators do", () => {
+    const config = {
+      base: "px-4",
+      defaultVariants: { size: "md" },
+      variants: { size: { md: "px-3", sm: "px-2" } },
+    } as const;
+    const button = configured.cva(config);
+    const card = configured.sva({
+      slots: ["root", "title"],
+      variants: { size: { sm: { title: "text-sm" } } },
+    });
+
+    expectTypeOf(button).toEqualTypeOf(cva(config));
+    expectTypeOf(button).toEqualTypeOf<RecipeOf<typeof config>>();
+    expectTypeOf<PropsOf<typeof card>>().toEqualTypeOf<{
+      readonly size: "sm";
+      readonly classNames?: SlotClasses<"root" | "title"> | undefined;
+    }>();
+    // @ts-expect-error: lg is not an option of size.
+    expect(button({ size: "lg" })).toBe("px-4");
+    expect(button({})).toBe("px-3");
+    expect(card({ size: "sm" })).toStrictEqual({ root: "", title: "text-sm" });
+  });
+
+  it("compose recipes of the default creators, and the other way", () => {
+    const pill = cva({
+      base: "rounded-full px-4",
+      variants: { size: { sm: "px-2" } },
+    });
+    const configuredBadge = configured.cva({
+      composes: [pill],
+      variants: { tone: { danger: "bg-red-100" } },
+    });
+    const badge = cva({
+      composes: [configuredBadge],
+      defaultVariants: { tone: "danger" },
+      variants: { muted: { true: "opacity-50" } },
+    });
+
+    expectTypeOf<VariantsOf<typeof configuredBadge>>().toEqualTypeOf<{
+      readonly size: "sm";
+      readonly tone: "danger";
+    }>();
+    expectTypeOf<VariantsOf<typeof badge>>().toEqualTypeOf<{
+      readonly muted?: boolean | "false" | "true" | undefined;
+      readonly size: "sm";
+      readonly tone?: "danger" | undefined;
+    }>();
+    // @ts-expect-error: tone is a required variant.
+    expect(configuredBadge({ size: "sm" })).toBe("rounded-full px-2");
+    expect(configuredBadge({ size: "sm", tone: "danger" })).toBe(
+      "rounded-full px-2 bg-red-100",
+    );
+    expect(badge({ muted: true, size: "sm" })).toBe(
+      "rounded-full px-4 px-2 bg-red-100 opacity-50",
+    );
+  });
+
+  it("pass through a function of the user's that is generic over them", () => {
+    const button = define({
+      base: "px-4",
+      variants: { size: { sm: "px-2" } },
+    });
+
+    expectTypeOf<VariantsOf<typeof button>>().toEqualTypeOf<{
+      readonly size: "sm";
+    }>();
+    expect(button({ size: "sm" })).toBe("px-2");
   });
 });

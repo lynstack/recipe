@@ -9,5 +9,5 @@
     "outDir": "out",
     "types": []
   },
-  "files": ["index.ts"]
+  "files": ["index.ts", "configured-use.ts"]
 }
