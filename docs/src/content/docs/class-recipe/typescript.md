@@ -163,6 +163,61 @@ Such a recipe checks less:
   so the variant uses its default, if it has one.
 - `VariantsOf` returns `Readonly<Record<string, string | undefined>>`.
 
+## A function generic over a config
+
+A library's own helper can take any config and return its recipe. Type
+the variants and the names with a default as `const` type parameters,
+and the recipe as a `Recipe` of their `RecipeProps`:
+
+```ts
+import { cva } from "@lynstack/class-recipe";
+import type {
+  Recipe,
+  RecipeConfig,
+  RecipeProps,
+  RecipeVariants,
+} from "@lynstack/class-recipe";
+
+function define<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: RecipeConfig<Variants, DefaultedName>,
+): Recipe<RecipeProps<Variants, DefaultedName>> {
+  return cva(config);
+}
+```
+
+A slot recipe's helper does the same with `SlotRecipeConfig`, and returns
+a `SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>>`.
+
+`define` takes no `composes`: its `Recipe` has the variants of its own
+config only, and other recipes cannot compose it. A helper whose configs
+compose recipes takes the recipes as a third type parameter, and returns
+the type of `cva` for its type parameters, which has the variants and
+defaults of the recipes it composes:
+
+```ts
+import { cva } from "@lynstack/class-recipe";
+import type {
+  ComposableKindRecipe,
+  ComposedVariants,
+  RecipeConfig,
+  RecipeVariants,
+} from "@lynstack/class-recipe";
+
+function defineComposed<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<string>[] = readonly [],
+>(
+  config: RecipeConfig<Variants, DefaultedName, Composed>,
+): ReturnType<typeof cva<Variants, DefaultedName, Composed>> {
+  return cva(config);
+}
+```
+
 ## Other types
 
 The package exports the types of every config, props object, and recipe,

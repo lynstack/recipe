@@ -155,6 +155,80 @@ function createCard(variants: SlotStyleRecipeVariants) {
 }
 ```
 
+## A function generic over a config
+
+A library's own helper can take any config and return its recipe. Type
+the variants and the names with a default as `const` type parameters,
+and the recipe as a `StyleRecipe` of their `VariantSelection`:
+
+```ts
+import { createStyleRecipe } from "@lynstack/native-recipe";
+import type {
+  NativeStyle,
+  StyleRecipe,
+  StyleRecipeConfig,
+  StyleRecipeVariants,
+  VariantSelection,
+} from "@lynstack/native-recipe";
+
+function define<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
+): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
+  return createStyleRecipe(config);
+}
+```
+
+A slot recipe's helper does the same with `SlotStyleRecipeConfig`, and
+returns a `SlotStyleRecipe` of `SlotStyles<Slot>`.
+
+`define` takes no `composes`: its `StyleRecipe` has the variants of its
+own config only, and other recipes cannot compose it. A helper whose
+configs compose recipes takes the recipes as a type parameter, and
+returns the type of `createStyleRecipe` for its type parameters, which
+has the variants and defaults of the recipes it composes. Leave `Base` as
+`never`, as `createStyleRecipe` does, so that the style it returns has
+the properties of the config:
+
+```ts
+import { createStyleRecipe } from "@lynstack/native-recipe";
+import type {
+  ComposableKindRecipe,
+  ComposedVariants,
+  NativeStyle,
+  StyleRecipeConfig,
+  StyleRecipeVariants,
+} from "@lynstack/native-recipe";
+
+function defineComposed<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
+    readonly [],
+>(
+  config: StyleRecipeConfig<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >,
+): ReturnType<
+  typeof createStyleRecipe<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >
+> {
+  return createStyleRecipe(config);
+}
+```
+
 ## Any style
 
 `NativeStyle` is the style of any React Native element: a view, a text, or
