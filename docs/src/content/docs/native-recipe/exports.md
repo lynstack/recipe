@@ -71,4 +71,4 @@ recipes that compose it. It exists in the types only. `KindRecipe`,
 module that exports a recipe and emits declarations names them through
 native-recipe. The last three type a function that takes a config that
 composes recipes, with `ComposableKindRecipe<NativeStyle>` for
-`composes`.
+`composes`, or `ComposableKindSlotRecipe<NativeStyle>` for a slot recipe.

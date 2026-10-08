@@ -12,7 +12,12 @@ import type {
 } from "@lynstack/recipe";
 import { createRecipeKind, createSlotRecipeKind } from "@lynstack/recipe";
 
-import { define, defineSlots } from "./define.js";
+import {
+  define,
+  defineComposed,
+  defineComposedSlots,
+  defineSlots,
+} from "./define.js";
 
 type Style = Readonly<Record<string, string | number>>;
 
@@ -106,7 +111,23 @@ const fieldStyles: Readonly<Record<"input" | "label", Style>> = field({
   invalid: true,
 });
 
+const bigText = defineComposed({
+  composes: [text],
+  variants: { size: { xl: { fontSize: 32 } } },
+});
+const bigTextStyle: Style = bigText({ size: "xl" });
+const sheet = defineComposedSlots({
+  composes: [card],
+  slots: ["footer"],
+  variants: { tone: { dark: { footer: { borderColor: "white" } } } },
+});
+const sheetStyles: Readonly<Record<"root" | "title" | "footer", Style>> = sheet(
+  { tone: "dark" },
+);
+
 export {
+  bigText,
+  bigTextStyle,
   badge,
   badgeStyle,
   card,
@@ -125,6 +146,8 @@ export {
   cardKeys,
   cardStyles,
   recipe,
+  sheet,
+  sheetStyles,
   slotStyleRecipe,
   style,
   styleRecipe,

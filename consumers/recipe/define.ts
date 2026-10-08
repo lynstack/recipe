@@ -1,4 +1,7 @@
 import type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedVariants,
   CreateKindRecipe,
   CreateKindSlotRecipe,
   KindRecipe,
@@ -47,4 +50,30 @@ function defineSlots<
   return slotStyleRecipe(config);
 }
 
-export { define, defineSlots };
+/** Creates a recipe that may compose others, as a library's own helper does. */
+function defineComposed<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<Style>[] = readonly [],
+>(
+  config: KindRecipeConfig<Style, Variants, DefaultedName, Composed>,
+): ReturnType<typeof styleRecipe<Variants, DefaultedName, Composed>> {
+  return styleRecipe(config);
+}
+
+/** Creates a slot recipe that may compose others, as a library's helper does. */
+function defineComposedSlots<
+  const Slot extends string,
+  const Variants extends KindSlotVariants<Style>,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<Style>[] =
+    readonly [],
+>(
+  config: KindSlotRecipeConfig<Slot, Style, Variants, DefaultedName, Composed>,
+): ReturnType<typeof slotStyleRecipe<Slot, Variants, DefaultedName, Composed>> {
+  return slotStyleRecipe(config);
+}
+
+export { define, defineComposed, defineComposedSlots, defineSlots };

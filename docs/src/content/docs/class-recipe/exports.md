@@ -70,7 +70,8 @@ so that you need not install it. `RecipeComposition` is part of the type
 of a recipe: a module that exports a recipe and emits declarations names
 it through class-recipe. `ComposedVariants`, `ComposableKindRecipe`, and
 `ComposableKindSlotRecipe` type a function that takes a config that
-composes recipes, with `ComposableKindRecipe<string>` for `composes`.
+composes recipes, with `ComposableKindRecipe<string>` for `composes`, or
+`ComposableKindSlotRecipe<string>` for a slot recipe.
 
 | Export                     | Type parameters                           | Description                                                                              |
 | -------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------- |

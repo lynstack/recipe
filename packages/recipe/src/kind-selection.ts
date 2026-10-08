@@ -13,8 +13,8 @@ type AnySelection = Readonly<Record<string, unknown>>;
 /**
  * The selection that a recipe made from a `RecipeKind` accepts: the
  * {@link VariantSelection} of its variants, or any selection when the
- * variant names are not known at compile time. Annotate with it the recipe
- * that a function generic over a config returns, as
+ * variant names are not known at compile time. A function generic over a
+ * config annotates the recipe it returns with it, as
  * `KindRecipe<KindSelection<Variants, DefaultedName>, Result>`.
  *
  * @typeParam Variants - The variant definitions, keyed by variant name.

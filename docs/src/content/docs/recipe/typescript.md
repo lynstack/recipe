@@ -143,6 +143,34 @@ function defineStyle<
 A slot recipe's helper does the same with `KindSlotRecipeConfig`, and
 returns a `KindRecipe` whose result is `Readonly<Record<Slot, Style>>`.
 
+A helper whose configs compose recipes takes the recipes as a third type
+parameter, and returns the type of `styleRecipe` for its type
+parameters, which has the variants and defaults of the recipes it
+composes:
+
+```ts
+import type {
+  ComposableKindRecipe,
+  ComposedVariants,
+  KindRecipeConfig,
+  KindVariants,
+} from "@lynstack/recipe";
+
+function defineComposedStyle<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<Style>[] = readonly [],
+>(
+  config: KindRecipeConfig<Style, Variants, DefaultedName, Composed>,
+): ReturnType<typeof styleRecipe<Variants, DefaultedName, Composed>> {
+  return styleRecipe(config);
+}
+```
+
+A slot recipe's helper does the same with `KindSlotRecipeConfig` and
+`ComposableKindSlotRecipe<Style>`.
+
 ## Types for library authors
 
 A library with its own config shape builds its types on the engine's, as
@@ -153,7 +181,7 @@ shows:
 | ------------------- | ------------------------------------------------------------------------------------ |
 | `KindVariants`      | The `variants` of a config, to constrain the variants a function infers.             |
 | `VariantSelection`  | The selection a recipe accepts, from the variants and the names that have a default. |
-| `KindSelection`     | The selection of a recipe that a function generic over a config returns.             |
+| `KindSelection`     | The selection a recipe accepts, or any selection when the variant names are unknown. |
 | `DefaultVariants`   | The `defaultVariants` of a config.                                                   |
 | `CompoundCondition` | The `variants` of a compound variant.                                                |
 | `VariantOption`     | The values one variant accepts.                                                      |
