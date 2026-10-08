@@ -8,7 +8,12 @@ import {
   sva,
 } from "@lynstack/class-recipe";
 
-import { define, defineComposed, defineSlots } from "./define.js";
+import {
+  define,
+  defineComposed,
+  defineComposedSlots,
+  defineSlots,
+} from "./define.js";
 import { look } from "./look.js";
 
 const button = createRecipe({
@@ -111,6 +116,14 @@ const cardProps: PropsOf<typeof card> = {
   size: "md",
 };
 
+const panel = defineComposedSlots({
+  composes: [card],
+  slots: ["footer"],
+  variants: { size: { sm: { footer: "gap-2" } } },
+});
+const panelClassNames: Readonly<Record<"root" | "title" | "footer", string>> =
+  panel({ size: "sm" });
+
 export {
   alert,
   alertClassNames,
@@ -132,6 +145,8 @@ export {
   iconButton,
   iconClassName,
   merged,
+  panel,
+  panelClassNames,
   pill,
   select,
   selectClassNames,

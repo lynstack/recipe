@@ -218,6 +218,10 @@ function defineComposed<
 }
 ```
 
+A slot recipe's helper does the same with `SlotRecipeConfig`,
+`ComposableKindSlotRecipe<string>`, and
+`ReturnType<typeof sva<Slot, Variants, DefaultedName, Composed>>`.
+
 ## Other types
 
 The package exports the types of every config, props object, and recipe,

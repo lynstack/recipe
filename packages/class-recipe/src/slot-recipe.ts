@@ -170,11 +170,14 @@ type CreateSlotRecipe = <
     readonly [],
 >(
   config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
-) => ComposedSlotRecipe<
-  // Not ComposedSlot, which declarations print with each composed type.
-  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
-  ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>
+) => NoInfer<
+  ComposedSlotRecipe<
+    // Not ComposedSlot, which declarations print with each composed type.
+    | Slot
+    | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>
+  >
 >;
 
 /** The slot recipe of a config with the slot recipes it composes. */

@@ -1,5 +1,6 @@
 import type {
   ComposableKindRecipe,
+  ComposableKindSlotRecipe,
   ComposedVariants,
   Recipe,
   RecipeConfig,
@@ -45,4 +46,18 @@ function defineSlots<
   return sva(config);
 }
 
-export { define, defineComposed, defineSlots };
+/** Creates a slot recipe that may compose others, as a library's helper does. */
+function defineComposedSlots<
+  const Slot extends string,
+  const Variants extends SlotRecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<string>[] =
+    readonly [],
+>(
+  config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
+): ReturnType<typeof sva<Slot, Variants, DefaultedName, Composed>> {
+  return sva(config);
+}
+
+export { define, defineComposed, defineComposedSlots, defineSlots };

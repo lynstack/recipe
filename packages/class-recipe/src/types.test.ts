@@ -137,6 +137,22 @@ function defineComposedRecipe<
   return createRecipe(config);
 }
 
+/** Creates a slot recipe that may compose others, as a library's does. */
+function defineComposedSlotRecipe<
+  const Slot extends string,
+  const Variants extends SlotRecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindSlotRecipe<string>[] =
+    readonly [],
+>(
+  config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
+): ReturnType<
+  typeof createSlotRecipe<Slot, Variants, DefaultedName, Composed>
+> {
+  return createSlotRecipe(config);
+}
+
 describe("a function generic over a config that composes recipes", () => {
   it("returns a recipe with the variants of the recipes it composes", () => {
     const iconButton = defineComposedRecipe({
@@ -152,19 +168,25 @@ describe("a function generic over a config that composes recipes", () => {
     }>();
   });
 
-  it("names a slot recipe that a slot recipe can compose", () => {
-    expect(card({ size: "sm" })).toStrictEqual({
+  it("returns a slot recipe with the slots of the slot recipes it composes", () => {
+    const dialog = defineComposedSlotRecipe({
+      composes: [card],
+      slots: ["footer"],
+      variants: { size: { sm: { footer: "gap-2" } } },
+    });
+
+    expect(dialog({ size: "sm" })).toStrictEqual({
       root: "p-4 p-2",
       title: "font-medium",
+      footer: "gap-2",
     });
-    expectTypeOf(card).toExtend<ComposableKindSlotRecipe<string>>();
+    expectTypeOf(dialog).toExtend<ComposableKindSlotRecipe<string>>();
     expectTypeOf(button).not.toExtend<ComposableKindSlotRecipe<string>>();
-    expectTypeOf<
-      keyof ComposedVariants<
-        readonly [typeof card],
-        { readonly tone: { readonly loud: { readonly root: string } } }
-      >
-    >().toEqualTypeOf<"size" | "tone">();
+    expectTypeOf<PropsOf<typeof dialog>>().toEqualTypeOf<{
+      readonly size: "sm" | "md";
+      readonly classNames?:
+        SlotClasses<"root" | "title" | "footer"> | undefined;
+    }>();
   });
 });
 
