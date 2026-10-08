@@ -54,7 +54,9 @@ function checkCompoundVariants(
     );
   }
   for (const [index, compound] of compoundVariants.entries()) {
-    const { variants, value } = isRecord(compound) ? compound : {};
+    const { variants, value }: UncheckedRecord = isRecord(compound)
+      ? compound
+      : {};
     if (!isRecord(variants)) {
       throw new TypeError(
         `Compound variant ${String(index)} needs \`variants\`, an object of the options it matches.`,

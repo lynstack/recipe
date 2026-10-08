@@ -191,7 +191,7 @@ function compileCondition(
     variant,
     toOptionNames(value)
       .map((option) => indexes?.get(option))
-      .filter((index) => index !== undefined),
+      .filter((index): index is number => index !== undefined),
   ];
 }
 
@@ -218,7 +218,7 @@ function toOptionNames(value: unknown): readonly string[] {
   const values: readonly unknown[] = Array.isArray(value) ? value : [value];
   return values
     .map((option) => toOptionName(option))
-    .filter((option) => option !== undefined);
+    .filter((option): option is string => option !== undefined);
 }
 
 /** A recipe function with the names, options, and defaults of its variants. */
