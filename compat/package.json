@@ -1,12 +1,7 @@
 {
   "name": "compat",
   "private": true,
-  "description": "Checks the packed packages on the oldest and newest runtimes and TypeScript versions that their docs list.",
+  "description": "Checks the packed packages on the oldest and newest runtimes that their docs list.",
   "license": "MIT",
-  "type": "module",
-  "devDependencies": {
-    "@types/react": "19.3.0",
-    "react": "19.3.0",
-    "react-native": "0.87.1"
-  }
+  "type": "module"
 }

@@ -27,7 +27,7 @@ it before working in that folder.
   with its scripts and development dependencies, `tsconfig.json`,
   `tsconfig.build.json` (the sources that tsdown builds),
   `vitest.config.ts`, `tsdown.config.ts`, `.oxlintrc.json`, README,
-  CHANGELOG, LICENSE, and fixture. A package's `.oxlintrc.json`, and that
+  CHANGELOG, and LICENSE. A package's `.oxlintrc.json`, and that
   of `docs`, extends the shared one and holds its own rules only.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
@@ -38,8 +38,15 @@ it before working in that folder.
   that several property tests share sit in `*.arbitraries.ts`, which the
   build leaves out. A benchmark imports its package by its name, so it
   runs against the built bundle, never against the sources directly.
-- `fixtures/consumer` in each package uses the built package; compiling it
-  checks the published declarations.
+- `consumers` holds an app of each package, `consumers/<package>`: a
+  private workspace package, with its own `package.json`,
+  `tsconfig.json`, and `.oxlintrc.json`, that depends on that package
+  only, as an app does, and exports what it builds with it. Compiling it
+  with declarations checks the published types. In the workspace, pnpm
+  links the package folder, whose types TypeScript can always name;
+  `scripts/consumers.ts` installs the packed packages in a copy of each
+  app outside the repository, where an app can name only the types that
+  its dependencies export.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
 - A package's `CHANGELOG.md` lists its versions, the newest first, each
@@ -50,7 +57,8 @@ it before working in that folder.
   that Node.js runs directly. `scripts/measure` runs the benchmarks of
   each package and saves the raw results, never formatted text, in
   `docs/src/measurements/<package>.json`. It has one module per package,
-  which names the benchmarks that package reports.
+  which names the benchmarks that package reports. `scripts/consumers.ts`
+  compiles the apps of `consumers` with the packed packages.
 - `examples` holds an example of each package that readers open in the
   browser, from the Open in StackBlitz or Open in Snack link of its
   overview page: `recipe` and `class-recipe` are React apps, built with
@@ -63,10 +71,9 @@ it before working in that folder.
   `compat/versions.json` holds the oldest Node.js, Bun, Deno, and
   TypeScript that the packages support, and the docs read their
   requirements from it. `smoke.mjs` imports each package and `smoke.cjs`
-  requires it; the fixture of each package is compiled outside it, with
-  the types of the React Native that `compat/package.json` installs with
-  npm, and of the oldest that the peer dependency of
-  `@lynstack/native-recipe` allows.
+  requires it. The apps of `consumers` are compiled with the packed
+  packages, with the React Native of the app of `@lynstack/native-recipe`
+  and the oldest that its peer dependency allows.
   To support an older or newer minimum, change `versions.json`; never
   write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
@@ -82,13 +89,16 @@ script of each package and of the docs, dependencies first, then
 typechecks and lints the scripts and checks formatting. The docs' `check`
 typechecks them, lints them, checks their formatting, and builds them. A
 package's `check` builds it
-(which runs publint and Are the Types Wrong), typechecks it, compiles its
-fixture, lints it, checks its formatting, and runs its tests.
+(which runs publint and Are the Types Wrong), typechecks it, lints it,
+checks its formatting, and runs its tests. The `check` of an app of
+`consumers` compiles it and lints it.
 `@lynstack/class-recipe` and `@lynstack/native-recipe` need
 `@lynstack/recipe` built first.
 
 Run a package's scripts with `pnpm --filter <name> <script>`, such as
-`pnpm --filter @lynstack/recipe test`, or from its folder.
+`pnpm --filter @lynstack/recipe test`, or from its folder. To check a
+package with its app, run
+`pnpm --filter @lynstack/class-recipe --filter class-recipe-consumer check`.
 
 - `pnpm test` runs the tests of every package.
 - `test:coverage`, in a package, runs its tests and reports coverage. Use
@@ -101,6 +111,12 @@ Run a package's scripts with `pnpm --filter <name> <script>`, such as
   package folder names, as in `pnpm measure class-recipe`, to measure only
   those. Run it before a release, and after a change that affects speed;
   it takes a few minutes. Commit the results with the change.
+- `pnpm consumers` packs the packages, installs them in a copy of each
+  app of `consumers` outside the repository, and compiles it. Pass
+  `--typescript <version>` or `--react-native <version>` to compile with
+  those. Run it after a change to a public type, or to the dependencies
+  between the packages; CI runs it on the oldest and newest TypeScript
+  and React Native.
 - `pnpm docs:dev` serves the docs locally, and `pnpm docs:build` builds
   them into `docs/dist`.
 - `pnpm format` formats every file.

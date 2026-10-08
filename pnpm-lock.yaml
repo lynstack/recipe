@@ -203,6 +203,34 @@ importers:
         specifier: 5.0.3
         version: 5.0.3(@types/node@24.19.1)(@vitest/coverage-v8@5.0.3)(vite@8.3.1(@types/node@24.19.1)(esbuild@0.28.2)(terser@5.51.2)(yaml@2.9.1))
 
+  consumers/class-recipe:
+    dependencies:
+      '@lynstack/class-recipe':
+        specifier: workspace:^
+        version: link:../../packages/class-recipe
+
+  consumers/native-recipe:
+    dependencies:
+      '@lynstack/native-recipe':
+        specifier: workspace:^
+        version: link:../../packages/native-recipe
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-native:
+        specifier: 0.87.1
+        version: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+
+  consumers/recipe:
+    dependencies:
+      '@lynstack/recipe':
+        specifier: workspace:^
+        version: link:../../packages/recipe
+
   docs:
     devDependencies:
       '@astrojs/starlight':

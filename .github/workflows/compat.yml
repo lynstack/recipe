@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - packages/*/src/**
-      - packages/*/fixtures/**
+      - consumers/**
+      - scripts/consumers.ts
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -17,7 +18,8 @@ on:
   pull_request:
     paths:
       - packages/*/src/**
-      - packages/*/fixtures/**
+      - consumers/**
+      - scripts/consumers.ts
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -66,7 +68,7 @@ jobs:
           echo "node=$(jq -c '[.node] + .nodeRequire + ["lts/*"]' compat/versions.json)" >> "$GITHUB_OUTPUT"
           echo "typescript=$(jq -r .devDependencies.typescript package.json)" >> "$GITHUB_OUTPUT"
           oldest="$(jq -r '.peerDependencies["react-native"] | ltrimstr(">=")' packages/native-recipe/package.json)"
-          echo "react-native=$(jq -c --arg oldest "$oldest" '[$oldest, .devDependencies["react-native"]]' compat/package.json)" >> "$GITHUB_OUTPUT"
+          echo "react-native=$(jq -c --arg oldest "$oldest" '[$oldest, .dependencies["react-native"]]' consumers/native-recipe/package.json)" >> "$GITHUB_OUTPUT"
 
   node:
     name: Node.js ${{ matrix.node }}
@@ -179,35 +181,17 @@ jobs:
         with:
           name: packages
           path: ${{ runner.temp }}/packages
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
         with:
-          node-version-file: package.json
-          package-manager-cache: false
-      - name: Install the dependencies of the fixtures
-        working-directory: compat
-        run: npm ci --ignore-scripts
-      # The oldest React Native installs with the versions of React that it
-      # asks for, as in an app.
-      - name: Install the types of React Native ${{ matrix.react-native }}
-        if: matrix.react-native != fromJSON(needs.pack.outputs.react-native)[1]
-        working-directory: compat
-        env:
-          REACT_NATIVE: ${{ matrix.react-native }}
-        run: |
-          read -ra peers <<< "$(npm view "react-native@$REACT_NATIVE" peerDependencies --json | jq -r 'to_entries | map("\(.key)@\(.value)") | join(" ")')"
-          npm install --no-save --ignore-scripts "react-native@$REACT_NATIVE" "${peers[@]}"
-      - name: Install the packed packages
-        run: *install
-      # Outside their packages, the fixtures import the packed packages as an
-      # app does.
-      - name: Compile the fixture of each package
+          install: false
+      # Installs the packed packages in each app of consumers, outside the
+      # repository, as an app installs them from npm, and compiles it.
+      - name: Compile the apps that install the packages
         env:
           TYPESCRIPT: ${{ matrix.typescript }}
-        run: |
-          mkdir compat/fixtures
-          for package in recipe class-recipe native-recipe; do
-            cp -r "packages/$package/fixtures/consumer" "compat/fixtures/$package"
-            npx --yes --package "typescript@$TYPESCRIPT" -- tsc \
-              -p "compat/fixtures/$package/tsconfig.json" \
-              --outDir "$RUNNER_TEMP/out/$package"
-          done
+          REACT_NATIVE: ${{ matrix.react-native }}
+        run: >-
+          node scripts/consumers.ts
+          --packages "$RUNNER_TEMP/packages"
+          --typescript "$TYPESCRIPT"
+          --react-native "$REACT_NATIVE"

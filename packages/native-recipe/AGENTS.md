@@ -29,9 +29,9 @@ dependency and a development dependency for those types.
     created, so that a config from untyped code fails with a message
     that names what is wrong.
 
-## Fixture
+## App
 
-`fixtures/consumer` compiles with the settings of
+`consumers/native-recipe`, at the root, compiles with the settings of
 `@react-native/typescript-config`, which React Native apps extend,
 including `skipLibCheck`, since React Native's own declarations do not
 compile without it.

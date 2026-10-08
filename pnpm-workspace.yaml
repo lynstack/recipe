@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - consumers/*
   - docs
 saveExact: true
 allowBuilds:

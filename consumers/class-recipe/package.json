@@ -1,0 +1,13 @@
+{
+  "name": "class-recipe-consumer",
+  "private": true,
+  "description": "An app that installs @lynstack/class-recipe: compiling it, with declarations, checks the published types.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "check": "tsc -p tsconfig.json && oxlint"
+  },
+  "dependencies": {
+    "@lynstack/class-recipe": "workspace:^"
+  }
+}
