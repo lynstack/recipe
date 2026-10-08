@@ -61,6 +61,16 @@ the same order, as the second type parameter:
 The helpers reject a config that lists `composes`, so that the type
 cannot leave out the recipes it composes.
 
+The helpers are for a config whose type is known where the recipe is
+declared. They do not apply in a function generic over the whole config,
+such as one that takes `config: Config` and returns
+`StyleRecipeOf<Config>`: `createStyleRecipe` infers the variants from its
+config, and TypeScript cannot infer them from a config whose type is a
+type parameter. Make such a function generic over the variants instead,
+as
+[A function generic over a config](/recipe/native-recipe/typescript/#a-function-generic-over-a-config)
+shows.
+
 ### Themed recipes
 
 `ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` take the type of the
