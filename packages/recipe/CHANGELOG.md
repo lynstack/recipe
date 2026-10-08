@@ -4,6 +4,12 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## Unreleased
+
+- An editor completes the variant names of `defaultVariants`, and the
+  slot names of the options of a slot recipe's variants. It completed
+  neither before.
+
 ## 1.8.0 — 2026-10-08
 
 A recipe warns about the names its config gives without declaring them,

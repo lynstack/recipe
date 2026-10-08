@@ -7,7 +7,7 @@ import type {
 } from "./composition.js";
 import type {
   KindCompoundCondition,
-  KindDefaultVariants,
+  WrittenKindDefaults,
 } from "./kind-selection.js";
 import type { LooseKindRecipeConfig, LooseRecipeKind } from "./build-recipe.js";
 import type {
@@ -93,7 +93,7 @@ interface KindRecipeConfig<
     | undefined;
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
-    | KindDefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenKindDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
   readonly cache?: boolean | undefined;

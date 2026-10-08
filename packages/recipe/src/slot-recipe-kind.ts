@@ -7,15 +7,16 @@ import type {
 } from "./composition.js";
 import type {
   KindCompoundCondition,
-  KindDefaultVariants,
+  SlotVariantsCheck,
+  WrittenKindDefaults,
 } from "./kind-selection.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
-import type { NoUnknownComposedSlots, RecipeKind } from "./types.js";
 import type { SelectedVariants, WithVariants } from "./variants.js";
 import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { createSlotsBuilder, noSlotValues } from "./slots.js";
 import type { KindVariants } from "./recipe-kind.js";
+import type { RecipeKind } from "./types.js";
 import { checkSlotRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
 import { warnUnknownNames } from "./check-names.js";
@@ -90,7 +91,7 @@ interface KindSlotRecipeConfig<
     SlotValues<NoInfer<Slot> | InheritedSlot<Composed>, Value> | undefined;
   /** For each variant name, the values of each slot for each of its options. */
   readonly variants: Variants &
-    NoUnknownComposedSlots<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
+    SlotVariantsCheck<Variants, NoInfer<Slot>, InheritedSlot<Composed>, Value>;
   /**
    * Values added to some slots when several variants have particular
    * options at the same time, applied in order after the values of the
@@ -105,7 +106,7 @@ interface KindSlotRecipeConfig<
     | undefined;
   /** The option each variant uses when the recipe is called without it. */
   readonly defaultVariants?:
-    | KindDefaultVariants<ComposedVariants<Composed, Variants>, DefaultedName>
+    | WrittenKindDefaults<ComposedVariants<Composed, Variants>, DefaultedName>
     | undefined;
   /** Whether the recipe caches its results. Defaults to the kind's `cache`. */
   readonly cache?: boolean | undefined;
