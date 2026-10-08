@@ -246,7 +246,10 @@ test or in an app of `consumers`, in each way users reach it:
 - with the oldest and the newest TypeScript that the packages support.
 
 When a feature adds a way to use a type, add that way to every type it
-applies to, and to this list.
+applies to, and to this list. When a way does not apply to a type, say so
+in its TSDoc and its docs, with the way that does: `RecipeOf` and the
+other types of the recipe of a config, for example, do not apply in a
+function generic over the whole config.
 
 **Fix a bug everywhere it lives.** The packages and the docs share
 patterns: the same type helper, the same check, the same example. When
