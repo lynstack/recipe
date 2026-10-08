@@ -251,7 +251,12 @@ test or in an app of `consumers`, in each way users reach it:
 - with `isolatedDeclarations`;
 - nested or composed several levels deep, where its declarations must
   grow linearly;
-- with the oldest and the newest TypeScript that the packages support.
+- with the oldest and the newest TypeScript that the packages support;
+- completed by an editor in a config written inline in the call: the
+  names of its variants, options, and slots, and the values of each, in
+  `base`, the variants, compound variants, and defaults, which each
+  package checks in `src/completions.test.ts` with the API of the
+  TypeScript of the repository.
 
 When a feature adds a way to use a type, add that way to every type it
 applies to, and to this list. When a way does not apply to a type, say so
