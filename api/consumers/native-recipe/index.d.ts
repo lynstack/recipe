@@ -442,5 +442,57 @@ declare const compactBox: ((props: {
     }, "size", NativeStyle, undefined> | undefined;
 };
 declare const compactBoxStyle: NativeStyle;
-export { compactBox, compactBoxStyle, anyChip, anyStyle, box, boxDefaults, boxKeys, boxOptions, button, chip, chipKeys, chipOptions, chipStyle, createArrayStyleRecipes, fade, fadeStyle, field, fieldStyles, iconBox, iconBoxStyle, iconChip, iconChipStyle, iconStyle, labelStyle, labeledButton, rootStyle, style, tag, tagLabelStyle, };
+declare const footedButton: ((props: {
+    readonly dense?: import("@lynstack/native-recipe").VariantOption<{
+        readonly true: {
+            readonly footer: {
+                readonly borderStyle: "dashed";
+            };
+        };
+    }> | undefined;
+    readonly size: "md";
+}) => {
+    readonly footer: {
+        readonly borderStyle?: "dashed" | "solid" | undefined;
+    };
+    readonly label: {
+        readonly fontSize?: 16 | undefined;
+        readonly fontWeight?: "600" | undefined;
+    };
+    readonly root: {
+        readonly alignItems?: "center" | undefined;
+        readonly height?: 40 | undefined;
+    };
+}) & {
+    readonly variantKeys: readonly ("dense" | "size")[];
+    readonly variantOptions: {
+        readonly dense: readonly ("false" | "true")[];
+        readonly size: readonly "md"[];
+    };
+    readonly defaultVariants: {
+        readonly dense: "false" | "true";
+    };
+} & {
+    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
+        readonly dense: {
+            readonly true: {
+                readonly footer: {
+                    readonly borderStyle: "dashed";
+                };
+            };
+        };
+        readonly size: {
+            readonly md: {
+                readonly label: {
+                    readonly fontSize: 16;
+                };
+                readonly root: {
+                    readonly height: 40;
+                };
+            };
+        };
+    }, never, NativeStyle, readonly ("footer" | "label" | "root")[]> | undefined;
+};
+declare const footedButtonStyles: Readonly<Record<"root" | "label" | "footer", NativeStyle>>;
+export { compactBox, compactBoxStyle, footedButton, footedButtonStyles, anyChip, anyStyle, box, boxDefaults, boxKeys, boxOptions, button, chip, chipKeys, chipOptions, chipStyle, createArrayStyleRecipes, fade, fadeStyle, field, fieldStyles, iconBox, iconBoxStyle, iconChip, iconChipStyle, iconStyle, labelStyle, labeledButton, rootStyle, style, tag, tagLabelStyle, };
 export type { BoxVariants, ChipVariants, IconBoxVariants };

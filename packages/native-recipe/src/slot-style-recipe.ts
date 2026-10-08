@@ -1,6 +1,5 @@
 import type {
   ComposableKindSlotRecipe,
-  ComposedSlot,
   ComposedVariants,
   KindRecipe,
   KindVariants,
@@ -12,6 +11,7 @@ import type {
   CompoundStyles,
   DefaultVariants,
   InheritedDefaultedName,
+  InheritedSlot,
   NativeStyle,
   NoUnknownCompoundStyles,
   NoUnknownSlotStyles,
@@ -84,12 +84,12 @@ interface SlotStyleRecipeConfig<
   readonly base?:
     | (Base &
         SlotStyles<string> &
-        NoUnknownSlotStyles<Base, NoInfer<ComposedSlot<Composed, Slot>>>)
+        NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>)
     | undefined;
   /** For each variant name, the style of each slot for each of its options. */
   readonly variants: Variants &
     SlotStyleRecipeVariants &
-    NoUnknownVariantStyles<Variants, NoInfer<ComposedSlot<Composed, Slot>>>;
+    NoUnknownVariantStyles<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
   /**
    * Styles added to some slots when several variants have particular
    * options at the same time, applied in order after the styles of the
@@ -101,7 +101,8 @@ interface SlotStyleRecipeConfig<
           NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownCompoundStyles<
             CompoundStyles<Compounds>,
-            NoInfer<ComposedSlot<Composed, Slot>>
+            NoInfer<Slot>,
+            InheritedSlot<Composed>
           >
         >[])
     | undefined;

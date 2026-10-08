@@ -13,9 +13,10 @@ type UnknownKey<Style> = Exclude<KeyOfEach<Style>, StyleKey>;
 type PropertyOfEach<Style, Key extends PropertyKey> = { [Property in Key]: Style extends unknown ? Property extends keyof Style ? Style[Property] : never : never; }[Key];
 type OptionValue<Variants> = { [Name in keyof Variants]: Variants[Name][keyof Variants[Name]]; }[keyof Variants];
 type SlotStyles<Slot extends string> = Readonly<Partial<Record<Slot, NativeStyle | undefined>>>;
-type NoUnknownSlotStyles<Styles, Slot extends string> = string extends keyof Styles ? unknown : { readonly [Name in keyof Styles]: Name extends Slot ? NoUnknownProperties<NonNullable<Styles[Name]>> : never; };
-type NoUnknownVariantStyles<Variants, Slot extends string> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<Variants[Name][Option], Slot>; }; };
-type NoUnknownCompoundStyles<Styles, Slot extends string> = Readonly<Partial<Record<Exclude<KeyOfEach<Styles>, Slot>, never>>> & { readonly [Name in Slot]?: NoUnknownProperties<DeclaredStyle$1<Styles, Name>>; };
+type NoUnknownSlotStyles<Styles, Slot extends string, Inherited extends string = never> = string extends keyof Styles ? unknown : { readonly [Name in keyof Styles]: Name extends Slot ? NoUnknownProperties<NonNullable<Styles[Name]>> : Name extends Inherited ? NoUnknownProperties<NonNullable<Styles[Name]>> : never; };
+type NoUnknownVariantStyles<Variants, Slot extends string, Inherited extends string = never> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<Variants[Name][Option], Slot, Inherited>; }; };
+type InheritedSlot<Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[]> = NonNullable<Composed[number]["~composition"]>["slots"][number];
+type NoUnknownCompoundStyles<Styles, Slot extends string, Inherited extends string = never> = Readonly<Partial<Record<Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>, never>>> & { readonly [Name in Slot | Inherited]?: NoUnknownProperties<DeclaredStyle$1<Styles, Name>>; };
 type DeclaredStyle$1<Styles, Slot> = Styles extends unknown ? Slot extends keyof Styles ? Exclude<Styles[Slot], undefined> : never : never;
 type DeclaredSlotStyles<Variants, Base, Compounds, Composed> = Base | OptionValue<Variants> | CompoundStyles<Compounds> | ComposedStyle<Composed>;
 type CompoundStyles<Compounds> = Compounds extends readonly (infer Compound)[] ? Compound extends {
@@ -36,9 +37,9 @@ interface SlotStyleCompoundVariant<Variants, Styles = SlotStyles<string>> {
 interface SlotStyleRecipeConfig<Slot extends string, Variants, Base, Compounds, DefaultedName extends keyof ComposedVariants$1<Composed, Variants>, Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []> {
   readonly composes?: Composed | undefined;
   readonly slots: readonly Slot[];
-  readonly base?: (Base & SlotStyles<string> & NoUnknownSlotStyles<Base, NoInfer<ComposedSlot$1<Composed, Slot>>>) | undefined;
-  readonly variants: Variants & SlotStyleRecipeVariants & NoUnknownVariantStyles<Variants, NoInfer<ComposedSlot$1<Composed, Slot>>>;
-  readonly compoundVariants?: (Compounds & readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<ComposedSlot$1<Composed, Slot>>>>[]) | undefined;
+  readonly base?: (Base & SlotStyles<string> & NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>) | undefined;
+  readonly variants: Variants & SlotStyleRecipeVariants & NoUnknownVariantStyles<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
+  readonly compoundVariants?: (Compounds & readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>, InheritedSlot<Composed>>>[]) | undefined;
   readonly defaultVariants?: DefaultVariants<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }

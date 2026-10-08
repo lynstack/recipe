@@ -11,7 +11,7 @@ import {
   createThemedRecipes,
 } from "@lynstack/native-recipe";
 
-import { define, defineComposed, defineSlots } from "./define.js";
+import { define, defineComposed, defineSlots, withFooter } from "./define.js";
 
 const box = createStyleRecipe({
   base: { borderRadius: 8 },
@@ -134,9 +134,16 @@ const compactBoxStyle: NativeStyle = compactBox({
   tone: "neutral",
 });
 
+const footedButton = withFooter(button);
+const footedButtonStyles: Readonly<
+  Record<"root" | "label" | "footer", NativeStyle>
+> = footedButton({ dense: true, size: "md" });
+
 export {
   compactBox,
   compactBoxStyle,
+  footedButton,
+  footedButtonStyles,
   anyChip,
   anyStyle,
   box,

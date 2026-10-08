@@ -7,6 +7,8 @@ published on npm and as a
 
 ## Unreleased
 
+- A function generic over the slot recipe that a slot style recipe
+  composes, plain or themed, can name its own slots.
 - The recipe creators warn, once, with `console.warn`, about a default, a
   compound variant, or a style that names a variant, an option, or a slot
   that the config does not declare, such as a misspelled name in a config

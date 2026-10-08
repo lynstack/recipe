@@ -1,4 +1,5 @@
 import type {
+  ComposableKindSlotRecipe,
   ComposedDefaultedName,
   ComposedVariants,
   VariantsOf as RecipeVariantsOf,
@@ -79,36 +80,61 @@ type SlotStyles<Slot extends string> = Readonly<
 /**
  * Rejects the slots and style properties of an option's styles that the
  * slot recipe does not have, unless the option's slot names are not known
- * at compile time.
+ * at compile time. A recipe's own slots, `Slot`, are matched before those
+ * of the slot recipes it composes, `Inherited`, so that they are accepted
+ * even when the inherited slots are generic.
  */
 type NoUnknownSlotStyles<
   Styles,
   Slot extends string,
+  Inherited extends string = never,
 > = string extends keyof Styles
   ? unknown
   : {
       readonly [Name in keyof Styles]: Name extends Slot
         ? NoUnknownProperties<NonNullable<Styles[Name]>>
-        : never;
+        : Name extends Inherited
+          ? NoUnknownProperties<NonNullable<Styles[Name]>>
+          : never;
     };
 
-type NoUnknownVariantStyles<Variants, Slot extends string> = {
+type NoUnknownVariantStyles<
+  Variants,
+  Slot extends string,
+  Inherited extends string = never,
+> = {
   readonly [Name in keyof Variants]: {
     readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<
       Variants[Name][Option],
-      Slot
+      Slot,
+      Inherited
     >;
   };
 };
 
 /**
+ * The slots of the slot recipes of `Composed`, as indexed access rather
+ * than a conditional type, so that TypeScript relates a config to them
+ * while `Composed` is generic.
+ */
+type InheritedSlot<
+  Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[],
+> = NonNullable<Composed[number]["~composition"]>["slots"][number];
+
+/**
  * Rejects the slots and style properties of the compound variants' styles,
  * given as a union, that the slot recipe does not have.
  */
-type NoUnknownCompoundStyles<Styles, Slot extends string> = Readonly<
-  Partial<Record<Exclude<KeyOfEach<Styles>, Slot>, never>>
+type NoUnknownCompoundStyles<
+  Styles,
+  Slot extends string,
+  Inherited extends string = never,
+> = Readonly<
+  Partial<Record<Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>, never>>
 > & {
-  readonly [Name in Slot]?: NoUnknownProperties<DeclaredStyle<Styles, Name>>;
+  readonly [Name in Slot | Inherited]?: NoUnknownProperties<
+    DeclaredStyle<Styles, Name>
+  >;
 };
 
 /** Every style that a slot recipe's config declares for `Slot`, as a union. */
@@ -222,6 +248,7 @@ export type {
   DeclaredStyle,
   DefaultedNameOf,
   InheritedDefaultedName,
+  InheritedSlot,
   KeyOfEach,
   NativeStyle,
   NoUnknownCompoundStyles,
