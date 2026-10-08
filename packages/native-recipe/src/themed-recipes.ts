@@ -28,6 +28,15 @@ import { buildStyleRecipe } from "./compile-style-recipe.js";
 import { buildThemedRecipe } from "./compile-themed-recipe.js";
 
 /**
+ * A function that takes a theme and the properties of a selection, whose
+ * second argument is optional when every property of `Props` is.
+ */
+type ThemedRecipeFunction<Theme, Props, Result> =
+  Partial<Props> extends Props
+    ? (theme: Theme, props?: Props) => Result
+    : (theme: Theme, props: Props) => Result;
+
+/**
  * A recipe whose styles are built from a theme: a function that returns
  * the styles of a selection of variants in a theme, with `withTheme`, which
  * returns the recipe of one theme.
@@ -45,9 +54,7 @@ type ThemedRecipe<
   Props,
   Result,
   Composition = unknown,
-> = (Partial<Props> extends Props
-  ? (theme: Theme, props?: Props) => Result
-  : (theme: Theme, props: Props) => Result) & {
+> = ThemedRecipeFunction<Theme, Props, Result> & {
   /**
    * Returns the recipe of `theme`, the same recipe for the same theme
    * object, with its variants listed in `variantKeys`, `variantOptions`,
@@ -114,7 +121,7 @@ interface ThemedRecipeCreators<Theme extends object> {
   ) => ComposedThemedRecipe<
     Theme,
     ComposedVariants<Composed, Variants>,
-    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
     RecipeStyle<Variants, Base, Compounds, Composed>,
     undefined
   >;
@@ -158,7 +165,7 @@ interface ThemedRecipeCreators<Theme extends object> {
   ) => ComposedThemedRecipe<
     Theme,
     ComposedVariants<Composed, Variants>,
-    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
     // Not ComposedSlot, which declarations print with each composed type.
     RecipeSlotStyles<
       | Slot

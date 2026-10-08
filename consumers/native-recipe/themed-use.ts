@@ -14,6 +14,7 @@ import {
   defineThemed,
   defineThemedAsCreated,
   themed,
+  withThemedDense,
 } from "./themed-define";
 import type { Palette } from "./themed-define";
 
@@ -60,6 +61,12 @@ const panel = defineComposedSlots({
   variants: { dense: { true: { body: { padding: 4 }, root: { margin: 0 } } } },
 });
 
+const denseChip = withThemedDense(lightChip);
+const denseChipStyle: NativeStyle = denseChip(palette, {
+  dense: true,
+  size: "md",
+});
+
 type LightChipVariants = VariantsOf<typeof lightChip>;
 
 const badgeStyle: StyleProp<ViewStyle> = badge(palette);
@@ -78,6 +85,8 @@ export {
   card,
   chip,
   chipStyle,
+  denseChip,
+  denseChipStyle,
   lightChip,
   lightChipStyle,
   lightCard,

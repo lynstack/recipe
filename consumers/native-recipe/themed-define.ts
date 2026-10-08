@@ -1,4 +1,5 @@
 import type {
+  ComposableKindRecipe,
   ComposableKindSlotRecipe,
   ComposedVariants,
   NativeStyle,
@@ -81,5 +82,29 @@ function defineComposedSlots<
   return createSlotStyleRecipe(config);
 }
 
-export { defineComposedSlots, defineThemed, defineThemedAsCreated, themed };
+/** Adds a themed dense variant to any recipe, as a library's helper does. */
+function withThemedDense<const Base extends ComposableKindRecipe<NativeStyle>>(
+  base: Base,
+): ReturnType<
+  typeof themed.createStyleRecipe<
+    { readonly dense: { readonly true: { readonly borderRadius: number } } },
+    never,
+    readonly [],
+    never,
+    readonly [Base]
+  >
+> {
+  return themed.createStyleRecipe((theme) => ({
+    composes: [base],
+    variants: { dense: { true: { borderRadius: theme.radius } } },
+  }));
+}
+
+export {
+  defineComposedSlots,
+  defineThemed,
+  defineThemedAsCreated,
+  themed,
+  withThemedDense,
+};
 export type { Palette };

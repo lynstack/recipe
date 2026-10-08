@@ -202,11 +202,62 @@ declare const panel: ((props?: {
         };
     }, never, NativeStyle, readonly ("body" | "footer" | "root" | "title")[]> | undefined;
 };
+declare const denseChip: ((theme: Palette, props: {
+    readonly dense?: import("@lynstack/native-recipe").VariantOption<{
+        readonly true: {
+            readonly borderRadius: number;
+        };
+    }> | undefined;
+    readonly round?: import("@lynstack/native-recipe").VariantOption<{
+        readonly true: {
+            readonly borderRadius: 999;
+        };
+    }> | undefined;
+    readonly size: "md";
+}) => {
+    readonly borderRadius?: number | undefined;
+    readonly height?: 40 | undefined;
+}) & {
+    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
+        readonly dense?: import("@lynstack/native-recipe").VariantOption<{
+            readonly true: {
+                readonly borderRadius: number;
+            };
+        }> | undefined;
+        readonly round?: import("@lynstack/native-recipe").VariantOption<{
+            readonly true: {
+                readonly borderRadius: 999;
+            };
+        }> | undefined;
+        readonly size: "md";
+    }, {
+        readonly borderRadius?: number | undefined;
+        readonly height?: 40 | undefined;
+    }, import("@lynstack/native-recipe").RecipeComposition<{
+        readonly dense: {
+            readonly true: {
+                readonly borderRadius: number;
+            };
+        };
+        readonly round: {
+            readonly true: {
+                readonly borderRadius: 999;
+            };
+        };
+        readonly size: {
+            readonly md: {
+                readonly borderRadius: number;
+                readonly height: 40;
+            };
+        };
+    }, never, NativeStyle, undefined>>;
+};
+declare const denseChipStyle: NativeStyle;
 type LightChipVariants = VariantsOf<typeof lightChip>;
 declare const badgeStyle: StyleProp<ViewStyle>;
 declare const chipStyle: StyleProp<ViewStyle>;
 declare const lightChipStyle: NativeStyle;
 declare const lightCardStyles: SlotStyles<"footer" | "root" | "title">;
 declare const panelStyles: SlotStyles<"body" | "footer" | "root" | "title">;
-export { badge, badgeStyle, card, chip, chipStyle, lightChip, lightChipStyle, lightCard, lightCardStyles, panel, panelStyles, };
+export { badge, badgeStyle, card, chip, chipStyle, denseChip, denseChipStyle, lightChip, lightChipStyle, lightCard, lightCardStyles, panel, panelStyles, };
 export type { LightChipVariants };
