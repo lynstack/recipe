@@ -1,18 +1,37 @@
 ---
-title: Exporting recipes from a library
-description: "Export native-recipe recipes from a library that emits declarations, and annotate them with StyleRecipeOf, SlotStyleRecipeOf, and their themed forms under isolatedDeclarations."
+title: Exporting and wrapping recipes
+description: "Export native-recipe recipes from a library that emits declarations, annotate them with StyleRecipeOf, SlotStyleRecipeOf, and their themed forms under isolatedDeclarations, and type a function of your own that creates recipes."
 sidebar:
   label: Exporting recipes
 head:
   - tag: title
-    content: "Exporting recipes from a library with native-recipe | lynstack recipe"
+    content: "Exporting and wrapping recipes with native-recipe | lynstack recipe"
 ---
 
 import RecipeExample from "../../../components/RecipeExample.astro";
 
 A library of components often keeps a recipe in one module and composes
 it in others. Each module then exports a recipe, and the library's
-declarations hold its type.
+declarations hold its type. A library may also create its recipes with a
+function of its own, which passes each config on to the recipe creator.
+
+:::note[Do you need this page?]
+
+- A config written inside `createStyleRecipe(…)` or
+  `createSlotStyleRecipe(…)`, in an app that does not emit declarations:
+  no. See [Typing recipes](/recipe/native-recipe/typescript/).
+- A config declared before the call: declare it `as const`, as
+  [A config declared before the call](/recipe/native-recipe/typescript/#a-config-declared-before-the-call)
+  explains.
+- A module that exports a recipe and emits declarations: see
+  [With `declaration`](#with-declaration), which needs nothing more.
+- A project that sets `isolatedDeclarations`: annotate each exported
+  recipe, as [With `isolatedDeclarations`](#with-isolateddeclarations)
+  shows.
+- A function of yours that takes a config and returns its recipe: see
+  [Wrap recipes in a function](#wrap-recipes-in-a-function).
+
+:::
 
 ## With `declaration`
 
@@ -21,6 +40,11 @@ A module that exports a recipe needs nothing more than
 types that native-recipe exports, such as `RecipeComposition`. The
 library depends on `@lynstack/native-recipe` only, even when its package
 manager, such as pnpm, keeps `@lynstack/recipe` out of its reach.
+
+Before 1.6.0, such a module failed with TS2883 (TS2742 before
+TypeScript 7), which says that the inferred type of the recipe cannot be
+named without a reference to `@lynstack/recipe`. Update native-recipe to
+fix it.
 
 ## With `isolatedDeclarations`
 
@@ -68,7 +92,7 @@ such as one that takes `config: Config` and returns
 config, and TypeScript cannot infer them from a config whose type is a
 type parameter. Make such a function generic over the variants instead,
 as
-[A function generic over a config](/recipe/native-recipe/typescript/#a-function-generic-over-a-config)
+[A function generic over a config](#a-function-generic-over-a-config)
 shows.
 
 ### Themed recipes
@@ -120,10 +144,96 @@ assertions as unneeded, since the type checker knows the type of each
 token. Isolated declarations need them: keep them, and turn the rule off
 for the files that declare themed recipes.
 
+## Wrap recipes in a function
+
+A function of yours that creates recipes, such as a helper that a library
+gives its users, is generic over the variants of the config, not over the
+whole config.
+
+### A function generic over a config
+
+Type the variants and the names with a default as `const` type
+parameters, and the recipe as a `StyleRecipe` of their
+`VariantSelection`:
+
+```ts
+import { createStyleRecipe } from "@lynstack/native-recipe";
+import type {
+  NativeStyle,
+  StyleRecipe,
+  StyleRecipeConfig,
+  StyleRecipeVariants,
+  VariantSelection,
+} from "@lynstack/native-recipe";
+
+function define<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof Variants = never,
+>(
+  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
+): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
+  return createStyleRecipe(config);
+}
+```
+
+A slot recipe's helper does the same with `SlotStyleRecipeConfig`, and
+returns a `SlotStyleRecipe` of `SlotStyles<Slot>`.
+
+### When the configs compose recipes
+
+`define` takes no `composes`: its `StyleRecipe` has the variants of its
+own config only, and other recipes cannot compose it. A helper whose
+configs compose recipes takes the recipes as a type parameter, and
+returns the type of `createStyleRecipe` for its type parameters, which
+has the variants and defaults of the recipes it composes. Leave `Base` as
+`never`, as `createStyleRecipe` does, so that the style it returns has
+the properties of the config:
+
+```ts
+import { createStyleRecipe } from "@lynstack/native-recipe";
+import type {
+  ComposableKindRecipe,
+  ComposedVariants,
+  NativeStyle,
+  StyleRecipeConfig,
+  StyleRecipeVariants,
+} from "@lynstack/native-recipe";
+
+function defineComposed<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
+    readonly [],
+>(
+  config: StyleRecipeConfig<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >,
+): ReturnType<
+  typeof createStyleRecipe<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >
+> {
+  return createStyleRecipe(config);
+}
+```
+
+A function that takes a recipe rather than a config, such as one that
+lists the options of each variant for a story, is typed in
+[A function that takes any recipe](/recipe/native-recipe/typescript/#a-function-that-takes-any-recipe).
+
 ## Next steps
 
 - [Composing recipes](/recipe/native-recipe/composing/) explains how the
   configs of composed recipes merge.
 - [Typing recipes](/recipe/native-recipe/typescript/) types component
-  props from a recipe.
+  props from a recipe, and a config declared before the call.
 - [All exports](/recipe/native-recipe/exports/) lists every type.

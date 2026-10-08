@@ -6,11 +6,25 @@ sidebar:
 ---
 
 The types are inferred from the config: write the config inline, or
-declare it with `as const`, and pass it to the recipe creator. This holds
-for the `slots` of a slot recipe too: a list declared before the call
-without `as const` is a `string[]`, so the slot recipe takes any slot
-name, and a misspelled slot in `base`, in the variants, or in the result
-is not an error.
+declare it with `as const`, and pass it to the recipe creator. A library
+that exports its recipes, or sets `isolatedDeclarations`, also needs
+[Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/).
+
+## A config declared before the call
+
+Declare a config before the call `as const`, so that the options named
+in its compound and default variants stay literal types. This holds for the `slots` of a slot recipe
+too: a list declared before the call without `as const` is a `string[]`,
+so the slot recipe takes any slot name, and a misspelled slot in `base`,
+in the variants, or in the result is not an error.
+
+TypeScript checks a declared config less than one written in the call:
+it reports a name that a type does not declare only in an object written
+where that type is expected. In a declared config, a misspelled variant
+name next to a correct one in the variants that a compound variant names
+is not an error, and the compound variant never applies. Write the
+config in the call when nothing needs it declared, and test the styles of
+a declared config.
 
 ## Checked styles
 
@@ -161,77 +175,9 @@ function createCard(variants: SlotStyleRecipeVariants) {
 
 ## A function generic over a config
 
-A library's own helper can take any config and return its recipe. Type
-the variants and the names with a default as `const` type parameters,
-and the recipe as a `StyleRecipe` of their `VariantSelection`:
-
-```ts
-import { createStyleRecipe } from "@lynstack/native-recipe";
-import type {
-  NativeStyle,
-  StyleRecipe,
-  StyleRecipeConfig,
-  StyleRecipeVariants,
-  VariantSelection,
-} from "@lynstack/native-recipe";
-
-function define<
-  const Variants extends StyleRecipeVariants,
-  const DefaultedName extends keyof Variants = never,
->(
-  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
-): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
-  return createStyleRecipe(config);
-}
-```
-
-A slot recipe's helper does the same with `SlotStyleRecipeConfig`, and
-returns a `SlotStyleRecipe` of `SlotStyles<Slot>`.
-
-`define` takes no `composes`: its `StyleRecipe` has the variants of its
-own config only, and other recipes cannot compose it. A helper whose
-configs compose recipes takes the recipes as a type parameter, and
-returns the type of `createStyleRecipe` for its type parameters, which
-has the variants and defaults of the recipes it composes. Leave `Base` as
-`never`, as `createStyleRecipe` does, so that the style it returns has
-the properties of the config:
-
-```ts
-import { createStyleRecipe } from "@lynstack/native-recipe";
-import type {
-  ComposableKindRecipe,
-  ComposedVariants,
-  NativeStyle,
-  StyleRecipeConfig,
-  StyleRecipeVariants,
-} from "@lynstack/native-recipe";
-
-function defineComposed<
-  const Variants extends StyleRecipeVariants,
-  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
-    never,
-  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
-    readonly [],
->(
-  config: StyleRecipeConfig<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >,
-): ReturnType<
-  typeof createStyleRecipe<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >
-> {
-  return createStyleRecipe(config);
-}
-```
+A function of yours that takes a config and returns its recipe is typed
+in
+[Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#a-function-generic-over-a-config).
 
 ## A function that takes any recipe
 
@@ -271,8 +217,9 @@ an image. Use it to type a style that can come from any recipe.
 
 ## Next steps
 
-- [Exporting recipes from a library](/recipe/native-recipe/exporting-recipes/)
-  annotates exported recipes for `isolatedDeclarations`.
+- [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/)
+  annotates exported recipes for `isolatedDeclarations`, and types a
+  function that creates recipes.
 - [All exports](/recipe/native-recipe/exports/) lists every type, with
   its type parameters.
 - [Building components](/recipe/native-recipe/building-components/) uses
