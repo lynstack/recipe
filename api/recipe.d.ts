@@ -23,8 +23,14 @@ interface RecipeKind<Value, Accumulator, Result> {
   readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
   readonly cache?: boolean | undefined;
 }
+//#endregion
+//#region src/unknown-slots.d.ts
 type NoUnknownSlots<Variants, Slot extends string> = NoUnknownComposedSlots<Variants, Slot, never>;
-type NoUnknownComposedSlots<Variants, Slot extends string, InheritedSlot extends string> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Partial<Record<Exclude<Exclude<keyof Variants[Name][Option], Slot>, InheritedSlot>, never>>>; }; };
+interface UnknownSlot<Name, Slot extends string> {
+  readonly "~unknownSlot": Name;
+  readonly "~slots": Slot;
+}
+type NoUnknownComposedSlots<Variants, Slot extends string, InheritedSlot extends string> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : { readonly [Unknown in Exclude<Exclude<keyof Variants[Name][Option], Slot>, InheritedSlot>]?: UnknownSlot<Unknown, Slot | InheritedSlot>; }; }; };
 //#endregion
 //#region src/slot-recipe-kind.d.ts
 type SlotValues<Slot extends string, Value> = { readonly [Name in Slot]?: Value | undefined; };

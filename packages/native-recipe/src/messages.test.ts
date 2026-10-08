@@ -79,3 +79,16 @@ describe("the error messages of a style recipe", () => {
     ]);
   });
 });
+
+describe("the error messages of a slot style recipe", () => {
+  it("names a slot that an option gives and the slots", () => {
+    expect(
+      errorsIn(`createSlotStyleRecipe({
+  slots: ["root", "label"],
+  variants: { size: { sm: { root: {}, lable: { fontSize: 12 } } } },
+});`),
+    ).toStrictEqual([
+      `Type '{ fontSize: 12; }' is not assignable to type '{ readonly fontSize: 12; } & UnknownSlot<"lable", "label" | "root">'.`,
+    ]);
+  });
+});

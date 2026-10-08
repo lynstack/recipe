@@ -37,7 +37,6 @@ export type {
 export type {
   CompoundCondition,
   DefaultVariants,
-  NoUnknownSlots,
   RecipeFunction,
   RecipeKind,
   VariantKey,
@@ -46,3 +45,4 @@ export type {
   VariantsOf,
 } from "./types.js";
 export type { KindSelection } from "./kind-selection.js";
+export type { NoUnknownSlots } from "./unknown-slots.js";

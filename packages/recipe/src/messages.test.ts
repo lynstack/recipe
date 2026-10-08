@@ -85,3 +85,16 @@ recipe({ composes: [base], variants: { tone: { muted: {} } } })({ tone: "loud" }
     ]);
   });
 });
+
+describe("the error messages of a slot recipe", () => {
+  it("names a slot that an option gives and the slots", () => {
+    expect(
+      errorsIn(`slotRecipe({
+  slots: ["root", "label"],
+  variants: { size: { sm: { root: { opacity: 1 }, lable: { opacity: 1 } } } },
+});`),
+    ).toStrictEqual([
+      `Type '{ opacity: 1; }' is not assignable to type '{ readonly opacity: 1; } & UnknownSlot<"lable", "label" | "root">'.`,
+    ]);
+  });
+});

@@ -12,6 +12,11 @@ tagged `recipe@<version>`.
 - Editors and error messages show the values a variant accepts by name,
   such as `"sm" | "md"`, rather than as `VariantOption<…>` of its
   options' values, and so do the declarations of exported recipes.
+- A slot that an option of a slot recipe's variants names without
+  declaring it is an error that names it and the recipe's slots, as
+  `UnknownSlot<"lable", "label" | "root">`. Before, the error said
+  "not assignable to type 'never'", and also marked the other slots of
+  the option.
 
 ## 1.8.0 — 2026-10-08
 

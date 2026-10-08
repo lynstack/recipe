@@ -78,6 +78,15 @@ type SlotStyles<Slot extends string> = Readonly<
 >;
 
 /**
+ * The type of a slot name that names no slot, `Name`, among the slots
+ * `Slot`: no style is assignable to it, so an error names both.
+ */
+interface UnknownSlot<Name, Slot extends string> {
+  readonly "~unknownSlot": Name;
+  readonly "~slots": Slot;
+}
+
+/**
  * Rejects the slots and style properties of an option's styles that the
  * slot recipe does not have, unless the option's slot names are not known
  * at compile time. A recipe's own slots, `Slot`, are matched before those
@@ -98,7 +107,7 @@ type NoUnknownSlotStyles<
         ? NoUnknownProperties<NonNullable<Styles[Name]>>
         : Name extends Inherited
           ? NoUnknownProperties<NonNullable<Styles[Name]>>
-          : never;
+          : UnknownSlot<Name, Slot | Inherited>;
     } & {
       readonly [
         Name in Exclude<Slot | Inherited, keyof typeof Object.prototype>
@@ -140,11 +149,11 @@ type NoUnknownCompoundStyles<
 > =
   string extends KeyOfEach<Styles>
     ? SlotStyles<string>
-    : Readonly<
-        Partial<
-          Record<Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>, never>
-        >
-      > & {
+    : {
+        readonly [
+          Unknown in Exclude<Exclude<KeyOfEach<Styles>, Slot>, Inherited>
+        ]?: UnknownSlot<Unknown, Slot | Inherited>;
+      } & {
         readonly [Name in Slot | Inherited]?: NoUnknownProperties<
           DeclaredStyle<Styles, Name>
         >;

@@ -67,3 +67,16 @@ cva({ composes: [base], variants: { tone: { muted: "bg-gray-50" } } })({ tone: "
     ]);
   });
 });
+
+describe("the error messages of a slot recipe", () => {
+  it("names a slot that an option gives and the slots", () => {
+    expect(
+      errorsIn(`sva({
+  slots: ["root", "label"],
+  variants: { size: { sm: { root: "p-2", lable: "text-sm" } } },
+});`),
+    ).toStrictEqual([
+      `Type '"text-sm"' is not assignable to type '"text-sm" & UnknownSlot<"lable", "label" | "root">'.`,
+    ]);
+  });
+});

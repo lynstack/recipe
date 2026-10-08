@@ -24,7 +24,11 @@ type PropsOf<Recipe extends (props: never) => unknown> = Simplify<NonNullable<Pa
 type OptionsOnly<Variants> = { [Name in keyof Variants]: Exclude<Variants[Name], object>; };
 type SlotClasses<Slot extends string> = { readonly [Name in Slot]?: string | undefined; };
 type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
-type NoUnknownSlots<Variants, Slot extends string, Inherited extends string = never> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : Readonly<Record<Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>, never>> & SlotClasses<Exclude<Slot | Inherited, keyof typeof Object.prototype>>; }; };
+interface UnknownSlot<Name, Slot extends string> {
+  readonly "~unknownSlot": Name;
+  readonly "~slots": Slot;
+}
+type NoUnknownSlots<Variants, Slot extends string, Inherited extends string = never> = { readonly [Name in keyof Variants]: { readonly [Option in keyof Variants[Name]]: string extends keyof Variants[Name][Option] ? unknown : { readonly [Unknown in Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>]: UnknownSlot<Unknown, Slot | Inherited>; } & SlotClasses<Exclude<Slot | Inherited, keyof typeof Object.prototype>>; }; };
 type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [DefaultedName] extends [never] ? { readonly [Name in keyof Variants]?: VariantOption$1<NoInfer<Variants>[Name]>; } : DefaultVariants$1<Variants, DefaultedName>;
 type InheritedSlot<Composed extends readonly ComposableKindSlotRecipe$1<string>[]> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 type WideSelection<Slot extends string> = Readonly<Record<string, string | SlotClasses<Slot> | undefined>>;

@@ -21,6 +21,10 @@ published on npm and as a
 - Editors and error messages show the values a variant accepts by name,
   such as `"sm" | "md"`, rather than as `VariantOption<…>` of its
   options' styles, and so do the declarations of exported recipes.
+- A slot that `base` or an option of a slot style recipe names without
+  declaring it is an error that names it and the recipe's slots, as
+  `UnknownSlot<"lable", "label" | "root">`, instead of "not assignable to
+  type 'never'".
 
 ## 1.7.0 — 2026-10-08
 

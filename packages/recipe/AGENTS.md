@@ -17,9 +17,10 @@ that API.
   `composition.ts`, the types of composing recipes, and
   `kind-selection.ts`, the types that accept any selection when the
   variant names are not known and that let an editor complete a config's
-  defaults and slots, and `recipe-of.ts`, the types of the
-  recipe of a config, for `isolatedDeclarations`, hold the public API and
-  its types.
+  defaults and slots, `unknown-slots.ts`, the checks that reject a slot
+  that a slot recipe does not declare, and `recipe-of.ts`, the types of
+  the recipe of a config, for `isolatedDeclarations`, hold the public API
+  and its types.
 - The other modules are internal:
   - `check-config.ts` checks the shape of a config when a recipe is
     created, so that a config from untyped code fails with a message

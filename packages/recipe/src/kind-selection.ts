@@ -1,10 +1,10 @@
 import type {
   CompoundCondition,
   DefaultVariants,
-  NoUnknownComposedSlots,
   VariantOption,
   VariantSelection,
 } from "./types.js";
+import type { NoUnknownComposedSlots } from "./unknown-slots.js";
 import type { SlotValues } from "./slot-recipe-kind.js";
 
 /**

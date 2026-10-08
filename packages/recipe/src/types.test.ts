@@ -9,12 +9,8 @@ import type {
   KindSlotRecipeConfig,
   KindSlotVariants,
 } from "./slot-recipe-kind.js";
-import type {
-  NoUnknownSlots,
-  VariantKey,
-  VariantSelection,
-  VariantsOf,
-} from "./types.js";
+import type { NoUnknownSlots, UnknownSlot } from "./unknown-slots.js";
+import type { VariantKey, VariantSelection, VariantsOf } from "./types.js";
 import type { KindSelection } from "./kind-selection.js";
 import { createRecipeKind } from "./recipe-kind.js";
 import { createSlotRecipeKind } from "./slot-recipe-kind.js";
@@ -118,7 +114,7 @@ describe("the slots a slot recipe's variants name", () => {
       NoUnknownSlots<{ size: { sm: { title: Style } } }, "root">
     >().toEqualTypeOf<{
       readonly size: {
-        readonly sm: Readonly<Partial<Record<"title", never>>>;
+        readonly sm: { readonly title?: UnknownSlot<"title", "root"> };
       };
     }>();
   });

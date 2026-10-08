@@ -135,6 +135,15 @@ type SlotClasses<Slot extends string> = {
 type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 
 /**
+ * The type of a slot name that names no slot, `Name`, among the slots
+ * `Slot`: no classes are assignable to it, so an error names both.
+ */
+interface UnknownSlot<Name, Slot extends string> {
+  readonly "~unknownSlot": Name;
+  readonly "~slots": Slot;
+}
+
+/**
  * Rejects the slots of each option's classes that neither `Slot` nor
  * `Inherited` names, unless the option's slot names are not known at
  * compile time, and lists every slot, so that an editor completes their
@@ -153,13 +162,16 @@ type NoUnknownSlots<
       Option in keyof Variants[Name]
     ]: string extends keyof Variants[Name][Option]
       ? unknown
-      : Readonly<
-          Record<
-            Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>,
-            never
-          >
-        > &
-          SlotClasses<Exclude<Slot | Inherited, keyof typeof Object.prototype>>;
+      : {
+          readonly [
+            Unknown in Exclude<
+              Exclude<keyof Variants[Name][Option], Slot>,
+              Inherited
+            >
+          ]: UnknownSlot<Unknown, Slot | Inherited>;
+        } & SlotClasses<
+          Exclude<Slot | Inherited, keyof typeof Object.prototype>
+        >;
   };
 };
 
