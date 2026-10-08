@@ -85,12 +85,14 @@ createStyleRecipe((theme) => ({
 }));
 
 // Wrong: the branch is around the variant, so one theme has no `outlined`.
-// TypeScript reports an error here.
-createStyleRecipe((theme) => ({
+const box = createStyleRecipe((theme) => ({
   variants: theme.highContrast
     ? {}
     : { outlined: { true: { borderWidth: 1 } } },
 }));
+
+// @ts-expect-error: the config compiles, but no call can set `outlined`.
+box(light, { outlined: true });
 ```
 
 ## Calling a themed recipe
