@@ -6,7 +6,7 @@ on:
     paths:
       - packages/*/src/**
       - consumers/**
-      - scripts/consumers.ts
+      - scripts/consumers/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -19,7 +19,7 @@ on:
     paths:
       - packages/*/src/**
       - consumers/**
-      - scripts/consumers.ts
+      - scripts/consumers/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -191,7 +191,7 @@ jobs:
           TYPESCRIPT: ${{ matrix.typescript }}
           REACT_NATIVE: ${{ matrix.react-native }}
         run: >-
-          node scripts/consumers.ts
+          node scripts/consumers/main.ts
           --packages "$RUNNER_TEMP/packages"
           --typescript "$TYPESCRIPT"
           --react-native "$REACT_NATIVE"

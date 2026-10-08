@@ -14,8 +14,10 @@ The docs lead with the short names, `cva` and `sva`.
 
 ## Modules
 
-- `cx.ts`, `recipe.ts`, `slot-recipe.ts`, `create-recipes.ts`, `join.ts`,
-  and `types.ts` hold the public API and its types. `types.ts` re-exports
+- `cx.ts`, `recipe.ts`, `slot-recipe.ts`, `recipe-of.ts`,
+  `create-recipes.ts`, `join.ts`, and `types.ts` hold the public API and
+  its types. `recipe-of.ts` holds `RecipeOf` and `SlotRecipeOf`, which
+  type a recipe from the type of its config. `types.ts` re-exports
   the shared types of `@lynstack/recipe`.
 - The other modules are internal, and use only the public API of
   `@lynstack/recipe`:

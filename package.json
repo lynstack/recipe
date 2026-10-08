@@ -15,7 +15,7 @@
     "test": "pnpm -r test",
     "bench": "pnpm -r --workspace-concurrency=1 bench",
     "measure": "pnpm build && node scripts/measure/main.ts",
-    "consumers": "node scripts/consumers.ts",
+    "consumers": "node scripts/consumers/main.ts",
     "docs:dev": "pnpm --filter docs dev",
     "docs:build": "pnpm --filter docs build"
   },

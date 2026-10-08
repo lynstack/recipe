@@ -269,6 +269,7 @@ const cva: CreateRecipe = createRecipe;
 
 export { createRecipe, cva, makeCreateRecipe };
 export type {
+  ComposedRecipe,
   CompoundVariant,
   CreateRecipe,
   Recipe,

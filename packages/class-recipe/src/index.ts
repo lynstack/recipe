@@ -27,6 +27,7 @@ export type {
   SlotRecipeConfig,
   SlotRecipeVariants,
 } from "./slot-recipe.js";
+export type { RecipeOf, SlotRecipeOf } from "./recipe-of.js";
 export type {
   ComposedSlot,
   CompoundCondition,

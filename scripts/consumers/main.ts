@@ -4,7 +4,8 @@
  * compiles it with declarations. Inside the workspace, pnpm links the
  * package folders, whose types TypeScript can always name; an app that
  * installs the packages can name only the types that its own dependencies
- * export.
+ * export. It also checks that the declarations of the slot recipes of an
+ * app's `chain.ts` grow linearly with the level of composition.
  *
  * Options:
  * - `--packages <folder>`: the tarballs to install. Without it, the
@@ -18,33 +19,27 @@
 import {
   cpSync,
   mkdtempSync,
-  readFileSync,
   readdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { execFileSync, spawnSync } from "node:child_process";
 import type { Dirent } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import os from "node:os";
 import { parseArgs } from "node:util";
 import path from "node:path";
 
-type Dependencies = Readonly<Record<string, string>>;
+import type { Dependencies, Manifest } from "./manifest.ts";
+import {
+  compiles,
+  growsLinearly,
+  hasIsolatedDeclarations,
+  withoutIsolatedDeclarations,
+} from "./compile.ts";
+import { isDependencies, parseJson, readManifest } from "./manifest.ts";
 
-/** The dependencies of an app, as its `package.json` lists them. */
-interface Manifest {
-  readonly dependencies: Dependencies;
-  readonly devDependencies: Dependencies;
-}
-
-/**
- * How much larger a declaration two levels of composition deeper may be,
- * at most, when declarations grow linearly with the level.
- */
-const LINEAR_GROWTH = 2;
-
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = fileURLToPath(new URL("../../", import.meta.url));
 const consumers = path.join(root, "consumers");
 
 const { values: options } = parseArgs({
@@ -54,35 +49,6 @@ const { values: options } = parseArgs({
     typescript: { type: "string" },
   },
 });
-
-function isDependencies(value: unknown): value is Dependencies {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    Object.values(value).every((range: unknown) => typeof range === "string")
-  );
-}
-
-function dependenciesField(value: unknown, key: string): Dependencies {
-  const dependencies: unknown =
-    typeof value === "object" && value !== null
-      ? Object.getOwnPropertyDescriptor(value, key)?.value
-      : undefined;
-  return isDependencies(dependencies) ? dependencies : {};
-}
-
-function parseJson(text: string): unknown {
-  const value: unknown = JSON.parse(text);
-  return value;
-}
-
-function readManifest(file: string): Manifest {
-  const value = parseJson(readFileSync(file, "utf8"));
-  return {
-    dependencies: dependenciesField(value, "dependencies"),
-    devDependencies: dependenciesField(value, "devDependencies"),
-  };
-}
 
 function run(command: string, args: readonly string[], cwd: string): void {
   execFileSync(command, args, { cwd, stdio: "inherit" });
@@ -177,14 +143,14 @@ function dependenciesOf(
   return withReactNative(name, dependencies, ["react", "react-native"]);
 }
 
+/** The TypeScript that the apps compile with. */
+const typescript =
+  options.typescript ??
+  readManifest(path.join(root, "package.json")).devDependencies["typescript"] ??
+  "";
+
 /** The development dependencies of the app `name`. */
 function devDependenciesOf(name: string, manifest: Manifest): Dependencies {
-  const typescript =
-    options.typescript ??
-    readManifest(path.join(root, "package.json")).devDependencies[
-      "typescript"
-    ] ??
-    "";
   return withReactNative(name, { ...manifest.devDependencies, typescript }, [
     "@types/react",
   ]);
@@ -224,44 +190,11 @@ function install(
     path.join(app, "pnpm-workspace.yaml"),
     workspaceSettings(tarballs),
   );
+  if (!hasIsolatedDeclarations(typescript)) {
+    withoutIsolatedDeclarations(app);
+  }
   run("pnpm", ["install", "--no-frozen-lockfile", "--ignore-scripts"], app);
   return app;
-}
-
-/** Whether the app in `app` compiles. */
-function compiles(app: string): boolean {
-  return (
-    spawnSync("pnpm", ["exec", "tsc", "-p", "tsconfig.json"], {
-      cwd: app,
-      stdio: "inherit",
-    }).status === 0
-  );
-}
-
-/** The declaration of the constant `name` in the declarations `text`. */
-function declarationOf(text: string, name: string): string {
-  const declaration = text
-    .split(/^(?=declare const |export )/mu)
-    .find((part: string) => part.startsWith(`declare const ${name}:`));
-  if (declaration === undefined) {
-    throw new Error(`The declarations have no constant named ${name}.`);
-  }
-  return declaration;
-}
-
-/**
- * Whether the declarations of the recipes of `chain.ts`, each of which
- * composes the one before, grow linearly with their level. The recipe four
- * levels deep then takes less than twice the declaration of the one two
- * levels deep; a type that repeats the types of the recipes it composes
- * takes at least four times.
- */
-function growsLinearly(app: string): boolean {
-  const text = readFileSync(path.join(app, "out", "chain.d.ts"), "utf8");
-  return (
-    declarationOf(text, "level4").length <
-    LINEAR_GROWTH * declarationOf(text, "level2").length
-  );
 }
 
 /**

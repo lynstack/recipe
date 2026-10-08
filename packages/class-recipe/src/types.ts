@@ -28,6 +28,16 @@ type InheritedDefaultedName<
   keyof ComposedVariants<Composed, Variants>
 >;
 
+/**
+ * The names of the variants with a default in a config of type `Config`:
+ * the keys of its `defaultVariants`.
+ */
+type DefaultedNameOf<Config> = Config extends {
+  readonly defaultVariants: infer Defaults;
+}
+  ? keyof Defaults
+  : never;
+
 /** The props of a recipe that override its classes, which are not variants. */
 type OverrideName = "className" | "classNames";
 
@@ -180,6 +190,7 @@ export type {
   VariantSelection,
 } from "@lynstack/recipe";
 export type {
+  DefaultedNameOf,
   InheritedDefaultedName,
   NoUnknownSlots,
   PropsOf,

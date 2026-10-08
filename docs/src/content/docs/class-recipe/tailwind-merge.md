@@ -1,6 +1,8 @@
 ---
 title: Resolving conflicts with tailwind-merge
 description: "Resolve conflicting Tailwind classes with a join function such as twMerge, which class-recipe runs once per selection rather than on every call."
+sidebar:
+  label: Merging classes
 ---
 
 Do you need tailwind-merge? No, if your recipes are conflict-free (see

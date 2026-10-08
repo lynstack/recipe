@@ -50,6 +50,8 @@ and of the recipe from the config you pass.
 | `SlotRecipeVariants`  | None                                        | The variants of a slot recipe's config, with any names: for each variant name, the classes of each slot for each option. | [Typing recipes](/recipe/class-recipe/typescript/#variant-names-not-known-in-advance)      |
 | `SlotCompoundVariant` | `<Slot, Variants>`                          | A compound variant of a slot recipe: `{ variants, classNames }`.                                                         | [sva](/recipe/class-recipe/sva/#a-compound-variant)                                        |
 | `CreateSlotRecipe`    | None                                        | The type of `sva` and `createSlotRecipe`.                                                                                | [sva](/recipe/class-recipe/sva/#signature)                                                 |
+| `RecipeOf`            | `<Config, Composed>`                        | The type of the recipe that `cva` returns for a config declared `as const`. Annotates an exported recipe.                | [Exporting recipes](/recipe/class-recipe/exporting-recipes/)                               |
+| `SlotRecipeOf`        | `<Config, Composed>`                        | The type of the slot recipe that `sva` returns for a config declared `as const`. Annotates an exported slot recipe.      | [Exporting recipes](/recipe/class-recipe/exporting-recipes/)                               |
 | `Recipes`             | None                                        | The functions that `createRecipes` returns, all sharing one join and cache setting.                                      | [createRecipes](/recipe/class-recipe/create-recipes/#what-it-returns)                      |
 | `RecipesOptions`      | None                                        | The options of `createRecipes`.                                                                                          | [createRecipes](/recipe/class-recipe/create-recipes/#options)                              |
 | `ClassJoin`           | None                                        | `(...classNames: readonly string[]) => string`: combines class strings into the class name, such as `cx` or `twMerge`.   | [createRecipes](/recipe/class-recipe/create-recipes/#the-join-function)                    |
@@ -57,9 +59,9 @@ and of the recipe from the config you pass.
 In these type parameters, `Variants` is the type of a config's
 `variants`, `DefaultedName` the names of the variants that have a default,
 `Slot` the names of the slots, `Props` the props a recipe accepts, and
-`Composed` the types of the recipes in `composes`. `Composition` is what a
-recipe passes on to the recipes that compose it; it exists in the types
-only.
+`Composed` the types of the recipes in `composes`, and `Config` the type
+of a config. `Composition` is what a recipe passes on to the recipes that
+compose it; it exists in the types only.
 
 ## Types shared with the engine
 

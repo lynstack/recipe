@@ -175,5 +175,8 @@ recipes of other values, build on the types of
 
 - [Building components](/recipe/class-recipe/building-components/) uses
   these types in components.
+- [Exporting recipes from a library](/recipe/class-recipe/exporting-recipes/)
+  annotates exported recipes with `RecipeOf` and `SlotRecipeOf`, for
+  `isolatedDeclarations`.
 - [All exports](/recipe/class-recipe/exports/) lists every type.
 - [FAQ](/recipe/class-recipe/faq/) answers common type errors.

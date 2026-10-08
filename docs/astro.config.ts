@@ -132,14 +132,12 @@ export default defineConfig({
               {
                 items: [
                   "class-recipe/conflict-free-recipes",
-                  {
-                    label: "Merging classes",
-                    slug: "class-recipe/tailwind-merge",
-                  },
+                  "class-recipe/tailwind-merge",
                   "class-recipe/building-components",
                   "class-recipe/shadcn-ui",
                   "class-recipe/frameworks",
                   { label: "Typing recipes", slug: "class-recipe/typescript" },
+                  "class-recipe/exporting-recipes",
                 ],
                 label: "Guides",
               },

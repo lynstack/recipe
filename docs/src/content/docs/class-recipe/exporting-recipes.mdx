@@ -1,0 +1,84 @@
+---
+title: Exporting recipes from a library
+description: "Export class-recipe recipes from a library that emits declarations: what TypeScript needs to name their types, and how RecipeOf and SlotRecipeOf annotate them with isolatedDeclarations."
+sidebar:
+  label: Exporting recipes
+head:
+  - tag: title
+    content: "Exporting recipes from a library with class-recipe | lynstack recipe"
+---
+
+import RecipeExample from "../../../components/RecipeExample.astro";
+
+A library of components often keeps a recipe in one module and composes
+it in others. For example, a base look for every button-like element
+lives in one module, and the button, the toggle, and the link compose
+it. Each module then exports a recipe, and the library's declarations
+hold its type.
+
+## With `declaration`
+
+A module that exports a recipe needs nothing more than
+`"declaration": true`. TypeScript writes the type of the recipe with the
+types that class-recipe exports, such as `RecipeComposition`. The library
+depends on `@lynstack/class-recipe` only, even when its package manager,
+such as pnpm, keeps `@lynstack/recipe` out of its reach.
+
+## With `isolatedDeclarations`
+
+With `"isolatedDeclarations": true`, TypeScript requires that the
+declarations of each file can be written from that file alone, without
+the type checker, as oxc and the tools built on it, such as tsdown, write
+them. Without the type checker, a tool cannot know what a call returns,
+so each recipe that a module exports needs a type annotation; without
+one, TypeScript reports TS9010.
+
+`SlotRecipeOf` and `RecipeOf` give that type from the type of the config.
+Declare the config `as const`, which isolated declarations can read, and
+annotate the recipe with `typeof` the config:
+
+<RecipeExample
+  name="class-recipe/exporting-recipes/look"
+  calls={[{}, { size: "sm" }]}
+/>
+
+`SlotRecipeOf<typeof lookConfig>` is the type that `sva(lookConfig)`
+returns, the same that TypeScript infers. The modules that use `look`
+see its slots, its variants, and its defaults.
+
+For a recipe of `cva`, use `RecipeOf` in the same way:
+
+```ts
+const pillConfig = {
+  base: "rounded-full px-2 text-xs",
+  variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-100" } },
+} as const;
+
+export const pill: RecipeOf<typeof pillConfig> = cva(pillConfig);
+```
+
+A recipe that a module keeps to itself needs no annotation.
+
+### Compose an exported recipe
+
+Isolated declarations cannot read the type of a recipe that a config
+lists, so leave `composes` out of the config. Spread the config into the
+call with `composes`, and pass the types of the recipes it composes, in
+the same order, as the second type parameter:
+
+<RecipeExample
+  name="class-recipe/exporting-recipes/toggle"
+  calls={[{ pressed: true }, { size: "sm" }]}
+/>
+
+`toggle` accepts the variants of `look` and its own, and has the slots of
+both. `RecipeOf` and `SlotRecipeOf` reject a config that lists
+`composes`, so that the type cannot leave out the recipes it composes.
+
+## Next steps
+
+- [Composing recipes](/recipe/class-recipe/composing/) explains how the
+  configs of composed recipes merge.
+- [Typing recipes](/recipe/class-recipe/typescript/) types component props
+  from a recipe.
+- [All exports](/recipe/class-recipe/exports/) lists every type.

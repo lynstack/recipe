@@ -38,13 +38,15 @@ it before working in that folder.
   that several property tests share sit in `*.arbitraries.ts`, which the
   build leaves out. A benchmark imports its package by its name, so it
   runs against the built bundle, never against the sources directly.
-- `consumers` holds an app of each package, `consumers/<package>`: a
-  private workspace package, with its own `package.json`,
-  `tsconfig.json`, and `.oxlintrc.json`, that depends on that package
+- `consumers` holds an app of each package, `consumers/<package>`, and
+  `consumers/class-recipe-isolated`, a library that emits the
+  declarations of each file on its own, with `isolatedDeclarations`.
+  Each is a private workspace package, with its own `package.json`,
+  `tsconfig.json`, and `.oxlintrc.json`, that depends on its package
   only, as an app does, and exports what it builds with it. Compiling it
   with declarations checks the published types. In the workspace, pnpm
   links the package folder, whose types TypeScript can always name;
-  `scripts/consumers.ts` installs the packed packages in a copy of each
+  `scripts/consumers` installs the packed packages in a copy of each
   app outside the repository, where an app can name only the types that
   its dependencies export. A type of `@lynstack/recipe` that the type of
   a recipe names, such as `RecipeComposition`, must therefore be exported
@@ -59,7 +61,7 @@ it before working in that folder.
   that Node.js runs directly. `scripts/measure` runs the benchmarks of
   each package and saves the raw results, never formatted text, in
   `docs/src/measurements/<package>.json`. It has one module per package,
-  which names the benchmarks that package reports. `scripts/consumers.ts`
+  which names the benchmarks that package reports. `scripts/consumers`
   compiles the apps of `consumers` with the packed packages.
 - `examples` holds an example of each package that readers open in the
   browser, from the Open in StackBlitz or Open in Snack link of its
@@ -100,7 +102,7 @@ checks its formatting, and runs its tests. The `check` of an app of
 Run a package's scripts with `pnpm --filter <name> <script>`, such as
 `pnpm --filter @lynstack/recipe test`, or from its folder. To check a
 package with its app, run
-`pnpm --filter @lynstack/class-recipe --filter class-recipe-consumer check`.
+`pnpm --filter @lynstack/class-recipe --filter "./consumers/class-recipe*" check`.
 
 - `pnpm test` runs the tests of every package.
 - `test:coverage`, in a package, runs its tests and reports coverage. Use
@@ -117,7 +119,8 @@ package with its app, run
   app of `consumers` outside the repository, and compiles it. It also
   checks that the declarations of the slot recipes of each app's
   `chain.ts`, each of which composes the one before, grow linearly with
-  the level of composition. Pass
+  the level of composition. With a TypeScript older than 5.5, which has
+  no `isolatedDeclarations`, it compiles an app that sets it without it. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
   those. Run it after a change to a public type, or to the dependencies
   between the packages; CI runs it on the oldest and newest TypeScript

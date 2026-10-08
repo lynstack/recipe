@@ -287,6 +287,7 @@ const sva: CreateSlotRecipe = createSlotRecipe;
 
 export { createSlotRecipe, makeCreateSlotRecipe, sva };
 export type {
+  ComposedSlotRecipe,
   CreateSlotRecipe,
   SlotCompoundVariant,
   SlotRecipe,

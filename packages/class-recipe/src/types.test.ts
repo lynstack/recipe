@@ -7,6 +7,7 @@ import type {
   RecipeProps,
   RecipeVariants,
 } from "./recipe.js";
+import type { RecipeOf, SlotRecipeOf } from "./recipe-of.js";
 import type {
   SlotRecipe,
   SlotRecipeConfig,
@@ -114,5 +115,84 @@ describe("a function generic over a config", () => {
       readonly invalid?: boolean | "true" | "false" | undefined;
       readonly classNames?: SlotClasses<"label" | "input"> | undefined;
     }>();
+  });
+});
+
+const pillConfig = {
+  base: "rounded-full",
+  variants: { size: { sm: "h-6", md: "h-8" } },
+  defaultVariants: { size: "md" },
+} as const;
+
+const badgeConfig = {
+  variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-100" } },
+} as const;
+
+const lookConfig = {
+  slots: ["root"],
+  base: { root: "border" },
+  variants: { size: { sm: { root: "h-6" }, md: { root: "h-8" } } },
+  defaultVariants: { size: "md" },
+} as const;
+
+const toggleConfig = {
+  slots: ["icon"],
+  variants: { pressed: { true: { root: "ring", icon: "opacity-100" } } },
+} as const;
+
+describe("the type of the recipe of a config", () => {
+  it("is the type of the recipe that cva returns for it", () => {
+    const pill: RecipeOf<typeof pillConfig> = createRecipe(pillConfig);
+
+    expect(pill({})).toBe("rounded-full h-8");
+    expectTypeOf<RecipeOf<typeof pillConfig>>().toEqualTypeOf(
+      createRecipe(pillConfig),
+    );
+  });
+
+  it("composes the recipes that its second parameter lists", () => {
+    const pill: RecipeOf<typeof pillConfig> = createRecipe(pillConfig);
+    const badge: RecipeOf<typeof badgeConfig, readonly [typeof pill]> =
+      createRecipe({ ...badgeConfig, composes: [pill] });
+
+    expect(badge({ tone: "danger", size: "sm" })).toBe(
+      "rounded-full h-6 bg-red-100",
+    );
+    expectTypeOf<
+      RecipeOf<typeof badgeConfig, readonly [typeof pill]>
+    >().toEqualTypeOf(createRecipe({ ...badgeConfig, composes: [pill] }));
+  });
+
+  it("is the type of the slot recipe that sva returns for it", () => {
+    const look: SlotRecipeOf<typeof lookConfig> = createSlotRecipe(lookConfig);
+
+    expect(look({})).toStrictEqual({ root: "border h-8" });
+    expectTypeOf<SlotRecipeOf<typeof lookConfig>>().toEqualTypeOf(
+      createSlotRecipe(lookConfig),
+    );
+  });
+
+  it("composes the slot recipes that its second parameter lists", () => {
+    const look: SlotRecipeOf<typeof lookConfig> = createSlotRecipe(lookConfig);
+    const toggle: SlotRecipeOf<typeof toggleConfig, readonly [typeof look]> =
+      createSlotRecipe({ ...toggleConfig, composes: [look] });
+
+    expect(toggle({ pressed: true, size: "sm" })).toStrictEqual({
+      root: "border h-6 ring",
+      icon: "opacity-100",
+    });
+    expectTypeOf<
+      SlotRecipeOf<typeof toggleConfig, readonly [typeof look]>
+    >().toEqualTypeOf(createSlotRecipe({ ...toggleConfig, composes: [look] }));
+  });
+
+  it("rejects a config that lists the recipes it composes", () => {
+    const pill = createRecipe(pillConfig);
+    const composingConfig = { ...badgeConfig, composes: [pill] } as const;
+    const badge = createRecipe(composingConfig);
+
+    expect(badge({ tone: "neutral" })).toBe("rounded-full h-8 bg-gray-100");
+    // @ts-expect-error: the recipes it composes are its second parameter.
+    expectTypeOf<RecipeOf<typeof composingConfig>>().toBeFunction();
   });
 });

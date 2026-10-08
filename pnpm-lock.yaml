@@ -209,6 +209,12 @@ importers:
         specifier: workspace:^
         version: link:../../packages/class-recipe
 
+  consumers/class-recipe-isolated:
+    dependencies:
+      '@lynstack/class-recipe':
+        specifier: workspace:^
+        version: link:../../packages/class-recipe
+
   consumers/native-recipe:
     dependencies:
       '@lynstack/native-recipe':
