@@ -330,15 +330,22 @@ engine to type their code. Re-export the types they name:
   your recipes take props besides their variants, such as a `className`
   or a `style`, so that these types leave them out. Otherwise re-export
   the engine's.
-
+- When your recipes compose others, `RecipeComposition`, which the type
+  of every recipe that can be composed names. An app installed with pnpm
+  cannot import the engine, so without it, a module of the app that
+  exports a recipe fails to emit its declarations. Re-export also the
+  types that a user's own helper names: `ComposableKindRecipe` and
+  `ComposedVariants`, and for slot recipes `ComposableKindSlotRecipe` and
+  `ComposedSlot`.
 - A type of the recipe of a config, such as `RecipeOf` of
   `@lynstack/class-recipe`, for users who export recipes with
   `isolatedDeclarations`. When your recipes are the engine's, re-export
   `KindRecipeOf` and `KindSlotRecipeOf`, or alias them with your kind's
   value and result.
 
-`@lynstack/class-recipe` re-exports the first five and defines its own
-`VariantsOf` and `VariantKey`, which leave out `className`.
+`@lynstack/class-recipe` re-exports the first five and the types of
+composition, and defines its own `VariantsOf`, which leaves out
+`className` and `classNames`.
 :::
 
 ## Composition
