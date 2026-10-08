@@ -5,7 +5,13 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
-## Unreleased
+## 1.7.0 — 2026-10-08
+
+A recipe warns about the names its config gives without declaring them,
+which TypeScript lets through in a config declared before the call or
+returned by a themed recipe's function; a slot style recipe accepts
+styles whose slot names are not known; and themed recipes compile in a
+library's generic functions on TypeScript before 5.9.
 
 - A slot style recipe, plain or themed, accepts styles whose slot names
   are not known at compile time, such as a `base` typed
@@ -20,6 +26,14 @@ published on npm and as a
   declared before the call or returned by a themed recipe's function,
   which TypeScript does not always report. Such a name still adds no
   style.
+- A function generic over the recipe that a themed recipe composes, and
+  annotated with `ReturnType<typeof themed.createStyleRecipe<…>>`,
+  compiles on TypeScript 5.4 to 5.8, where it failed with TS2322.
+- The declaration of a themed slot recipe annotated with
+  `ThemedSlotStyleRecipeOf` lists the names of its slots, as
+  `SlotStyleRecipeOf` does, so that it grows linearly with the level of
+  composition. In 1.6.0 it grew about 2.3 times with each level.
+- Depends on `@lynstack/recipe` through the range `^1.8.0`.
 
 ## 1.6.0 — 2026-10-08
 
