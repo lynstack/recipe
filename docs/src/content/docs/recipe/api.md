@@ -265,6 +265,8 @@ shows:
 | `KindCompoundVariant` | A value added when several variants have particular options at the same time.                                       |
 | `VariantSelection`    | The variants a selection names, with the optional ones marked optional.                                             |
 | `KindSelection`       | The selection a recipe of a kind accepts: its `VariantSelection`, or any selection for unknown variant names.       |
+| `KindRecipeOf`        | The type of the recipe of a config declared `as const`, to annotate an exported recipe.                             |
+| `KindSlotRecipeOf`    | The type of the slot recipe of a config declared `as const`, to annotate an exported slot recipe.                   |
 | `VariantOption`       | The values accepted for one variant.                                                                                |
 | `DefaultVariants`     | The option each defaulted variant uses when a selection leaves it out.                                              |
 | `CompoundCondition`   | The condition of a compound variant: the options it matches for each variant it names.                              |
@@ -288,6 +290,24 @@ config annotates the recipe it returns with it, as
 [A function generic over a config](/recipe/recipe/typescript/#a-function-generic-over-a-config)
 shows.
 
+### `KindRecipeOf` and `KindSlotRecipeOf`
+
+`KindRecipeOf<Value, Result, Config, Composed>` is the type of the recipe
+that a `CreateKindRecipe<Value, Result>` returns for a config, and
+`KindSlotRecipeOf<Value, Result, Config, Composed>` that of the slot
+recipe that a `CreateKindSlotRecipe<Value, Result>` returns. They
+annotate an exported recipe where `isolatedDeclarations` cannot infer the
+type of a call, as
+[Exporting recipes](/recipe/recipe/typescript/#exporting-recipes-with-isolateddeclarations)
+shows.
+
+| Parameter  | What it is                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| `Value`    | The value of an option, or of a slot, as in `CreateKindRecipe`.                              |
+| `Result`   | What a recipe of the kind returns, or returns for each slot.                                 |
+| `Config`   | The type of a config declared `as const`, without `composes`, which is a type error.         |
+| `Composed` | The types of the recipes it composes, in the order of `composes`. Defaults to `readonly []`. |
+
 ### `RecipeFunction`
 
 ```ts
@@ -310,6 +330,12 @@ engine to type their code. Re-export the types they name:
   your recipes take props besides their variants, such as a `className`
   or a `style`, so that these types leave them out. Otherwise re-export
   the engine's.
+
+- A type of the recipe of a config, such as `RecipeOf` of
+  `@lynstack/class-recipe`, for users who export recipes with
+  `isolatedDeclarations`. When your recipes are the engine's, re-export
+  `KindRecipeOf` and `KindSlotRecipeOf`, or alias them with your kind's
+  value and result.
 
 `@lynstack/class-recipe` re-exports the first five and defines its own
 `VariantsOf` and `VariantKey`, which leave out `className`.

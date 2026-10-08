@@ -253,6 +253,12 @@ importers:
         specifier: workspace:^
         version: link:../../packages/recipe
 
+  consumers/recipe-isolated:
+    dependencies:
+      '@lynstack/recipe':
+        specifier: workspace:^
+        version: link:../../packages/recipe
+
   docs:
     devDependencies:
       '@astrojs/starlight':

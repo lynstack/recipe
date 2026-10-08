@@ -34,4 +34,5 @@ Each item is one rule. Its link leads to the page that explains it.
 - Type the library with the engine's types: [type the library's config](/recipe/recipe/building-a-library/#type-the-librarys-config).
 - Keep `variantKeys`, `variantOptions`, and `defaultVariants` on each recipe: [Building a library](/recipe/recipe/building-a-library/#split-props-with-variantkeys).
 - Re-export the types your users name: [API reference](/recipe/recipe/api/#types-for-library-authors).
+- Give users who set `isolatedDeclarations` the type of the recipe of a config: [Exporting recipes](/recipe/recipe/typescript/#exporting-recipes-with-isolateddeclarations).
 - Pass `composes` on to the engine, and mark recipe types with `Composable`: [Making library recipes composable](/recipe/recipe/composable-libraries/).

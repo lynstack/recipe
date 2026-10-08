@@ -16,6 +16,7 @@ export type {
   KindRecipeConfig,
   KindVariants,
 } from "./recipe-kind.js";
+export type { KindRecipeOf, KindSlotRecipeOf } from "./recipe-of.js";
 export { createSlotRecipeKind } from "./slot-recipe-kind.js";
 export type {
   CreateKindSlotRecipe,

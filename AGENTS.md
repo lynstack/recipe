@@ -39,9 +39,8 @@ it before working in that folder.
   build leaves out. A benchmark imports its package by its name, so it
   runs against the built bundle, never against the sources directly.
 - `consumers` holds the apps that check the published types: an app of
-  each package, `consumers/<package>`, and a library of
-  `@lynstack/class-recipe` and of `@lynstack/native-recipe` that sets
-  `isolatedDeclarations`, `consumers/<package>-isolated`. Each is a
+  each package, `consumers/<package>`, and a library of each package
+  that sets `isolatedDeclarations`, `consumers/<package>-isolated`. Each is a
   private workspace package, with its own `package.json`,
   `tsconfig.json`, and `.oxlintrc.json`, that depends on its package and
   on no other package of the workspace, as an app does, and exports what

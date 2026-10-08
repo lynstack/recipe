@@ -16,7 +16,9 @@ that API.
 - `recipe-kind.ts`, `slot-recipe-kind.ts`, `types.ts`,
   `composition.ts`, the types of composing recipes, and
   `kind-selection.ts`, the types that accept any selection when the
-  variant names are not known, hold the public API and its types.
+  variant names are not known, and `recipe-of.ts`, the types of the
+  recipe of a config, for `isolatedDeclarations`, hold the public API and
+  its types.
 - The other modules are internal:
   - `check-config.ts` checks the shape of a config when a recipe is
     created, so that a config from untyped code fails with a message

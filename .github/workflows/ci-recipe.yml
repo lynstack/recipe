@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - packages/recipe/**
-      - consumers/recipe/**
+      - consumers/recipe*/**
       - .github/workflows/ci-recipe.yml
       - package.json
       - pnpm-lock.yaml
@@ -17,7 +17,7 @@ on:
   pull_request:
     paths:
       - packages/recipe/**
-      - consumers/recipe/**
+      - consumers/recipe*/**
       - .github/workflows/ci-recipe.yml
       - package.json
       - pnpm-lock.yaml
@@ -46,4 +46,4 @@ jobs:
         with:
           cache: true
           require-lockfile: true
-      - run: pnpm --filter @lynstack/recipe --filter recipe-consumer check
+      - run: pnpm --filter @lynstack/recipe --filter "./consumers/recipe*" check

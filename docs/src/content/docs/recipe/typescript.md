@@ -171,6 +171,54 @@ function defineComposedStyle<
 A slot recipe's helper does the same with `KindSlotRecipeConfig` and
 `ComposableKindSlotRecipe<Style>`.
 
+## Exporting recipes with `isolatedDeclarations`
+
+With `"isolatedDeclarations": true`, TypeScript requires that the
+declarations of each file can be written from that file alone, as oxc and
+the tools built on it, such as tsdown, write them. They cannot know what
+a call returns, so each recipe that a module exports needs a type
+annotation; without one, TypeScript reports TS9010.
+
+`KindRecipeOf` and `KindSlotRecipeOf` give that type from the type of
+the config. Declare the config `as const`, which isolated declarations
+can read, and annotate the recipe with the value and result of the kind
+and `typeof` the config:
+
+```ts
+import type { KindRecipeOf } from "@lynstack/recipe";
+
+const textConfig = {
+  variants: { size: { sm: { fontSize: 12 }, md: { fontSize: 16 } } },
+  defaultVariants: { size: "md" },
+} as const;
+
+export const text: KindRecipeOf<Style, Style, typeof textConfig> =
+  styleRecipe(textConfig);
+```
+
+A recipe that composes others spreads its config into the call with
+`composes`, and lists the types of the recipes it composes as the last
+type parameter, since isolated declarations cannot read a recipe inside
+a config:
+
+```ts
+const headingConfig = {
+  variants: { size: { xl: { fontSize: 32 } } },
+} as const;
+
+export const heading: KindRecipeOf<
+  Style,
+  Style,
+  typeof headingConfig,
+  readonly [typeof text]
+> = styleRecipe({ ...headingConfig, composes: [text] });
+```
+
+`KindSlotRecipeOf` does the same for a slot recipe of
+`createSlotRecipeKind`. A library that wraps the engine's recipes in its
+own type defines its own such type, as `RecipeOf` of
+`@lynstack/class-recipe` does.
+
 ## Types for library authors
 
 A library with its own config shape builds its types on the engine's, as
@@ -182,6 +230,8 @@ shows:
 | `KindVariants`      | The `variants` of a config, to constrain the variants a function infers.             |
 | `VariantSelection`  | The selection a recipe accepts, from the variants and the names that have a default. |
 | `KindSelection`     | The selection a recipe accepts, or any selection when the variant names are unknown. |
+| `KindRecipeOf`      | The type of the recipe of a config, to annotate an exported recipe.                  |
+| `KindSlotRecipeOf`  | The type of the slot recipe of a config, to annotate an exported slot recipe.        |
 | `DefaultVariants`   | The `defaultVariants` of a config.                                                   |
 | `CompoundCondition` | The `variants` of a compound variant.                                                |
 | `VariantOption`     | The values one variant accepts.                                                      |

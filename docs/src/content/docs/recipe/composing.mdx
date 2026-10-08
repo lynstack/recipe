@@ -175,4 +175,7 @@ recipe's type carries what it passes on to the recipes that compose it,
 under a `~composition` property that exists in the type only. A library
 that wraps recipes passes it on, as
 [Making library recipes composable](/recipe/recipe/composable-libraries/)
+shows. A module that exports a recipe that composes others, with
+`isolatedDeclarations`, annotates it with `KindRecipeOf`, as
+[Exporting recipes](/recipe/recipe/typescript/#exporting-recipes-with-isolateddeclarations)
 shows.
