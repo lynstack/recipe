@@ -219,6 +219,16 @@ export const heading: KindRecipeOf<
 own type defines its own such type, as `RecipeOf` of
 `@lynstack/class-recipe` does.
 
+Both types are for a config whose type is known where the recipe is
+declared. They do not apply in a function generic over the whole config,
+such as one that takes `config: Config` and returns
+`KindRecipeOf<Style, Style, Config>`: `styleRecipe` infers the variants
+from its config, and TypeScript cannot infer them from a config whose
+type is a type parameter, so the recipe it returns does not have that
+type. Make such a function generic over the variants instead, as
+[A function generic over a config](#a-function-generic-over-a-config)
+shows.
+
 ## Types for library authors
 
 A library with its own config shape builds its types on the engine's, as

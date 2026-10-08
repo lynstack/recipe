@@ -308,6 +308,10 @@ shows.
 | `Config`   | The type of a config declared `as const`, without `composes`, which is a type error.         |
 | `Composed` | The types of the recipes it composes, in the order of `composes`. Defaults to `readonly []`. |
 
+They apply to a config whose type is known, not in a function generic
+over the whole config, which is generic over its variants instead; see
+[Exporting recipes](/recipe/recipe/typescript/#exporting-recipes-with-isolateddeclarations).
+
 ### `RecipeFunction`
 
 ```ts
