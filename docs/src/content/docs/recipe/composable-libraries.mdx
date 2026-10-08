@@ -53,9 +53,13 @@ property, which exists in the type only. A wrapper's type carries it too:
   together with those of the recipes it composes. The config's compound
   variants and defaults name these, so that they can name the variants of
   the recipes it composes.
-- `ComposedDefaultedName<Composed, DefaultedName>` is the names of the
-  variants with a default in the config or in a recipe it composes.
-  `Extract` keeps those that are variants of the merged config.
+- `ComposedDefaultedName<Composed, never>` is the names of the variants
+  with a default in a recipe it composes, and `Extract` keeps those that
+  are variants of the merged config. Add them to `DefaultedName` instead
+  of passing `DefaultedName` to `ComposedDefaultedName`: TypeScript
+  cannot reduce an `Extract` of a type parameter, so a function generic
+  over a config could not return the wrapper's recipe, and a wrapper
+  that composes nothing has exactly its own `DefaultedName`.
 - `Composable<RecipeComposition<…>>` marks the type of the wrapper, so
   that other recipes can compose it in turn. Without it, `composes`
   rejects the wrapper.

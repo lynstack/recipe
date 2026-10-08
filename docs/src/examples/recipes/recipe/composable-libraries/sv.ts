@@ -80,10 +80,11 @@ export function sv<
   config: StyleVariantsConfig<Variants, DefaultedName, Composed>,
 ): StyleVariants<
   ComposedVariants<Composed, Variants>,
-  Extract<
-    ComposedDefaultedName<Composed, DefaultedName>,
-    keyof ComposedVariants<Composed, Variants>
-  >
+  | DefaultedName
+  | Extract<
+      ComposedDefaultedName<Composed, never>,
+      keyof ComposedVariants<Composed, Variants>
+    >
 >;
 
 export function sv(config: LooseConfig): LooseStyleVariants {
