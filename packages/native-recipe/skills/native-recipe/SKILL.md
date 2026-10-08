@@ -98,9 +98,11 @@ type BadgeProps = VariantsOf<typeof badge>; // also works on themed recipes
   the variants' styles.
 - A recipe ignores props that are not variants, so it can take all of a
   component's props.
-- Write the config inside the call. A config declared before the call
-  must be `as const`, and TypeScript checks it less: a misspelled variant
-  name next to a correct one in a compound variant is not an error.
+- Write the config inside the call, where TypeScript checks every name.
+  A config declared before the call must be `as const`, and TypeScript
+  lets some misspelled names through; the recipe then warns, when it is
+  created, that its config names what it does not declare. Fix every
+  such warning.
 - `composes: [other]` adds the config of another recipe of the same kind
   (style recipe or slot style recipe) before its own; see
   [Compose a shared recipe](#compose-a-shared-recipe-instead-of-copying-its-config).
@@ -332,4 +334,5 @@ no variants.
   size that a token exists for?
 - Is every theme object created once, or memoized, and passed unchanged?
 - Is any config declared before its call where it could be written in
-  the call, or declared without `as const`?
+  the call, or declared without `as const`? Does creating any recipe warn
+  that its config names what it does not declare?

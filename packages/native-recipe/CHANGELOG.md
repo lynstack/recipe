@@ -5,6 +5,15 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## Unreleased
+
+- The recipe creators warn, once, with `console.warn`, about a default, a
+  compound variant, or a style that names a variant, an option, or a slot
+  that the config does not declare, such as a misspelled name in a config
+  declared before the call or returned by a themed recipe's function,
+  which TypeScript does not always report. Such a name still adds no
+  style.
+
 ## 1.6.0 — 2026-10-08
 
 A library of components can export and wrap its recipes: their

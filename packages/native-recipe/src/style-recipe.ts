@@ -185,10 +185,12 @@ type ComposedStyleRecipe<
  * only options are `"true"` and `"false"` and which defaults to `false`. An
  * option that the config does not declare adds no style, and its style is
  * built on every call. Properties of the selection that are not variants
- * are ignored. The recipe's `variantKeys` property lists the names of its
- * variants, `variantOptions` the names of the options of each, and
- * `defaultVariants` the option each uses when the recipe is called without
- * it.
+ * are ignored. Creating the recipe warns once, with `console.warn`, about a
+ * default or a compound variant that names a variant or an option that the
+ * config does not declare, which adds no style. The recipe's `variantKeys`
+ * property lists the names of its variants, `variantOptions` the names of
+ * the options of each, and `defaultVariants` the option each uses when the
+ * recipe is called without it.
  *
  * A recipe composes the recipes listed in its config's `composes` as if
  * their configs and its own were one: their base styles first, then the

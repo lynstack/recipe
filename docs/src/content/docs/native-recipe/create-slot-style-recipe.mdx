@@ -53,7 +53,9 @@ an object of styles keyed by slot name.
 | `cache`            | Optional | Whether the recipe caches its styles. Defaults to `true`. With `false`, every call returns a new object, so leave it on in components.  |
 
 An option or a compound variant gives styles only to the slots it names.
-A style for a slot that `slots` does not declare is a type error.
+A style for a slot that `slots` does not declare is a type error. It is
+ignored, and the recipe warns about it when it is created (see
+[Names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare)).
 Variants, defaults, boolean variants, and undeclared options work as in a
 style recipe (see [Variants](/recipe/native-recipe/variants/)).
 

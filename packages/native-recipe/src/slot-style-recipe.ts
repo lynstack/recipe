@@ -172,7 +172,10 @@ type ComposedSlotStyleRecipe<
  * variant, whose only options are `"true"` and `"false"` and which defaults
  * to `false`. An option that the config does not declare adds no style, and
  * its styles are built on every call. Properties of the selection that are
- * not variants are ignored. Its `variantKeys`, `variantOptions`, and
+ * not variants are ignored. Creating it warns once, with `console.warn`,
+ * about a default, a compound variant, or a style that names a variant, an
+ * option, or a slot that the config does not declare, which adds no style.
+ * Its `variantKeys`, `variantOptions`, and
  * `defaultVariants` properties list its variants as those of
  * `createStyleRecipe` do.
  *

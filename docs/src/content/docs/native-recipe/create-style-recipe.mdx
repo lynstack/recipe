@@ -56,6 +56,35 @@ recipe throws a `TypeError` that names what is wrong: no `variants`, a
 style that is not an object, or a compound variant without `variants` or
 `style`.
 
+### Names the config does not declare
+
+A default or a compound variant can name a variant or an option that the
+config does not declare, such as a misspelled one. TypeScript rejects it
+in a config written in the call, but a config declared before the call
+lets some through (see
+[A config declared before the call](/recipe/native-recipe/typescript/#a-config-declared-before-the-call)),
+and so does JavaScript. The recipe then adds no style for that name:
+
+- A default of an undeclared variant, or an option that its variant does
+  not declare, is ignored.
+- A compound variant's condition on an undeclared variant never matches.
+  An undeclared option in its list is ignored, so a condition left
+  without a declared option never matches either.
+- In a slot recipe, a style for a slot that `slots` does not name is
+  ignored.
+
+When it is created, the recipe warns about each such name with
+`console.warn`, in one message:
+
+```text
+A recipe's config names variants, options, or slots that it does not declare, so they add nothing:
+- Compound variant 0 names the variant "tonne".
+```
+
+The names of the recipes it composes count as declared. A recipe created
+again from a config with the same mistakes, such as a themed recipe for
+each theme, does not repeat the warning.
+
 A style that never changes does not need a recipe, though: keep it in
 `StyleSheet.create` (see
 [Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate)).
@@ -80,9 +109,10 @@ compoundVariants: [
 ],
 ```
 
-The condition is checked after defaults apply. A compound variant that
-names an undeclared variant, or lists no declared option for a variant,
-never matches.
+The condition is checked after defaults apply. A condition on an
+undeclared variant never matches, and an undeclared option in a list is
+ignored; the recipe warns about both (see
+[Names the config does not declare](#names-the-config-does-not-declare)).
 
 ## The result
 

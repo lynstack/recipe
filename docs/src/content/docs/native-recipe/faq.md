@@ -21,6 +21,16 @@ TypeScript reports `Property 'variants' is missing` (TS2741). In
 JavaScript, creating the recipe throws a `TypeError` that says so. See
 [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-config).
 
+## Why does the console warn that a recipe's config names what it does not declare?
+
+A default, a compound variant, or a slot's style names a variant, an
+option, or a slot that the config does not declare, usually a typo in a
+config declared before the call, or returned by a themed recipe's
+function, where TypeScript does not catch every one. The recipe adds no
+style for that name. The message lists each one; fix the name, or
+declare it. See
+[Names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare).
+
 ## Can I pass extra styles into a recipe call?
 
 No. A recipe takes only variants. Merge extra styles in the `style` prop,
