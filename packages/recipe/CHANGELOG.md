@@ -4,6 +4,28 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## 1.7.0 — 2026-10-08
+
+A library can type its own functions and exported recipes: a function
+generic over a config returns the recipe of its config, an exported
+recipe has a type to annotate it with for `isolatedDeclarations`, and
+the declarations of composed slot recipes stay small.
+
+- `KindRecipeOf<Value, Result, Config, Composed>` and `KindSlotRecipeOf`
+  are the types of the recipe and the slot recipe of a config declared
+  `as const`, which annotate an exported recipe where
+  `isolatedDeclarations` cannot infer the type of a call. A recipe that
+  composes others lists their types as the last parameter.
+- `KindSelection` is exported: a function generic over a config, such as
+  a library's own helper, returns
+  `KindRecipe<KindSelection<Variants, DefaultedName>, Result>`. Since
+  1.3.0, the type of a recipe could not be assigned to such a type while
+  the names of its defaults were a type parameter.
+- The declaration of a slot recipe that composes others lists the names
+  of its slots, instead of the types of the slot recipes it composes, so
+  that it grows linearly with the level of composition. Before, it grew
+  about 2.4 times with each level.
+
 ## 1.6.0 — 2026-10-07
 
 A config with the wrong shape fails with a message that names what is
