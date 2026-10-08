@@ -8,5 +8,5 @@
     "outDir": "out",
     "types": []
   },
-  "files": ["index.ts", "chain.ts"]
+  "files": ["index.ts", "chain.ts", "recipe-chain.ts"]
 }
