@@ -8,7 +8,7 @@ import {
   sva,
 } from "@lynstack/class-recipe";
 
-import { define, defineSlots } from "./define.js";
+import { define, defineComposed, defineSlots } from "./define.js";
 import { look } from "./look.js";
 
 const button = createRecipe({
@@ -66,6 +66,14 @@ const badge = define({
   variants: { tone: { danger: "bg-red-100", neutral: "bg-gray-100" } },
 });
 const badgeClassName: string = badge({});
+const compactButton = defineComposed({
+  composes: [button],
+  variants: { size: { xs: "h-6" } },
+});
+const compactButtonClassName: string = compactButton({
+  size: "xs",
+  tone: "neutral",
+});
 const alert = defineSlots({
   slots: ["root", "title"],
   variants: { tone: { danger: { root: "bg-red-100" } } },
@@ -118,6 +126,8 @@ export {
   cardOptions,
   cardProps,
   className,
+  compactButton,
+  compactButtonClassName,
   field,
   iconButton,
   iconClassName,

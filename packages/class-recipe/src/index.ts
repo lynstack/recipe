@@ -29,7 +29,10 @@ export type {
 } from "./slot-recipe.js";
 export type { RecipeOf, SlotRecipeOf } from "./recipe-of.js";
 export type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
   ComposedSlot,
+  ComposedVariants,
   CompoundCondition,
   DefaultVariants,
   PropsOf,

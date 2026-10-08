@@ -1,7 +1,14 @@
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { NativeStyle, SlotStyles, VariantSelection } from "./types.js";
+import type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedVariants,
+  NativeStyle,
+  SlotStyles,
+  VariantSelection,
+} from "./types.js";
 import type {
   SlotStyleRecipe,
   SlotStyleRecipeConfig,
@@ -198,5 +205,69 @@ describe("a function generic over a config", () => {
     expectTypeOf<Parameters<typeof field>[0]>().toEqualTypeOf<{
       readonly size: "sm";
     }>();
+  });
+});
+
+/** Creates a recipe that may compose others, as a library's helper does. */
+function defineComposedStyleRecipe<
+  const Variants extends StyleRecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
+    readonly [],
+>(
+  config: StyleRecipeConfig<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >,
+): ReturnType<
+  typeof createStyleRecipe<
+    Variants,
+    never,
+    readonly [],
+    DefaultedName,
+    Composed
+  >
+> {
+  return createStyleRecipe(config);
+}
+
+describe("a function generic over a config that composes recipes", () => {
+  it("returns a recipe with the variants of the recipes it composes", () => {
+    const iconBadge = defineComposedStyleRecipe({
+      composes: [badge],
+      variants: { size: { icon: { width: 24 } } },
+    });
+
+    expect(iconBadge({ tone: "neutral", size: "icon" })).toStrictEqual({
+      borderRadius: 6,
+      padding: 4,
+      backgroundColor: "#f3f4f6",
+      width: 24,
+    });
+    expectTypeOf<Parameters<typeof iconBadge>[0]>().toEqualTypeOf<{
+      readonly tone: "neutral" | "danger";
+      readonly size?: "md" | "sm" | "icon" | undefined;
+    }>();
+  });
+
+  it("names a slot recipe that a slot recipe can compose", () => {
+    const card = createSlotStyleRecipe({
+      slots: ["root"],
+      variants: { size: { sm: { root: { padding: 4 } } } },
+    });
+
+    expect(card({ size: "sm" })).toStrictEqual({ root: { padding: 4 } });
+    expectTypeOf(card).toExtend<ComposableKindSlotRecipe<NativeStyle>>();
+    expectTypeOf(badge).not.toExtend<ComposableKindSlotRecipe<NativeStyle>>();
+    expectTypeOf<
+      keyof ComposedVariants<
+        readonly [typeof card],
+        { readonly tone: { readonly loud: { readonly root: NativeStyle } } }
+      >
+    >().toEqualTypeOf<"size" | "tone">();
   });
 });

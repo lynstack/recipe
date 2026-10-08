@@ -1,6 +1,13 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { PropsOf, SlotClasses, SlotRecipeProps } from "./types.js";
+import type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
+  ComposedVariants,
+  PropsOf,
+  SlotClasses,
+  SlotRecipeProps,
+} from "./types.js";
 import type {
   Recipe,
   RecipeConfig,
@@ -115,6 +122,49 @@ describe("a function generic over a config", () => {
       readonly invalid?: boolean | "true" | "false" | undefined;
       readonly classNames?: SlotClasses<"label" | "input"> | undefined;
     }>();
+  });
+});
+
+/** Creates a recipe that may compose others, as a library's helper does. */
+function defineComposedRecipe<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<string>[] = readonly [],
+>(
+  config: RecipeConfig<Variants, DefaultedName, Composed>,
+): ReturnType<typeof createRecipe<Variants, DefaultedName, Composed>> {
+  return createRecipe(config);
+}
+
+describe("a function generic over a config that composes recipes", () => {
+  it("returns a recipe with the variants of the recipes it composes", () => {
+    const iconButton = defineComposedRecipe({
+      composes: [button],
+      variants: { size: { icon: "size-10" } },
+    });
+
+    expect(iconButton({ tone: "danger" })).toBe("rounded bg-red-600 h-10");
+    expectTypeOf<PropsOf<typeof iconButton>>().toEqualTypeOf<{
+      readonly tone: "neutral" | "danger";
+      readonly size?: "sm" | "md" | "icon" | undefined;
+      readonly className?: string | undefined;
+    }>();
+  });
+
+  it("names a slot recipe that a slot recipe can compose", () => {
+    expect(card({ size: "sm" })).toStrictEqual({
+      root: "p-4 p-2",
+      title: "font-medium",
+    });
+    expectTypeOf(card).toExtend<ComposableKindSlotRecipe<string>>();
+    expectTypeOf(button).not.toExtend<ComposableKindSlotRecipe<string>>();
+    expectTypeOf<
+      keyof ComposedVariants<
+        readonly [typeof card],
+        { readonly tone: { readonly loud: { readonly root: string } } }
+      >
+    >().toEqualTypeOf<"size" | "tone">();
   });
 });
 

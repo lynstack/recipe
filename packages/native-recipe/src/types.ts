@@ -204,7 +204,10 @@ type VariantsOf<Recipe extends (...args: never) => unknown> = Recipe extends {
     : never;
 
 export type {
+  ComposableKindRecipe,
+  ComposableKindSlotRecipe,
   ComposedSlot,
+  ComposedVariants,
   CompoundCondition,
   DefaultVariants,
   KindRecipe,

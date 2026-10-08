@@ -11,7 +11,7 @@ import {
   createThemedRecipes,
 } from "@lynstack/native-recipe";
 
-import { define, defineSlots } from "./define.js";
+import { define, defineComposed, defineSlots } from "./define.js";
 
 const box = createStyleRecipe({
   base: { borderRadius: 8 },
@@ -125,7 +125,18 @@ function createArrayStyleRecipes(): void {
   createStyleRecipe({ variants: { size: { sm: [{ padding: 8 }] } } });
 }
 
+const compactBox = defineComposed({
+  composes: [box],
+  variants: { size: { xs: { height: 24 } } },
+});
+const compactBoxStyle: NativeStyle = compactBox({
+  size: "xs",
+  tone: "neutral",
+});
+
 export {
+  compactBox,
+  compactBoxStyle,
   anyChip,
   anyStyle,
   box,

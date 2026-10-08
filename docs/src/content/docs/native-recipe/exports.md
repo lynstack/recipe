@@ -59,9 +59,16 @@ shows them.
 | `KindRecipe`               | `Props`, `Result`, `Composition`                                     | The recipe of `@lynstack/recipe` that `StyleRecipe` and `SlotStyleRecipe` are, and that `withTheme` returns.                   | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/)                         |
 | `RecipeComposition`        | `Variants`, `DefaultedName`, `Value`, `Slots`                        | What a recipe passes on to the recipes that compose it, in its type only.                                                      | [Composing recipes](/recipe/native-recipe/composing/)                                       |
 | `ComposedSlot`             | `Composed`, `Slot`                                                   | The slots of a slot recipe that composes others: theirs, then its own.                                                         | [Composing recipes](/recipe/native-recipe/composing/)                                       |
+| `ComposedVariants`         | `Composed`, `Variants`                                               | The variants of a config together with those of the recipes it composes.                                                       | [Composing recipes](/recipe/native-recipe/composing/)                                       |
+| `ComposableKindRecipe`     | `Value`                                                              | A recipe that a recipe whose values are of type `Value` can compose.                                                           | [Composing recipes](/recipe/native-recipe/composing/)                                       |
+| `ComposableKindSlotRecipe` | `Value`                                                              | A slot recipe that a slot recipe whose values are of type `Value` can compose.                                                 | [Composing recipes](/recipe/native-recipe/composing/)                                       |
 
 The `Composition` parameter carries what a recipe passes on to the
 recipes that compose it. It exists in the types only. `KindRecipe`,
-`RecipeComposition`, and `ComposedSlot` come from `@lynstack/recipe`.
-The first two are part of the type of a recipe, so a module that exports
-a recipe and emits declarations names them through native-recipe.
+`RecipeComposition`, `ComposedSlot`, `ComposedVariants`,
+`ComposableKindRecipe`, and `ComposableKindSlotRecipe` come from
+`@lynstack/recipe`. The first two are part of the type of a recipe, so a
+module that exports a recipe and emits declarations names them through
+native-recipe. The last three type a function that takes a config that
+composes recipes, with `ComposableKindRecipe<NativeStyle>` for
+`composes`.
