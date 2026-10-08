@@ -13,6 +13,7 @@ import {
   defineComposed,
   defineComposedSlots,
   defineSlots,
+  withFooter,
 } from "./define.js";
 import { look } from "./look.js";
 
@@ -124,6 +125,10 @@ const panel = defineComposedSlots({
 const panelClassNames: Readonly<Record<"root" | "title" | "footer", string>> =
   panel({ size: "sm" });
 
+const footedCard = withFooter(card);
+const footedCardClasses: Readonly<Record<"root" | "title" | "footer", string>> =
+  footedCard({ dense: true, size: "md" });
+
 export {
   alert,
   alertClassNames,
@@ -131,9 +136,9 @@ export {
   badgeClassName,
   button,
   buttonDefaults,
-  buttonProps,
   buttonKeys,
   buttonOptions,
+  buttonProps,
   card,
   cardKeys,
   cardOptions,
@@ -142,6 +147,8 @@ export {
   compactButton,
   compactButtonClassName,
   field,
+  footedCard,
+  footedCardClasses,
   iconButton,
   iconClassName,
   merged,

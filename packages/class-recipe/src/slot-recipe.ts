@@ -1,7 +1,6 @@
 import type {
   Composable,
   ComposableKindSlotRecipe,
-  ComposedSlot,
   ComposedVariants,
   KindVariants,
   RecipeComposition,
@@ -11,6 +10,7 @@ import type {
   CompoundCondition,
   DefaultVariants,
   InheritedDefaultedName,
+  InheritedSlot,
   NoUnknownSlots,
   RecipeFunction,
   SlotClassNames,
@@ -79,13 +79,13 @@ interface SlotRecipeConfig<
   readonly slots: readonly Slot[];
   /** Classes applied to each slot whatever the variants. */
   readonly base?:
-    SlotClasses<NoInfer<ComposedSlot<Composed, Slot>>> | undefined;
+    SlotClasses<NoInfer<Slot> | InheritedSlot<Composed>> | undefined;
   /**
    * For each variant name, the classes of each slot for each of its options.
    * The names `className` and `classNames` are reserved for overrides.
    */
   readonly variants: Variants &
-    NoUnknownSlots<Variants, NoInfer<ComposedSlot<Composed, Slot>>> & {
+    NoUnknownSlots<Variants, NoInfer<Slot>, InheritedSlot<Composed>> & {
       readonly className?: never;
       readonly classNames?: never;
     };
@@ -96,7 +96,7 @@ interface SlotRecipeConfig<
    */
   readonly compoundVariants?:
     | readonly SlotCompoundVariant<
-        NoInfer<ComposedSlot<Composed, Slot>>,
+        NoInfer<Slot> | InheritedSlot<Composed>,
         NoInfer<ComposedVariants<Composed, Variants>>
       >[]
     | undefined;

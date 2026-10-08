@@ -60,4 +60,23 @@ function defineComposedSlots<
   return sva(config);
 }
 
-export { define, defineComposed, defineComposedSlots, defineSlots };
+/** Adds a footer to any slot recipe, as a library's own helper does. */
+function withFooter<const Base extends ComposableKindSlotRecipe<string>>(
+  base: Base,
+): ReturnType<
+  typeof sva<
+    "footer",
+    { readonly dense: { readonly true: { readonly footer: "pt-2" } } },
+    never,
+    readonly [Base]
+  >
+> {
+  return sva({
+    base: { footer: "pt-4" },
+    composes: [base],
+    slots: ["footer"],
+    variants: { dense: { true: { footer: "pt-2" } } },
+  });
+}
+
+export { define, defineComposed, defineComposedSlots, defineSlots, withFooter };

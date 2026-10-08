@@ -1,4 +1,5 @@
 import type {
+  ComposableKindSlotRecipe,
   ComposedDefaultedName,
   ComposedVariants,
   KindRecipe,
@@ -119,9 +120,9 @@ type OptionsOnly<Variants> = {
  *
  * @typeParam Slot - The names of the slots.
  */
-type SlotClasses<Slot extends string> = Readonly<
-  Partial<Record<Slot, string | undefined>>
->;
+type SlotClasses<Slot extends string> = {
+  readonly [Name in Slot]?: string | undefined;
+};
 
 /**
  * The class name of every slot, keyed by slot name, as returned by a slot
@@ -132,18 +133,38 @@ type SlotClasses<Slot extends string> = Readonly<
 type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 
 /**
- * Rejects the slots of each option's classes that `Slot` does not name,
- * unless the option's slot names are not known at compile time.
+ * Rejects the slots of each option's classes that neither `Slot` nor
+ * `Inherited` names, unless the option's slot names are not known at
+ * compile time. A recipe's own slots are matched first, so that they are
+ * accepted even when the inherited slots are generic.
  */
-type NoUnknownSlots<Variants, Slot extends string> = {
+type NoUnknownSlots<
+  Variants,
+  Slot extends string,
+  Inherited extends string = never,
+> = {
   readonly [Name in keyof Variants]: {
     readonly [
       Option in keyof Variants[Name]
     ]: string extends keyof Variants[Name][Option]
       ? unknown
-      : Readonly<Record<Exclude<keyof Variants[Name][Option], Slot>, never>>;
+      : Readonly<
+          Record<
+            Exclude<Exclude<keyof Variants[Name][Option], Slot>, Inherited>,
+            never
+          >
+        >;
   };
 };
+
+/**
+ * The slots of the slot recipes of `Composed`, as indexed access rather
+ * than a conditional type, so that TypeScript relates a config to them
+ * while `Composed` is generic.
+ */
+type InheritedSlot<
+  Composed extends readonly ComposableKindSlotRecipe<string>[],
+> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 
 /**
  * The variants of a slot recipe whose variant names are not known at
@@ -195,6 +216,7 @@ export type {
 export type {
   DefaultedNameOf,
   InheritedDefaultedName,
+  InheritedSlot,
   NoUnknownSlots,
   PropsOf,
   Simplify,

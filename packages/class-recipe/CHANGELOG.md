@@ -6,6 +6,9 @@ tagged `class-recipe@<version>`.
 
 ## Unreleased
 
+- Declarations and error messages print the classes of each slot as
+  `SlotClasses<…>`, and a function generic over the slot recipe it
+  composes can name its own slots.
 - `cva` and `sva` warn, once, with `console.warn`, about a default, a
   compound variant, or classes that name a variant, an option, or a slot
   that the config does not declare, such as a misspelled name in a config

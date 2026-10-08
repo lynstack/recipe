@@ -120,7 +120,7 @@ declare const tag: ((props?: {
     }, "size" | "tone", string, undefined> | undefined;
 };
 declare const look: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "h-8";
@@ -155,7 +155,7 @@ declare const look: NoInfer<((props: {
     }, never, string, readonly "root"[]> | undefined;
 }>;
 declare const field: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"label" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"label" | "root"> | undefined;
     readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly label: "text-red-700";
@@ -205,7 +205,7 @@ declare const field: NoInfer<((props: {
     }, never, string, readonly ("label" | "root")[]> | undefined;
 }>;
 declare const select: NoInfer<((props?: {
-    readonly classNames?: Readonly<Partial<Record<"label" | "root" | "trigger", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"label" | "root" | "trigger"> | undefined;
     readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly label: "text-red-700";

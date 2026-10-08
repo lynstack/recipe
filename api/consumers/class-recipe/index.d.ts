@@ -50,7 +50,7 @@ declare const button: ((props: {
 type ButtonVariants = VariantsOf<typeof button>;
 type ButtonProps = PropsOf<typeof button>;
 declare const card: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"root" | "title", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root" | "title"> | undefined;
     readonly size: "md";
 }) => Readonly<Record<"root" | "title", string>>) & {
     readonly variantKeys: readonly "size"[];
@@ -92,7 +92,7 @@ declare const pill: ((props: {
     }, never, string, undefined> | undefined;
 };
 declare const field: NoInfer<((props?: {
-    readonly classNames?: Readonly<Partial<Record<"input" | "label", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"input" | "label"> | undefined;
     readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly input: "border-red-600";
@@ -170,7 +170,7 @@ declare const iconButton: ((props: {
     }, "size", string, undefined> | undefined;
 };
 declare const select: NoInfer<((props?: {
-    readonly classNames?: Readonly<Partial<Record<"input" | "label" | "trigger", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"input" | "label" | "trigger"> | undefined;
     readonly invalid?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly input: "border-red-600";
@@ -259,12 +259,12 @@ declare const compactButton: ((props: {
 };
 declare const compactButtonClassName: string;
 declare const alert: import("@lynstack/class-recipe").SlotRecipe<"root" | "title", {
-    readonly classNames?: Readonly<Partial<Record<"root" | "title", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root" | "title"> | undefined;
     readonly tone: "danger";
 }>;
 declare const alertClassNames: Readonly<Record<"root" | "title", string>>;
 declare const toggle: NoInfer<((props?: {
-    readonly classNames?: Readonly<Partial<Record<"icon" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"icon" | "root"> | undefined;
     readonly pressed?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly icon: "opacity-100";
@@ -338,7 +338,7 @@ declare const cardOptions: {
 declare const buttonProps: ButtonProps;
 declare const cardProps: PropsOf<typeof card>;
 declare const panel: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"footer" | "root" | "title", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"footer" | "root" | "title"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "p-4";
@@ -376,5 +376,38 @@ declare const panel: NoInfer<((props: {
     }, never, string, readonly ("footer" | "root" | "title")[]> | undefined;
 }>;
 declare const panelClassNames: Readonly<Record<"root" | "title" | "footer", string>>;
-export { alert, alertClassNames, badge, badgeClassName, button, buttonDefaults, buttonProps, buttonKeys, buttonOptions, card, cardKeys, cardOptions, cardProps, className, compactButton, compactButtonClassName, field, iconButton, iconClassName, merged, panel, panelClassNames, pill, select, selectClassNames, toggle, toggleClassNames, toggleRoot, };
+declare const footedCard: NoInfer<((props: {
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"footer" | "root" | "title"> | undefined;
+    readonly dense?: import("@lynstack/class-recipe").VariantOption<{
+        readonly true: {
+            readonly footer: "pt-2";
+        };
+    }> | undefined;
+    readonly size: "md";
+}) => Readonly<Record<"footer" | "root" | "title", string>>) & {
+    readonly variantKeys: readonly ("dense" | "size")[];
+    readonly variantOptions: {
+        readonly dense: readonly ("false" | "true")[];
+        readonly size: readonly "md"[];
+    };
+    readonly defaultVariants: {
+        readonly dense: "false" | "true";
+    };
+} & {
+    readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
+        readonly dense: {
+            readonly true: {
+                readonly footer: "pt-2";
+            };
+        };
+        readonly size: {
+            readonly md: {
+                readonly root: "p-4";
+                readonly title: "text-base";
+            };
+        };
+    }, never, string, readonly ("footer" | "root" | "title")[]> | undefined;
+}>;
+declare const footedCardClasses: Readonly<Record<"root" | "title" | "footer", string>>;
+export { alert, alertClassNames, badge, badgeClassName, button, buttonDefaults, buttonKeys, buttonOptions, buttonProps, card, cardKeys, cardOptions, cardProps, className, compactButton, compactButtonClassName, field, footedCard, footedCardClasses, iconButton, iconClassName, merged, panel, panelClassNames, pill, select, selectClassNames, toggle, toggleClassNames, toggleRoot, };
 export type { ButtonProps, ButtonVariants };

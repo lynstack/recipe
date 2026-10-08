@@ -1,6 +1,6 @@
 import type { VariantsOf } from "@lynstack/class-recipe";
 declare const look: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "h-8";

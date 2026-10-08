@@ -1,5 +1,5 @@
 declare const level0: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"root"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "h-8";
@@ -34,7 +34,7 @@ declare const level0: NoInfer<((props: {
     }, never, string, readonly "root"[]> | undefined;
 }>;
 declare const level1: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"icon" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"icon" | "root"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "h-8";
@@ -76,7 +76,7 @@ declare const level1: NoInfer<((props: {
     }, never, string, readonly ("icon" | "root")[]> | undefined;
 }>;
 declare const level2: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"icon" | "label" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"icon" | "label" | "root"> | undefined;
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
             readonly root: "h-8";
@@ -125,7 +125,7 @@ declare const level2: NoInfer<((props: {
     }, never, string, readonly ("icon" | "label" | "root")[]> | undefined;
 }>;
 declare const level3: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"badge" | "icon" | "label" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"badge" | "icon" | "label" | "root"> | undefined;
     readonly shape: "round";
     readonly size: import("@lynstack/class-recipe").VariantOption<{
         readonly md: {
@@ -181,7 +181,7 @@ declare const level3: NoInfer<((props: {
     }, never, string, readonly ("badge" | "icon" | "label" | "root")[]> | undefined;
 }>;
 declare const level4: NoInfer<((props: {
-    readonly classNames?: Readonly<Partial<Record<"badge" | "hint" | "icon" | "label" | "root", string | undefined>>> | undefined;
+    readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"badge" | "hint" | "icon" | "label" | "root"> | undefined;
     readonly muted?: import("@lynstack/class-recipe").VariantOption<{
         readonly true: {
             readonly hint: "opacity-50";

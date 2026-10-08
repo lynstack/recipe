@@ -1,9 +1,9 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { twMerge } from "tailwind-merge";
 
+import type { ComposableKindSlotRecipe, VariantsOf } from "./types.js";
 import { createRecipe, cva } from "./recipe.js";
 import { createSlotRecipe, sva } from "./slot-recipe.js";
-import type { VariantsOf } from "./types.js";
 import { createRecipes } from "./create-recipes.js";
 
 const control = cva({
@@ -177,4 +177,64 @@ describe("a slot recipe that composes slot recipes", () => {
 
     expect(labeled()).toStrictEqual({ root: "grid gap-1", label: "text-sm" });
   });
+
+  it("accepts its own slots in a function generic over the slot recipe it composes", () => {
+    const footed = withFooter(field);
+
+    expect(footed({ dense: true })).toStrictEqual({
+      root: "grid gap-1",
+      label: "text-sm",
+      footer: "pt-4 pt-2",
+    });
+    expectTypeOf(footed).returns.toEqualTypeOf<
+      Readonly<Record<"root" | "label" | "footer", string>>
+    >();
+  });
+
+  it("rejects a slot that it does not declare in a function generic over the slot recipe it composes", () => {
+    expect(withIcon(field)()).toStrictEqual({
+      root: "grid gap-1",
+      label: "text-sm",
+      footer: "",
+    });
+  });
 });
+
+/** Adds a footer to any slot recipe, as a library's own helper does. */
+function withFooter<const Base extends ComposableKindSlotRecipe<string>>(
+  base: Base,
+): ReturnType<
+  typeof sva<
+    "footer",
+    { readonly dense: { readonly true: { readonly footer: "pt-2" } } },
+    never,
+    readonly [Base]
+  >
+> {
+  return sva({
+    composes: [base],
+    slots: ["footer"],
+    base: { footer: "pt-4" },
+    variants: { dense: { true: { footer: "pt-2" } } },
+  });
+}
+
+/** Adds a footer, and classes for a slot that no recipe declares. */
+function withIcon<const Base extends ComposableKindSlotRecipe<string>>(
+  base: Base,
+): ReturnType<
+  typeof sva<
+    "footer",
+    { readonly dense: { readonly true: { readonly footer: "pt-2" } } },
+    never,
+    readonly [Base]
+  >
+> {
+  return sva({
+    composes: [base],
+    slots: ["footer"],
+    // @ts-expect-error: icon is not a slot of the recipe.
+    base: { icon: "size-4" },
+    variants: { dense: { true: { footer: "pt-2" } } },
+  });
+}
