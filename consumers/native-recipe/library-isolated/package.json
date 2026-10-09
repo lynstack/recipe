@@ -14,7 +14,7 @@
     "out"
   ],
   "scripts": {
-    "check": "tsc -p tsconfig.json && oxlint"
+    "check": "tsc -p tsconfig.json && tsc -p tsconfig.strictest.json && oxlint"
   },
   "dependencies": {
     "@lynstack/native-recipe": "workspace:^",

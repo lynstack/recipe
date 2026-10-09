@@ -5,9 +5,13 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "check": "tsc -p tsconfig.json && oxlint"
+    "check": "tsc -p tsconfig.json && tsc -p tsconfig.bundler.json && tsc -p tsconfig.strictest.json && oxlint"
   },
   "dependencies": {
-    "@lynstack/class-recipe": "workspace:^"
+    "@lynstack/class-recipe": "workspace:^",
+    "react": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0"
   }
 }

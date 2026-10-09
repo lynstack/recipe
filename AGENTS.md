@@ -41,7 +41,9 @@ it before working in that folder.
   against the built bundle, never against the sources directly.
 - `consumers` holds the apps that check the published types as the
   users of each package compile them, in `consumers/<package>/<app>`:
-  - `app`, an app of the package's users;
+  - `app`, an app of the package's users, with components that render
+    its recipes, in React for `@lynstack/class-recipe` and in React
+    Native for `@lynstack/native-recipe`;
   - `library`, a design system built on the package, which publishes
     the declarations that tsc emits for its recipes and helpers, typed
     by inference;
@@ -55,7 +57,12 @@ it before working in that folder.
   `tsconfig.json`, and `.oxlintrc.json`, that depends on its package, or
   on the libraries of its package, and on no other package of the
   workspace, as an app does, and exports what it builds with it, so that
-  compiling it with declarations checks the published types. A library
+  compiling it with declarations checks the published types. Each
+  compiles with `tsconfig.json`, which emits its declarations, and with
+  each profile next to it, which emits nothing: `tsconfig.strictest.json`,
+  with the checks that strict projects add, such as
+  `exactOptionalPropertyTypes`, and, for an app whose `tsconfig.json`
+  resolves modules as Node.js does, `tsconfig.bundler.json`. A library
   lists `exports`, and `pnpm consumers` packs it after compiling it,
   before the apps that install it. In the workspace, pnpm links the
   package folder, whose types TypeScript can always name;

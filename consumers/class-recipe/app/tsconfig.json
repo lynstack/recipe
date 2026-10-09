@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2022",
     "module": "nodenext",
+    "jsx": "react-jsx",
     "strict": true,
     "declaration": true,
     "emitDeclarationOnly": true,
@@ -13,6 +14,7 @@
     "chain.ts",
     "recipe-chain.ts",
     "chain-overrides.ts",
-    "configured-recipes.ts"
+    "configured-recipes.ts",
+    "components.tsx"
   ]
 }

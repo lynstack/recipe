@@ -30,13 +30,27 @@ function withoutIsolatedDeclarations(app: string): void {
   );
 }
 
-/** Whether the app in `app` compiles. */
+/**
+ * The configs that an app compiles with: `tsconfig.json`, which emits its
+ * declarations, then each profile, such as `tsconfig.strictest.json`.
+ */
+function configsOf(app: string): readonly string[] {
+  return [
+    "tsconfig.json",
+    ...readdirSync(app)
+      .filter((file: string) => /^tsconfig\..+\.json$/u.test(file))
+      .toSorted(),
+  ];
+}
+
+/** Whether the app in `app` compiles with each of its configs. */
 function compiles(app: string): boolean {
-  return (
-    spawnSync("pnpm", ["exec", "tsc", "-p", "tsconfig.json"], {
-      cwd: app,
-      stdio: "inherit",
-    }).status === 0
+  return configsOf(app).every(
+    (config: string) =>
+      spawnSync("pnpm", ["exec", "tsc", "-p", config], {
+        cwd: app,
+        stdio: "inherit",
+      }).status === 0,
   );
 }
 

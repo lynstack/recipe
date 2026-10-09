@@ -1,4 +1,20 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../../.oxlintrc.json"]
+  "extends": ["../../../.oxlintrc.json"],
+  "rules": {
+    // React's types of children and of the props of elements are mutable,
+    // and components take them as React types them.
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "allow": [
+          {
+            "from": "package",
+            "package": "@types/react",
+            "name": ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"]
+          }
+        ]
+      }
+    ]
+  }
 }

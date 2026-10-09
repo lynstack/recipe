@@ -208,6 +208,13 @@ importers:
       '@lynstack/class-recipe':
         specifier: workspace:^
         version: link:../../../packages/class-recipe
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
 
   consumers/class-recipe/library:
     dependencies:

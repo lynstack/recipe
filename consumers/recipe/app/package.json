@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "check": "tsc -p tsconfig.json && oxlint"
+    "check": "tsc -p tsconfig.json && tsc -p tsconfig.bundler.json && tsc -p tsconfig.strictest.json && oxlint"
   },
   "dependencies": {
     "@lynstack/recipe": "workspace:^"

@@ -1,0 +1,12 @@
+{
+  // The checks that strict projects add to strict, without emitting.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "verbatimModuleSyntax": true,
+    "emitDeclarationOnly": false,
+    "noEmit": true
+  }
+}

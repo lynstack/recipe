@@ -1,0 +1,10 @@
+{
+  // The resolution of apps that a bundler builds, without emitting.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "emitDeclarationOnly": false,
+    "noEmit": true
+  }
+}
