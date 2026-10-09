@@ -7,12 +7,16 @@ published on npm and as a
 
 ## Unreleased
 
-- A themed style recipe rejects a value that a style property does not
-  take in its base style, such as `fontWeight: 650`, or a token whose type
-  a property does not take, as a recipe without a theme does. Before, such
+- A themed recipe rejects a value that a style property does not take in
+  its base style and in the styles of its options, such as
+  `fontWeight: 650`, `textAlign: "middle"`, or a token whose type a
+  property does not take, as a recipe without a theme does. Before, such
   a value passed the types when only a text or image style has the
   property. An error in the base style also names the wrong property or
   value, where it marked every property of the base style.
+- A base style that gives a view property and a text property, such as
+  `{ borderRadius: 3, fontWeight: 650 }`, is checked as a text style, so
+  a value that only a text style rejects is a type error.
 - An editor completes the slot names of the compound variants of a themed
   slot style recipe, and, in a themed recipe of either kind, the variant
   names of a condition next to an option and of a compound variant after

@@ -144,8 +144,26 @@ describe("the styles of createStyleRecipe", () => {
       // @ts-expect-error fontSize is a number
       variants: { size: { sm: { fontSize: "12px" } } },
     });
+    const mixed = createStyleRecipe({
+      // @ts-expect-error 650 is not a font weight
+      base: { borderRadius: 3, fontWeight: 650 },
+      variants: {},
+    });
 
     expect(recipe).toBeTypeOf("function");
+    expect(mixed()).toStrictEqual({ borderRadius: 3, fontWeight: 650 });
+  });
+
+  it("accepts compound styles that fit different elements", () => {
+    const recipe = createStyleRecipe({
+      variants: { tone: { muted: {}, cover: {} } },
+      compoundVariants: [
+        { variants: { tone: "muted" }, style: { color: "#6b7280" } },
+        { variants: { tone: "cover" }, style: { resizeMode: "cover" } },
+      ],
+    });
+
+    expect(recipe({ tone: "cover" })).toStrictEqual({ resizeMode: "cover" });
   });
 });
 

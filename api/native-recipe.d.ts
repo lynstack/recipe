@@ -8,7 +8,8 @@ type DefaultedNameOf<Config> = Config extends {
   readonly defaultVariants: infer Defaults;
 } ? keyof Defaults : never;
 type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
-type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never] ? unknown : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
+type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never] ? TextOrImageStyle<Style> : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
+type TextOrImageStyle<Style> = Style extends unknown ? [keyof Style] extends [keyof ViewStyle] ? unknown : [keyof Style] extends [keyof TextStyle] ? TextStyle : [keyof Style] extends [keyof ImageStyle] ? ImageStyle : unknown : never;
 type UnknownKey<Style> = Exclude<KeyOfEach<Style>, StyleKey>;
 type PropertyOfEach<Style, Key extends PropertyKey> = { [Property in Key]: Style extends unknown ? Property extends keyof Style ? Style[Property] : never : never; }[Key];
 type OptionValue<Variants> = { [Name in keyof Variants]: Variants[Name][keyof Variants[Name]]; }[keyof Variants];

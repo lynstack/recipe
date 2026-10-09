@@ -45,11 +45,26 @@ type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
 /**
  * Rejects the properties of the styles in `Style` that no React Native
  * style has, which the `NativeStyle` constraint alone lets through next to
- * known ones.
+ * known ones, and the values of a text or image style that its type does
+ * not take.
  */
 type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never]
-  ? unknown
+  ? TextOrImageStyle<Style>
   : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
+
+/**
+ * `TextStyle` or `ImageStyle` for each style in `Style` whose properties
+ * only that type has, whose values a `NativeStyle` otherwise lets through.
+ */
+type TextOrImageStyle<Style> = Style extends unknown
+  ? [keyof Style] extends [keyof ViewStyle]
+    ? unknown
+    : [keyof Style] extends [keyof TextStyle]
+      ? TextStyle
+      : [keyof Style] extends [keyof ImageStyle]
+        ? ImageStyle
+        : unknown
+  : never;
 
 /** The keys of the styles in `Style` that no React Native style has. */
 type UnknownKey<Style> = Exclude<KeyOfEach<Style>, StyleKey>;
