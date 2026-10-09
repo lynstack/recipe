@@ -11,7 +11,8 @@ A recipe infers the props it accepts from its config:
 - A variant without a default is required; a variant with a default, or a
   boolean variant, is optional.
 - A boolean variant accepts `true`, `false`, `"true"`, and `"false"`, and
-  an option whose name is a number accepts the number and the string.
+  an option whose name is a number, written without quotes, accepts the
+  number and the string.
 - A compound variant or a default that names an undeclared variant or
   option is a type error, and so is a slot that `slots` does not name.
 

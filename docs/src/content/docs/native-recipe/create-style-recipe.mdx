@@ -140,7 +140,8 @@ A recipe is a function. It takes a selection and returns a style:
 <EvaluatedCode name="native-recipe/create-style-recipe/stable" />
 
 The argument is optional when every variant is optional. A call with no
-argument, `undefined`, or `null` is the same as a call with `{}`. Props
+argument or `undefined` is the same as a call with `{}`. TypeScript
+rejects `null`; a `null` from untyped data counts as `{}` too. Props
 that are not variants are ignored (see
 [Variants](/recipe/native-recipe/variants/#details)).
 

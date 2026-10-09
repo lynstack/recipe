@@ -79,6 +79,10 @@ string:
   calls={[{ level: 1 }, { level: "2" }]}
 />
 
+Write the name without quotes, as `1:`. TypeScript reads a quoted name,
+`"1":`, as a string, so the option then accepts only `"1"` in the
+types, though the recipe accepts `1` at runtime.
+
 ## Compound variants
 
 A compound variant adds a style when several variants have particular

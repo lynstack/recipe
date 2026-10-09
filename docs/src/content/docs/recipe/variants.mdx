@@ -54,6 +54,10 @@ string:
   calls={[{ level: 1 }, { level: "2" }]}
 />
 
+Write the name without quotes, as `1:`. TypeScript reads a quoted name,
+`"1":`, as a string, so the option then accepts only `"1"` in the
+types, though the recipe accepts `1` at runtime.
+
 ## Compound variants
 
 A compound variant adds its `value` when every variant it names has one of
@@ -86,8 +90,9 @@ Compound variants apply after the values of the options, in the order of
   cached.
 - Properties of the selection that are not variants are ignored, so a
   component can pass a recipe all of its props.
-- Calling a recipe without a selection, or with `undefined` or `null`, is
-  the same as calling it with an empty one.
+- Calling a recipe without a selection, or with `undefined`, is the same
+  as calling it with an empty one. TypeScript rejects `null`; a `null` from
+  untyped data is an empty selection too.
 
 ## Listing the variants
 

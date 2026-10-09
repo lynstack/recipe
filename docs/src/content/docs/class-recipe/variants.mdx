@@ -89,6 +89,10 @@ string:
   calls={[{ level: 1 }, { level: "2" }]}
 />
 
+Write the name without quotes, as `1:`. TypeScript reads a quoted name,
+`"1":`, as a string, so the option then accepts only `"1"` in the
+types, though the recipe accepts `1` at runtime.
+
 ## Compound variants
 
 A **compound variant** adds classes only when several variants have
@@ -156,8 +160,9 @@ elevated:
 - A variant passed as `undefined` counts as left out: it uses its default.
 - TypeScript rejects `null` as a variant's value. A `null` from untyped
   data counts as left out, like `undefined`.
-- Calling a recipe without an argument, or with `undefined` or `null`, is
-  the same as calling it with `{}`.
+- Calling a recipe without an argument, or with `undefined`, is the same
+  as calling it with `{}`. TypeScript rejects `null` as the argument; a
+  `null` from untyped data counts as `{}` too.
 
 ## Listing the variants
 
