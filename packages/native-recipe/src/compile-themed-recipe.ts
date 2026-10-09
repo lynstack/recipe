@@ -11,7 +11,9 @@ type LooseThemedRecipe<Recipe extends LooseRecipe> = ((
 /**
  * Returns a themed recipe that builds the recipe of each theme with `build`
  * the first time it is called with that theme. The recipe of the last theme
- * is kept apart, so calling again with the same theme skips the lookup.
+ * is kept apart, so calling again with the same theme skips the lookup. A
+ * `themeToken` passed as the theme, as in `withTheme(themeToken)` inside a
+ * config function, stands for the theme being built.
  */
 function buildThemedRecipe<Recipe extends LooseRecipe>(
   build: (theme: object) => Recipe,
@@ -26,14 +28,14 @@ function buildThemedRecipe<Recipe extends LooseRecipe>(
     }
     const recipe = recipes.get(theme);
     if (recipe === undefined) {
-      return recipeOfNewTheme(resolveTheme(theme));
+      return recipeOfResolvedTheme(resolveTheme(theme));
     }
     lastTheme = theme;
     lastRecipe = recipe;
     return recipe;
   }
 
-  function recipeOfNewTheme(theme: object): Recipe {
+  function recipeOfResolvedTheme(theme: object): Recipe {
     let recipe = recipes.get(theme);
     if (recipe === undefined) {
       recipe = buildWithTheme(theme, build);
