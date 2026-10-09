@@ -48,9 +48,10 @@ type RecipesOfTheme<Composed extends readonly unknown[]> = {
  * with `isolatedDeclarations`, which cannot infer the type of a call. A
  * config that lists `composes` is rejected, so that the type cannot leave
  * out the recipes it composes.
- * It applies to a config whose type is known, not in a function generic
- * over the whole config, from which `createStyleRecipe` cannot infer the
- * variants; make such a function generic over the variants instead.
+ *
+ * It needs a config whose type is known. In a function generic over the
+ * whole config, `createStyleRecipe` cannot infer the variants, so make such
+ * a function generic over the variants instead.
  *
  * @typeParam Config - The type of the function that returns the config for
  *   a theme, without `composes`: return the config `as const`, and give
@@ -110,9 +111,10 @@ type ThemedStyleRecipeOf<
  * own, as with `isolatedDeclarations`, which cannot infer the type of a
  * call. A config that lists `composes` is rejected, so that the type cannot
  * leave out the slot recipes it composes.
- * It applies to a config whose type is known, not in a function generic
- * over the whole config, from which `createSlotStyleRecipe` cannot infer the
- * variants; make such a function generic over the variants instead.
+ *
+ * It needs a config whose type is known. In a function generic over the
+ * whole config, `createSlotStyleRecipe` cannot infer the variants, so make
+ * such a function generic over the variants instead.
  *
  * @typeParam Config - The type of the function that returns the config for
  *   a theme, without `composes`: return the config `as const`, and give

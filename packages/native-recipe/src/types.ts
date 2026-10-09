@@ -76,10 +76,12 @@ type SlotStyles<Slot extends string> = Readonly<
  * slot recipe does not have, unless the option's slot names are not known
  * at compile time. A recipe's own slots, `Slot`, are matched before those
  * of the slot recipes it composes, `Inherited`, so that they are accepted
- * even when the inherited slots are generic. It also lists every slot, so
- * that an editor completes their names and styles, but those named as a
- * property of every object, such as `toString`, which styles that do not
- * give them would have with another type.
+ * even when the inherited slots are generic.
+ *
+ * It also lists every slot, so that an editor completes their names and
+ * styles. It leaves out a slot named after a property that every object
+ * has, such as `toString`: styles that do not give it would still have it,
+ * with another type.
  */
 type NoUnknownSlotStyles<
   Styles,

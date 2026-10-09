@@ -56,22 +56,19 @@ shows them.
 | `DefaultVariants`          | `Variants`, `DefaultedName`                                          | The option each variant with a default uses when a selection leaves it out.                                                        | [Variants](/recipe/native-recipe/variants/#required-and-default-variants)                                   |
 | `CompoundCondition`        | `Variants`                                                           | The condition of a compound variant: the options it matches for each variant it names.                                             | [Variants](/recipe/native-recipe/variants/#compound-variants)                                               |
 | `RecipeFunction`           | `Props`, `Result`                                                    | A function that takes a selection, whose argument is optional when every variant is.                                               | [createStyleRecipe](/recipe/native-recipe/create-style-recipe/#the-result)                                  |
-| `KindRecipe`               | `Props`, `Result`, `Composition`                                     | The recipe of `@lynstack/recipe` that `StyleRecipe` and `SlotStyleRecipe` are, and that `withTheme` returns.                       | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/)                                         |
+| `KindRecipe`               | `Props`, `Result`, `Composition`                                     | The type of a plain recipe, such as one that `withTheme` returns; `StyleRecipe` and `SlotStyleRecipe` are forms of it.             | [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/#withtheme)                               |
 | `RecipeComposition`        | `Variants`, `DefaultedName`, `Value`, `Slots`                        | What a recipe passes on to the recipes that compose it, in its type only.                                                          | [Composing recipes](/recipe/native-recipe/composing/)                                                       |
 | `ComposedSlot`             | `Composed`, `Slot`                                                   | The slots of a slot recipe that composes others: theirs, then its own.                                                             | [Composing recipes](/recipe/native-recipe/composing/)                                                       |
 | `ComposedVariants`         | `Composed`, `Variants`                                               | The variants of a config together with those of the recipes it composes.                                                           | [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes) |
-| `ComposableKindRecipe`     | `Value`                                                              | A recipe that a recipe whose values are of type `Value` can compose.                                                               | [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes) |
-| `ComposableKindSlotRecipe` | `Value`                                                              | A slot recipe that a slot recipe whose values are of type `Value` can compose.                                                     | [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes) |
+| `ComposableKindRecipe`     | `Value`                                                              | Any recipe that `composes` accepts; use `ComposableKindRecipe<NativeStyle>`.                                                       | [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes) |
+| `ComposableKindSlotRecipe` | `Value`                                                              | Any slot recipe that a slot recipe's `composes` accepts; use `ComposableKindSlotRecipe<NativeStyle>`.                              | [Exporting and wrapping recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes) |
 
-The `Composition` parameter carries what a recipe passes on to the
-recipes that compose it. It exists in the types only. `KindRecipe`,
-`RecipeComposition`, `ComposedSlot`, `ComposedVariants`,
-`ComposableKindRecipe`, and `ComposableKindSlotRecipe` come from
-`@lynstack/recipe`. The first two are part of the type of a recipe, so a
-module that exports a recipe and emits declarations names them through
-native-recipe. `ComposedSlot` names the slots of a slot recipe that
-composes others. The last three type a function that takes a config that
-composes recipes, as
-[When the configs compose recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes)
-shows, with `ComposableKindRecipe<NativeStyle>` for
-`composes`, or `ComposableKindSlotRecipe<NativeStyle>` for a slot recipe.
+The `Composition` parameter carries, in the types only, what a recipe
+passes on to the recipes that compose it. The last six types come from
+`@lynstack/recipe`, which native-recipe re-exports so that you need not
+install it. `KindRecipe` and `RecipeComposition` are part of the type of
+a recipe, so a module that emits declarations names them through
+native-recipe. `ComposedVariants`, `ComposableKindRecipe`, and
+`ComposableKindSlotRecipe` type a function whose configs compose recipes
+(see
+[When the configs compose recipes](/recipe/native-recipe/exporting-recipes/#when-the-configs-compose-recipes)).

@@ -207,9 +207,8 @@ over the system's color scheme.
 A recipe's config is a function that reads the tokens from `themeToken`.
 Variants still choose between options; the tokens give the options their
 values. Write the function in the call, as `() => ({ … })`, so that your
-editor completes the config while you write it, and TypeScript reports
-each error where it is (see
-[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)):
+editor completes the config while you write it (see
+[Writing the config function](/recipe/native-recipe/create-themed-recipes/#writing-the-config-function)):
 
 ```ts
 // src/components/button.styles.ts

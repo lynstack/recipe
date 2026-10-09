@@ -12,19 +12,18 @@ that exports its recipes, or sets `isolatedDeclarations`, also needs
 
 ## A config declared before the call
 
-Declare a config before the call `as const`, so that the options named in
-its compound and default variants stay literal types. The same holds for
-the `slots` of a slot recipe: a list declared without `as const` is a
+Declare a config written before the call `as const`, so that the options
+its compound and default variants name stay literal types. The same goes
+for a slot recipe's `slots`: without `as const`, the list is a
 `string[]`, so the slot recipe takes any slot name, and a misspelled slot
 in `base`, in the variants, or in the result is not a type error.
 
-TypeScript also checks a declared config less than one written in the
-call, since it reports a name that a type does not declare only in an
-object written where that type is expected. In a declared config, and in
-the config that a themed recipe's function returns, a misspelled variant
-name next to a correct one in the variants that a compound variant names
-is not a type error. The recipe warns about it when it is created, and
-the compound variant never matches; see
+TypeScript also checks a declared config less strictly: it reports an
+unknown name only in an object literal written where its type is
+expected. So in a declared config, or in the config that a themed
+recipe's function returns, a compound variant can name a misspelled
+variant next to a correct one without a type error. The recipe warns
+about it when it is created, and the compound variant never matches; see
 [Names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare).
 
 ## Checked styles
@@ -88,11 +87,12 @@ linearly.
 
 With an older TypeScript:
 
-- List the recipes in one `composes` rather than chaining them: a recipe
-  that composes ten recipes costs about what each of them costs.
+- List the recipes in one `composes` rather than chaining them. The cost
+  then grows linearly: a recipe that composes ten recipes costs about as
+  much as the ten recipes.
 - A recipe imported from a package, through its emitted declarations,
   counts as one recipe, however many recipes it composes.
-- Or upgrade to TypeScript 5.9 or newer.
+- Upgrade to TypeScript 5.9 or newer.
 
 ## Typing component props
 
@@ -139,11 +139,9 @@ createStyleRecipe(() => ({
 }));
 ```
 
-Write the function in the call, as `() => ({ … })`, and read the tokens
-from `themeToken`, as above. Your editor then completes a config that has
-an error, such as one you are writing, and TypeScript reports each error
-where it is (see
-[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)).
+Write the function in the call, as above, so that your editor completes
+the config even while it has an error (see
+[Writing the config function](/recipe/native-recipe/create-themed-recipes/#writing-the-config-function)).
 
 The style a themed recipe returns has the types of the tokens it uses:
 `backgroundColor: themeToken.colors.primary` gives a `string`, where a literal
@@ -207,11 +205,11 @@ in
 ## A function that takes any recipe
 
 A function that takes any recipe, such as one that lists the options of
-each variant for a story, cannot take it as a recipe of any selection:
-that type can be called without variants, which a recipe with a required
-variant cannot, so TypeScript rejects such a recipe. Type it as a function
-of `never`, which the function does not call, with the properties it
-reads:
+each variant for a story, cannot type its parameter as a recipe of any
+selection. That type can be called without variants, and a recipe with a
+required variant cannot, so TypeScript rejects the recipe. Type the
+parameter instead as a function of `never`, which your function does not
+call, with the properties it reads:
 
 ```ts
 import type {
@@ -228,12 +226,12 @@ type AnyRecipe = ((props: never) => NativeStyle) &
   >;
 ```
 
-For a slot recipe, use
-`(props: never) => Readonly<Record<string, NativeStyle>>` with the same
-properties of
-`SlotStyleRecipe<VariantSelection<SlotStyleRecipeVariants, never>, SlotStyles<string>>`.
-A function that calls the recipe is generic over it instead, so that it
-keeps the recipe's own selection.
+For a slot recipe, pick the same properties from
+`SlotStyleRecipe<VariantSelection<SlotStyleRecipeVariants, never>, SlotStyles<string>>`,
+and intersect them with
+`(props: never) => Readonly<Record<string, NativeStyle>>`. A function
+that calls the recipe should be generic over it instead, so that it keeps
+the recipe's own selection.
 
 ## Any style
 

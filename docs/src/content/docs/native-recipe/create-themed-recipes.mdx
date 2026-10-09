@@ -15,12 +15,11 @@ import RecipeExample from "../../../components/RecipeExample.astro";
   builds a light and a dark theme step by step. This page is the reference.
 </Aside>
 
-`createThemedRecipes` returns `createStyleRecipe` and
-`createSlotStyleRecipe` for a theme type, and `themeToken`, the theme
-whose recipe is being built. Each creator takes a function that returns
-the config of the recipe, which reads the tokens from `themeToken`. Each
-returns a themed recipe, which takes the theme first, then the
-selection.
+For a theme type, `createThemedRecipes` returns `createStyleRecipe`,
+`createSlotStyleRecipe`, and `themeToken`. Each creator takes a function
+that reads the tokens from `themeToken` and returns the config of the
+recipe. Each returns a themed recipe, which takes the theme first, then
+the selection.
 
 <RecipeExample name="native-recipe/create-themed-recipes/button" />
 
@@ -61,25 +60,29 @@ function createThemedRecipes<Theme extends object>(): {
 };
 ```
 
-`Theme` is the type of your theme objects. `themeToken` reads the theme
-whose recipe is being built, while its config function runs. The return
-type is `ThemedRecipeCreators<Theme>`.
+`Theme` is the type of your theme objects, and the return type is
+`ThemedRecipeCreators<Theme>`.
 
 ## The config function
 
-The function reads the theme from `themeToken` and returns the config of a
+The function returns the config of a
 [style recipe](/recipe/native-recipe/create-style-recipe/#the-config) or
 of a [slot style recipe](/recipe/native-recipe/create-slot-style-recipe/#the-config).
 It has the same properties and the same checks, `variants` included.
 TypeScript infers the variants, options, and slots from what it returns.
 A token is typed as the theme type declares it.
 
-The function runs once for each theme object, and `themeToken` reads that
-theme while it runs. So a token can be computed, as in
-`themeToken.gap * 2`, or branched on. Read `themeToken` only inside the
-function: read anywhere else, such as in
-`const { colors } = themeToken` at the top level of a module, it throws a
-`TypeError`.
+The function runs once for each theme object, at the first call with
+that theme, and `themeToken` is that theme while it runs. So a token can
+be computed, as in `themeToken.gap * 2`, or branched on. Read
+`themeToken` only inside the function. Anywhere else it throws a
+`TypeError`, as in `const { colors } = themeToken` at the top level of a
+module.
+
+Since the function runs at the first call with each theme, that call is
+where a config with the wrong shape throws its `TypeError`, and where the
+recipe warns about
+[names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare).
 
 Every theme must give the same variants, options, and slots. Only the
 styles may change with the theme. So when you branch on a token, branch
@@ -106,14 +109,12 @@ const box = createStyleRecipe(() => ({
 box(light, { outlined: true });
 ```
 
-### Editor completions
+### Writing the config function
 
 Write the function in the call, as `() => ({ … })`, and read the tokens
-from `themeToken`. TypeScript infers the variants, options, and slots of
-the config from what the function returns. While the config has an error,
-as it often has while you write it, your editor still completes the names
-of the variants, options, and slots, and TypeScript reports each error
-where it is, with a short message:
+from `themeToken`. While the config has an error, as it often does while
+you write it, your editor still completes the names of the variants,
+options, and slots:
 
 ```ts
 createSlotStyleRecipe(() => ({
@@ -124,18 +125,22 @@ createSlotStyleRecipe(() => ({
 }));
 ```
 
-The function can also take the theme as a parameter, as in
-`(theme: Theme) => ({ … })`. Your editor completes the config as well,
-but TypeScript reports any error in the config on the whole function,
-with a long message, since it does not follow an error into a function
-whose parameters have types. Without the type, as in `(theme) =>`, your
-editor completes nothing while the config has an error.
+TypeScript reports an error in `base`, in a compound variant, or in a
+token where it is. A wrong value in the style of an option, such as
+`flexDirection: "sideways"`, it reports on `variants`, with a longer
+message.
 
-A config declared before the call takes the theme as its typed parameter,
-since `ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` read the theme
-type from it (see
+The function can also take the theme as a typed parameter, as in
+`(theme: Theme) => ({ … })`. Your editor still completes the config, but
+TypeScript reports any error on the whole function, with a long message.
+With an untyped parameter, as in `(theme) =>`, your editor completes
+nothing while the config has an error.
+
+A config declared before the call needs the typed parameter, since
+`ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` read the theme type
+from it (see
 [Exporting recipes](/recipe/native-recipe/exporting-recipes/#themed-recipes)).
-Either way, the recipe and its checks are the same.
+Whichever form you use, the recipe and its checks are the same.
 
 ## Calling a themed recipe
 

@@ -227,13 +227,13 @@ const card = createStyleRecipe(() => ({
 }));
 ```
 
-Write the function in the call, as `() => ({ … })`, reading `themeToken`:
-the editor then completes the config while it has an error, and
-TypeScript reports each error where it is. Read `themeToken` only inside
-the function; read anywhere else, such as destructured at the top level
-of a module, it throws. Take a typed `(theme: Theme)` parameter only in a
-config declared before the call, as `isolatedDeclarations` requires,
-since `ThemedStyleRecipeOf` reads the theme type from it.
+Write the function in the call, as `() => ({ … })`, and read tokens from
+`themeToken`; the editor then completes the config even while it has an
+error. Read `themeToken` only inside the function: anywhere else, such as
+destructured at the top level of a module, it throws. Use a typed
+`(theme: Theme)` parameter only for a config declared before the call, as
+`isolatedDeclarations` needs, since `ThemedStyleRecipeOf` reads the theme
+type from it.
 
 Keep the variants and options the same for every theme; only the styles
 may depend on the theme.

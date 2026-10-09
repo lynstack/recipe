@@ -192,12 +192,16 @@ type ComposedStyleRecipe<
  * only options are `"true"` and `"false"` and which defaults to `false`. An
  * option that the config does not declare adds no style, and its style is
  * built on every call. Properties of the selection that are not variants
- * are ignored. Creating the recipe warns once, with `console.warn`, about a
- * default or a compound variant that names a variant or an option that the
- * config does not declare, which adds no style. The recipe's `variantKeys`
- * property lists the names of its variants, `variantOptions` the names of
- * the options of each, and `defaultVariants` the option each uses when the
- * recipe is called without it.
+ * are ignored. The recipe's `variantKeys` property lists the names of its
+ * variants, `variantOptions` the names of the options of each, and
+ * `defaultVariants` the option each uses when the recipe is called without
+ * it.
+ *
+ * Creating the recipe throws a `TypeError` for a config with the wrong
+ * shape, such as one without `variants`. It warns once, with
+ * `console.warn`, about a default or a compound variant that names a
+ * variant or an option that the config does not declare: such a name adds
+ * no style.
  *
  * A recipe composes the recipes listed in its config's `composes` as if
  * their configs and its own were one: their base styles first, then the
@@ -221,6 +225,8 @@ type ComposedStyleRecipe<
  * @param config - The recipes it composes, and the base style, variants,
  *   compound variants, and default variants of the recipe.
  * @returns The recipe.
+ * @throws {TypeError} When a part of the config has the wrong shape, such
+ *   as a missing `variants`.
  *
  * @example
  * ```ts

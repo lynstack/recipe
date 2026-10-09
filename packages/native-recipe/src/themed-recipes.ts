@@ -212,14 +212,14 @@ interface ThemedRecipeCreators<Theme extends object> {
  * recipe of that theme from its config; later calls with the same object
  * reuse it, so they return the same frozen styles for the same variants,
  * as the recipes of `createStyleRecipe` and `createSlotStyleRecipe` do. A
- * theme that is no longer referenced is released with its recipe.
+ * theme that is no longer referenced is released with its recipe. The
+ * first call with each theme also throws a `TypeError` for a config with
+ * the wrong shape, and warns about names the config does not declare.
  *
  * A config function reads the theme being built from `themeToken`, as in
- * `() => ({ base: { gap: themeToken.gap } })`: written in the call, an
- * editor completes it while it has an error, and TypeScript reports each
- * error where it is. A config declared before the call, for
- * `ThemedStyleRecipeOf`, takes the theme as a typed parameter instead, as
- * in `(theme: Theme) =>`.
+ * `() => ({ base: { gap: themeToken.gap } })`, which an editor completes
+ * even while it has an error. A config declared before the call, for
+ * `ThemedStyleRecipeOf`, takes a typed `(theme: Theme)` parameter instead.
  *
  * The config of every theme must declare the same variants and options;
  * only the styles may depend on the theme. A themed recipe composes the

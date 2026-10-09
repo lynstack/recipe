@@ -177,12 +177,15 @@ type ComposedSlotStyleRecipe<
  * variant, whose only options are `"true"` and `"false"` and which defaults
  * to `false`. An option that the config does not declare adds no style, and
  * its styles are built on every call. Properties of the selection that are
- * not variants are ignored. Creating it warns once, with `console.warn`,
- * about a default, a compound variant, or a style that names a variant, an
- * option, or a slot that the config does not declare, which adds no style.
- * Its `variantKeys`, `variantOptions`, and
+ * not variants are ignored. Its `variantKeys`, `variantOptions`, and
  * `defaultVariants` properties list its variants as those of
  * `createStyleRecipe` do.
+ *
+ * Creating the slot recipe throws a `TypeError` for a config with the
+ * wrong shape, such as one without `variants`. It warns once, with
+ * `console.warn`, about a default, a compound variant, or a style that
+ * names a variant, an option, or a slot that the config does not declare:
+ * such a name adds no style.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first.
@@ -204,6 +207,8 @@ type ComposedSlotStyleRecipe<
  * @param config - The slot recipes it composes, and the slots, base styles,
  *   variants, compound variants, and default variants of the recipe.
  * @returns The slot recipe.
+ * @throws {TypeError} When a part of the config has the wrong shape, such
+ *   as a missing `variants`.
  *
  * @example
  * ```ts

@@ -56,14 +56,20 @@ recipe throws a `TypeError` that names what is wrong: no `variants`, a
 style that is not an object, or a compound variant without `variants` or
 `style`.
 
+Every style is checked against the styles of React Native, as in
+`StyleSheet.create` (see
+[Typing recipes](/recipe/native-recipe/typescript/)). A style that never
+changes does not need a recipe: keep it in `StyleSheet.create` (see
+[Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate)).
+
 ### Names the config does not declare
 
 A default or a compound variant can name a variant or an option that the
 config does not declare, such as a misspelled one. TypeScript rejects it
-in a config written in the call, but a config declared before the call
-lets some through (see
+in a config written in the call. A config declared before the call can
+let some through (see
 [A config declared before the call](/recipe/native-recipe/typescript/#a-config-declared-before-the-call)),
-and so does JavaScript. The recipe then adds no style for that name:
+and JavaScript checks none. The recipe then adds no style for that name:
 
 - A default of an undeclared variant, or an option that its variant does
   not declare, is ignored.
@@ -84,14 +90,6 @@ A recipe's config names variants, options, or slots that it does not declare, so
 The names of the recipes it composes count as declared. A recipe created
 again from a config with the same mistakes, such as a themed recipe for
 each theme, does not repeat the warning.
-
-A style that never changes does not need a recipe, though: keep it in
-`StyleSheet.create` (see
-[Building components](/recipe/native-recipe/building-components/#keep-static-styles-in-stylesheetcreate)).
-
-Every style is checked against the styles of React Native, as in
-`StyleSheet.create` (see
-[Typing recipes](/recipe/native-recipe/typescript/)).
 
 ## Compound variants
 
