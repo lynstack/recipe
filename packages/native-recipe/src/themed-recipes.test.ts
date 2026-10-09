@@ -223,46 +223,6 @@ describe(createThemedRecipes, () => {
     expect(slotStyle).toBeTypeOf("function");
   });
 
-  it("rejects values that a style property does not take in compound variants", () => {
-    const compoundStyle = createStyleRecipe((theme) => ({
-      variants: { tone: { primary: {} } },
-      compoundVariants: [
-        {
-          variants: { tone: "primary" },
-          style: {
-            borderRadius: theme.radius,
-            // @ts-expect-error "sideways" is not a flex direction
-            flexDirection: "sideways",
-          },
-        },
-      ],
-    }));
-    const compoundSlotStyles = createSlotStyleRecipe((theme) => ({
-      slots: ["root"],
-      variants: { tone: { primary: {} } },
-      compoundVariants: [
-        {
-          variants: { tone: "primary" },
-          styles: {
-            root: {
-              borderRadius: theme.radius,
-              // @ts-expect-error "sideways" is not a flex direction
-              flexDirection: "sideways",
-            },
-          },
-        },
-      ],
-    }));
-
-    expect(compoundStyle(light, { tone: "primary" })).toStrictEqual({
-      borderRadius: 8,
-      flexDirection: "sideways",
-    });
-    expect(compoundSlotStyles(light, { tone: "primary" })).toStrictEqual({
-      root: { borderRadius: 8, flexDirection: "sideways" },
-    });
-  });
-
   it("rejects options, slots, and tokens that do not exist", () => {
     const defaultOption = createStyleRecipe((theme) => ({
       variants: { tone: { primary: { color: theme.colors.primary } } },

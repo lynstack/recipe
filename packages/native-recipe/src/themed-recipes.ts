@@ -116,7 +116,7 @@ interface ThemedRecipeCreators<Theme extends object> {
    */
   readonly createStyleRecipe: <
     const Variants,
-    const Base = never,
+    const Base extends NativeStyle = never,
     const Compounds extends readonly StyleCompoundVariant<
       NoInfer<ComposedVariants<Composed, Variants>>
     >[] = readonly [],
