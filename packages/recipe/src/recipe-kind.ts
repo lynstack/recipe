@@ -186,10 +186,13 @@ type LooseKindRecipe = WithVariants<
  * each, and `defaultVariants` the option each uses when a selection leaves
  * it out, so that a library can list every selection of a recipe.
  *
- * Creating a recipe warns once, with `console.warn`, about a default or a
+ * Creating a recipe from a config with the wrong shape, such as one without
+ * `variants`, throws a `TypeError` that names what is wrong. Creating a
+ * recipe also warns once, with `console.warn`, about a default or a
  * compound variant's condition that names a variant or an option that no
- * config of the recipe declares. Such a default is ignored, and such a
- * condition never matches.
+ * config of the recipe declares. Such a default is ignored. A condition on
+ * such a variant never matches, and such an option in a condition's list
+ * of options is ignored.
  *
  * With the cache, a recipe builds the result of each declared selection
  * once, and calling it again with the same variants returns the same

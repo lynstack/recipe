@@ -194,9 +194,10 @@ type LooseSlotRecipe = WithVariants<
  * in the order of `slots`. With the cache, a slot recipe builds it once for
  * each declared selection and returns the same object for the same
  * variants. The `cache` of a slot recipe's config overrides the kind's.
- * Variants, boolean variants, undeclared options, the warning about
- * undeclared names, and the `variantKeys`, `variantOptions`, and
- * `defaultVariants` properties are as in {@link createRecipeKind}. It also
+ * Variants, boolean variants, undeclared options, the `TypeError` for a
+ * config with the wrong shape, the warning about undeclared names, and the
+ * `variantKeys`, `variantOptions`, and `defaultVariants` properties are as
+ * in {@link createRecipeKind}. It also
  * warns about a value for a slot that no config lists in `slots`, which is
  * ignored.
  *

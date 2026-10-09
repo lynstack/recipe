@@ -87,14 +87,23 @@ recipe in a recipe, is a type error (see
 
 Before TypeScript 5.9, the work of checking a chain of recipes, each of
 which composes the one before, grows exponentially with its length: at
-least twofold with each recipe, and more when the type of a recipe's
-result keeps the types of the recipes it composes. A long chain compiled
-in one project fails with "Type instantiation is excessively deep and
-possibly infinite". TypeScript 5.9 and newer check it in time that grows
-linearly. A recipe that lists several recipes in one `composes`, or
-composes a recipe imported through emitted declarations, does not add
-to it. Check the chains your library expects with the oldest TypeScript
-it supports.
+least twofold with each recipe. A long chain compiled in one project
+fails with "Type instantiation is excessively deep and possibly
+infinite". TypeScript 5.9 and newer check the same chain in time that
+grows linearly.
+
+The cost grows faster than twofold when the type of a recipe's result
+keeps the types of the recipes it composes, as a style object that lists
+the properties of each does. Two things do not lengthen a chain:
+
+- A recipe that lists several recipes in one `composes`. Its cost grows
+  linearly: a recipe that composes ten recipes costs about as much as the
+  ten recipes.
+- A recipe imported through emitted declarations, which counts as one
+  recipe, however many recipes it composes.
+
+Check the chains your library expects with the oldest TypeScript it
+supports.
 
 ## Typing component props
 

@@ -61,9 +61,9 @@ type WrittenKindDefaults<Variants, DefaultedName extends keyof Variants> = [
 /**
  * The check of the variants of a slot recipe: it rejects the slots that are
  * neither `Slot` nor `InheritedSlot`, and lists every slot in each option,
- * so that an editor completes their names and values. It leaves out the
- * slots named as a property of every object, such as `toString`, which an
- * option that does not give them would have with another type.
+ * so that an editor completes their names and values. It leaves out a slot
+ * named after a property that every object has, such as `toString`: an
+ * option that does not give it would still have it, with another type.
  */
 type SlotVariantsCheck<
   Variants,

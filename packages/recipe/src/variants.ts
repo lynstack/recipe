@@ -66,8 +66,9 @@ const noProps: SelectedVariants = Object.freeze({});
  * Prepares variants for selecting values. A variant that declares an option
  * named `"true"` or `"false"` also declares the other one, with
  * `config.noValue`, and a variant whose only options are those defaults to
- * `"false"`. A compound variant that names an undeclared variant or option,
- * or lists no option for a variant, never matches and is left out.
+ * `"false"`. An undeclared option in a compound variant's list is ignored,
+ * and a compound variant that names an undeclared variant, or no declared
+ * option of a variant, never matches and is left out.
  */
 function compileVariants<Value>(
   config: VariantsConfig<Value>,

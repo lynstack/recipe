@@ -117,7 +117,8 @@ function unknownSlots<Value>(
  * Returns the names in a recipe's own config that none of its layers
  * declares: a variant or option in its defaults or compound variants, and,
  * for a slot recipe, a slot that a value is given to. Such a default or
- * value is left out, and such a compound variant never matches. Each layer
+ * value is left out, an undeclared option in a compound variant's list is
+ * ignored, and any other such compound variant never matches. Each layer
  * was checked when its own recipe was created, so only `own` is checked.
  */
 function unknownNames<Value>(
