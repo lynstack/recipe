@@ -168,13 +168,13 @@ function Button({
 export { Button, buttonVariants };
 ```
 
-A Base UI component takes a `className` that is either a string or a
-function of its state, such as
+A Base UI component takes a `className` that is a string or a function
+of its state, such as
 `className={(state) => (state.disabled ? "opacity-25" : "")}`. A recipe
-takes a string, so the component passes Base UI a function, which calls
-the recipe with the `className` of that state. class-variance-authority
-ignores a function, so the classes it returned were lost; the recipe adds
-them.
+takes a string, so the component passes Base UI a function that resolves
+`className` for the current state and calls the recipe with it.
+class-variance-authority ignores a function `className`, which drops the
+classes it returns; the recipe keeps them.
 
 The component keeps its API: `variant`, `size`, the `render` prop of
 Base UI, such as `<Button nativeButton={false} render={<a href="/" />}>`,

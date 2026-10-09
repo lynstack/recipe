@@ -216,9 +216,9 @@ export type AlertTone = NonNullable<AlertVariants["tone"]>; // "info" | "danger"
 
 Write the config inside `cva(…)` or `sva(…)`, where TypeScript checks
 every name. A config declared before the call must be `as const`, and
-TypeScript lets some misspelled names through; the recipe then warns,
-when it is created, that its config names what it does not declare. Fix
-every such warning.
+TypeScript lets some misspelled names through. Creating such a recipe
+warns that its config names what it does not declare; fix every such
+warning.
 
 ### Use `cx` only to add classes that set new properties
 

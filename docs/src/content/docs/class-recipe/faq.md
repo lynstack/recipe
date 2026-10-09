@@ -30,8 +30,8 @@ The message names the part to fix. The most common ones:
 - A compound variant gives its classes under `class`, as
   class-variance-authority and tailwind-variants do. Rename it to
   `className` in `cva`, or `classNames` in `sva`.
-- Classes are an array, `false`, or `null`, or a slot recipe gets a
-  string where it takes the classes of each slot.
+- Classes are an array, `false`, or `null`.
+- A slot recipe gets a string where it takes the classes of each slot.
 
 See [cva](/recipe/class-recipe/cva/#the-config) and
 [Migrating from tailwind-variants](/recipe/class-recipe/migrating-from-tailwind-variants/#configs-that-throw-without-types).

@@ -5,7 +5,11 @@ sidebar:
   label: TypeScript
 ---
 
-A recipe infers the props it accepts from its config:
+A recipe infers the props it accepts from its config. A library that
+exports its recipes, or sets `isolatedDeclarations`, also needs
+[Exporting and wrapping recipes](/recipe/class-recipe/exporting-recipes/).
+
+The inferred props follow these rules:
 
 - An option that a variant does not declare is a type error.
 - A variant without a default is required; a variant with a default, or a
@@ -32,9 +36,6 @@ button({ tone: "danger" });
 // @ts-expect-error: tone has no default, so it is required.
 button({ size: "sm" });
 ```
-
-A library that exports its recipes, or sets `isolatedDeclarations`,
-also needs [Exporting and wrapping recipes](/recipe/class-recipe/exporting-recipes/).
 
 ## A config declared before the call
 
