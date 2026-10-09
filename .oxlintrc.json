@@ -119,8 +119,8 @@
     }
   ],
   // The examples are apps that readers open and edit, written as the docs
-  // write them, outside the workspace.
-  "ignorePatterns": ["dist", ".astro", "examples", "compat"],
+  // write them, outside the workspace. api holds generated declarations.
+  "ignorePatterns": ["dist", ".astro", "examples", "compat", "api"],
   "env": {
     "builtin": true
   }
