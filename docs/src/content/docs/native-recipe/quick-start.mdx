@@ -148,9 +148,8 @@ See [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/).
 The colors above are written in each recipe. A design system keeps them
 in a [theme](/recipe/native-recipe/glossary/#theme) instead, with one
 theme for light and one for dark. `createThemedRecipes` returns recipe
-creators whose config is a function, and `themeToken`, which the function
-reads the theme from. Their recipes take the theme first, then the
-variants:
+creators and `themeToken`. A config is a function that reads tokens from
+`themeToken`, and the recipe takes the theme first, then the variants:
 
 ```ts
 import { createThemedRecipes } from "@lynstack/native-recipe";

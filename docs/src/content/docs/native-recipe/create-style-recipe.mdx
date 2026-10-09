@@ -71,8 +71,10 @@ let some through (see
 [A config declared before the call](/recipe/native-recipe/typescript/#a-config-declared-before-the-call)),
 and JavaScript checks none. The recipe then adds no style for that name:
 
-- A default of an undeclared variant, or an option that its variant does
-  not declare, is ignored.
+- A default of an undeclared variant is ignored.
+- A default option that its variant does not declare selects no option,
+  so a call that leaves the variant out adds no style for it. The
+  recipe's `defaultVariants` still lists that option as written.
 - A compound variant's condition on an undeclared variant never matches.
   An undeclared option in its list is ignored, so a condition left
   without a declared option never matches either.

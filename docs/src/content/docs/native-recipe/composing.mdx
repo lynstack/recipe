@@ -101,13 +101,11 @@ Here is a `card` slot recipe:
 
 ## Compose themed recipes
 
-A [themed recipe](/recipe/native-recipe/create-themed-recipes/) builds
-its styles from a theme. It composes a themed recipe through `withTheme`.
-`withTheme(theme)` returns the plain recipe of one theme.
-
-In a config function, `withTheme(themeToken)` returns the recipe of the
-theme being built. Then the light icon button composes the light button,
-and the dark icon button composes the dark button:
+A [themed recipe](/recipe/native-recipe/create-themed-recipes/) composes
+another themed recipe through `withTheme`, which returns the plain recipe
+of one theme. In a config function, `withTheme(themeToken)` returns the
+recipe of the theme being built, so the light icon button composes the
+light button, and the dark icon button the dark button:
 
 <RecipeExample
   name="native-recipe/composing/themed-icon-button"

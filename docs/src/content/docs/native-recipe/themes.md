@@ -129,7 +129,8 @@ value, so that each theme can give them its own value.
 ### 2. Create the recipe creators
 
 Call `createThemedRecipes` once, with the theme type, and export its
-recipe creators and `themeToken`, which a recipe reads the theme from.
+recipe creators and `themeToken`, the theme that a recipe reads its tokens
+from.
 Every component imports them from here, so their recipes take a `Theme`:
 
 ```ts
@@ -263,9 +264,10 @@ button(dark, { tone: "outline" }).label; // color is dark.colors.text
 ```
 
 A style that no theme changes, such as `fontWeight` here, is written as
-it is; only tokens come from the theme. The function runs once for each
-theme, while `themeToken` reads that theme, so read `themeToken` only
-inside it.
+it is; only tokens come from the theme.
+
+The function runs once for each theme, and `themeToken` is that theme
+only while it runs, so read `themeToken` only inside the function.
 
 ### 5. Use them in components
 

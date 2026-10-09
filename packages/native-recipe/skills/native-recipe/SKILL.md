@@ -16,13 +16,11 @@ allocates more, and nothing in the code says why.
 **Check the setup first.** If the project calls `createThemedRecipes`,
 usually in a module such as `src/theme/recipes.ts`, import
 `createStyleRecipe`, `createSlotStyleRecipe`, and `themeToken` from that
-module for
-every component that uses colors, spacing, radii, or type sizes, and take
-those values from the theme. Find how components read the theme, usually
-a `useTheme` hook, and use it. If the project has no theme, use the
-functions of `@lynstack/native-recipe` directly, and see
-[Adding themes](#adding-themes) when a task asks for dark mode or a
-theme.
+module for every component that uses colors, spacing, radii, or type
+sizes, and take those values from the theme. Find how components read the
+theme, usually a `useTheme` hook, and use it. If the project has no theme,
+use the functions of `@lynstack/native-recipe` directly, and see [Adding
+themes](#adding-themes) when a task asks for dark mode or a theme.
 
 ## The API at a glance
 
@@ -206,9 +204,9 @@ condition.
 ### Take colors, spacing, and sizes from the theme
 
 In a project with a theme, a recipe's config is a function that reads the
-theme from `themeToken`, and every value that a token exists for comes from the theme, never as a
-literal. Name new tokens by their role, such as `surface` or `onPrimary`,
-so that each theme gives them its own value.
+theme from `themeToken`, and every value that a token exists for comes
+from the theme, never as a literal. Name new tokens by their role, such as
+`surface` or `onPrimary`, so that each theme gives them its own value.
 
 ```ts
 // Wrong: the dark theme gets the light theme's color.
