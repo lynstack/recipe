@@ -3,14 +3,13 @@ import type {
   ComposableKindSlotRecipe,
   ComposedVariants,
   NativeStyle,
-  SlotStyleRecipe,
+  SlotStyleCompoundVariant,
   SlotStyleRecipeConfig,
   SlotStyleRecipeVariants,
   SlotStyles,
-  StyleRecipe,
+  StyleCompoundVariant,
   StyleRecipeConfig,
   StyleRecipeVariants,
-  VariantSelection,
 } from "@lynstack/native-recipe";
 import {
   createSlotStyleRecipe,
@@ -20,36 +19,33 @@ import {
 /** Creates a recipe from any config, as a library's own helper does. */
 function define<
   const Variants extends StyleRecipeVariants,
+  const Base extends NativeStyle = never,
+  const Compounds extends readonly StyleCompoundVariant<NoInfer<Variants>>[] =
+    readonly [],
   const DefaultedName extends keyof Variants = never,
 >(
-  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
-): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName>,
+): ReturnType<
+  typeof createStyleRecipe<Variants, Base, Compounds, DefaultedName>
+> {
   return createStyleRecipe(config);
 }
 
 /** Creates a recipe that may compose others, as a library's own helper does. */
 function defineComposed<
   const Variants extends StyleRecipeVariants,
+  const Base extends NativeStyle = never,
+  const Compounds extends readonly StyleCompoundVariant<
+    NoInfer<ComposedVariants<Composed, Variants>>
+  >[] = readonly [],
   const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
     never,
   const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
     readonly [],
 >(
-  config: StyleRecipeConfig<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >,
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
 ): ReturnType<
-  typeof createStyleRecipe<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >
+  typeof createStyleRecipe<Variants, Base, Compounds, DefaultedName, Composed>
 > {
   return createStyleRecipe(config);
 }
@@ -58,18 +54,15 @@ function defineComposed<
 function defineSlots<
   const Slot extends string,
   const Variants extends SlotStyleRecipeVariants,
+  const Base extends SlotStyles<string> = never,
+  const Compounds extends readonly SlotStyleCompoundVariant<
+    NoInfer<Variants>
+  >[] = readonly [],
   const DefaultedName extends keyof Variants = never,
 >(
-  config: SlotStyleRecipeConfig<
-    Slot,
-    Variants,
-    SlotStyles<Slot>,
-    readonly [],
-    DefaultedName
-  >,
-): SlotStyleRecipe<
-  VariantSelection<Variants, DefaultedName>,
-  SlotStyles<Slot>
+  config: SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName>,
+): ReturnType<
+  typeof createSlotStyleRecipe<Slot, Variants, Base, Compounds, DefaultedName>
 > {
   return createSlotStyleRecipe(config);
 }

@@ -41,19 +41,17 @@ types that native-recipe exports, such as `RecipeComposition`. The
 library depends on `@lynstack/native-recipe` only, even when its package
 manager, such as pnpm, keeps `@lynstack/recipe` out of its reach.
 
-Before 1.6.0, such a module failed with TS2883 (TS2742 before
-TypeScript 7), which says that the inferred type of the recipe cannot be
-named without a reference to `@lynstack/recipe`. Update native-recipe to
-fix it.
+If such a module fails with TS2883 (TS2742 before TypeScript 7), which
+says that the inferred type of the recipe cannot be named without a
+reference to `@lynstack/recipe`, update native-recipe to 1.6.0 or newer.
 
 ## With `isolatedDeclarations`
 
 With `"isolatedDeclarations": true`, TypeScript requires that the
-declarations of each file can be written from that file alone, without
-the type checker, as oxc and the tools built on it, such as tsdown, write
-them. Without the type checker, a tool cannot know what a call returns,
-so each recipe that a module exports needs a type annotation; without
-one, TypeScript reports TS9010.
+declarations of each file can be written from that file alone, as oxc
+and the tools built on it, such as tsdown, write them. Such a tool cannot
+know what a call returns, so each recipe that a module exports needs a
+type annotation; without one, TypeScript reports TS9010.
 
 `StyleRecipeOf` and `SlotStyleRecipeOf` give that type from the type of
 the config. Declare the config `as const`, which isolated declarations
@@ -82,31 +80,25 @@ the same order, as the second type parameter:
   calls={[{ raised: true }]}
 />
 
-The helpers reject a config that lists `composes`, so that the type
-cannot leave out the recipes it composes.
-
-The helpers are for a config whose type is known where the recipe is
-declared. They do not apply in a function generic over the whole config,
-such as one that takes `config: Config` and returns
-`StyleRecipeOf<Config>`: `createStyleRecipe` infers the variants from its
-config, and TypeScript cannot infer them from a config whose type is a
-type parameter. Make such a function generic over the variants instead,
-as
-[A function generic over a config](#a-function-generic-over-a-config)
-shows.
+`StyleRecipeOf` and `SlotStyleRecipeOf` reject a config that lists
+`composes`, so that the type cannot leave out the recipes it composes.
 
 ### Themed recipes
 
-`ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` take the type of the
-config function of a themed recipe. They read the theme type from its
-parameter, so a config declared before the call takes the theme as its
-typed parameter, as in `(theme: Theme) =>`, and does not read
-`themeToken`, which is for configs written in the call (see
-[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)).
-Isolated declarations cannot infer a value read from the theme, so give
-each one its type, and return the config `as const`:
+`ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` take the type of a
+themed recipe's config function, and read the theme type from its
+parameter. So a declared config function takes `(theme: Theme)` and reads
+the tokens from `theme`, not from `themeToken`, which is for configs
+written in the call (see
+[Writing the config function](/recipe/native-recipe/create-themed-recipes/#writing-the-config-function)).
+Isolated declarations cannot infer a value read from the theme, so assert
+the type of each one, and return the config `as const`:
 
 ```ts
+import { createThemedRecipes } from "@lynstack/native-recipe";
+import type { ThemedStyleRecipeOf } from "@lynstack/native-recipe";
+import type { Theme } from "./theme";
+
 const { createStyleRecipe } = createThemedRecipes<Theme>();
 
 const chipConfig = (theme: Theme) =>
@@ -152,46 +144,59 @@ for the files that declare themed recipes.
 
 A function of yours that creates recipes, such as a helper that a library
 gives its users, is generic over the variants of the config, not over the
-whole config.
+whole config. `StyleRecipeOf` and the other `…Of` types do not apply in
+such a function: they need a config whose type is known where the recipe
+is declared, and TypeScript cannot infer the variants of a config whose
+type is a type parameter.
 
 ### A function generic over a config
 
-Type the variants and the names with a default as `const` type
-parameters, and the recipe as a `StyleRecipe` of their
-`VariantSelection`:
+Take the parts of the config that TypeScript infers as `const` type
+parameters, pass them on to `StyleRecipeConfig`, and return the type that
+`createStyleRecipe` returns for them:
 
 ```ts
 import { createStyleRecipe } from "@lynstack/native-recipe";
 import type {
   NativeStyle,
-  StyleRecipe,
+  StyleCompoundVariant,
   StyleRecipeConfig,
   StyleRecipeVariants,
-  VariantSelection,
 } from "@lynstack/native-recipe";
 
 function define<
   const Variants extends StyleRecipeVariants,
+  const Base extends NativeStyle = never,
+  const Compounds extends readonly StyleCompoundVariant<NoInfer<Variants>>[] =
+    readonly [],
   const DefaultedName extends keyof Variants = never,
 >(
-  config: StyleRecipeConfig<Variants, NativeStyle, readonly [], DefaultedName>,
-): StyleRecipe<VariantSelection<Variants, DefaultedName>, NativeStyle> {
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName>,
+): ReturnType<
+  typeof createStyleRecipe<Variants, Base, Compounds, DefaultedName>
+> {
   return createStyleRecipe(config);
 }
 ```
 
-A slot recipe's helper does the same with `SlotStyleRecipeConfig`, and
-returns a `SlotStyleRecipe` of `SlotStyles<Slot>`.
+`Base` and `Compounds` are the types of `base` and `compoundVariants`.
+Passing them on keeps the properties of the style that the recipe
+returns, so TypeScript still checks that a text style goes only to a
+`Text` (see
+[The style a recipe returns](/recipe/native-recipe/typescript/#the-style-a-recipe-returns)).
+
+A slot recipe's helper does the same with `SlotStyleRecipeConfig`, whose
+first type parameter is `Slot`, `SlotStyleCompoundVariant`, and
+`ReturnType<typeof createSlotStyleRecipe<Slot, Variants, Base, Compounds, DefaultedName>>`,
+with `Base extends SlotStyles<string>`.
 
 ### When the configs compose recipes
 
-`define` takes no `composes`: its `StyleRecipe` has the variants of its
-own config only, and other recipes cannot compose it. A helper whose
-configs compose recipes takes the recipes as a type parameter, and
-returns the type of `createStyleRecipe` for its type parameters, which
-has the variants and defaults of the recipes it composes. Leave `Base` as
-`never`, as `createStyleRecipe` does, so that the style it returns has
-the properties of the config:
+`define` takes no `composes`: its recipe has the variants of its own
+config only. A helper whose configs compose recipes takes them as a last
+type parameter, `Composed`. The defaults and the compound variants may
+name the variants of the recipes it composes, so they take
+`ComposedVariants<Composed, Variants>`:
 
 ```ts
 import { createStyleRecipe } from "@lynstack/native-recipe";
@@ -199,36 +204,33 @@ import type {
   ComposableKindRecipe,
   ComposedVariants,
   NativeStyle,
+  StyleCompoundVariant,
   StyleRecipeConfig,
   StyleRecipeVariants,
 } from "@lynstack/native-recipe";
 
 function defineComposed<
   const Variants extends StyleRecipeVariants,
+  const Base extends NativeStyle = never,
+  const Compounds extends readonly StyleCompoundVariant<
+    NoInfer<ComposedVariants<Composed, Variants>>
+  >[] = readonly [],
   const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
     never,
   const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
     readonly [],
 >(
-  config: StyleRecipeConfig<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >,
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
 ): ReturnType<
-  typeof createStyleRecipe<
-    Variants,
-    never,
-    readonly [],
-    DefaultedName,
-    Composed
-  >
+  typeof createStyleRecipe<Variants, Base, Compounds, DefaultedName, Composed>
 > {
   return createStyleRecipe(config);
 }
 ```
+
+A slot recipe's helper does the same with `SlotStyleRecipeConfig`,
+`ComposableKindSlotRecipe<NativeStyle>`, and
+`ReturnType<typeof createSlotStyleRecipe<Slot, Variants, Base, Compounds, DefaultedName, Composed>>`.
 
 A function that takes a recipe rather than a config, such as one that
 lists the options of each variant for a story, is typed in

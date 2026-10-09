@@ -104,11 +104,16 @@ const anyChip: ThemedRecipe<
 > = chip;
 
 const fade = define({
+  base: { borderRadius: 4 },
+  compoundVariants: [
+    { style: { borderWidth: 1 }, variants: { tone: "danger" } },
+  ],
   defaultVariants: { tone: "neutral" },
   variants: { tone: { danger: { opacity: 1 }, neutral: { opacity: 0.5 } } },
 });
 const fadeStyle: NativeStyle = fade();
 const field = defineSlots({
+  base: { label: { fontSize: 12 } },
   slots: ["label", "input"],
   variants: { size: { sm: { input: { height: 24 } } } },
 });
@@ -126,6 +131,7 @@ function createArrayStyleRecipes(): void {
 }
 
 const compactBox = defineComposed({
+  base: { padding: 2 },
   composes: [box],
   variants: { size: { xs: { height: 24 } } },
 });

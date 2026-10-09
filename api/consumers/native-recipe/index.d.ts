@@ -251,13 +251,59 @@ declare const iconChipStyle: StyleProp<ViewStyle>;
 declare const anyChip: ThemedRecipe<Theme, ChipVariants, {
     readonly backgroundColor?: string;
 }>;
-declare const fade: import("@lynstack/native-recipe").StyleRecipe<{
+declare const fade: ((props?: {
     readonly tone?: "danger" | "neutral" | undefined;
-}, NativeStyle>;
+} | undefined) => {
+    readonly borderRadius?: 4 | undefined;
+    readonly borderWidth?: 1 | undefined;
+    readonly opacity?: 0.5 | 1 | undefined;
+}) & {
+    readonly variantKeys: readonly "tone"[];
+    readonly variantOptions: {
+        readonly tone: readonly ("danger" | "neutral")[];
+    };
+    readonly defaultVariants: {
+        readonly tone: "danger" | "neutral";
+    };
+} & {
+    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
+        readonly tone: {
+            readonly danger: {
+                readonly opacity: 1;
+            };
+            readonly neutral: {
+                readonly opacity: 0.5;
+            };
+        };
+    }, "tone", NativeStyle, undefined> | undefined;
+};
 declare const fadeStyle: NativeStyle;
-declare const field: import("@lynstack/native-recipe").SlotStyleRecipe<{
+declare const field: ((props: {
     readonly size: "sm";
-}, Readonly<Partial<Record<"input" | "label", NativeStyle | undefined>>>>;
+}) => {
+    readonly input: {
+        readonly height?: 24 | undefined;
+    };
+    readonly label: {
+        readonly fontSize?: 12 | undefined;
+    };
+}) & {
+    readonly variantKeys: readonly "size"[];
+    readonly variantOptions: {
+        readonly size: readonly "sm"[];
+    };
+    readonly defaultVariants: {};
+} & {
+    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
+        readonly size: {
+            readonly sm: {
+                readonly input: {
+                    readonly height: 24;
+                };
+            };
+        };
+    }, never, NativeStyle, readonly ("input" | "label")[]> | undefined;
+};
 declare const fieldStyles: SlotStyles<"label" | "input">;
 /** Configs whose styles are arrays of styles, which the types reject. */
 declare function createArrayStyleRecipes(): void;
@@ -271,6 +317,7 @@ declare const compactBox: ((props: {
     readonly borderWidth?: 2 | undefined;
     readonly height?: 24 | 40 | 48 | undefined;
     readonly opacity?: 0.5 | undefined;
+    readonly padding?: 2 | undefined;
 }) & {
     readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
     readonly variantOptions: {
