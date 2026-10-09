@@ -55,7 +55,7 @@ describe("the type of the recipe of a config", () => {
     );
   });
 
-  it("composes the recipes that its second parameter lists", () => {
+  it("composes the recipes that its last parameter lists", () => {
     const box: StyleRecipeOf<typeof boxConfig> = createStyleRecipe(boxConfig);
     const card: StyleRecipeOf<typeof cardConfig, readonly [typeof box]> =
       createStyleRecipe({ ...cardConfig, composes: [box] });
@@ -84,7 +84,7 @@ describe("the type of the recipe of a config", () => {
     );
   });
 
-  it("composes the slot recipes that its second parameter lists", () => {
+  it("composes the slot recipes that its last parameter lists", () => {
     const field: SlotStyleRecipeOf<typeof fieldConfig> =
       createSlotStyleRecipe(fieldConfig);
     const search: SlotStyleRecipeOf<
@@ -114,7 +114,7 @@ describe("the type of the recipe of a config", () => {
       padding: 8,
       opacity: 1,
     });
-    // @ts-expect-error: the recipes it composes are its second parameter.
+    // @ts-expect-error: the recipes it composes are its last parameter.
     expectTypeOf<StyleRecipeOf<typeof composingConfig>>().toBeFunction();
   });
 });
@@ -171,7 +171,7 @@ describe("the type of the themed recipe of a config", () => {
     );
   });
 
-  it("composes the themed recipes that its second parameter lists", () => {
+  it("composes the themed recipes that its last parameter lists", () => {
     const chip: ThemedStyleRecipeOf<typeof chipConfig> =
       themed.createStyleRecipe(chipConfig);
     const badge: ThemedStyleRecipeOf<
@@ -210,7 +210,7 @@ describe("the type of the themed recipe of a config", () => {
     );
   });
 
-  it("composes the themed slot recipes that its second parameter lists", () => {
+  it("composes the themed slot recipes that its last parameter lists", () => {
     const tag: ThemedSlotStyleRecipeOf<typeof tagConfig> =
       themed.createSlotStyleRecipe(tagConfig);
     const pill: ThemedSlotStyleRecipeOf<

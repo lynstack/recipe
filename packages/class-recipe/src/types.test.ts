@@ -222,7 +222,7 @@ describe("the type of the recipe of a config", () => {
     );
   });
 
-  it("composes the recipes that its second parameter lists", () => {
+  it("composes the recipes that its last parameter lists", () => {
     const pill: RecipeOf<typeof pillConfig> = createRecipe(pillConfig);
     const badge: RecipeOf<typeof badgeConfig, readonly [typeof pill]> =
       createRecipe({ ...badgeConfig, composes: [pill] });
@@ -244,7 +244,7 @@ describe("the type of the recipe of a config", () => {
     );
   });
 
-  it("composes the slot recipes that its second parameter lists", () => {
+  it("composes the slot recipes that its last parameter lists", () => {
     const look: SlotRecipeOf<typeof lookConfig> = createSlotRecipe(lookConfig);
     const toggle: SlotRecipeOf<typeof toggleConfig, readonly [typeof look]> =
       createSlotRecipe({ ...toggleConfig, composes: [look] });
@@ -264,7 +264,7 @@ describe("the type of the recipe of a config", () => {
     const badge = createRecipe(composingConfig);
 
     expect(badge({ tone: "neutral" })).toBe("rounded-full h-8 bg-gray-100");
-    // @ts-expect-error: the recipes it composes are its second parameter.
+    // @ts-expect-error: the recipes it composes are its last parameter.
     expectTypeOf<RecipeOf<typeof composingConfig>>().toBeFunction();
   });
 });
