@@ -88,6 +88,10 @@ A recipe merges the configs it composes once, when you create it. After
 that, it costs what one recipe with the merged config costs, with or
 without the cache.
 
+Before TypeScript 5.9, type checking a long chain of recipes, each of
+which composes the one before, slows down quickly; see
+[Chains of composed recipes](/recipe/class-recipe/typescript/#chains-of-composed-recipes).
+
 ## Errors
 
 - A config without `variants` throws a `TypeError` that says so when you

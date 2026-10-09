@@ -77,6 +77,9 @@ const iconButton = createStyleRecipe({
   slot recipes in a slot recipe.
 - The composed recipes keep their own configs and caches. Composing does
   not change them.
+- Before TypeScript 5.9, type checking a long chain of recipes, each of
+  which composes the one before, slows down quickly; see
+  [Chains of composed recipes](/recipe/native-recipe/typescript/#chains-of-composed-recipes).
 
 ## Compose slot recipes
 

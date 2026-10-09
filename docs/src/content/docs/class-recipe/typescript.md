@@ -222,6 +222,24 @@ with the same properties of
 A function that calls the recipe is generic over it instead, so that it
 keeps the recipe's own props.
 
+## Chains of composed recipes
+
+Before TypeScript 5.9, the work of checking a chain of recipes, each of
+which composes the one before, grows exponentially with its length,
+about twofold with each recipe. A chain of about fourteen recipes
+compiled in the same project fails with "Type instantiation is
+excessively deep and possibly infinite", and a shorter one already slows
+the editor down. TypeScript 5.9 and newer check the same chain in time
+that grows linearly.
+
+With an older TypeScript:
+
+- List the recipes in one `composes` rather than chaining them: a recipe
+  that composes ten recipes costs about what each of them costs.
+- A recipe imported from a package, through its emitted declarations,
+  counts as one recipe, however many recipes it composes.
+- Or upgrade to TypeScript 5.9 or newer.
+
 ## Other types
 
 The package exports the types of every config, props object, and recipe,
