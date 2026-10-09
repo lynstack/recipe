@@ -174,7 +174,8 @@ package with its apps, run
   those, and `--update` to write the declarations of the apps to `api`.
   Run it after a change to a public type, or to the dependencies between
   the packages, and commit `api` with the change; CI runs it on the
-  oldest and newest TypeScript and React Native.
+  oldest and newest TypeScript and React Native, and the release
+  workflow of each package runs it before publishing.
 - `pnpm sources --typescript <version>` builds the packages and compiles
   the sources of each, tests and benchmarks included, with that
   TypeScript, without the options of `tsconfig.base.json` that it does not
@@ -195,8 +196,9 @@ that entry as the notes of the GitHub release. After the version is on npm, set
 it in the package's example in `examples`, and update its
 `package-lock.json` with `npm install`. The
 package's release workflow checks that the tag matches the version in its
-`package.json`, runs its `check`, packs it with `pnpm pack`, which turns
-each `workspace:^` dependency into a range, such as `^1.1.2`, and
+`package.json`, runs its `check` and `pnpm consumers`, packs it with
+`pnpm pack`, which turns each `workspace:^` dependency into a range, such
+as `^1.1.2`, and
 publishes it to npm, unless that version is already there, so that a
 release of a version published by hand, or a rerun, publishes nothing.
 Release a package first when a package built on it needs a new version of

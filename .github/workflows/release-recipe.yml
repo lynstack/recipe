@@ -38,6 +38,10 @@ jobs:
             exit 1
           fi
       - run: pnpm --filter @lynstack/recipe check
+      # Installs the packed packages in each app of consumers, outside the
+      # repository, as their users install them, and compiles it.
+      - run: pnpm build
+      - run: pnpm consumers
       - run: npm --version
       # A release of a version already on npm, such as a rerun, publishes
       # nothing.
