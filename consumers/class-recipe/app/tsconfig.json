@@ -15,6 +15,7 @@
     "recipe-chain.ts",
     "chain-overrides.ts",
     "configured-recipes.ts",
-    "components.tsx"
+    "components.tsx",
+    "misuse.ts"
   ]
 }

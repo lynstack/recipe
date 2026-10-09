@@ -43,7 +43,9 @@ it before working in that folder.
   users of each package compile them, in `consumers/<package>/<app>`:
   - `app`, an app of the package's users, with components that render
     its recipes, in React for `@lynstack/class-recipe` and in React
-    Native for `@lynstack/native-recipe`;
+    Native for `@lynstack/native-recipe`, and, in `misuse.ts`, one call
+    or config for each kind of mistake that the types reject, each
+    under a `@ts-expect-error` that says why;
   - `library`, a design system built on the package, which publishes
     the declarations that tsc emits for its recipes and helpers, typed
     by inference;

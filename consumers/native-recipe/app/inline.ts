@@ -119,17 +119,6 @@ const field = defineSlots({
 });
 const fieldStyles: SlotStyles<"label" | "input"> = field({ size: "sm" });
 
-/** Configs whose styles are arrays of styles, which the types reject. */
-function createArrayStyleRecipes(): void {
-  const styles = [{ padding: 8 }];
-  // @ts-expect-error: a style is an object, not an array of styles.
-  createStyleRecipe({ base: styles, variants: {} });
-  // @ts-expect-error: a style is an object, not an array of styles.
-  createStyleRecipe({ base: [{ padding: 8 }], variants: {} });
-  // @ts-expect-error: a style is an object, not an array of styles.
-  createStyleRecipe({ variants: { size: { sm: [{ padding: 8 }] } } });
-}
-
 const compactBox = defineComposed({
   base: { padding: 2 },
   composes: [box],
@@ -161,7 +150,6 @@ export {
   chipKeys,
   chipOptions,
   chipStyle,
-  createArrayStyleRecipes,
   fade,
   fadeStyle,
   field,

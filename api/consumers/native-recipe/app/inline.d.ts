@@ -305,8 +305,6 @@ declare const field: ((props: {
     }, never, NativeStyle, readonly ("input" | "label")[]> | undefined;
 };
 declare const fieldStyles: SlotStyles<"label" | "input">;
-/** Configs whose styles are arrays of styles, which the types reject. */
-declare function createArrayStyleRecipes(): void;
 declare const compactBox: ((props: {
     readonly disabled?: "false" | "true" | boolean | undefined;
     readonly size?: "lg" | "md" | "xs" | undefined;
@@ -402,5 +400,5 @@ declare const footedButton: ((props: {
     }, never, NativeStyle, readonly ("footer" | "label" | "root")[]> | undefined;
 };
 declare const footedButtonStyles: Readonly<Record<"root" | "label" | "footer", NativeStyle>>;
-export { compactBox, compactBoxStyle, footedButton, footedButtonStyles, anyChip, anyStyle, box, boxDefaults, boxKeys, boxOptions, button, chip, chipKeys, chipOptions, chipStyle, createArrayStyleRecipes, fade, fadeStyle, field, fieldStyles, iconBox, iconBoxStyle, iconChip, iconChipStyle, iconStyle, labelStyle, labeledButton, rootStyle, style, tag, tagLabelStyle, };
+export { compactBox, compactBoxStyle, footedButton, footedButtonStyles, anyChip, anyStyle, box, boxDefaults, boxKeys, boxOptions, button, chip, chipKeys, chipOptions, chipStyle, fade, fadeStyle, field, fieldStyles, iconBox, iconBoxStyle, iconChip, iconChipStyle, iconStyle, labelStyle, labeledButton, rootStyle, style, tag, tagLabelStyle, };
 export type { BoxVariants, ChipVariants, IconBoxVariants };

@@ -21,6 +21,7 @@
     "style-chain.ts",
     "themed-chain.ts",
     "themed-use.ts",
-    "components.tsx"
+    "components.tsx",
+    "misuse.ts"
   ]
 }
