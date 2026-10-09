@@ -1,10 +1,8 @@
-import type {
-  ComposableKindSlotRecipe,
-  ComposedDefaultedName,
-  ComposedVariants,
-  VariantsOf as RecipeVariantsOf,
-} from "@lynstack/recipe";
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
+import type {
+  VariantsOf as RecipeVariantsOf,
+  UnknownSlot,
+} from "@lynstack/recipe";
 
 /**
  * The style of a React Native element: a view, a text, or an image, as
@@ -13,21 +11,6 @@ import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 type NativeStyle = ViewStyle | TextStyle | ImageStyle;
 
 type StyleKey = keyof ViewStyle | keyof TextStyle | keyof ImageStyle;
-
-/**
- * The names of the variants that the recipes of `Composed` give a default,
- * among the variants of a recipe that composes them with its own
- * `Variants`. Kept apart from the recipe's own defaulted names, so that a
- * recipe that composes nothing has exactly those, even when they are
- * generic.
- */
-type InheritedDefaultedName<
-  Composed extends readonly unknown[],
-  Variants,
-> = Extract<
-  ComposedDefaultedName<Composed, never>,
-  keyof ComposedVariants<Composed, Variants>
->;
 
 /**
  * The names of the variants with a default in a config of type `Config`:
@@ -89,15 +72,6 @@ type SlotStyles<Slot extends string> = Readonly<
 >;
 
 /**
- * The type of a slot name that names no slot, `Name`, among the slots
- * `Slot`: no style is assignable to it, so an error names both.
- */
-interface UnknownSlot<Name, Slot extends string> {
-  readonly "~unknownSlot": Name;
-  readonly "~slots": Slot;
-}
-
-/**
  * Rejects the slots and style properties of an option's styles that the
  * slot recipe does not have, unless the option's slot names are not known
  * at compile time. A recipe's own slots, `Slot`, are matched before those
@@ -142,15 +116,6 @@ type NoUnknownVariantStyles<
           >;
         };
       };
-
-/**
- * The slots of the slot recipes of `Composed`, as indexed access rather
- * than a conditional type, so that TypeScript relates a config to them
- * while `Composed` is generic.
- */
-type InheritedSlot<
-  Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[],
-> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 
 /**
  * Rejects the slots and style properties of the compound variants' styles,
@@ -284,8 +249,6 @@ export type {
   CompoundStyles,
   DeclaredStyle,
   DefaultedNameOf,
-  InheritedDefaultedName,
-  InheritedSlot,
   KeyOfEach,
   NativeStyle,
   NoUnknownCompoundStyles,

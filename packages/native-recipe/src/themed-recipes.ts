@@ -2,17 +2,11 @@ import type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
   KindRecipe,
   RecipeComposition,
 } from "@lynstack/recipe";
 
-import type {
-  InheritedDefaultedName,
-  NativeStyle,
-  RecipeSlotStyles,
-  SlotStyles,
-  VariantSelection,
-} from "./types.js";
 import type {
   LooseSlotStyleRecipe,
   LooseSlotStyleRecipeConfig,
@@ -21,6 +15,12 @@ import type {
   LooseStyleRecipe,
   LooseStyleRecipeConfig,
 } from "./compile-style-recipe.js";
+import type {
+  NativeStyle,
+  RecipeSlotStyles,
+  SlotStyles,
+  VariantSelection,
+} from "./types.js";
 import type {
   RecipeStyle,
   StyleCompoundVariant,

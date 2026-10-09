@@ -1,6 +1,8 @@
 import type {
   ComposableKindSlotRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
+  InheritedSlot,
   KindRecipe,
   KindVariants,
   RecipeComposition,
@@ -9,8 +11,6 @@ import type {
 import type {
   CompoundCondition,
   CompoundStyles,
-  InheritedDefaultedName,
-  InheritedSlot,
   NativeStyle,
   NoUnknownCompoundStyles,
   NoUnknownSlotStyles,

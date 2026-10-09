@@ -1,4 +1,7 @@
-import type { ComposedVariants } from "@lynstack/recipe";
+import type {
+  ComposedVariants,
+  InheritedDefaultedName,
+} from "@lynstack/recipe";
 
 import type {
   BaseOf,
@@ -6,11 +9,7 @@ import type {
   SlotStyleRecipeConfigParts,
   StyleRecipeConfigParts,
 } from "./recipe-of.js";
-import type {
-  DefaultedNameOf,
-  InheritedDefaultedName,
-  RecipeSlotStyles,
-} from "./types.js";
+import type { DefaultedNameOf, RecipeSlotStyles } from "./types.js";
 import type { ComposedThemedRecipe } from "./themed-recipes.js";
 import type { RecipeStyle } from "./style-recipe.js";
 

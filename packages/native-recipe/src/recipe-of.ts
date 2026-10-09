@@ -2,6 +2,7 @@ import type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
 } from "@lynstack/recipe";
 
 import type {
@@ -15,7 +16,6 @@ import type {
 } from "./style-recipe.js";
 import type {
   DefaultedNameOf,
-  InheritedDefaultedName,
   NativeStyle,
   RecipeSlotStyles,
   SlotStyles,

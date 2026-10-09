@@ -1,6 +1,7 @@
 import type {
   ComposableKindRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
   KindRecipe,
   KindVariants,
   RecipeComposition,
@@ -9,7 +10,6 @@ import type {
 import type {
   ComposedStyle,
   CompoundCondition,
-  InheritedDefaultedName,
   KeyOfEach,
   NativeStyle,
   NoUnknownProperties,
