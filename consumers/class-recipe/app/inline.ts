@@ -14,8 +14,8 @@ import {
   defineComposedSlots,
   defineSlots,
   withFooter,
-} from "./define.js";
-import { look } from "./look.js";
+} from "./generic.js";
+import { look } from "./exported.js";
 
 const button = createRecipe({
   base: "inline-flex",

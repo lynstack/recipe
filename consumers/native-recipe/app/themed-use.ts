@@ -15,8 +15,8 @@ import {
   defineThemedAsCreated,
   themed,
   withThemedDense,
-} from "./themed-define";
-import type { Palette } from "./themed-define";
+} from "./themed-generic";
+import type { Palette } from "./themed-generic";
 
 const palette: Palette = {
   colors: { primary: "#2563eb", surface: "#ffffff" },

@@ -9,7 +9,7 @@
     "types": []
   },
   "files": [
-    "index.ts",
+    "inline.ts",
     "chain.ts",
     "recipe-chain.ts",
     "chain-overrides.ts",

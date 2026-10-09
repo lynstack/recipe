@@ -1,6 +1,6 @@
 import type { NativeStyle, SlotStyles, VariantsOf } from "@lynstack/native-recipe";
 import type { StyleProp, ViewStyle } from "react-native";
-import type { Palette } from "./themed-define";
+import type { Palette } from "./themed-generic";
 declare const badge: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly tone?: "primary" | "surface" | undefined;
 }, NativeStyle>;

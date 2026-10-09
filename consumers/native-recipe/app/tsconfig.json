@@ -15,7 +15,7 @@
     "types": []
   },
   "files": [
-    "index.ts",
+    "inline.ts",
     "chain.ts",
     "style-chain.ts",
     "themed-chain.ts",

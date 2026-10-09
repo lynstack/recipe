@@ -11,7 +11,7 @@ import {
   createThemedRecipes,
 } from "@lynstack/native-recipe";
 
-import { define, defineComposed, defineSlots, withFooter } from "./define.js";
+import { define, defineComposed, defineSlots, withFooter } from "./generic.js";
 
 const box = createStyleRecipe({
   base: { borderRadius: 8 },

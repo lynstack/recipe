@@ -18,7 +18,7 @@ import {
   defineComposedSlots,
   defineSlots,
   withFooter,
-} from "./define.js";
+} from "./generic.js";
 
 type Style = Readonly<Record<string, string | number>>;
 
