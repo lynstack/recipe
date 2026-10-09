@@ -98,8 +98,10 @@ own types, such as `Duplicate identifier 'FormData'`. Set
 
 The editor of Expo Snack checks TypeScript with a version too old to read
 the types of the package. So the example runs as JavaScript. The code is
-the same, without the types. In your app, with TypeScript 5.4 or newer,
-the types work.
+the same, without the types. In your app, with a TypeScript that the
+package supports (see
+[Requirements](/recipe/native-recipe/installation/#requirements)), the
+types work.
 
 ## I get a `TypeError` that says to install one copy of `@lynstack/recipe`
 
