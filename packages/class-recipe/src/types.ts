@@ -120,8 +120,9 @@ type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 /**
  * Rejects the slots of each option's classes that neither `Slot` nor
  * `Inherited` names, unless the option's slot names are not known at
- * compile time. A recipe's own slots are matched first, so that they are
- * accepted even when the inherited slots are generic.
+ * compile time. The recipe's own slots are checked before the inherited
+ * ones, so that they are accepted even when the inherited slots are
+ * generic.
  *
  * It also lists every slot, so that an editor completes their names. It
  * leaves out a slot named after a property that every object has, such as
@@ -153,8 +154,9 @@ type NoUnknownSlots<
 
 /**
  * The type of `defaultVariants`: the defaults as written, checked. While an
- * editor completes them, TypeScript has not inferred their names and takes
- * `never`, which would allow no name; then it is a default for any variant.
+ * editor completes them, TypeScript has not yet inferred their names and
+ * takes `never`, which would allow no name, so the type then takes an
+ * optional default for each variant.
  */
 type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [
   DefaultedName,

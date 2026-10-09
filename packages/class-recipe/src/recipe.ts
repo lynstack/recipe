@@ -161,8 +161,7 @@ type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<
  * @param config - The recipes it composes, and the base classes, variants,
  *   compound variants, and default variants of the recipe.
  * @returns The recipe.
- * @throws {TypeError} When a part of the config has the wrong shape, such
- *   as a missing `variants`.
+ * @throws {TypeError} When the config has the wrong shape.
  */
 type CreateRecipe = <
   const Variants extends RecipeVariants,

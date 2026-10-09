@@ -45,8 +45,9 @@ type KindDefaultVariants<
 
 /**
  * The type of `defaultVariants`: the defaults as written, checked. While an
- * editor completes them, TypeScript has not inferred their names and takes
- * `never`, which would allow no name; then it is a default for any variant.
+ * editor completes them, TypeScript has not yet inferred their names and
+ * takes `never`, which would allow no name, so the type then takes an
+ * optional default for each variant.
  */
 type WrittenKindDefaults<Variants, DefaultedName extends keyof Variants> = [
   DefaultedName,

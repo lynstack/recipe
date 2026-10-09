@@ -51,7 +51,10 @@ function checkVariants(variants: unknown, checkStyles: CheckStyles): void {
   }
 }
 
-/** Tells a config that names its styles another way how to name them. */
+/**
+ * The hint to rename `style` to `styles`, or the reverse, when a compound
+ * variant that needs `property` gives its styles under the other name.
+ */
 function renameHint(compound: UncheckedRecord, property: string): string {
   const misnamed = ["style", "styles"].find(
     (name) => name !== property && Object.hasOwn(compound, name),

@@ -51,7 +51,11 @@ function checkVariants(variants: unknown, checkClasses: CheckClasses): void {
   }
 }
 
-/** Tells a config written for another library how to name its classes. */
+/**
+ * The hint to rename `class`, `className`, or `classNames` to `property`,
+ * when a compound variant that needs `property` gives its classes under
+ * another of those names.
+ */
 function renameHint(compound: UncheckedRecord, property: string): string {
   const misnamed = ["class", "className", "classNames"].find(
     (name) => name !== property && Object.hasOwn(compound, name),

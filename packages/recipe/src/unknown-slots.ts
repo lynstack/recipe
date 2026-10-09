@@ -37,8 +37,9 @@ interface UnknownSlot<Name, Slot extends string> {
 
 /**
  * Rejects the slots of the variants' options that are neither `Slot` nor
- * `InheritedSlot`. A recipe's own slots are excluded first, so that they
- * are accepted even when the inherited slots are generic.
+ * `InheritedSlot`. The recipe's own slots are checked before the inherited
+ * ones, so that they are accepted even when the inherited slots are
+ * generic.
  */
 type NoUnknownComposedSlots<
   Variants,

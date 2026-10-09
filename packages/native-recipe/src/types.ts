@@ -26,15 +26,19 @@ type DefaultedNameOf<Config> = Config extends {
 type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
 
 /**
- * Rejects the properties that no React Native style has, and the values
- * that a text or image style does not take, in the styles in `Style`,
- * which the `NativeStyle` constraint alone lets through.
+ * Checks the styles in `Style` beyond the `NativeStyle` constraint: it
+ * rejects a property that no React Native style has, and, when there is
+ * none, a value that a text or image style does not take.
  */
 type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never]
   ? TextOrImageStyle<Style>
   : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
 
-/** The text or image style type of each style that only it fits. */
+/**
+ * For each style in `Style`: `unknown` when a view style has all its keys,
+ * else `TextStyle` when a text style has them, else `ImageStyle` when an
+ * image style has them, else `unknown`.
+ */
 type TextOrImageStyle<Style> = Style extends unknown
   ? [keyof Style] extends [keyof ViewStyle]
     ? unknown
@@ -74,9 +78,9 @@ type SlotStyles<Slot extends string> = Readonly<
 /**
  * Rejects the slots and style properties of an option's styles that the
  * slot recipe does not have, unless the option's slot names are not known
- * at compile time. A recipe's own slots, `Slot`, are matched before those
- * of the slot recipes it composes, `Inherited`, so that they are accepted
- * even when the inherited slots are generic.
+ * at compile time. The recipe's own slots, `Slot`, are checked before
+ * those of the slot recipes it composes, `Inherited`, so that they are
+ * accepted even when the inherited slots are generic.
  *
  * It also lists every slot, so that an editor completes their names and
  * styles. It leaves out a slot named after a property that every object

@@ -225,8 +225,7 @@ type ComposedStyleRecipe<
  * @param config - The recipes it composes, and the base style, variants,
  *   compound variants, and default variants of the recipe.
  * @returns The recipe.
- * @throws {TypeError} When a part of the config has the wrong shape, such
- *   as a missing `variants`.
+ * @throws {TypeError} When the config has the wrong shape.
  *
  * @example
  * ```ts

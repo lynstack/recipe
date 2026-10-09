@@ -56,9 +56,10 @@ type RecipesOfTheme<Composed extends readonly unknown[]> = {
  * @typeParam Config - The type of the function that returns the config for
  *   a theme, without `composes`: return the config `as const`, and give
  *   each value read from the theme its type, such as
- *   `theme.gap as Theme["gap"]`. The function takes the theme as its typed
- *   parameter, as in `(theme: Theme) =>`, from which the type reads the
- *   theme type; it does not apply to a function that reads `themeToken`.
+ *   `theme.gap as Theme["gap"]`. The function takes the theme as a typed
+ *   parameter, as in `(theme: Theme) =>`, and the type reads the theme
+ *   type from it, so it does not apply to a function that reads
+ *   `themeToken`.
  * @typeParam Composed - The types of the recipes it composes, in the order
  *   of `composes`: a themed recipe, whose `withTheme` the config calls, or
  *   a recipe. Defaults to none.
@@ -119,9 +120,10 @@ type ThemedStyleRecipeOf<
  * @typeParam Config - The type of the function that returns the config for
  *   a theme, without `composes`: return the config `as const`, and give
  *   each value read from the theme its type, such as
- *   `theme.gap as Theme["gap"]`. The function takes the theme as its typed
- *   parameter, as in `(theme: Theme) =>`, from which the type reads the
- *   theme type; it does not apply to a function that reads `themeToken`.
+ *   `theme.gap as Theme["gap"]`. The function takes the theme as a typed
+ *   parameter, as in `(theme: Theme) =>`, and the type reads the theme
+ *   type from it, so it does not apply to a function that reads
+ *   `themeToken`.
  * @typeParam Composed - The types of the slot recipes it composes, in the
  *   order of `composes`: a themed slot recipe, whose `withTheme` the config
  *   calls, or a slot recipe. Defaults to none.
@@ -158,7 +160,7 @@ type ThemedSlotStyleRecipeOf<
       RecipesOfTheme<Composed>,
       ReturnType<Config>["variants"]
     >,
-  // Not ComposedSlot, which declarations print with each composed type.
+  // SlotOfEach, not ComposedSlot, which prints each composed type.
   RecipeSlotStyles<
     | ReturnType<Config>["slots"][number]
     | SlotOfEach<RecipesOfTheme<Composed>[number]>,

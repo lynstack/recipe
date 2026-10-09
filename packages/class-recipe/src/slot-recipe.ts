@@ -73,8 +73,8 @@ interface SlotRecipeConfig<
    */
   readonly composes?: Composed | undefined;
   /**
-   * The names of the elements it styles, after those of the slot recipes it
-   * composes; not of a property that every object has, such as `toString`.
+   * The slot recipe's elements, after those of the slot recipes it composes.
+   * A name of a property of every object, such as `toString`, is unsupported.
    */
   readonly slots: readonly Slot[];
   /** Classes applied to each slot whatever the variants. */
@@ -160,8 +160,7 @@ type SlotRecipe<
  *   classes, variants, compound variants, and default variants of the
  *   recipe.
  * @returns The slot recipe.
- * @throws {TypeError} When a part of the config has the wrong shape, such
- *   as a missing `variants`.
+ * @throws {TypeError} When the config has the wrong shape.
  */
 type CreateSlotRecipe = <
   const Slot extends string,
@@ -172,6 +171,7 @@ type CreateSlotRecipe = <
     readonly [],
 >(
   config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
+  // Infers from the config only, not a caller's return type (TS2590).
 ) => NoInfer<
   ComposedSlotRecipe<
     // Not ComposedSlot, which declarations print with each composed type.

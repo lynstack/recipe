@@ -28,13 +28,11 @@ type BooleanVariantName<Variants> = {
  * The values accepted for one variant: the names of its options, as
  * strings or, for numeric names, as numbers, plus `true`, `false`, `"true"`,
  * and `"false"` when it declares an option named `"true"` or `"false"`.
- *
- * @remarks
- * Written as a conditional type so that editors and errors show the names,
- * such as `"sm" | "md"`, rather than the options they come from.
+ * Editors and errors show them by name, such as `"sm" | "md"`.
  *
  * @typeParam Options - The options of the variant, keyed by option name.
  */
+// A conditional type, so that editors print the names, not the options.
 type VariantOption<Options> = [Options] extends [unknown]
   ? | OptionName<Options>
     | NumberOption<Options>
