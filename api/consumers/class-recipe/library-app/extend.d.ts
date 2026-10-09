@@ -1,0 +1,11 @@
+declare const linkClassName: string;
+declare const sheetClassNames: Readonly<Record<"body" | "footer" | "handle" | "root" | "title", string>>;
+declare const pressableClassName: string;
+declare const comboboxClassNames: Readonly<Record<"label" | "list" | "root", string>>;
+declare const switchClassNames: Readonly<Record<"icon" | "root" | "thumb", string>>;
+declare const avatarClassName: string;
+declare const fabClassName: string;
+declare const alertClassNames: Readonly<Record<"icon" | "root", string>>;
+declare const drawerClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
+declare const footedDialogClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
+export { alertClassNames, avatarClassName, comboboxClassNames, drawerClassNames, fabClassName, footedDialogClassNames, linkClassName, pressableClassName, sheetClassNames, switchClassNames, };

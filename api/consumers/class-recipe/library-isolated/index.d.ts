@@ -12,3 +12,6 @@ declare const badgeClassName: string;
 declare const iconToggleClassNames: Readonly<Record<"glyph" | "icon" | "root", string>>;
 export { badgeClassName, iconToggleClassNames, toggleClassNames, toggleDefaults, toggleVariants, };
 export type { ToggleProps, ToggleVariants };
+export { badge, toggle } from "./toggle.js";
+export { chip, configured, field, tag } from "./configured.js";
+export { label, select } from "./configured-use.js";

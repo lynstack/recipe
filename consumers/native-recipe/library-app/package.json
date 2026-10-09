@@ -1,0 +1,16 @@
+{
+  "name": "native-recipe-library-app",
+  "private": true,
+  "description": "An app that installs two design systems built on @lynstack/native-recipe, and not the package itself. Only pnpm consumers compiles it, with the packed libraries: in the workspace, tsc emits declarations for them that name packages they do not depend on.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "native-recipe-library": "workspace:*",
+    "native-recipe-library-isolated": "workspace:*",
+    "react": "19.3.0",
+    "react-native": "0.87.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0"
+  }
+}

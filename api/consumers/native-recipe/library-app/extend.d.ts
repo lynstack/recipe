@@ -1,0 +1,11 @@
+import type { NativeStyle, SlotStyles } from "native-recipe-library";
+declare const toolbarStyles: SlotStyles<"divider" | "icon" | "label" | "root">;
+declare const tileStyle: NativeStyle;
+declare const sheetStyles: SlotStyles<"handle" | "root" | "title">;
+declare const pillTagStyles: SlotStyles<"close" | "label" | "root">;
+declare const avatarStyle: NativeStyle;
+declare const fabStyle: NativeStyle;
+declare const alertStyles: SlotStyles<"icon" | "root">;
+declare const footedFieldStyles: SlotStyles<"footer" | "label" | "root">;
+declare const footedButtonStyles: SlotStyles<"footer" | "label" | "root">;
+export { alertStyles, avatarStyle, fabStyle, footedButtonStyles, footedFieldStyles, pillTagStyles, sheetStyles, tileStyle, toolbarStyles, };

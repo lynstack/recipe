@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../../.oxlintrc.json"],
+  "rules": {
+    // React Native does not type its styles as read-only, so a function
+    // of an app that takes them cannot take read-only types.
+    "typescript/prefer-readonly-parameter-types": "off"
+  }
+}

@@ -29,3 +29,7 @@ export {
   titleStyle,
 };
 export type { HeadingVariants };
+export { card, text } from "./text.js";
+export { dialog, heading } from "./heading.js";
+export { slotStyleRecipe, styleRecipe } from "./kind.js";
+export type { Style } from "./kind.js";

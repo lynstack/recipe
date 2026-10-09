@@ -1,0 +1,18 @@
+{
+  // The settings of @react-native/typescript-config that React Native apps
+  // extend: React Native's own declarations need skipLibCheck and no DOM.
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "customConditions": ["react-native"],
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "out",
+    "types": []
+  },
+  "files": ["index.ts"]
+}

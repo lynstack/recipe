@@ -21,14 +21,7 @@
  * - `--update`: replaces the declarations that `api/consumers` keeps with
  *   those the apps emit, instead of comparing them.
  */
-import {
-  cpSync,
-  mkdtempSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
-import type { Dirent } from "node:fs";
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import os from "node:os";
@@ -36,6 +29,7 @@ import { parseArgs } from "node:util";
 import path from "node:path";
 
 import type { Dependencies, Manifest } from "./manifest.ts";
+import { appsIn, packLibrary, tarballsIn } from "./apps.ts";
 import {
   compiles,
   growsLinearly,
@@ -70,21 +64,6 @@ function pack(destination: string): string {
     root,
   );
   return destination;
-}
-
-/** The tarball of each package in `folder`, keyed by package name. */
-function tarballsIn(folder: string): ReadonlyMap<string, string> {
-  return new Map(
-    readdirSync(folder)
-      .filter((file: string) => file.endsWith(".tgz"))
-      .map((file: string): readonly [string, string] => [
-        file.replace(
-          /^lynstack-(?<name>.*)-\d+\.\d+\.\d+\.tgz$/u,
-          "@lynstack/$<name>",
-        ),
-        path.join(folder, file),
-      ]),
-  );
 }
 
 /** React Native at `version`, and the React and React types it asks for. */
@@ -220,8 +199,12 @@ function install(
     JSON.stringify({
       dependencies: dependenciesOf(manifest, tarballs),
       devDependencies: devDependenciesOf(manifest),
+      exports: manifest.exports,
+      files: manifest.files,
+      name: manifest.name,
       private: true,
       type: "module",
+      version: manifest.version,
     }),
   );
   writeFileSync(
@@ -257,43 +240,34 @@ function declarationsFailureOf(name: string, app: string): string | undefined {
 }
 
 /**
- * Installs the app `name` into `folder` from `tarballs` and checks it, and
+ * Checks the declarations that the compiled `app` of `name` emits, and
  * returns what fails, if anything.
  */
-function failureOf(
-  name: string,
-  folder: string,
-  tarballs: ReadonlyMap<string, string>,
-): string | undefined {
-  const app = install(name, folder, tarballs);
-  if (!compiles(app)) {
-    return `the app of ${name} does not compile`;
-  }
+function failureOf(name: string, app: string): string | undefined {
   if (!growsLinearly(app)) {
     return `the declarations of the app of ${name} grow faster than the levels of composition`;
   }
   return declarationsFailureOf(name, app);
 }
 
-/** The folders in `folder`. */
-function foldersIn(folder: string): readonly string[] {
-  return readdirSync(folder, { withFileTypes: true })
-    .filter((entry: Readonly<Dirent>) => entry.isDirectory())
-    .map((entry: Readonly<Dirent>) => entry.name);
-}
-
-/** The apps of `consumers`, named `<package>/<app>`. */
-const apps = foldersIn(consumers).flatMap((name: string) =>
-  foldersIn(path.join(consumers, name)).map((app: string) => `${name}/${app}`),
-);
-
 const folder = mkdtempSync(path.join(os.tmpdir(), "lynstack-consumers-"));
-const tarballs = tarballsIn(
-  options.packages ?? pack(path.join(folder, "packages")),
-);
-const failures = apps
-  .map((name: string) => failureOf(name, folder, tarballs))
-  .filter((failure: string | undefined) => failure !== undefined);
+const packages = options.packages ?? pack(path.join(folder, "packages"));
+const tarballs = new Map(tarballsIn(packages));
+const failures: string[] = [];
+for (const { library, name } of appsIn(consumers)) {
+  const app = install(name, folder, tarballs);
+  if (compiles(app)) {
+    if (library !== undefined) {
+      tarballs.set(library, packLibrary(app, path.join(folder, "libraries")));
+    }
+    const failure = failureOf(name, app);
+    if (failure !== undefined) {
+      failures.push(failure);
+    }
+  } else {
+    failures.push(`the app of ${name} does not compile`);
+  }
+}
 if (failures.length > 0) {
   throw new Error(`${failures.join("; ")}. The apps are in ${folder}.`);
 }

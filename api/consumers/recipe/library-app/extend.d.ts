@@ -1,0 +1,12 @@
+import type { Style } from "recipe-library";
+declare const captionStyle: Style;
+declare const sheetStyles: Readonly<Record<"footer" | "handle" | "root" | "title", Style>>;
+declare const navLinkClassName: string;
+declare const displayStyle: Style;
+declare const panelStyles: Readonly<Record<"body" | "root" | "title", Style>>;
+declare const badgeStyle: Style;
+declare const labelStyle: Style;
+declare const fieldStyles: Readonly<Record<"input" | "label", Style>>;
+declare const drawerStyles: Readonly<Record<"footer" | "root" | "title", Style>>;
+declare const footedDialogStyles: Readonly<Record<"footer" | "root" | "title", Style>>;
+export { badgeStyle, captionStyle, displayStyle, drawerStyles, fieldStyles, footedDialogStyles, labelStyle, navLinkClassName, panelStyles, sheetStyles, };

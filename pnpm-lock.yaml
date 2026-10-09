@@ -209,6 +209,21 @@ importers:
         specifier: workspace:^
         version: link:../../../packages/class-recipe
 
+  consumers/class-recipe/library:
+    dependencies:
+      '@lynstack/class-recipe':
+        specifier: workspace:^
+        version: link:../../../packages/class-recipe
+
+  consumers/class-recipe/library-app:
+    dependencies:
+      class-recipe-library:
+        specifier: workspace:*
+        version: link:../library
+      class-recipe-library-isolated:
+        specifier: workspace:*
+        version: link:../library-isolated
+
   consumers/class-recipe/library-isolated:
     dependencies:
       '@lynstack/class-recipe':
@@ -220,6 +235,41 @@ importers:
       '@lynstack/native-recipe':
         specifier: workspace:^
         version: link:../../../packages/native-recipe
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-native:
+        specifier: 0.87.1
+        version: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+
+  consumers/native-recipe/library:
+    dependencies:
+      '@lynstack/native-recipe':
+        specifier: workspace:^
+        version: link:../../../packages/native-recipe
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-native:
+        specifier: 0.87.1
+        version: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.0)(supports-color@8.1.1)
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+
+  consumers/native-recipe/library-app:
+    dependencies:
+      native-recipe-library:
+        specifier: workspace:*
+        version: link:../library
+      native-recipe-library-isolated:
+        specifier: workspace:*
+        version: link:../library-isolated
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -252,6 +302,21 @@ importers:
       '@lynstack/recipe':
         specifier: workspace:^
         version: link:../../../packages/recipe
+
+  consumers/recipe/library:
+    dependencies:
+      '@lynstack/recipe':
+        specifier: workspace:^
+        version: link:../../../packages/recipe
+
+  consumers/recipe/library-app:
+    dependencies:
+      recipe-library:
+        specifier: workspace:*
+        version: link:../library
+      recipe-library-isolated:
+        specifier: workspace:*
+        version: link:../library-isolated
 
   consumers/recipe/library-isolated:
     dependencies:

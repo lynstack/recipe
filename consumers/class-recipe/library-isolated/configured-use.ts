@@ -29,5 +29,5 @@ const labelClassName: string = label({ muted: true, tone: "danger" });
 const selectClassNames: Readonly<Record<"label" | "root" | "trigger", string>> =
   select({ invalid: true, open: true });
 
-export { chipClassName, label, labelClassName, selectClassNames };
+export { chipClassName, label, labelClassName, select, selectClassNames };
 export type { ChipProps };

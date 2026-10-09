@@ -1,9 +1,18 @@
 {
   "name": "recipe-library-isolated",
+  "version": "1.0.0",
   "private": true,
   "description": "A library that installs @lynstack/recipe and emits each file's declarations on its own, with isolatedDeclarations, as oxc and tsdown do.",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts"
+    }
+  },
+  "files": [
+    "out"
+  ],
   "scripts": {
     "check": "tsc -p tsconfig.json && oxlint"
   },

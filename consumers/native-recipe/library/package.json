@@ -1,8 +1,8 @@
 {
-  "name": "native-recipe-library-isolated",
+  "name": "native-recipe-library",
   "version": "1.0.0",
   "private": true,
-  "description": "A library that installs @lynstack/native-recipe and emits each file's declarations on its own, with isolatedDeclarations, as oxc and tsdown do.",
+  "description": "A design system that installs @lynstack/native-recipe and publishes the declarations that tsc emits: the recipes of its components, its themed creators, and its own helpers.",
   "license": "MIT",
   "type": "module",
   "exports": {

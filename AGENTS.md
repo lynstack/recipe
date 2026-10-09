@@ -39,26 +39,40 @@ it before working in that folder.
   build leaves out. Benchmarks sit in the package's `bench` folder as
   `*.bench.ts`. A benchmark imports its package by its name, so it runs
   against the built bundle, never against the sources directly.
-- `consumers` holds the apps that check the published types: an app of
-  each package, `consumers/<package>/app`, and a library of each package
-  that sets `isolatedDeclarations`, `consumers/<package>/library-isolated`.
-  Each is a
-  private workspace package, with its own `package.json`,
-  `tsconfig.json`, and `.oxlintrc.json`, that depends on its package and
-  on no other package of the workspace, as an app does, and exports what
-  it builds with it, so that compiling it with declarations checks the
-  published types. In the workspace, pnpm links the package folder, whose
-  types TypeScript can always name; `scripts/consumers` installs the
-  packed packages in a copy of each app outside the repository, where an
-  app can name only the types that its dependencies export. A type of
-  `@lynstack/recipe` that the type of a recipe names, such as
-  `RecipeComposition`, must therefore be exported by the package too.
+- `consumers` holds the apps that check the published types as the
+  users of each package compile them, in `consumers/<package>/<app>`:
+  - `app`, an app of the package's users;
+  - `library`, a design system built on the package, which publishes
+    the declarations that tsc emits for its recipes and helpers, typed
+    by inference;
+  - `library-isolated`, a library that sets `isolatedDeclarations`, and
+    types each recipe it exports;
+  - `library-app`, an app that installs both libraries and not the
+    package, uses their recipes, and extends them with their creators,
+    with `skipLibCheck` off except where React Native needs it.
+
+  Each is a private workspace package, with its own `package.json`,
+  `tsconfig.json`, and `.oxlintrc.json`, that depends on its package, or
+  on the libraries of its package, and on no other package of the
+  workspace, as an app does, and exports what it builds with it, so that
+  compiling it with declarations checks the published types. A library
+  lists `exports`, and `pnpm consumers` packs it after compiling it,
+  before the apps that install it. In the workspace, pnpm links the
+  package folder, whose types TypeScript can always name;
+  `scripts/consumers` installs the packed packages in a copy of each app
+  outside the repository, where an app can name only the types that its
+  dependencies export. A type of `@lynstack/recipe` that the type of a
+  recipe names, such as `RecipeComposition`, must therefore be exported
+  by the package too. In the workspace, tsc emits declarations for a
+  library that name packages it does not depend on, so `library-app` has
+  no `check` there: only `pnpm consumers` compiles it.
+
 - `api` keeps the declarations that show every change to a public type
   in a diff: `api/<package>.d.ts`, the public API of each package, which
   is its `dist/index.d.ts` without comments, and
-  `api/consumers/<package>/<app>`, the declarations that each app of `consumers` emits when it installs
-  the packed packages, which show how the types of the apps' recipes
-  print. Only `pnpm api --update` and `pnpm consumers --update` write
+  `api/consumers/<package>/<app>`, the declarations that each app of
+  `consumers` emits when it installs the packed packages, which show how
+  the types of the apps' recipes print. Only `pnpm api --update` and `pnpm consumers --update` write
   them.
 - A package's README is short: what the package does, how to install it,
   one example, and links to the docs. The docs hold everything else.
@@ -135,7 +149,8 @@ package with its apps, run
   those. Run it before a release, and after a change that affects speed;
   it takes a few minutes. Commit the results with the change.
 - `pnpm consumers` packs the packages, installs them in a copy of each
-  app of `consumers` outside the repository, and compiles it. It also
+  app of `consumers` outside the repository, and compiles it, the
+  libraries first, each packed for the apps that install it. It also
   checks that the declarations of the recipes of each chain of an app,
   `chain.ts` or a module ending in `-chain.ts`, each of which composes
   the one before, grow linearly with the level of composition, and,

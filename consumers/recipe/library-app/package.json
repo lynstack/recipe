@@ -1,0 +1,11 @@
+{
+  "name": "recipe-library-app",
+  "private": true,
+  "description": "An app that installs two libraries built on @lynstack/recipe, and not the package itself. Only pnpm consumers compiles it, with the packed libraries: in the workspace, tsc emits declarations for them that name packages they do not depend on.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "recipe-library": "workspace:*",
+    "recipe-library-isolated": "workspace:*"
+  }
+}

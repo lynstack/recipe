@@ -1,8 +1,8 @@
 {
-  "name": "class-recipe-library-isolated",
+  "name": "recipe-library",
   "version": "1.0.0",
   "private": true,
-  "description": "A library that installs @lynstack/class-recipe and emits each file's declarations on its own, with isolatedDeclarations, as oxc and tsdown do.",
+  "description": "A library that installs @lynstack/recipe and publishes the declarations that tsc emits: its recipe kinds, the recipes it creates with them, and its own helpers.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -17,6 +17,6 @@
     "check": "tsc -p tsconfig.json && oxlint"
   },
   "dependencies": {
-    "@lynstack/class-recipe": "workspace:^"
+    "@lynstack/recipe": "workspace:^"
   }
 }

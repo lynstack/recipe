@@ -1,0 +1,11 @@
+{
+  "name": "class-recipe-library-app",
+  "private": true,
+  "description": "An app that installs two design systems built on @lynstack/class-recipe, and not the package itself. Only pnpm consumers compiles it, with the packed libraries: in the workspace, tsc emits declarations for them that name packages they do not depend on.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "class-recipe-library": "workspace:*",
+    "class-recipe-library-isolated": "workspace:*"
+  }
+}

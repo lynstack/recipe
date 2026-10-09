@@ -32,3 +32,6 @@ export {
   toggleVariants,
 };
 export type { ToggleProps, ToggleVariants };
+export { badge, toggle } from "./toggle.js";
+export { chip, configured, field, tag } from "./configured.js";
+export { label, select } from "./configured-use.js";
