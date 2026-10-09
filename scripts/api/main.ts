@@ -1,8 +1,9 @@
 /**
  * Checks that the public API of each package, the declarations that its
  * build writes without their comments, is the one that `api/<package>.d.ts`
- * keeps, so that every change to a public type shows in a diff. The
- * packages must be built first.
+ * keeps, so that every change to a public type shows in a diff, and that
+ * an app of `consumers` uses each of its exports. The packages must be
+ * built first.
  *
  * Options:
  * - `--update`: replaces each `api/<package>.d.ts` with the API of the
@@ -21,6 +22,8 @@ import os from "node:os";
 import { parseArgs } from "node:util";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+
+import { uncoveredExportsOf } from "./coverage.ts";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const packages = path.join(root, "packages");
@@ -83,5 +86,15 @@ rmSync(temporary, { force: true, recursive: true });
 if (changed.length > 0) {
   throw new Error(
     `The API of ${changed.join(", ")} differs from api/<package>.d.ts: review the difference above, then run pnpm api --update.`,
+  );
+}
+const uncovered = readdirSync(packages).flatMap((name: string) =>
+  uncoveredExportsOf(root, name).map(
+    (exported: string) => `${exported} of @lynstack/${name}`,
+  ),
+);
+if (uncovered.length > 0) {
+  throw new Error(
+    `No app of consumers names ${uncovered.join(", ")}: use each where users of the package would, in consumers/<package>.`,
   );
 }

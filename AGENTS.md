@@ -146,7 +146,10 @@ package with its apps, run
 - `pnpm api` checks that the public API of each built package is the one
   that `api/<package>.d.ts` keeps, and writes how they differ. After a
   change to a public type, run `pnpm api --update` and commit `api` with
-  the change.
+  the change. It also checks that something names each export of a
+  package: an app of `consumers/<package>`, the declarations it emits,
+  which `api/consumers/<package>` keeps, or the API of a package built on
+  it. Name a new export where its users would, in an app of its package.
 - `test:coverage`, in a package, runs its tests and reports coverage. Use
   it to find behavior without a test; it sets no threshold, and a test
   written only to cover a line adds nothing.
