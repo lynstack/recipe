@@ -4,6 +4,12 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## 1.7.2 — 2026-10-09
+
+### Changed
+
+- Requires `@lynstack/recipe` `^1.9.0`.
+
 ## 1.7.1 — 2026-10-09
 
 ### Fixed
