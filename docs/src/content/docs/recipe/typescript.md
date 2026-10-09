@@ -246,9 +246,9 @@ recipe's own selection.
 
 With `"isolatedDeclarations": true`, TypeScript requires that the
 declarations of each file can be written from that file alone, as oxc and
-the tools built on it, such as tsdown, write them. They cannot know what
-a call returns, so each recipe that a module exports needs a type
-annotation; without one, TypeScript reports TS9010.
+the tools built on it, such as tsdown, write them. Such a tool cannot
+know what a call returns, so each recipe that a module exports needs a
+type annotation; without one, TypeScript reports TS9010.
 
 `KindRecipeOf` and `KindSlotRecipeOf` give that type from the type of
 the config. Declare the config `as const`, which isolated declarations
@@ -287,17 +287,16 @@ export const heading: KindRecipeOf<
 
 `KindRecipeOf` rejects a config that lists `composes`, so that the type
 cannot leave out the recipes it composes. `KindSlotRecipeOf` does the
-same for a slot recipe of `createSlotRecipeKind`. A library that wraps the engine's recipes in its
-own type defines its own such type, as `RecipeOf` of
-`@lynstack/class-recipe` does.
+same for a slot recipe of `createSlotRecipeKind`. A library that wraps
+the engine's recipes in its own type defines its own such type, as
+`RecipeOf` of `@lynstack/class-recipe` does.
 
-Both types are for a config whose type is known where the recipe is
-declared. They do not apply in a function generic over the whole config,
-such as one that takes `config: Config` and returns
-`KindRecipeOf<Style, Style, Config>`: `styleRecipe` infers the variants
-from its config, and TypeScript cannot infer them from a config whose
-type is a type parameter, so the recipe it returns does not have that
-type. Make such a function generic over the variants instead, as
+Both types need the config's type where the recipe is declared. In a
+function generic over the whole config, such as one that takes
+`config: Config` and returns `KindRecipeOf<Style, Style, Config>`,
+`styleRecipe` cannot infer the variants from a type parameter, so its
+result does not have that type. Make such a function generic over the
+variants instead, as
 [A function generic over a config](#a-function-generic-over-a-config)
 shows.
 

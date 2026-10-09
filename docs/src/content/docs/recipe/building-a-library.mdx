@@ -104,9 +104,8 @@ function splitProps(
 }
 ```
 
-`Object.fromEntries` gives each object a property for every key, even one
-named `__proto__`, which assigning to a new object would turn into its
-prototype.
+Assigning a `__proto__` key to a new object would set its prototype;
+`Object.fromEntries` creates a property for every key, that one included.
 
 `splitProps(props, box.variantKeys)` puts `tone` in `variants`, and every
 other prop in `rest`.
@@ -115,8 +114,7 @@ other prop in `rest`.
 
 A tool that shows every look of a component, such as a story or a table of
 its options, reads the options of each variant from `variantOptions`, and
-calls the recipe for each selection. `defaultVariants` tells it which
-option a selection that leaves a variant out gets:
+calls the recipe for each selection:
 
 ```ts
 function selectionsOf(
@@ -134,6 +132,12 @@ function selectionsOf(
 
 `selectionsOf(box.variantOptions)` returns one selection for each option
 of `tone`.
+
+`defaultVariants` tells such a tool which option a selection that leaves
+a variant out gets. A default option that its variant does not declare
+is the exception: `defaultVariants` lists it as written, but a call uses
+no option for that variant, and the recipe warns about it when it is
+created.
 
 ## Slot recipes
 

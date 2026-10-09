@@ -142,7 +142,10 @@ is required (see [`RecipeFunction`](#recipefunction)). At runtime,
   its option names as literal types.
 - `defaultVariants` gives the option, as a string, that each variant a
   selection may leave out uses then. Its type, `SelectionDefaults`, which
-  is not exported, has a key for each such variant.
+  is not exported, has a key for each such variant. A default option that
+  its variant does not declare is listed as written, though a call does
+  not use it (see
+  [Names that a config does not declare](#names-that-a-config-does-not-declare)).
 - `Composition` is what the recipe passes on to the recipes that compose
   it, which its type carries under a `~composition` property that exists
   in the type only.
@@ -200,12 +203,11 @@ whose result is a frozen object of each slot's result, keyed by slot name.
 It infers `Slot` from `slots`, and the slots of the slot recipes it
 composes are added to it. Its `Composition` lists the slots too.
 
-The slots are the same as
-[`ComposedSlot<Composed, Slot>`](#composition), written out: a
-declaration file prints `ComposedSlot` with the type of each recipe that
-`Composed` lists, which holds the types of the recipes that recipe
-composes, so a recipe several levels of composition deep would take a
-declaration many times the size of its config.
+These slots are [`ComposedSlot<Composed, Slot>`](#composition) written
+out. A declaration file would print `ComposedSlot` with the type of every
+composed recipe, and each of those types holds the recipes it composes. A
+recipe several levels deep would then need a declaration many times the
+size of its config.
 
 | Config property    | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
@@ -221,9 +223,9 @@ A value for a slot that `slots` does not name is a type error. See
 [Slot recipes](/recipe/recipe/slot-recipes/).
 
 A slot named after a property that every object has, such as `toString`
-or `constructor`, is not supported: the types reject an object of slot
-values that leaves it out, since every object has that property with
-another type.
+or `constructor`, is not supported. Every object inherits that property
+with a function type, so the types reject an object of slot values that
+leaves that slot out.
 
 ### A config with the wrong shape
 
@@ -250,10 +252,14 @@ option, or a slot that no config of the recipe declares. TypeScript
 rejects such a name in a config written in the call, but not every such
 name in a config declared before it (see
 [A config declared before the call](/recipe/recipe/typescript/#a-config-declared-before-the-call)),
-and not in untyped code. The recipe then leaves the name out:
+and not in untyped code. A call of the recipe then ignores the name:
 
-- A default of an undeclared variant, or an option that its variant does
-  not declare, is ignored.
+- A default of an undeclared variant is ignored, and the recipe's
+  `defaultVariants` leaves it out.
+- A default option that its variant does not declare selects no option: a
+  call that leaves the variant out adds no value for it, not even a
+  boolean variant's `false`. The recipe's `defaultVariants` still lists
+  that option as written.
 - A compound variant's condition on an undeclared variant never matches.
   An undeclared option in its list is ignored, so a condition left
   without a declared option never matches either.
@@ -272,7 +278,7 @@ A recipe's config names variants, options, or slots that it does not declare, so
 
 A recipe created again from a config with the same mistakes, such as a
 themed recipe for each theme, does not repeat the warning. Like the
-check of the shape, it runs only when the recipe is created.
+shape check, it costs nothing on a call.
 
 ## Types for apps
 
@@ -344,8 +350,8 @@ shows.
 | `Config`   | The type of a config declared `as const`, without `composes`, which is a type error.         |
 | `Composed` | The types of the recipes it composes, in the order of `composes`. Defaults to `readonly []`. |
 
-They apply to a config whose type is known, not in a function generic
-over the whole config, which is generic over its variants instead; see
+They apply only to a config whose type is known. A function that takes
+any config is generic over its variants instead; see
 [Exporting recipes](/recipe/recipe/typescript/#exporting-recipes-with-isolateddeclarations).
 
 ### `RecipeFunction`
@@ -371,21 +377,21 @@ engine to type their code. Re-export the types they name:
   or a `style`, so that these types leave them out. Otherwise re-export
   the engine's.
 - When your recipes compose others, `RecipeComposition`, which the type
-  of every recipe that can be composed names. An app installed with pnpm
-  cannot import the engine, so without it, a module of the app that
-  exports a recipe fails to emit its declarations. Re-export also the
-  types that a user's own helper names: `ComposableKindRecipe` and
+  of every composable recipe names. Without it, an app that installs your
+  library with pnpm cannot emit declarations for a module that exports a
+  recipe, since it cannot import the engine. Re-export also the types
+  that a user's own helper names: `ComposableKindRecipe` and
   `ComposedVariants`, and for slot recipes `ComposableKindSlotRecipe` and
   `ComposedSlot`.
-- A type of the recipe of a config, such as `RecipeOf` of
-  `@lynstack/class-recipe`, for users who export recipes with
-  `isolatedDeclarations`. When your recipes are the engine's, re-export
-  `KindRecipeOf` and `KindSlotRecipeOf`, or alias them with your kind's
-  value and result.
+- A type that gives the recipe of a config, such as `RecipeOf` of
+  `@lynstack/class-recipe`, for users who set `isolatedDeclarations`.
+  When your recipes are the engine's, re-export `KindRecipeOf` and
+  `KindSlotRecipeOf`, or alias them with your kind's value and result.
 
-`@lynstack/class-recipe` re-exports the first five and the types of
-composition, and defines its own `VariantsOf`, which leaves out
-`className` and `classNames`.
+`@lynstack/class-recipe` re-exports the five types of the first item and
+the types of composition. It defines its own `VariantsOf`, which leaves
+out `className` and `classNames`, and its own `RecipeOf` and
+`SlotRecipeOf`.
 :::
 
 ## Composition
