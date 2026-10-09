@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - packages/*/src/**
+      - packages/*/bench/**
       - consumers/**
       - scripts/consumers/**
       - scripts/sources/**
@@ -19,6 +20,7 @@ on:
   pull_request:
     paths:
       - packages/*/src/**
+      - packages/*/bench/**
       - consumers/**
       - scripts/consumers/**
       - scripts/sources/**

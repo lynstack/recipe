@@ -5,9 +5,5 @@
     "isolatedDeclarations": true
   },
   "include": ["src"],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/*.bench.ts",
-    "src/**/*.arbitraries.ts"
-  ]
+  "exclude": ["src/**/*.test.ts", "src/**/*.arbitraries.ts"]
 }

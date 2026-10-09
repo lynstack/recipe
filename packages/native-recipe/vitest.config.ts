@@ -3,10 +3,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     benchmark: {
-      include: ["src/**/*.bench.ts"],
+      include: ["bench/**/*.bench.ts"],
     },
     coverage: {
-      exclude: ["src/**/*.bench.ts", "src/**/*.test.ts"],
+      exclude: ["src/**/*.test.ts"],
       include: ["src/**/*.ts"],
       provider: "v8",
     },

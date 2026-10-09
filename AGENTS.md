@@ -32,12 +32,13 @@ it before working in that folder.
 - Each package has one entry point, `src/index.ts`; every public export
   goes through it. tsdown bundles it into `dist/index.js` and
   `dist/index.d.ts`.
-- Tests sit next to the code as `*.test.ts`, and benchmarks as
-  `*.bench.ts`. The `*.property.test.ts` tests generate configs and calls
+- `src` holds the sources and their tests. Tests sit next to the code as
+  `*.test.ts`. The `*.property.test.ts` tests generate configs and calls
   with fast-check and compare the results with a reference. Arbitraries
   that several property tests share sit in `*.arbitraries.ts`, which the
-  build leaves out. A benchmark imports its package by its name, so it
-  runs against the built bundle, never against the sources directly.
+  build leaves out. Benchmarks sit in the package's `bench` folder as
+  `*.bench.ts`. A benchmark imports its package by its name, so it runs
+  against the built bundle, never against the sources directly.
 - `consumers` holds the apps that check the published types: an app of
   each package, `consumers/<package>`, and a library of each package
   that sets `isolatedDeclarations`, `consumers/<package>-isolated`. Each is a

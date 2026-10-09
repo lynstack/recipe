@@ -95,7 +95,11 @@ function compiles(name: string, compiler: Compiler): boolean {
     config,
     JSON.stringify({
       compilerOptions: compiler.compilerOptions,
-      include: [path.join(project, "src"), path.join(project, "*.config.ts")],
+      include: [
+        path.join(project, "src"),
+        path.join(project, "bench"),
+        path.join(project, "*.config.ts"),
+      ],
     }),
   );
   return (
