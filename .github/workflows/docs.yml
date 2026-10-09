@@ -8,6 +8,7 @@ on:
       - compat/versions.json
       - examples/**
       - packages/class-recipe/src/**
+      - packages/native-recipe/src/**
       - packages/recipe/src/**
       - .github/workflows/docs.yml
       - package.json
