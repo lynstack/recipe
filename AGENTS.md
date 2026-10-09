@@ -110,18 +110,20 @@ it before working in that folder.
   `compat/versions.json` holds the oldest Node.js, Bun, Deno, and
   TypeScript that the packages support, and the docs read their
   requirements from it. `smoke.mjs` imports each package and `smoke.cjs`
-  requires it. The apps of `consumers` are compiled with the packed
-  packages, with the React Native that the apps of
-  `@lynstack/native-recipe` list and the oldest that its peer dependency
-  allows. The sources of each package are compiled with the oldest
+  requires it. The sources of each package are compiled with the oldest
   TypeScript.
   To support an older or newer minimum, change `versions.json`; never
   write those versions by hand in the docs.
 - `.github/workflows` holds a CI and a release workflow for each package,
   named after it, `ci.yml`, which checks what the packages share and the
   docs, `compat.yml`, which runs `compat` on the oldest and the newest of
-  each runtime and TypeScript, and `docs.yml`, which builds the docs and
-  deploys them to GitHub Pages on every push to `main` that changes them.
+  each runtime and TypeScript, `consumers.yml`, which runs
+  `pnpm consumers` with the oldest and the newest TypeScript, and with
+  the React Native that the apps of `@lynstack/native-recipe` list and
+  the oldest that its peer dependency allows, whenever the packages, the
+  consumers, or the declarations they keep change, and `docs.yml`, which builds
+  the docs and deploys them to GitHub Pages on every push to `main` that
+  changes them.
 
 ## Commands
 
@@ -173,8 +175,8 @@ package with its apps, run
   `--typescript <version>` or `--react-native <version>` to compile with
   those, and `--update` to write the declarations of the apps to `api`.
   Run it after a change to a public type, or to the dependencies between
-  the packages, and commit `api` with the change; CI runs it on the
-  oldest and newest TypeScript and React Native, and the release
+  the packages, and commit `api` with the change; `consumers.yml` runs
+  it on the oldest and newest TypeScript and React Native, and the release
   workflow of each package runs it before publishing.
 - `pnpm sources --typescript <version>` builds the packages and compiles
   the sources of each, tests and benchmarks included, with that

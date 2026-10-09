@@ -1,0 +1,107 @@
+name: Consumers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - packages/*/src/**
+      - packages/*/package.json
+      - packages/*/tsdown.config.ts
+      - packages/*/tsconfig*.json
+      - consumers/**
+      - api/consumers/**
+      - scripts/consumers/**
+      - compat/versions.json
+      - .github/workflows/consumers.yml
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - tsconfig.base.json
+  pull_request:
+    paths:
+      - packages/*/src/**
+      - packages/*/package.json
+      - packages/*/tsdown.config.ts
+      - packages/*/tsconfig*.json
+      - consumers/**
+      - api/consumers/**
+      - scripts/consumers/**
+      - compat/versions.json
+      - .github/workflows/consumers.yml
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - tsconfig.base.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pack:
+    name: Pack the packages
+    runs-on: ubuntu-latest
+    outputs:
+      typescript: ${{ steps.versions.outputs.typescript }}
+      react-native: ${{ steps.versions.outputs.react-native }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          cache: true
+          require-lockfile: true
+      - run: pnpm build
+      # pnpm pack turns workspace:^ dependencies into version ranges.
+      - run: pnpm --filter "./packages/*" pack --pack-destination "$RUNNER_TEMP/packages"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: packages
+          path: ${{ runner.temp }}/packages
+          if-no-files-found: error
+      # The oldest and the newest TypeScript and React Native to compile
+      # the apps with.
+      - name: Read the versions to check
+        id: versions
+        run: |
+          echo "typescript=$(jq -c --arg newest "$(jq -r .devDependencies.typescript package.json)" '[.typescript, $newest]' compat/versions.json)" >> "$GITHUB_OUTPUT"
+          oldest="$(jq -r '.peerDependencies["react-native"] | ltrimstr(">=")' packages/native-recipe/package.json)"
+          echo "react-native=$(jq -c --arg oldest "$oldest" '[$oldest, .dependencies["react-native"]]' consumers/native-recipe/app/package.json)" >> "$GITHUB_OUTPUT"
+
+  compile:
+    name: TypeScript ${{ matrix.typescript }}, React Native ${{ matrix.react-native }}
+    needs: pack
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript: ${{ fromJSON(needs.pack.outputs.typescript) }}
+        react-native: ${{ fromJSON(needs.pack.outputs.react-native) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: packages
+          path: ${{ runner.temp }}/packages
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          install: false
+      # Installs the packed packages in each app of consumers, outside the
+      # repository, as an app installs them from npm, compiles it, and,
+      # with the TypeScript and React Native of the repository, compares
+      # its declarations with those that api/consumers keeps.
+      - name: Compile the apps that install the packages
+        env:
+          TYPESCRIPT: ${{ matrix.typescript }}
+          REACT_NATIVE: ${{ matrix.react-native }}
+        run: >-
+          node scripts/consumers/main.ts
+          --packages "$RUNNER_TEMP/packages"
+          --typescript "$TYPESCRIPT"
+          --react-native "$REACT_NATIVE"
