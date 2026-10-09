@@ -107,12 +107,11 @@ no variants. `variants: {}` is still required:
 ```tsx
 import type { ReactNode } from "react";
 import { View } from "react-native";
-import { createStyleRecipe } from "../theme/recipes";
+import { createStyleRecipe, themeToken } from "../theme/recipes";
 import { useTheme } from "../theme/provider";
-import type { Theme } from "../theme/tokens";
 
-const screen = createStyleRecipe((theme: Theme) => ({
-  base: { backgroundColor: theme.colors.background, flex: 1 },
+const screen = createStyleRecipe(() => ({
+  base: { backgroundColor: themeToken.colors.background, flex: 1 },
   variants: {},
 }));
 

@@ -148,8 +148,9 @@ See [createSlotStyleRecipe](/recipe/native-recipe/create-slot-style-recipe/).
 The colors above are written in each recipe. A design system keeps them
 in a [theme](/recipe/native-recipe/glossary/#theme) instead, with one
 theme for light and one for dark. `createThemedRecipes` returns recipe
-creators whose config is a function of the theme. Their recipes take the
-theme first, then the variants:
+creators whose config is a function, and `themeToken`, which the function
+reads the theme from. Their recipes take the theme first, then the
+variants:
 
 ```ts
 import { createThemedRecipes } from "@lynstack/native-recipe";
@@ -159,16 +160,16 @@ interface Theme {
   readonly radius: { readonly md: number };
 }
 
-const { createSlotStyleRecipe } = createThemedRecipes<Theme>();
+const { createSlotStyleRecipe, themeToken } = createThemedRecipes<Theme>();
 
-export const themedButton = createSlotStyleRecipe((theme: Theme) => ({
+export const themedButton = createSlotStyleRecipe(() => ({
   slots: ["root", "label"],
   base: {
     root: {
-      borderRadius: theme.radius.md,
-      backgroundColor: theme.colors.primary,
+      borderRadius: themeToken.radius.md,
+      backgroundColor: themeToken.colors.primary,
     },
-    label: { color: theme.colors.onPrimary },
+    label: { color: themeToken.colors.onPrimary },
   },
   // Required, even when a recipe has no variants: then write `variants: {}`.
   variants: {

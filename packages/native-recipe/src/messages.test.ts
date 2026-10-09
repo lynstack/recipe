@@ -92,3 +92,30 @@ describe("the error messages of a slot style recipe", () => {
     ]);
   });
 });
+
+describe("the error messages of a themed recipe whose config reads `themeToken`", () => {
+  it("names a slot that a compound variant gives and the slots", () => {
+    expect(
+      errorsIn(`themed.createSlotStyleRecipe(() => ({
+  slots: ["root", "label"],
+  base: { root: { gap: themed.themeToken.gap } },
+  variants: { size: { sm: {} } },
+  compoundVariants: [{ variants: { size: "sm" }, styles: { lable: { margin: 1 } } }],
+}));`),
+    ).toStrictEqual([
+      `Type '{ margin: 1; }' is not assignable to type '{ readonly margin: 1; } & UnknownSlot<"lable", "label" | "root">'.`,
+    ]);
+  });
+
+  it("names the options of a variant that a default gives", () => {
+    expect(
+      errorsIn(`themed.createStyleRecipe(() => ({
+  base: { gap: themed.themeToken.gap },
+  variants: ${variants},
+  defaultVariants: { tone: "muted" },
+}));`),
+    ).toStrictEqual([
+      `Type '"muted"' is not assignable to type '"danger" | "neutral"'.`,
+    ]);
+  });
+});

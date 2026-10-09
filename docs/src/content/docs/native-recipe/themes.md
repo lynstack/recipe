@@ -50,7 +50,7 @@ these files:
 
 ```
 src/theme/tokens.ts      the Theme type, and the light and dark themes
-src/theme/recipes.ts     the recipe creators, bound to Theme
+src/theme/recipes.ts     the recipe creators and themeToken, bound to Theme
 src/theme/provider.tsx   ThemeProvider and useTheme
 src/components/button.tsx
 ```
@@ -129,15 +129,15 @@ value, so that each theme can give them its own value.
 ### 2. Create the recipe creators
 
 Call `createThemedRecipes` once, with the theme type, and export its
-recipe creators. Every component imports them from here, so their recipes
-take a `Theme`:
+recipe creators and `themeToken`, which a recipe reads the theme from.
+Every component imports them from here, so their recipes take a `Theme`:
 
 ```ts
 // src/theme/recipes.ts
 import { createThemedRecipes } from "@lynstack/native-recipe";
 import type { Theme } from "./tokens";
 
-export const { createStyleRecipe, createSlotStyleRecipe } =
+export const { createStyleRecipe, createSlotStyleRecipe, themeToken } =
   createThemedRecipes<Theme>();
 ```
 
@@ -204,23 +204,23 @@ over the system's color scheme.
 
 ### 4. Write recipes with tokens
 
-A recipe's config is a function of the theme. Variants still choose
-between options; the tokens give the options their values. Give the
-`theme` parameter its type, so that your editor completes the config
-while you write it (see
+A recipe's config is a function that reads the tokens from `themeToken`.
+Variants still choose between options; the tokens give the options their
+values. Write the function in the call, as `() => ({ … })`, so that your
+editor completes the config while you write it, and TypeScript reports
+each error where it is (see
 [Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)):
 
 ```ts
 // src/components/button.styles.ts
-import { createSlotStyleRecipe } from "../theme/recipes";
-import type { Theme } from "../theme/tokens";
+import { createSlotStyleRecipe, themeToken } from "../theme/recipes";
 
-export const button = createSlotStyleRecipe((theme: Theme) => ({
+export const button = createSlotStyleRecipe(() => ({
   slots: ["root", "label"],
   base: {
     root: {
       alignItems: "center",
-      borderRadius: theme.radius.md,
+      borderRadius: themeToken.radius.md,
       flexDirection: "row",
       justifyContent: "center",
     },
@@ -229,26 +229,26 @@ export const button = createSlotStyleRecipe((theme: Theme) => ({
   variants: {
     tone: {
       primary: {
-        root: { backgroundColor: theme.colors.primary },
-        label: { color: theme.colors.onPrimary },
+        root: { backgroundColor: themeToken.colors.primary },
+        label: { color: themeToken.colors.onPrimary },
       },
       outline: {
-        root: { borderColor: theme.colors.border, borderWidth: 1 },
-        label: { color: theme.colors.text },
+        root: { borderColor: themeToken.colors.border, borderWidth: 1 },
+        label: { color: themeToken.colors.text },
       },
       danger: {
-        root: { backgroundColor: theme.colors.danger },
-        label: { color: theme.colors.onPrimary },
+        root: { backgroundColor: themeToken.colors.danger },
+        label: { color: themeToken.colors.onPrimary },
       },
     },
     size: {
       sm: {
-        root: { height: 32, paddingHorizontal: theme.space.md },
-        label: { fontSize: theme.fontSize.sm },
+        root: { height: 32, paddingHorizontal: themeToken.space.md },
+        label: { fontSize: themeToken.fontSize.sm },
       },
       md: {
-        root: { height: 40, paddingHorizontal: theme.space.lg },
-        label: { fontSize: theme.fontSize.md },
+        root: { height: 40, paddingHorizontal: themeToken.space.lg },
+        label: { fontSize: themeToken.fontSize.md },
       },
     },
   },
@@ -264,7 +264,9 @@ button(dark, { tone: "outline" }).label; // color is dark.colors.text
 ```
 
 A style that no theme changes, such as `fontWeight` here, is written as
-it is; only tokens come from the theme.
+it is; only tokens come from the theme. The function runs once for each
+theme, while `themeToken` reads that theme, so read `themeToken` only
+inside it.
 
 ### 5. Use them in components
 

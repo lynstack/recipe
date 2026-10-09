@@ -129,23 +129,24 @@ and compound variants against its variants, and its slots against
 `slots`. A token that the theme type does not have is an error too:
 
 ```ts
-const { createStyleRecipe } = createThemedRecipes<Theme>();
+const { createStyleRecipe, themeToken } = createThemedRecipes<Theme>();
 
-createStyleRecipe((theme: Theme) => ({
+createStyleRecipe(() => ({
   variants: {
     // Error: Theme has no spacing.
-    size: { sm: { padding: theme.spacing } },
+    size: { sm: { padding: themeToken.spacing } },
   },
 }));
 ```
 
-Type the `theme` parameter, as above. Without its type, an editor
-completes nothing in a config that has an error, such as one you are
-writing (see
+Write the function in the call, as `() => ({ … })`, and read the tokens
+from `themeToken`, as above. Your editor then completes a config that has
+an error, such as one you are writing, and TypeScript reports each error
+where it is (see
 [Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)).
 
 The style a themed recipe returns has the types of the tokens it uses:
-`backgroundColor: theme.colors.primary` gives a `string`, where a literal
+`backgroundColor: themeToken.colors.primary` gives a `string`, where a literal
 color in a recipe without a theme gives its literal type. `VariantsOf`
 returns the variants of a themed recipe, and a themed recipe takes only
 the theme type that `createThemedRecipes` was given.

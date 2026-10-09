@@ -17,11 +17,14 @@ published on npm and as a
   slot style recipe, and, in a themed recipe of either kind, the variant
   names of a condition next to an option and of a compound variant after
   the first. It completed none of them before.
-- The TSDoc of `createThemedRecipes` and the skill advise typing the
-  parameter of the config function, as in `(theme: Theme) =>`: while a
-  config has an error, such as one being written, TypeScript infers
-  nothing from a function whose parameter has no type, and an editor
-  completes no variant name or option.
+- `createThemedRecipes` also returns `themeToken`, which reads the theme
+  whose recipe is being built, so that a config function can take no
+  parameter: `createStyleRecipe(() => ({ base: { gap: themeToken.gap } }))`.
+  In such a function written in the call, an editor completes the config
+  while it has an error, and TypeScript reports each error where it is,
+  where it reported any error of a function with a typed parameter on the
+  whole function. Reading `themeToken` outside a config function throws a
+  `TypeError`. A config function that takes the theme works as before.
 
 ## 1.7.1 — 2026-10-09
 

@@ -20,7 +20,7 @@ a button's container and label. You create it with
 
 ## Themed recipe
 
-A recipe whose config is a function of a theme. You call it with the
+A recipe whose config is built from the tokens of a theme. You call it with the
 theme first, then the variants: `button(theme, { size: "sm" })`. See
 [createThemedRecipes](/recipe/native-recipe/create-themed-recipes/).
 

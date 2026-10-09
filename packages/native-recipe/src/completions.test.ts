@@ -282,16 +282,18 @@ describe("completions in the compound variants of themed recipes", () => {
   });
 });
 
-describe("completions in a themed config whose parameter is typed", () => {
-  it("completes the variant names of a condition being written", () => {
-    expect(
-      completionsAt(`${themed}
-      themed.createSlotStyleRecipe((theme: { readonly gap: number }) => ({
-        slots: ["root"],
-        base: { root: { gap: theme.gap } },
-        variants: { raised: { true: { root: { elevation: 2 } } } },
-        compoundVariants: [{ variants: { r${cursor} }, styles: {} }],
-      }));`),
-    ).toStrictEqual(["raised"]);
+describe("completions in a themed config being written", () => {
+  it.each([
+    "(theme: { readonly gap: number }) => ({ base: { root: { gap: theme.gap } },",
+    "() => ({ base: { root: { gap: themed.themeToken.gap, paddng: 1 } },",
+  ])("completes variant and slot names in %s", (config) => {
+    const recipe = `${themed}\nthemed.createSlotStyleRecipe(${config} slots: ["root", "label"], variants: { raised: { true: {} } }, compoundVariants:`;
+    const condition = `${recipe} [{ variants: { r${cursor} }, styles: {} }] }));`;
+    const styles = `${recipe} [{ variants: {}, styles: { ${cursor} } }] }));`;
+
+    expect(completionsAt(condition)).toStrictEqual(["raised"]);
+    expect(completionsAt(styles)).toStrictEqual(
+      expect.arrayContaining(["label", "root"]),
+    );
   });
 });

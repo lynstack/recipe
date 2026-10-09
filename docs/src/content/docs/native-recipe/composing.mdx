@@ -105,9 +105,9 @@ A [themed recipe](/recipe/native-recipe/create-themed-recipes/) builds
 its styles from a theme. It composes a themed recipe through `withTheme`.
 `withTheme(theme)` returns the plain recipe of one theme.
 
-The config function receives the theme. Pass that same theme to
-`withTheme`. Then the light icon button composes the light button, and
-the dark icon button composes the dark button:
+In a config function, `withTheme(themeToken)` returns the recipe of the
+theme being built. Then the light icon button composes the light button,
+and the dark icon button composes the dark button:
 
 <RecipeExample
   name="native-recipe/composing/themed-icon-button"

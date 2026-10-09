@@ -158,6 +158,53 @@ declare const panel: ((props?: {
         };
     }, never, NativeStyle, readonly ("body" | "footer" | "root" | "title")[]> | undefined;
 };
+declare const pill: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
+    readonly size?: "sm" | undefined;
+}, NativeStyle>;
+declare const sheet: ((theme: Palette, props?: {
+    readonly open?: "false" | "true" | boolean | undefined;
+    readonly raised?: "false" | "true" | boolean | undefined;
+} | undefined) => {
+    readonly handle: {
+        readonly backgroundColor?: string | undefined;
+    };
+    readonly root: {
+        readonly borderRadius?: number | undefined;
+        readonly elevation?: 2 | undefined;
+        readonly height?: 320 | undefined;
+    };
+    readonly title: {};
+}) & {
+    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
+        readonly open?: "false" | "true" | boolean | undefined;
+        readonly raised?: "false" | "true" | boolean | undefined;
+    }, {
+        readonly handle: {
+            readonly backgroundColor?: string | undefined;
+        };
+        readonly root: {
+            readonly borderRadius?: number | undefined;
+            readonly elevation?: 2 | undefined;
+            readonly height?: 320 | undefined;
+        };
+        readonly title: {};
+    }, import("@lynstack/native-recipe").RecipeComposition<{
+        readonly open: {
+            readonly true: {
+                readonly root: {
+                    readonly height: 320;
+                };
+            };
+        };
+        readonly raised: {
+            readonly true: {
+                readonly root: {
+                    readonly elevation: 2;
+                };
+            };
+        };
+    }, never, NativeStyle, readonly ("handle" | "root" | "title")[]>>;
+};
 declare const denseChip: ((theme: Palette, props: {
     readonly dense?: "false" | "true" | boolean | undefined;
     readonly round?: "false" | "true" | boolean | undefined;
@@ -199,5 +246,7 @@ declare const chipStyle: StyleProp<ViewStyle>;
 declare const lightChipStyle: NativeStyle;
 declare const lightCardStyles: SlotStyles<"footer" | "root" | "title">;
 declare const panelStyles: SlotStyles<"body" | "footer" | "root" | "title">;
-export { badge, badgeStyle, card, chip, chipStyle, denseChip, denseChipStyle, lightChip, lightChipStyle, lightCard, lightCardStyles, panel, panelStyles, };
+declare const pillStyle: StyleProp<ViewStyle>;
+declare const sheetStyles: SlotStyles<"handle" | "root" | "title">;
+export { badge, badgeStyle, card, chip, chipStyle, denseChip, denseChipStyle, lightChip, lightChipStyle, lightCard, lightCardStyles, panel, panelStyles, pill, pillStyle, sheet, sheetStyles, };
 export type { LightChipVariants };

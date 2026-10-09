@@ -98,9 +98,13 @@ shows.
 ### Themed recipes
 
 `ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` take the type of the
-config function of a themed recipe. Isolated declarations cannot infer a
-value read from the theme, so give each one its type, and return the
-config `as const`:
+config function of a themed recipe. They read the theme type from its
+parameter, so a config declared before the call takes the theme as its
+typed parameter, as in `(theme: Theme) =>`, and does not read
+`themeToken`, which is for configs written in the call (see
+[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)).
+Isolated declarations cannot infer a value read from the theme, so give
+each one its type, and return the config `as const`:
 
 ```ts
 const { createStyleRecipe } = createThemedRecipes<Theme>();

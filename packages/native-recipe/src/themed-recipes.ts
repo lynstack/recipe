@@ -34,6 +34,7 @@ import type { LooseThemedRecipe } from "./compile-themed-recipe.js";
 import { buildSlotStyleRecipe } from "./compile-slot-style-recipe.js";
 import { buildStyleRecipe } from "./compile-style-recipe.js";
 import { buildThemedRecipe } from "./compile-themed-recipe.js";
+import { createThemeReference } from "./theme-reference.js";
 
 /**
  * A function that takes a theme and the properties of a selection, whose
@@ -98,6 +99,12 @@ type ComposedThemedRecipe<
  * @typeParam Theme - The theme the styles are built from.
  */
 interface ThemedRecipeCreators<Theme extends object> {
+  /**
+   * The theme whose recipe is being built, for a config function to read
+   * without a parameter, as in `() => ({ base: { gap: themeToken.gap } })`.
+   * Reading it outside a config function throws a `TypeError`.
+   */
+  readonly themeToken: Theme;
   /**
    * Creates a themed style recipe: `createStyleRecipe` with a config built
    * from a theme.
@@ -207,19 +214,22 @@ interface ThemedRecipeCreators<Theme extends object> {
  * as the recipes of `createStyleRecipe` and `createSlotStyleRecipe` do. A
  * theme that is no longer referenced is released with its recipe.
  *
- * Give the parameter of the config function the theme type, as in
- * `(theme: Theme) =>`. While a call has an error, such as a config being
- * written, TypeScript infers nothing from a function whose parameters have
- * no type, so an editor completes no variant name or option.
+ * A config function reads the theme being built from `themeToken`, as in
+ * `() => ({ base: { gap: themeToken.gap } })`: written in the call, an
+ * editor completes it while it has an error, and TypeScript reports each
+ * error where it is. A config declared before the call, for
+ * `ThemedStyleRecipeOf`, takes the theme as a typed parameter instead, as
+ * in `(theme: Theme) =>`.
  *
  * The config of every theme must declare the same variants and options;
  * only the styles may depend on the theme. A themed recipe composes the
  * recipe of a theme that `withTheme` returns, such as
- * `composes: [control.withTheme(theme)]` in the config of `theme`.
+ * `composes: [control.withTheme(themeToken)]`.
  *
  * @typeParam Theme - The theme the styles are built from.
  * @returns `createStyleRecipe` and `createSlotStyleRecipe`, which take a
- *   config built from a theme.
+ *   config built from a theme, and `themeToken`, which their config
+ *   functions read the theme from.
  *
  * @example
  * ```ts
@@ -228,14 +238,14 @@ interface ThemedRecipeCreators<Theme extends object> {
  *   readonly radius: number;
  * }
  *
- * const { createStyleRecipe } = createThemedRecipes<Theme>();
+ * const { createStyleRecipe, themeToken } = createThemedRecipes<Theme>();
  *
- * const button = createStyleRecipe((theme: Theme) => ({
- *   base: { borderRadius: theme.radius },
+ * const button = createStyleRecipe(() => ({
+ *   base: { borderRadius: themeToken.radius },
  *   variants: {
  *     tone: {
- *       primary: { backgroundColor: theme.colors.primary },
- *       surface: { backgroundColor: theme.colors.surface },
+ *       primary: { backgroundColor: themeToken.colors.primary },
+ *       surface: { backgroundColor: themeToken.colors.surface },
  *     },
  *   },
  *   defaultVariants: { tone: "primary" },
@@ -254,8 +264,8 @@ interface ThemedRecipeCreators<Theme extends object> {
  * button.withTheme(light).variantKeys; // => ["tone"]
  * button.withTheme(light).defaultVariants; // => { tone: "primary" }
  *
- * const iconButton = createStyleRecipe((theme: Theme) => ({
- *   composes: [button.withTheme(theme)],
+ * const iconButton = createStyleRecipe(() => ({
+ *   composes: [button.withTheme(themeToken)],
  *   base: { width: 40, height: 40 },
  *   variants: {},
  * }));
@@ -271,16 +281,18 @@ function createThemedRecipes<
 function createThemedRecipes(): {
   readonly createStyleRecipe: (config: never) => unknown;
   readonly createSlotStyleRecipe: (config: never) => unknown;
+  readonly themeToken: object;
 } {
   return {
     createSlotStyleRecipe: (
       config: (theme: object) => LooseSlotStyleRecipeConfig,
-    ): LooseThemedRecipe<object, LooseSlotStyleRecipe> =>
+    ): LooseThemedRecipe<LooseSlotStyleRecipe> =>
       buildThemedRecipe((theme) => buildSlotStyleRecipe(config(theme))),
     createStyleRecipe: (
       config: (theme: object) => LooseStyleRecipeConfig,
-    ): LooseThemedRecipe<object, LooseStyleRecipe> =>
+    ): LooseThemedRecipe<LooseStyleRecipe> =>
       buildThemedRecipe((theme) => buildStyleRecipe(config(theme))),
+    themeToken: createThemeReference(),
   };
 }
 

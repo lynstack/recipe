@@ -16,9 +16,11 @@ import RecipeExample from "../../../components/RecipeExample.astro";
 </Aside>
 
 `createThemedRecipes` returns `createStyleRecipe` and
-`createSlotStyleRecipe` for a theme type. Each takes a function that
-returns the config of the recipe for a theme. Each returns a themed
-recipe, which takes the theme first, then the selection.
+`createSlotStyleRecipe` for a theme type, and `themeToken`, the theme
+whose recipe is being built. Each creator takes a function that returns
+the config of the recipe, which reads the tokens from `themeToken`. Each
+returns a themed recipe, which takes the theme first, then the
+selection.
 
 <RecipeExample name="native-recipe/create-themed-recipes/button" />
 
@@ -40,16 +42,16 @@ They are the styles that the recipe of each theme returns, which
 />
 
 Call `createThemedRecipes` once, in a module of your own, and import its
-recipe creators wherever you create recipes (see
+recipe creators and `themeToken` wherever you create recipes (see
 [Theming with design tokens](/recipe/native-recipe/themes/#2-create-the-recipe-creators)).
-At runtime it only returns the two functions. Its value is the type
-parameter: every recipe they create takes that theme type.
+Every recipe they create takes the theme type that you give it.
 
 ## Signature
 
 ```ts
 // Simplified: the type parameters of each creator are left out.
 function createThemedRecipes<Theme extends object>(): {
+  readonly themeToken: Theme;
   createStyleRecipe(
     config: (theme: Theme) => StyleRecipeConfig,
   ): ThemedRecipe<Theme>;
@@ -59,17 +61,25 @@ function createThemedRecipes<Theme extends object>(): {
 };
 ```
 
-`Theme` is the type of your theme objects. The return type is
-`ThemedRecipeCreators<Theme>`.
+`Theme` is the type of your theme objects. `themeToken` reads the theme
+whose recipe is being built, while its config function runs. The return
+type is `ThemedRecipeCreators<Theme>`.
 
 ## The config function
 
-The function receives a theme and returns the config of a
+The function reads the theme from `themeToken` and returns the config of a
 [style recipe](/recipe/native-recipe/create-style-recipe/#the-config) or
 of a [slot style recipe](/recipe/native-recipe/create-slot-style-recipe/#the-config).
 It has the same properties and the same checks, `variants` included.
 TypeScript infers the variants, options, and slots from what it returns.
 A token is typed as the theme type declares it.
+
+The function runs once for each theme object, and `themeToken` reads that
+theme while it runs. So a token can be computed, as in
+`themeToken.gap * 2`, or branched on. Read `themeToken` only inside the
+function: read anywhere else, such as in
+`const { colors } = themeToken` at the top level of a module, it throws a
+`TypeError`.
 
 Every theme must give the same variants, options, and slots. Only the
 styles may change with the theme. So when you branch on a token, branch
@@ -78,17 +88,17 @@ theme. For a theme with a `highContrast` flag:
 
 ```ts
 // Right: the branch is inside the style.
-createStyleRecipe((theme: Theme) => ({
+createStyleRecipe(() => ({
   variants: {
-    outlined: { true: { borderWidth: theme.highContrast ? 2 : 1 } },
+    outlined: { true: { borderWidth: themeToken.highContrast ? 2 : 1 } },
   },
 }));
 
 // Wrong: the branch is around the variant, so one theme has no `outlined`.
 // TypeScript reports an error here. With exactOptionalPropertyTypes, it
 // reports one at each call that sets `outlined` instead.
-const box = createStyleRecipe((theme: Theme) => ({
-  variants: theme.highContrast
+const box = createStyleRecipe(() => ({
+  variants: themeToken.highContrast
     ? {}
     : { outlined: { true: { borderWidth: 1 } } },
 }));
@@ -98,32 +108,34 @@ box(light, { outlined: true });
 
 ### Editor completions
 
-Give the `theme` parameter the theme type, as in `(theme: Theme) =>`.
-TypeScript infers the variants, options, and slots of the config from
-what the function returns. While a call has an error, as it often has
-while you write a config, TypeScript infers nothing from a function whose
-parameters have no type. Your editor then completes no variant name or
-option in `compoundVariants` or `defaultVariants`. With the parameter
-typed, it completes them as in a config without a theme.
+Write the function in the call, as `() => ({ … })`, and read the tokens
+from `themeToken`. TypeScript infers the variants, options, and slots of
+the config from what the function returns. While the config has an error,
+as it often has while you write it, your editor still completes the names
+of the variants, options, and slots, and TypeScript reports each error
+where it is, with a short message:
 
 ```ts
-// Completes `raised` after `r`.
-createSlotStyleRecipe((theme: Theme) => ({
+createSlotStyleRecipe(() => ({
   slots: ["root"],
   variants: { raised: { true: { root: { elevation: 2 } } } },
-  compoundVariants: [{ variants: { r }, styles: {} }],
-}));
-
-// Completes nothing after `r`, since `{ r }` is an error.
-createSlotStyleRecipe((theme) => ({
-  slots: ["root"],
-  variants: { raised: { true: { root: { elevation: 2 } } } },
+  // Completes `raised` after `r`.
   compoundVariants: [{ variants: { r }, styles: {} }],
 }));
 ```
 
-The type of the parameter changes nothing else: the recipe and its
-checks are the same.
+The function can also take the theme as a parameter, as in
+`(theme: Theme) => ({ … })`. Your editor completes the config as well,
+but TypeScript reports any error in the config on the whole function,
+with a long message, since it does not follow an error into a function
+whose parameters have types. Without the type, as in `(theme) =>`, your
+editor completes nothing while the config has an error.
+
+A config declared before the call takes the theme as its typed parameter,
+since `ThemedStyleRecipeOf` and `ThemedSlotStyleRecipeOf` read the theme
+type from it (see
+[Exporting recipes](/recipe/native-recipe/exporting-recipes/#themed-recipes)).
+Either way, the recipe and its checks are the same.
 
 ## Calling a themed recipe
 
@@ -172,20 +184,20 @@ Use it to:
 
 ## Composing themed recipes
 
-To compose a themed recipe, list `withTheme(theme)` in `composes`. Use
-the `theme` that your config function receives. Then each theme composes
+To compose a themed recipe, list `withTheme(themeToken)` in `composes`.
+It returns the recipe of the theme being built, so each theme composes
 the recipe of the same theme:
 
 ```ts
-const iconButton = createStyleRecipe((theme: Theme) => ({
-  composes: [button.withTheme(theme)],
+const iconButton = createStyleRecipe(() => ({
+  composes: [button.withTheme(themeToken)],
   base: { width: 40, height: 40 },
   variants: {},
 }));
 ```
 
 A themed recipe can also compose recipes without a theme. A themed slot
-recipe composes the `withTheme(theme)` of another themed slot recipe in
+recipe composes the `withTheme(themeToken)` of another themed slot recipe in
 the same way. See
 [Composing recipes](/recipe/native-recipe/composing/#compose-themed-recipes)
 for an example with its output.
@@ -195,13 +207,18 @@ for an example with its output.
 `createSlotStyleRecipe` works the same way for slot recipes:
 
 ```ts
-const { createSlotStyleRecipe } = createThemedRecipes<Theme>();
+const { createSlotStyleRecipe, themeToken } = createThemedRecipes<Theme>();
 
-const card = createSlotStyleRecipe((theme: Theme) => ({
+const card = createSlotStyleRecipe(() => ({
   slots: ["root", "title"],
-  base: { root: { borderRadius: theme.radius }, title: { fontSize: 16 } },
+  base: {
+    root: { borderRadius: themeToken.radius },
+    title: { fontSize: 16 },
+  },
   variants: {
-    raised: { true: { root: { backgroundColor: theme.colors.surface } } },
+    raised: {
+      true: { root: { backgroundColor: themeToken.colors.surface } },
+    },
   },
 }));
 

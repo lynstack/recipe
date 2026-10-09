@@ -5,14 +5,14 @@ interface Theme {
   readonly radius: number;
 }
 
-const { createStyleRecipe } = createThemedRecipes<Theme>();
+const { createStyleRecipe, themeToken } = createThemedRecipes<Theme>();
 
-const button = createStyleRecipe((theme: Theme) => ({
-  base: { borderRadius: theme.radius },
+const button = createStyleRecipe(() => ({
+  base: { borderRadius: themeToken.radius },
   variants: {
     tone: {
-      primary: { backgroundColor: theme.colors.primary },
-      surface: { backgroundColor: theme.colors.surface },
+      primary: { backgroundColor: themeToken.colors.primary },
+      surface: { backgroundColor: themeToken.colors.surface },
     },
   },
   defaultVariants: { tone: "primary" },

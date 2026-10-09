@@ -15,7 +15,8 @@ allocates more, and nothing in the code says why.
 
 **Check the setup first.** If the project calls `createThemedRecipes`,
 usually in a module such as `src/theme/recipes.ts`, import
-`createStyleRecipe` and `createSlotStyleRecipe` from that module for
+`createStyleRecipe`, `createSlotStyleRecipe`, and `themeToken` from that
+module for
 every component that uses colors, spacing, radii, or type sizes, and take
 those values from the theme. Find how components read the theme, usually
 a `useTheme` hook, and use it. If the project has no theme, use the
@@ -75,12 +76,12 @@ const button = createSlotStyleRecipe({
 });
 button({ size: "sm" }).label; // a frozen style for each slot
 
-// Themed: the config is a function of the theme, and the recipe takes the
-// theme first.
-const { createStyleRecipe: createThemedStyleRecipe } =
+// Themed: the config is a function that reads the theme from `themeToken`,
+// and the recipe takes the theme first.
+const { createStyleRecipe: createThemedStyleRecipe, themeToken } =
   createThemedRecipes<Theme>();
-const card = createThemedStyleRecipe((theme: Theme) => ({
-  base: { backgroundColor: theme.colors.surface },
+const card = createThemedStyleRecipe(() => ({
+  base: { backgroundColor: themeToken.colors.surface },
   variants: {},
 }));
 card(theme); // the style for this theme
@@ -197,15 +198,15 @@ input({ size: "sm", invalid: true });
 ```
 
 In a themed recipe, compose the recipe of the same theme:
-`composes: [control.withTheme(theme)]`, with the `theme` the config
-function receives. A compound variant of the composed recipe applies after
-every option of the recipe that composes it; to override one, give that
-recipe a compound variant with the same condition.
+`composes: [control.withTheme(themeToken)]`. A compound variant of the
+composed recipe applies after every option of the recipe that composes
+it; to override one, give that recipe a compound variant with the same
+condition.
 
 ### Take colors, spacing, and sizes from the theme
 
-In a project with a theme, a recipe's config is a function of the theme,
-and every value that a token exists for comes from the theme, never as a
+In a project with a theme, a recipe's config is a function that reads the
+theme from `themeToken`, and every value that a token exists for comes from the theme, never as a
 literal. Name new tokens by their role, such as `surface` or `onPrimary`,
 so that each theme gives them its own value.
 
@@ -217,15 +218,22 @@ const card = createStyleRecipe(() => ({
 }));
 
 // Right
-const card = createStyleRecipe((theme: Theme) => ({
-  base: { backgroundColor: theme.colors.surface, padding: theme.space.lg },
+const card = createStyleRecipe(() => ({
+  base: {
+    backgroundColor: themeToken.colors.surface,
+    padding: themeToken.space.lg,
+  },
   variants: {},
 }));
 ```
 
-Give the `theme` parameter the theme type, as in `(theme: Theme) =>`:
-without it, an editor completes no variant name or option of a config
-that has an error, such as one being written.
+Write the function in the call, as `() => ({ … })`, reading `themeToken`:
+the editor then completes the config while it has an error, and
+TypeScript reports each error where it is. Read `themeToken` only inside
+the function; read anywhere else, such as destructured at the top level
+of a module, it throws. Take a typed `(theme: Theme)` parameter only in a
+config declared before the call, as `isolatedDeclarations` requires,
+since `ThemedStyleRecipeOf` reads the theme type from it.
 
 Keep the variants and options the same for every theme; only the styles
 may depend on the theme.
@@ -261,11 +269,11 @@ pick the smaller tool that fits:
   1. A tokens module with a `Theme` interface and one object for each
      theme, created once at the top level, with colors named by role.
   2. A recipes module that calls `createThemedRecipes<Theme>()` once and
-     exports `createStyleRecipe` and `createSlotStyleRecipe`.
+     exports `createStyleRecipe`, `createSlotStyleRecipe`, and `themeToken`.
   3. A provider that passes one of those theme objects, chosen from
      `useColorScheme` or the user's preference, through a React context,
      and a `useTheme` hook that returns it unchanged.
-  4. Recipes written as functions of the theme, called as
+  4. Recipes whose config functions read `themeToken`, called as
      `recipe(useTheme(), variants)` in components.
 
 The full walkthrough, with a provider, is at
@@ -320,7 +328,7 @@ const styles = StyleSheet.create({ separator: { height: 12 } });
 ```
 
 In a project with a theme, a static style that uses a token, such as
-`theme.space.md`, does depend on the theme, so it is a themed recipe with
+`themeToken.space.md`, does depend on the theme, so it is a themed recipe with
 no variants.
 
 ## Checklist before you finish

@@ -61,6 +61,25 @@ const panel = defineComposedSlots({
   variants: { dense: { true: { body: { padding: 4 }, root: { margin: 0 } } } },
 });
 
+const { themeToken } = themed;
+
+const pill = defineThemed(() => ({
+  defaultVariants: { size: "sm" },
+  variants: { size: { sm: { borderRadius: themeToken.radius } } },
+}));
+
+const sheet = themed.createSlotStyleRecipe(() => ({
+  composes: [card.withTheme(themeToken)],
+  compoundVariants: [
+    {
+      styles: { handle: { backgroundColor: themeToken.colors.primary } },
+      variants: { open: true, raised: true },
+    },
+  ],
+  slots: ["handle"],
+  variants: { open: { true: { root: { height: 320 } } } },
+}));
+
 const denseChip = withThemedDense(lightChip);
 const denseChipStyle: NativeStyle = denseChip(palette, {
   dense: true,
@@ -78,6 +97,11 @@ const lightCardStyles: SlotStyles<"footer" | "root" | "title"> = lightCard({
 const panelStyles: SlotStyles<"body" | "footer" | "root" | "title"> = panel({
   dense: true,
 });
+const pillStyle: StyleProp<ViewStyle> = pill(palette);
+const sheetStyles: SlotStyles<"handle" | "root" | "title"> = sheet(palette, {
+  open: true,
+  raised: true,
+});
 
 export {
   badge,
@@ -93,5 +117,9 @@ export {
   lightCardStyles,
   panel,
   panelStyles,
+  pill,
+  pillStyle,
+  sheet,
+  sheetStyles,
 };
 export type { LightChipVariants };
