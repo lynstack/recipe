@@ -14,6 +14,10 @@ published on npm and as a
   a value passed the types when only a text or image style has the
   property. An error in the base style also names the wrong property or
   value, where it marked every property of the base style.
+- A config declared before the call, such as with `as const`, whose
+  option gives only text or image properties and a value that such a
+  style does not take, such as `textAlign: "middle"`, is a type error.
+  Before, it passed, and the recipe accepted any option of any variant.
 - A base style that gives a view property and a text property, such as
   `{ borderRadius: 3, fontWeight: 650 }`, is checked as a text style, so
   a value that only a text style rejects is a type error.

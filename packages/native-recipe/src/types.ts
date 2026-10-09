@@ -43,19 +43,15 @@ type DefaultedNameOf<Config> = Config extends {
 type KeyOfEach<Style> = Style extends unknown ? keyof Style : never;
 
 /**
- * Rejects the properties of the styles in `Style` that no React Native
- * style has, which the `NativeStyle` constraint alone lets through next to
- * known ones, and the values of a text or image style that its type does
- * not take.
+ * Rejects the properties that no React Native style has, and the values
+ * that a text or image style does not take, in the styles in `Style`,
+ * which the `NativeStyle` constraint alone lets through.
  */
 type NoUnknownProperties<Style> = [UnknownKey<Style>] extends [never]
   ? TextOrImageStyle<Style>
   : Readonly<Partial<Record<UnknownKey<Style>, never>>>;
 
-/**
- * `TextStyle` or `ImageStyle` for each style in `Style` whose properties
- * only that type has, whose values a `NativeStyle` otherwise lets through.
- */
+/** The text or image style type of each style that only it fits. */
 type TextOrImageStyle<Style> = Style extends unknown
   ? [keyof Style] extends [keyof ViewStyle]
     ? unknown
@@ -133,15 +129,19 @@ type NoUnknownVariantStyles<
   Variants,
   Slot extends string,
   Inherited extends string = never,
-> = {
-  readonly [Name in keyof Variants]: {
-    readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<
-      Variants[Name][Option],
-      Slot,
-      Inherited
-    >;
-  };
-};
+> =
+  // A mapped index signature would let through what `Variants` rejects.
+  string extends keyof Variants
+    ? unknown
+    : {
+        readonly [Name in keyof Variants]: {
+          readonly [Option in keyof Variants[Name]]: NoUnknownSlotStyles<
+            Variants[Name][Option],
+            Slot,
+            Inherited
+          >;
+        };
+      };
 
 /**
  * The slots of the slot recipes of `Composed`, as indexed access rather

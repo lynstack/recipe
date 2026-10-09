@@ -30,13 +30,17 @@ import { buildStyleRecipe } from "./compile-style-recipe.js";
  */
 type StyleRecipeVariants = KindVariants<NativeStyle>;
 
-type NoUnknownStyles<Variants> = {
-  readonly [Name in keyof Variants]: {
-    readonly [Option in keyof Variants[Name]]: NoUnknownProperties<
-      Variants[Name][Option]
-    >;
-  };
-};
+type NoUnknownStyles<Variants> =
+  // A mapped index signature would let through what `Variants` rejects.
+  string extends keyof Variants
+    ? unknown
+    : {
+        readonly [Name in keyof Variants]: {
+          readonly [Option in keyof Variants[Name]]: NoUnknownProperties<
+            Variants[Name][Option]
+          >;
+        };
+      };
 
 /**
  * A style added when several variants have particular options at the same
