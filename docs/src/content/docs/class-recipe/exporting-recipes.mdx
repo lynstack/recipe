@@ -42,19 +42,17 @@ types that class-recipe exports, such as `RecipeComposition`. The library
 depends on `@lynstack/class-recipe` only, even when its package manager,
 such as pnpm, keeps `@lynstack/recipe` out of its reach.
 
-Before 1.6.0, such a module failed with TS2883 (TS2742 before
-TypeScript 7), which says that the inferred type of the recipe cannot be
-named without a reference to `@lynstack/recipe`. Update class-recipe to
-fix it.
+If such a module fails with TS2883 (TS2742 before TypeScript 7), which
+says that the inferred type of the recipe cannot be named without a
+reference to `@lynstack/recipe`, update class-recipe to 1.6.0 or newer.
 
 ## With `isolatedDeclarations`
 
 With `"isolatedDeclarations": true`, TypeScript requires that the
-declarations of each file can be written from that file alone, without
-the type checker, as oxc and the tools built on it, such as tsdown, write
-them. Without the type checker, a tool cannot know what a call returns,
-so each recipe that a module exports needs a type annotation; without
-one, TypeScript reports TS9010.
+declarations of each file can be written from that file alone, as oxc
+and the tools built on it, such as tsdown, write them. Such a tool cannot
+know what a call returns, so each recipe that a module exports needs a
+type annotation; without one, TypeScript reports TS9010.
 
 `SlotRecipeOf` and `RecipeOf` give that type from the type of the config.
 Declare the config `as const`, which isolated declarations can read, and
@@ -72,6 +70,9 @@ see its slots, its variants, and its defaults.
 For a recipe of `cva`, use `RecipeOf` in the same way:
 
 ```ts
+import { cva } from "@lynstack/class-recipe";
+import type { RecipeOf } from "@lynstack/class-recipe";
+
 const pillConfig = {
   base: "rounded-full px-2 text-xs",
   variants: { tone: { neutral: "bg-gray-100", danger: "bg-red-100" } },
@@ -98,20 +99,14 @@ the same order, as the second type parameter:
 both. `RecipeOf` and `SlotRecipeOf` reject a config that lists
 `composes`, so that the type cannot leave out the recipes it composes.
 
-Both types are for a config whose type is known where the recipe is
-declared. They do not apply in a function generic over the whole config,
-such as one that takes `config: Config` and returns `RecipeOf<Config>`:
-`cva` infers the variants from its config, and TypeScript cannot infer
-them from a config whose type is a type parameter. Make such a function
-generic over the variants instead, as
-[A function generic over a config](#a-function-generic-over-a-config)
-shows.
-
 ## Wrap recipes in a function
 
 A function of yours that creates recipes, such as a helper that a library
 gives its users, is generic over the variants of the config, not over the
-whole config.
+whole config. `RecipeOf` and `SlotRecipeOf` do not apply in such a
+function: they need a config whose type is known where the recipe is
+declared, and TypeScript cannot infer the variants of a config whose type
+is a type parameter.
 
 ### A function generic over a config
 

@@ -235,11 +235,12 @@ that grows linearly.
 
 With an older TypeScript:
 
-- List the recipes in one `composes` rather than chaining them: a recipe
-  that composes ten recipes costs about what each of them costs.
+- List the recipes in one `composes` rather than chaining them. The cost
+  then grows linearly: a recipe that composes ten recipes costs about as
+  much as the ten recipes.
 - A recipe imported from a package, through its emitted declarations,
   counts as one recipe, however many recipes it composes.
-- Or upgrade to TypeScript 5.9 or newer.
+- Upgrade to TypeScript 5.9 or newer.
 
 ## Other types
 

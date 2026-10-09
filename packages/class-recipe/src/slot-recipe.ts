@@ -160,6 +160,8 @@ type SlotRecipe<
  *   classes, variants, compound variants, and default variants of the
  *   recipe.
  * @returns The slot recipe.
+ * @throws {TypeError} When a part of the config has the wrong shape, such
+ *   as a missing `variants`.
  */
 type CreateSlotRecipe = <
   const Slot extends string,
@@ -218,12 +220,10 @@ function makeCreateSlotRecipe(options: BuildOptions): unknown {
  * slot recipe whose variants come from untrusted input.
  *
  * Every declared slot is present in the result, as `""` when it has no
- * classes. A variant without a default is required, except a boolean
- * variant, whose only options are `"true"` and `"false"` and which defaults
- * to `false`. An option or a slot that the config does not declare adds
- * no classes, and the slot recipe warns about such a name in its config
- * once, when it is created. Its `variantKeys`, `variantOptions`, and
- * `defaultVariants` list its variants as those of `createRecipe` do.
+ * classes. Variants, defaults, undeclared options and slots, which add no
+ * classes, the `TypeError` for a config with the wrong shape, the warning
+ * about undeclared names, and the `variantKeys`, `variantOptions`, and
+ * `defaultVariants` properties are as in {@link createRecipe}.
  *
  * A slot recipe composes the slot recipes listed in `composes` as a recipe
  * composes recipes, and has the slots of each, theirs first.

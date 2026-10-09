@@ -58,7 +58,7 @@ and of the recipe from the config you pass.
 
 In these type parameters, `Variants` is the type of a config's
 `variants`, `DefaultedName` the names of the variants that have a default,
-`Slot` the names of the slots, `Props` the props a recipe accepts, and
+`Slot` the names of the slots, `Props` the props a recipe accepts,
 `Composed` the types of the recipes in `composes`, and `Config` the type
 of a config. `Composition` is what a recipe passes on to the recipes that
 compose it; it exists in the types only.
@@ -67,27 +67,24 @@ compose it; it exists in the types only.
 
 These types come from `@lynstack/recipe`, which class-recipe re-exports
 so that you need not install it. `RecipeComposition` is part of the type
-of a recipe: a module that exports a recipe and emits declarations names
-it through class-recipe. `ComposedSlot` names the slots of a slot recipe
-that composes others. `ComposedVariants`, `ComposableKindRecipe`, and
-`ComposableKindSlotRecipe` type a function that takes a config that
-composes recipes, as
-[When the configs compose recipes](/recipe/class-recipe/exporting-recipes/#when-the-configs-compose-recipes)
-shows, with `ComposableKindRecipe<string>` for `composes`, or
-`ComposableKindSlotRecipe<string>` for a slot recipe.
+of every recipe, so a module that emits declarations names it through
+class-recipe. `ComposedVariants`, `ComposableKindRecipe`, and
+`ComposableKindSlotRecipe` type a function whose configs compose recipes
+(see
+[When the configs compose recipes](/recipe/class-recipe/exporting-recipes/#when-the-configs-compose-recipes)).
 
-| Export                     | Type parameters                           | Description                                                                              |
-| -------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `VariantSelection`         | `<Variants, DefaultedName>`               | The variants a selection names, with the optional ones marked optional.                  |
-| `VariantOption`            | `<Options>`                               | The values accepted for one variant: its option names, and numbers or booleans for them. |
-| `DefaultVariants`          | `<Variants, DefaultedName>`               | The option each defaulted variant uses when a selection leaves it out.                   |
-| `CompoundCondition`        | `<Variants>`                              | The condition of a compound variant: the options it matches for each variant it names.   |
-| `RecipeFunction`           | `<Props, Result>`                         | A function that takes a selection, whose argument is optional when every variant is.     |
-| `RecipeComposition`        | `<Variants, DefaultedName, Value, Slots>` | What a recipe passes on to the recipes that compose it, in its type only.                |
-| `ComposedSlot`             | `<Composed, Slot>`                        | The slots of a slot recipe that composes others: theirs, then its own.                   |
-| `ComposedVariants`         | `<Composed, Variants>`                    | The variants of a config together with those of the recipes it composes.                 |
-| `ComposableKindRecipe`     | `<Value>`                                 | A recipe that a recipe whose values are of type `Value` can compose.                     |
-| `ComposableKindSlotRecipe` | `<Value>`                                 | A slot recipe that a slot recipe whose values are of type `Value` can compose.           |
+| Export                     | Type parameters                           | Description                                                                                      |
+| -------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `VariantSelection`         | `<Variants, DefaultedName>`               | The variants a selection names, with the optional ones marked optional.                          |
+| `VariantOption`            | `<Options>`                               | The values accepted for one variant: its option names, and numbers or booleans for them.         |
+| `DefaultVariants`          | `<Variants, DefaultedName>`               | The option each defaulted variant uses when a selection leaves it out.                           |
+| `CompoundCondition`        | `<Variants>`                              | The condition of a compound variant: the options it matches for each variant it names.           |
+| `RecipeFunction`           | `<Props, Result>`                         | A function that takes a selection, whose argument is optional when every variant is.             |
+| `RecipeComposition`        | `<Variants, DefaultedName, Value, Slots>` | What a recipe passes on to the recipes that compose it, in its type only.                        |
+| `ComposedSlot`             | `<Composed, Slot>`                        | The slots of a slot recipe that composes others: theirs, then its own.                           |
+| `ComposedVariants`         | `<Composed, Variants>`                    | The variants of a config together with those of the recipes it composes.                         |
+| `ComposableKindRecipe`     | `<Value>`                                 | Any recipe that `composes` accepts; use `ComposableKindRecipe<string>`.                          |
+| `ComposableKindSlotRecipe` | `<Value>`                                 | Any slot recipe that a slot recipe's `composes` accepts; use `ComposableKindSlotRecipe<string>`. |
 
 The recipes of class-recipe are built on
 [`@lynstack/recipe`](/recipe/recipe/). Use it to create recipes for values

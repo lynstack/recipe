@@ -161,6 +161,8 @@ type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<
  * @param config - The recipes it composes, and the base classes, variants,
  *   compound variants, and default variants of the recipe.
  * @returns The recipe.
+ * @throws {TypeError} When a part of the config has the wrong shape, such
+ *   as a missing `variants`.
  */
 type CreateRecipe = <
   const Variants extends RecipeVariants,
@@ -201,13 +203,16 @@ function makeCreateRecipe(options: BuildOptions): unknown {
  *
  * A variant without a default is required, except a boolean variant, whose
  * only options are `"true"` and `"false"` and which defaults to `false`. An
- * option that the config does not declare adds no classes. Creating the
- * recipe warns once, with `console.warn`, about a default or a compound
- * variant that names a variant or an option that the config does not
- * declare, which adds no classes. The recipe's
+ * option that the config does not declare adds no classes. The recipe's
  * `variantKeys` property lists the names of its variants, `variantOptions`
  * the names of the options of each, and `defaultVariants` the option each
  * uses when the recipe is called without it.
+ *
+ * Creating the recipe throws a `TypeError` for a config with the wrong
+ * shape, such as one without `variants`. It warns once, with
+ * `console.warn`, about a default or a compound variant that names a
+ * variant or an option that the config does not declare: such a name adds
+ * no classes.
  *
  * A recipe composes the recipes listed in its config's `composes` as if
  * their configs and its own were one: their base classes first, then the

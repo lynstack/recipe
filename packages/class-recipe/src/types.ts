@@ -120,11 +120,13 @@ type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 /**
  * Rejects the slots of each option's classes that neither `Slot` nor
  * `Inherited` names, unless the option's slot names are not known at
- * compile time, and lists every slot, so that an editor completes their
- * names, but those named as a property of every object, such as
- * `toString`, which an option that does not give them would have with
- * another type. A recipe's own slots are matched first, so that they are
+ * compile time. A recipe's own slots are matched first, so that they are
  * accepted even when the inherited slots are generic.
+ *
+ * It also lists every slot, so that an editor completes their names. It
+ * leaves out a slot named after a property that every object has, such as
+ * `toString`: an option that does not give it would still have it, with
+ * another type.
  */
 type NoUnknownSlots<
   Variants,
