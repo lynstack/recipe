@@ -38,18 +38,17 @@ also needs [Exporting and wrapping recipes](/recipe/class-recipe/exporting-recip
 
 ## A config declared before the call
 
-A config written inline is inferred as it is. Declare a config before the
-call `as const`, so that the options named in its compound and default
-variants stay literal types. The same holds for the `slots` of `sva`: a
-list declared without `as const` is a `string[]`, so the slot recipe
-takes any slot name, and a misspelled slot in `base`, in the variants, in
+A config written inline is inferred as it is. Declare a config written
+before the call `as const`, so that the options its compound and default
+variants name stay literal types. The same goes for the `slots` of `sva`:
+without `as const`, the list is a `string[]`, so the slot recipe takes
+any slot name, and a misspelled slot in `base`, in the variants, in
 `classNames`, or in the result is not a type error.
 
-TypeScript also checks a declared config less than one written in the
-call, since it reports a name that a type does not declare only in an
-object written where that type is expected. In a declared config, a
-misspelled name next to a correct one is not a type error in these
-places:
+TypeScript also checks a declared config less strictly: it reports an
+unknown name only in an object literal written where its type is
+expected. So in a declared config, a misspelled name next to a correct one
+is not a type error in these places:
 
 - the variants that a compound variant names;
 - the slots of `base`;
@@ -93,6 +92,10 @@ type ButtonProps = PropsOf<typeof button>;
 
 For a slot recipe, `PropsOf` includes `classNames` instead, typed with
 [`SlotClasses`](/recipe/class-recipe/exports/#types-for-components).
+
+`PropsOf` types the props of a component. To type the recipe itself, as
+an exported recipe under `isolatedDeclarations` needs, use `RecipeOf` (see
+[Exporting recipes](/recipe/class-recipe/exporting-recipes/)).
 
 ### `RecipeProps` takes a config, not a recipe
 
@@ -197,11 +200,11 @@ in
 ## A function that takes any recipe
 
 A function that takes any recipe, such as one that lists the options of
-each variant for a story, cannot take it as a recipe of any selection:
-that type can be called without variants, which a recipe with a required
-variant cannot, so TypeScript rejects such a recipe. Type it as a function
-of `never`, which the function does not call, with the properties it
-reads:
+each variant for a story, cannot type its parameter as a recipe of any
+selection. That type can be called without variants, and a recipe with a
+required variant cannot, so TypeScript rejects the recipe. Type the
+parameter instead as a function of `never`, which your function does not
+call, with the properties it reads:
 
 ```ts
 import type {
@@ -215,13 +218,18 @@ type AnyRecipe = ((props: never) => string) &
     Recipe<RecipeProps<RecipeVariants, never>>,
     "variantKeys" | "variantOptions" | "defaultVariants"
   >;
+
+function listOptions(recipe: AnyRecipe): readonly string[] {
+  return recipe.variantKeys.flatMap((key) => recipe.variantOptions[key] ?? []);
+}
 ```
 
-For a slot recipe, use `(props: never) => Readonly<Record<string, string>>`
-with the same properties of
-`SlotRecipe<string, SlotRecipeProps<string, SlotRecipeVariants, never>>`.
-A function that calls the recipe is generic over it instead, so that it
-keeps the recipe's own props.
+For a slot recipe, pick the same properties from
+`SlotRecipe<string, SlotRecipeProps<string, SlotRecipeVariants, never>>`,
+and intersect them with
+`(props: never) => Readonly<Record<string, string>>`. A function that
+calls the recipe should be generic over it instead, so that it keeps the
+recipe's own props.
 
 ## Chains of composed recipes
 

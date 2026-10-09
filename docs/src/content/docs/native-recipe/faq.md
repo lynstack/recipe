@@ -23,12 +23,12 @@ JavaScript, creating the recipe throws a `TypeError` that says so. See
 
 ## Why does the console warn that a recipe's config names what it does not declare?
 
-A default, a compound variant, or a slot's style names a variant, an
-option, or a slot that the config does not declare, usually a typo in a
-config declared before the call, or returned by a themed recipe's
-function, where TypeScript does not catch every one. The recipe adds no
-style for that name. The message lists each one; fix the name, or
-declare it. See
+The config names a variant, an option, or a slot that it does not
+declare. In a config declared before the call, or returned by a themed
+recipe's function, it is usually a misspelled variant in a compound
+variant, which TypeScript does not catch there. In JavaScript or untyped
+data, it can be any name. The recipe adds no style for that name. The
+message lists each one: fix the name, or declare it. See
 [Names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare).
 
 ## Can I pass extra styles into a recipe call?

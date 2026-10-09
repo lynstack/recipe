@@ -156,9 +156,10 @@ edge cases.
   call.
 - **Other props.** The recipe ignores props that are not variants. So a
   component can pass all of its props to the recipe.
-- **`null` and `undefined`.** Calling a recipe with no argument, with
-  `undefined`, or with `null` is the same as calling it with `{}`. A
-  variant set to `undefined` uses its default.
+- **`null` and `undefined`.** Calling a recipe with no argument, or with
+  `undefined`, is the same as calling it with `{}`, and a variant set to
+  `undefined` uses its default. TypeScript rejects `null`; a `null` from
+  untyped data counts as `undefined`.
 
 ## Next steps
 

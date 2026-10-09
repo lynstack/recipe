@@ -25,6 +25,8 @@ recipe's function returns, a compound variant can name a misspelled
 variant next to a correct one without a type error. The recipe warns
 about it when it is created, and the compound variant never matches; see
 [Names the config does not declare](/recipe/native-recipe/create-style-recipe/#names-the-config-does-not-declare).
+Write the config in the call when nothing needs it declared, so that
+TypeScript reports these names as you type.
 
 ## Checked styles
 
@@ -224,6 +226,10 @@ type AnyRecipe = ((props: never) => NativeStyle) &
     StyleRecipe<VariantSelection<StyleRecipeVariants, never>, NativeStyle>,
     "variantKeys" | "variantOptions" | "defaultVariants"
   >;
+
+function listOptions(recipe: AnyRecipe): readonly string[] {
+  return recipe.variantKeys.flatMap((key) => recipe.variantOptions[key] ?? []);
+}
 ```
 
 For a slot recipe, pick the same properties from
