@@ -96,18 +96,18 @@ interface SlotStyleRecipeConfig<
   readonly compoundVariants?:
     | WrittenCompounds<
         Compounds,
-        readonly SlotStyleCompoundVariant<
+        SlotStyleCompoundVariant<
           NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownCompoundStyles<
             CompoundStyles<Compounds>,
             NoInfer<Slot>,
             InheritedSlot<Composed>
           >
-        >[],
-        readonly SlotStyleCompoundVariant<
+        >,
+        SlotStyleCompoundVariant<
           NoInfer<ComposedVariants<Composed, Variants>>,
           SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>
-        >[]
+        >
       >
     | undefined;
   /** The option each variant uses when a recipe is called without it. */

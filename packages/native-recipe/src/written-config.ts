@@ -16,15 +16,17 @@ type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [
   : DefaultVariants<Variants, DefaultedName>;
 
 /**
- * The type of `compoundVariants`: the compound variants as written,
+ * The type of `compoundVariants`: the compound variants as written, each
  * intersected with `Checked`. While an editor completes them, TypeScript has
- * not inferred them and takes `readonly []`, whose intersection would make
- * every element `never`; then it is `Unchecked`.
+ * either not inferred them and takes `readonly []`, whose intersection would
+ * make every element `never`, so that each is `Unchecked`; or, in a config
+ * that a function returns, inferred them from the element being written,
+ * whose properties complete only through its intersection with `Checked`.
  */
 type WrittenCompounds<Compounds, Checked, Unchecked> = [Compounds] extends [
   readonly [],
 ]
-  ? Unchecked
-  : Compounds & Checked;
+  ? readonly Unchecked[]
+  : Compounds & { readonly [Index in keyof Compounds]: Checked };
 
 export type { WrittenCompounds, WrittenDefaults };

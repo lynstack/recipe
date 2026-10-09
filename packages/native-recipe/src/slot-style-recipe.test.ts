@@ -236,10 +236,10 @@ describe(createSlotStyleRecipe, () => {
         // @ts-expect-error fontSise is not a style property
         size: { sm: { root: { fontSize: 12, fontSise: 12 } } },
       },
-      // @ts-expect-error opactiy is not a style property
       compoundVariants: [
         {
           variants: { size: "sm" },
+          // @ts-expect-error opactiy is not a style property
           styles: { root: { opacity: 1, opactiy: 0.5 } },
         },
       ],
@@ -254,10 +254,10 @@ describe(createSlotStyleRecipe, () => {
       // @ts-expect-error icon is not a slot
       base: { root: { flex: 1 }, icon: { width: 16 } },
       variants: { size: { sm: { root: { height: 32 } } } },
-      // @ts-expect-error icon is not a slot
       compoundVariants: [
         {
           variants: { size: "sm" },
+          // @ts-expect-error icon is not a slot
           styles: { icon: { width: 16 } },
         },
       ],

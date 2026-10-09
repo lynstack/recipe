@@ -89,13 +89,11 @@ interface StyleRecipeConfig<
   readonly compoundVariants?:
     | WrittenCompounds<
         Compounds,
-        readonly StyleCompoundVariant<
+        StyleCompoundVariant<
           NoInfer<ComposedVariants<Composed, Variants>>,
           NoUnknownProperties<CompoundStyle<Compounds>>
-        >[],
-        readonly StyleCompoundVariant<
-          NoInfer<ComposedVariants<Composed, Variants>>
-        >[]
+        >,
+        StyleCompoundVariant<NoInfer<ComposedVariants<Composed, Variants>>>
       >
     | undefined;
   /** The option each variant uses when a recipe is called without it. */

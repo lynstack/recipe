@@ -222,27 +222,62 @@ describe("completions in the config of themed recipes", () => {
   });
 });
 
-describe("completions in the compound variants of themed recipes", () => {
-  it("completes the variant names of a condition of a style recipe", () => {
-    expect(
-      completionsAt(`${themed}
-      themed.createStyleRecipe((theme) => ({
-        base: { gap: theme.gap },
-        variants: ${variants},
-        compoundVariants: [{ variants: { ${cursor} }, style: {} }],
-      }));`),
-    ).toStrictEqual(expect.arrayContaining(["tone", "size"]));
-  });
+const themedTones = `variants: { tone: { neutral: {}, danger: {} }, size: { sm: {} } },`;
+const themedStyleRecipe = `themed.createStyleRecipe((theme) => ({
+  base: { gap: theme.gap },
+  ${themedTones}`;
+const themedSlotRecipe = `themed.createSlotStyleRecipe((theme) => ({
+  slots: ["root", "label"],
+  base: { root: { gap: theme.gap } },
+  ${themedTones}`;
 
-  it("completes the style properties of a slot of a slot recipe", () => {
+describe("completions in the compound variants of themed recipes", () => {
+  it.each([
+    [
+      themedStyleRecipe,
+      `{ variants: { ${cursor} }, style: {} }`,
+      ["tone", "size"],
+    ],
+    [
+      themedStyleRecipe,
+      `{ variants: { tone: "danger", ${cursor} }, style: {} }`,
+      ["size"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { ${cursor} }, styles: {} }`,
+      ["tone", "size"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { tone: "danger", ${cursor} }, styles: {} }`,
+      ["size"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { tone: "danger" }, styles: { root: {} } }, { variants: { ${cursor} }, styles: {} }`,
+      ["tone", "size"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { tone: "danger" }, styles: { ${cursor} } }`,
+      ["root", "label"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { tone: "danger" }, styles: { root: {}, ${cursor} } }`,
+      ["label"],
+    ],
+    [
+      themedSlotRecipe,
+      `{ variants: { tone: "danger" }, styles: { label: { ${cursor} } } }`,
+      ["margin", "opacity", "color"],
+    ],
+  ] as const)("completes in %s, in %s", (recipe, compounds, names) => {
     expect(
-      completionsAt(`${themed}
-      themed.createSlotStyleRecipe((theme) => ({
-        slots: ["root", "label"],
-        base: { root: { gap: theme.gap } },
-        variants: ${slotVariants},
-        compoundVariants: [{ variants: { tone: "danger" }, styles: { label: { ${cursor} } } }],
-      }));`),
-    ).toStrictEqual(expect.arrayContaining(["margin", "opacity", "color"]));
+      completionsAt(
+        `${themed}\n${recipe}\n  compoundVariants: [${compounds}],\n}));`,
+      ),
+    ).toStrictEqual(expect.arrayContaining([...names]));
   });
 });

@@ -34,7 +34,7 @@ type VariantsOf<Recipe extends (...args: never) => unknown> = Recipe extends {
 //#endregion
 //#region src/written-config.d.ts
 type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [DefaultedName] extends [never] ? { readonly [Name in keyof Variants]?: VariantOption$1<NoInfer<Variants>[Name]>; } : DefaultVariants$1<Variants, DefaultedName>;
-type WrittenCompounds<Compounds, Checked, Unchecked> = [Compounds] extends [readonly []] ? Unchecked : Compounds & Checked;
+type WrittenCompounds<Compounds, Checked, Unchecked> = [Compounds] extends [readonly []] ? readonly Unchecked[] : Compounds & { readonly [Index in keyof Compounds]: Checked; };
 //#endregion
 //#region src/slot-style-recipe.d.ts
 type SlotStyleRecipeVariants = KindVariants<SlotStyles<string>>;
@@ -47,7 +47,7 @@ interface SlotStyleRecipeConfig<Slot extends string, Variants, Base, Compounds, 
   readonly slots: readonly Slot[];
   readonly base?: (Base & NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>) | undefined;
   readonly variants: Variants & SlotStyleRecipeVariants & NoUnknownVariantStyles<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
-  readonly compoundVariants?: WrittenCompounds<Compounds, readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>, InheritedSlot<Composed>>>[], readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>>[]> | undefined;
+  readonly compoundVariants?: WrittenCompounds<Compounds, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>, InheritedSlot<Composed>>>, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>>> | undefined;
   readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }
@@ -66,7 +66,7 @@ interface StyleRecipeConfig<Variants, Base, Compounds, DefaultedName extends key
   readonly composes?: Composed | undefined;
   readonly base?: (Base & NativeStyle & NoUnknownProperties<Base>) | undefined;
   readonly variants: Variants & StyleRecipeVariants & NoUnknownStyles<Variants>;
-  readonly compoundVariants?: WrittenCompounds<Compounds, readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownProperties<CompoundStyle<Compounds>>>[], readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[]> | undefined;
+  readonly compoundVariants?: WrittenCompounds<Compounds, StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownProperties<CompoundStyle<Compounds>>>, StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>> | undefined;
   readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }

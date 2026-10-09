@@ -5,6 +5,13 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## Unreleased
+
+- An editor completes the slot names of the compound variants of a themed
+  slot style recipe, and, in a themed recipe of either kind, the variant
+  names of a condition next to an option and of a compound variant after
+  the first. It completed none of them before.
+
 ## 1.7.1 — 2026-10-09
 
 An editor completes the compound variants, the defaults, and the slots
