@@ -271,18 +271,33 @@ asserts the runtime outcome.
 
 **Test types the way users use them.** A type that works on one inline
 call can still fail in a user's project. Check each public type, in a
-test or in an app of `consumers`, in each way users reach it:
+test or in an app of `consumers`, in each way users reach it. Each way
+names where `consumers/<package>` holds it, in the packages it applies
+to:
 
-- inferred from an inline argument, and from a value declared before the
-  call;
+- inferred from an inline argument (`app/inline.ts`), and from a value
+  declared before the call (`app/types.ts`, and
+  `library-isolated` for configs declared `as const`);
 - passed through a function of the user's that is generic over it, and
-  returned from that function;
+  returned from that function (`app/generic.ts`, `library/helpers.ts`);
 - exported from one module and used in another, with declarations
-  emitted, as an app that installs the packed package compiles it;
-- with `isolatedDeclarations`;
+  emitted, as an app that installs the packed package compiles it
+  (`app/exported.ts` and `app/configured-recipes.ts` of class-recipe,
+  `app/themed-*.ts` of native-recipe, `app/inline.ts` with
+  `app/generic.ts`);
+- published by a design system, whose declarations tsc emits, and used
+  and extended by an app that installs it and not the package
+  (`library`, `library-app`);
+- with `isolatedDeclarations` (`library-isolated`);
 - nested or composed several levels deep, where its declarations must
-  grow linearly;
-- with the oldest and the newest TypeScript that the packages support;
+  grow linearly (`app/chain.ts` and each `app/*-chain.ts`);
+- rendered by components, in React for class-recipe and React Native for
+  native-recipe (`app/components.tsx`);
+- rejected when the input is wrong, with the error at the mistake
+  (`app/misuse.ts`);
+- with the oldest and the newest TypeScript that the packages support,
+  and with the options of strict projects and of bundlers
+  (`tsconfig.strictest.json`, `tsconfig.bundler.json`);
 - completed by an editor in a config written inline in the call: the
   names of its variants, options, and slots, and the values of each, in
   `base`, the variants, compound variants, and defaults, which each
@@ -300,7 +315,11 @@ patterns: the same type helper, the same check, the same example. When
 you fix a bug, find the pattern that caused it, then search every
 package, the docs, the skills, and the READMEs for that pattern. Fix
 each place in the same change, with a test for each, or say why a place
-is not affected. List in the commit body where you looked.
+is not affected. List in the commit body where you looked. When a bug
+was found outside the repository, by a user or a review, add the code
+that shows it to the app of `consumers` whose users would write it,
+next to the way of the list above that it belongs to, or add the way it
+shows if the list lacks it.
 
 **Performance comes first.** A recipe and a slot recipe of any kind, a
 class name recipe and slot recipe, and a style recipe and slot style
