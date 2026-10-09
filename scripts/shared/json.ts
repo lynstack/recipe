@@ -1,31 +1,39 @@
 import { readFileSync } from "node:fs";
 
-function isList(value: unknown): value is readonly unknown[] {
-  return Array.isArray(value);
+/** Parses JSON text, whose shape the caller checks. */
+function parseJson(text: string): unknown {
+  const value: unknown = JSON.parse(text);
+  return value;
 }
 
+/** Reads and parses a JSON file, whose shape the caller checks. */
+function readJson(file: string): unknown {
+  return parseJson(readFileSync(file, "utf8"));
+}
+
+/** Returns `value[key]`, or `undefined` when `value` is not an object. */
 function field(value: unknown, key: string): unknown {
   return typeof value === "object" && value !== null
     ? Object.getOwnPropertyDescriptor(value, key)?.value
     : undefined;
 }
 
-/** Reads and parses a JSON file, whose shape the caller checks. */
-function readJson(path: string): unknown {
-  const value: unknown = JSON.parse(readFileSync(path, "utf8"));
-  return value;
-}
-
 /** Returns the list `value[key]`, or an empty list when there is none. */
 function listField(value: unknown, key: string): readonly unknown[] {
   const items = field(value, key);
-  return isList(items) ? items : [];
+  return Array.isArray(items) ? items : [];
+}
+
+/** Returns the string `value[key]`, or `undefined` when there is none. */
+function optionalStringField(value: unknown, key: string): string | undefined {
+  const text = field(value, key);
+  return typeof text === "string" ? text : undefined;
 }
 
 /** Returns the string `value[key]`, which must exist. */
 function stringField(value: unknown, key: string): string {
-  const text = field(value, key);
-  if (typeof text !== "string") {
+  const text = optionalStringField(value, key);
+  if (text === undefined) {
     throw new TypeError(`Expected a string at "${key}".`);
   }
   return text;
@@ -40,4 +48,12 @@ function numberField(value: unknown, key: string): number {
   return number;
 }
 
-export { listField, numberField, readJson, stringField };
+export {
+  field,
+  listField,
+  numberField,
+  optionalStringField,
+  parseJson,
+  readJson,
+  stringField,
+};

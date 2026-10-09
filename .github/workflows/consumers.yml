@@ -11,6 +11,7 @@ on:
       - consumers/**
       - api/consumers/**
       - scripts/consumers/**
+      - scripts/shared/**
       - compat/versions.json
       - .github/workflows/consumers.yml
       - package.json
@@ -26,6 +27,7 @@ on:
       - consumers/**
       - api/consumers/**
       - scripts/consumers/**
+      - scripts/shared/**
       - compat/versions.json
       - .github/workflows/consumers.yml
       - package.json

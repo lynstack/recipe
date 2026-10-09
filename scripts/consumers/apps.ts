@@ -1,10 +1,13 @@
-import type { Dirent } from "node:fs";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 
-import { parseJson, readManifest } from "./manifest.ts";
-import type { Manifest } from "./manifest.ts";
+import { field, parseJson } from "../shared/json.ts";
+import { run, succeeds } from "../shared/commands.ts";
+import type { Manifest } from "../shared/manifest.ts";
+import { foldersIn } from "../shared/files.ts";
+import { readManifest } from "../shared/manifest.ts";
+import { root } from "../shared/workspace.ts";
 
 /** An app of `consumers`. */
 interface App {
@@ -13,13 +16,6 @@ interface App {
   /** The package name of a library, which other apps install. */
   readonly library: string | undefined;
   readonly manifest: Manifest;
-}
-
-/** The folders in `folder`. */
-function foldersIn(folder: string): readonly string[] {
-  return readdirSync(folder, { withFileTypes: true })
-    .filter((entry: Readonly<Dirent>) => entry.isDirectory())
-    .map((entry: Readonly<Dirent>) => entry.name);
 }
 
 /** The app in the folder `name` of `consumers`. */
@@ -54,6 +50,26 @@ function appsIn(consumers: string): readonly App[] {
 }
 
 /**
+ * The configs that an app compiles with: `tsconfig.json`, which emits its
+ * declarations, then each profile, such as `tsconfig.strictest.json`.
+ */
+function configsOf(app: string): readonly string[] {
+  return [
+    "tsconfig.json",
+    ...readdirSync(app)
+      .filter((file: string) => /^tsconfig\..+\.json$/u.test(file))
+      .toSorted(),
+  ];
+}
+
+/** Whether the installed app in `app` compiles with each of its configs. */
+function compiles(app: string): boolean {
+  return configsOf(app).every((config: string) =>
+    succeeds("pnpm", ["exec", "tsc", "-p", config], app),
+  );
+}
+
+/**
  * Packs the installed library in the folder `app` into `destination`, and
  * returns its tarball.
  */
@@ -63,14 +79,21 @@ function packLibrary(app: string, destination: string): string {
     ["pack", "--pack-destination", destination, "--json"],
     { cwd: app, encoding: "utf8" },
   );
-  const filename: unknown = Object.getOwnPropertyDescriptor(
-    parseJson(packed),
-    "filename",
-  )?.value;
+  const filename = field(parseJson(packed), "filename");
   if (typeof filename !== "string") {
     throw new TypeError(`pnpm pack wrote no tarball for ${app}.`);
   }
   return filename;
+}
+
+/** Packs the packages of the workspace into `destination`. */
+function packPackages(destination: string): string {
+  run(
+    "pnpm",
+    ["--filter", "./packages/*", "pack", "--pack-destination", destination],
+    root,
+  );
+  return destination;
 }
 
 /** The tarball of each package in `folder`, keyed by package name. */
@@ -88,5 +111,5 @@ function tarballsIn(folder: string): ReadonlyMap<string, string> {
   );
 }
 
-export { appsIn, packLibrary, tarballsIn };
+export { appsIn, compiles, packLibrary, packPackages, tarballsIn };
 export type { App };

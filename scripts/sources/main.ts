@@ -12,21 +12,15 @@
  * Options:
  * - `--typescript <version>`: the TypeScript to compile with. Required.
  */
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import os from "node:os";
 import { parseArgs } from "node:util";
 import path from "node:path";
+import { writeFileSync } from "node:fs";
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
-const packages = ["recipe", "class-recipe", "native-recipe"] as const;
-
-/** The first TypeScript of each compiler option added after 5.0. */
-const OPTIONS_SINCE: Readonly<Record<string, string>> = {
-  erasableSyntaxOnly: "5.8",
-  isolatedDeclarations: "5.5",
-};
+import { field, readJson } from "../shared/json.ts";
+import { packageNames, packagesFolder, root } from "../shared/workspace.ts";
+import { run, succeeds } from "../shared/commands.ts";
+import { hasCompilerOption } from "../shared/typescript.ts";
+import { withTemporaryFolder } from "../shared/files.ts";
 
 const {
   values: { typescript },
@@ -36,43 +30,28 @@ if (typescript === undefined) {
   throw new Error("Pass the TypeScript to compile with: --typescript 5.4.5.");
 }
 
-/** Whether TypeScript `version` is `since` or newer. */
-function isAtLeast(version: string, since: string): boolean {
-  const [major = 0, minor = 0] = version.split(".").map(Number);
-  const [sinceMajor = 0, sinceMinor = 0] = since.split(".").map(Number);
-  return major > sinceMajor || (major === sinceMajor && minor >= sinceMinor);
-}
-
 /** The options of `tsconfig.base.json` that TypeScript `version` has. */
 function baseOptionsFor(version: string): Readonly<Record<string, unknown>> {
-  const base: unknown = JSON.parse(
-    readFileSync(path.join(root, "tsconfig.base.json"), "utf8"),
+  const options = field(
+    readJson(path.join(root, "tsconfig.base.json")),
+    "compilerOptions",
   );
-  if (
-    typeof base !== "object" ||
-    base === null ||
-    !("compilerOptions" in base) ||
-    typeof base.compilerOptions !== "object" ||
-    base.compilerOptions === null
-  ) {
+  if (typeof options !== "object" || options === null) {
     throw new TypeError("tsconfig.base.json has no compilerOptions.");
   }
   return Object.fromEntries(
-    Object.entries(base.compilerOptions).filter(
-      ([name]: readonly [string, unknown]) => {
-        const since = OPTIONS_SINCE[name];
-        return since === undefined || isAtLeast(version, since);
-      },
+    Object.entries(options).filter(([name]: readonly [string, unknown]) =>
+      hasCompilerOption(version, name),
     ),
   );
 }
 
 /** Installs TypeScript `version` in `folder` and returns its `tsc`. */
 function installTypeScript(version: string, folder: string): string {
-  execFileSync(
+  run(
     "npm",
     ["install", "--no-save", "--no-package-lock", `typescript@${version}`],
-    { cwd: folder, stdio: "inherit" },
+    folder,
   );
   return path.join(folder, "node_modules", "typescript", "bin", "tsc");
 }
@@ -89,7 +68,7 @@ interface Compiler {
 
 /** Whether the sources of the package `name` compile with `compiler`. */
 function compiles(name: string, compiler: Compiler): boolean {
-  const project = path.join(root, "packages", name);
+  const project = path.join(packagesFolder, name);
   const config = path.join(compiler.folder, `tsconfig.${name}.json`);
   writeFileSync(
     config,
@@ -102,28 +81,20 @@ function compiles(name: string, compiler: Compiler): boolean {
       ],
     }),
   );
-  return (
-    spawnSync(process.execPath, [compiler.tsc, "-p", config], {
-      cwd: project,
-      stdio: "inherit",
-    }).status === 0
-  );
+  return succeeds(process.execPath, [compiler.tsc, "-p", config], project);
 }
 
-execFileSync("pnpm", ["build"], { cwd: root, stdio: "inherit" });
-const folder = mkdtempSync(path.join(os.tmpdir(), "lynstack-sources-"));
-try {
+run("pnpm", ["build"], root);
+const failed = withTemporaryFolder("sources", (folder: string) => {
   const compiler: Compiler = {
     compilerOptions: baseOptionsFor(typescript),
     folder,
     tsc: installTypeScript(typescript, folder),
   };
-  const failed = packages.filter((name: string) => !compiles(name, compiler));
-  if (failed.length > 0) {
-    throw new Error(
-      `The sources of ${failed.join(", ")} do not compile with TypeScript ${typescript}.`,
-    );
-  }
-} finally {
-  rmSync(folder, { force: true, recursive: true });
+  return packageNames().filter((name: string) => !compiles(name, compiler));
+});
+if (failed.length > 0) {
+  throw new Error(
+    `The sources of ${failed.join(", ")} do not compile with TypeScript ${typescript}.`,
+  );
 }

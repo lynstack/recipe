@@ -7,6 +7,7 @@ on:
       - packages/*/src/**
       - packages/*/bench/**
       - scripts/sources/**
+      - scripts/shared/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json
@@ -20,6 +21,7 @@ on:
       - packages/*/src/**
       - packages/*/bench/**
       - scripts/sources/**
+      - scripts/shared/**
       - packages/*/package.json
       - packages/*/tsdown.config.ts
       - packages/*/tsconfig*.json

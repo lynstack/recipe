@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
+import { foldersIn } from "../shared/files.ts";
+
 /** The names that the declarations `api` export. */
 function exportsOf(api: string): readonly string[] {
   const list = [...api.matchAll(/^export \{(?<names>[^}]*)\};$/gmu)].at(-1)
@@ -47,14 +49,12 @@ function filesInFolders(folder: string, pattern: RegExp): readonly string[] {
   if (!existsSync(folder)) {
     return [];
   }
-  return readdirSync(folder, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .flatMap((entry) => {
-      const app = path.join(folder, entry.name);
-      return readdirSync(app)
-        .filter((file: string) => pattern.test(file))
-        .map((file: string) => path.join(app, file));
-    });
+  return foldersIn(folder).flatMap((name: string) => {
+    const app = path.join(folder, name);
+    return readdirSync(app)
+      .filter((file: string) => pattern.test(file))
+      .map((file: string) => path.join(app, file));
+  });
 }
 
 /**

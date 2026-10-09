@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { readJson, stringField } from "./json.ts";
+import { readJson, stringField } from "../shared/json.ts";
 
 /** The version of each package measured, keyed by package name. */
 type Versions = Readonly<Record<string, string>>;

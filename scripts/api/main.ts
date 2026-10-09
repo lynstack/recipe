@@ -9,24 +9,14 @@
  * - `--update`: replaces each `api/<package>.d.ts` with the API of the
  *   package, instead of comparing them.
  */
-import {
-  existsSync,
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
-import { fileURLToPath } from "node:url";
-import os from "node:os";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 
+import { packageNames, packagesFolder, root } from "../shared/workspace.ts";
+import { showDifference } from "../shared/commands.ts";
 import { uncoveredExportsOf } from "./coverage.ts";
-
-const root = fileURLToPath(new URL("../../", import.meta.url));
-const packages = path.join(root, "packages");
+import { withTemporaryFolder } from "../shared/files.ts";
 
 const { values: options } = parseArgs({
   options: { update: { type: "boolean" } },
@@ -49,23 +39,12 @@ function apiOf(folder: string): string {
 }
 
 /**
- * Writes how the API in the file `kept` differs from `api`, which it
- * writes to the file `current`.
- */
-function showDifference(kept: string, api: string, current: string): void {
-  writeFileSync(current, api);
-  spawnSync("git", ["diff", "--no-index", "--", kept, current], {
-    stdio: "inherit",
-  });
-}
-
-/**
  * Whether `api/<name>.d.ts` keeps the API of the package `name`, or, with
  * `--update`, writes it there. If not, writes how they differ, using the
  * folder `temporary` for the API it has.
  */
 function keepsApi(name: string, temporary: string): boolean {
-  const api = apiOf(path.join(packages, name));
+  const api = apiOf(path.join(packagesFolder, name));
   const kept = path.join(root, "api", `${name}.d.ts`);
   if (options.update === true) {
     writeFileSync(kept, api);
@@ -74,21 +53,21 @@ function keepsApi(name: string, temporary: string): boolean {
   if (existsSync(kept) && readFileSync(kept, "utf8") === api) {
     return true;
   }
-  showDifference(kept, api, path.join(temporary, `${name}.d.ts`));
+  const current = path.join(temporary, `${name}.d.ts`);
+  writeFileSync(current, api);
+  showDifference(kept, current);
   return false;
 }
 
-const temporary = mkdtempSync(path.join(os.tmpdir(), "lynstack-api-"));
-const changed = readdirSync(packages).filter(
-  (name: string) => !keepsApi(name, temporary),
+const changed = withTemporaryFolder("api", (temporary: string) =>
+  packageNames().filter((name: string) => !keepsApi(name, temporary)),
 );
-rmSync(temporary, { force: true, recursive: true });
 if (changed.length > 0) {
   throw new Error(
     `The API of ${changed.join(", ")} differs from api/<package>.d.ts: review the difference above, then run pnpm api --update.`,
   );
 }
-const uncovered = readdirSync(packages).flatMap((name: string) =>
+const uncovered = packageNames().flatMap((name: string) =>
   uncoveredExportsOf(root, name).map(
     (exported: string) => `${exported} of @lynstack/${name}`,
   ),

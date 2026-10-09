@@ -97,7 +97,10 @@ it before working in that folder.
   compiles the apps of `consumers` with the packed packages,
   `scripts/sources` compiles the sources of each package, tests and
   benchmarks included, with a given TypeScript, and `scripts/api`
-  compares the public API of each package with `api`.
+  compares the public API of each package with `api`. `scripts/shared`
+  holds what several of them use: the paths of the workspace, reading
+  JSON and manifests, running commands, temporary folders, and the
+  compiler options of each TypeScript.
 - `examples` holds an example of each package that readers open in the
   browser, from the Open in StackBlitz or Open in Snack link of its
   overview page: `recipe` and `class-recipe` are React apps, built with

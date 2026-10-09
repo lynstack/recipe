@@ -110,10 +110,12 @@
     },
     {
       // The scripts are Node.js programs, not tests, and run outside the
-      // package.
+      // package. They are not a package either, so each imports what they
+      // share from scripts/shared.
       "files": ["scripts/**/*.ts"],
       "rules": {
         "import/no-nodejs-modules": "off",
+        "import/no-relative-parent-imports": "off",
         "vitest/require-hook": "off"
       }
     }

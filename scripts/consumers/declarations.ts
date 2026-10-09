@@ -1,6 +1,48 @@
 import { cpSync, existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+
+import { showDifference } from "../shared/commands.ts";
+
+/**
+ * How much larger a declaration two levels of composition deeper may be,
+ * at most, when declarations grow linearly with the level.
+ */
+const LINEAR_GROWTH = 2;
+
+/** The declaration of the constant `name` in the declarations `text`. */
+function declarationOf(text: string, name: string): string {
+  const declaration = text
+    .split(/^(?=declare const |export )/mu)
+    .find((part: string) => part.startsWith(`declare const ${name}:`));
+  if (declaration === undefined) {
+    throw new Error(`The declarations have no constant named ${name}.`);
+  }
+  return declaration;
+}
+
+/**
+ * Whether the declarations of the recipes of each chain of `app`, a module
+ * named `chain.ts` or ending in `-chain.ts`, each of whose recipes composes
+ * the one before, grow linearly with their level. The recipe four levels
+ * deep then takes less than twice the declaration of the one two levels
+ * deep; a type that repeats the types of the recipes it composes takes at
+ * least four times.
+ */
+function growsLinearly(app: string): boolean {
+  const out = path.join(app, "out");
+  if (!existsSync(out)) {
+    return true;
+  }
+  return readdirSync(out)
+    .filter((file: string) => /(?:^|-)chain\.d\.ts$/u.test(file))
+    .every((file: string) => {
+      const text = readFileSync(path.join(out, file), "utf8");
+      return (
+        declarationOf(text, "level4").length <
+        LINEAR_GROWTH * declarationOf(text, "level2").length
+      );
+    });
+}
 
 /** The paths of the declaration files in `folder`, relative to it. */
 function declarationFilesIn(folder: string): readonly string[] {
@@ -36,9 +78,7 @@ function matchesDeclarations(app: string, kept: string): boolean {
   if (sameDeclarations(kept, emitted)) {
     return true;
   }
-  spawnSync("git", ["diff", "--no-index", "--", kept, emitted], {
-    stdio: "inherit",
-  });
+  showDifference(kept, emitted);
   return false;
 }
 
@@ -48,4 +88,4 @@ function updateDeclarations(app: string, kept: string): void {
   cpSync(path.join(app, "out"), kept, { recursive: true });
 }
 
-export { matchesDeclarations, updateDeclarations };
+export { growsLinearly, matchesDeclarations, updateDeclarations };

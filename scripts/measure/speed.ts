@@ -1,9 +1,13 @@
-import { mkdtempSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
-import { tmpdir } from "node:os";
 
-import { listField, numberField, readJson, stringField } from "./json.ts";
+import {
+  listField,
+  numberField,
+  readJson,
+  stringField,
+} from "../shared/json.ts";
+import { withTemporaryFolder } from "../shared/files.ts";
 
 /** The calls per second of one task of a benchmark. */
 interface Speed {
@@ -53,14 +57,9 @@ function runBenchmarks(directory: string, outputFile: string): unknown {
  * returns the speed of each task.
  */
 function measureSpeeds(directory: string): Speeds {
-  const output = mkdtempSync(path.join(tmpdir(), "recipe-measure-"));
-  try {
-    return speedsOf(
-      runBenchmarks(directory, path.join(output, "benchmarks.json")),
-    );
-  } finally {
-    rmSync(output, { force: true, recursive: true });
-  }
+  return withTemporaryFolder("measure", (output: string) =>
+    speedsOf(runBenchmarks(directory, path.join(output, "benchmarks.json"))),
+  );
 }
 
 /**

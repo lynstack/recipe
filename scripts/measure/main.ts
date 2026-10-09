@@ -4,10 +4,11 @@
  * Pass package folder names, such as `class-recipe`, to measure only those.
  */
 import { format, resolveConfig } from "prettier";
-import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import path from "node:path";
 import { writeFileSync } from "node:fs";
 
+import { packagesFolder, root } from "../shared/workspace.ts";
 import { measureClassRecipe } from "./class-recipe.ts";
 import { measureNativeRecipe } from "./native-recipe.ts";
 import { measureRecipe } from "./recipe.ts";
@@ -21,26 +22,20 @@ interface Measured {
   readonly results: unknown;
 }
 
-/** The index of the first argument, after Node.js and the script. */
-const FIRST_ARGUMENT = 2;
-
 const measures: ReadonlyMap<string, Measure> = new Map<string, Measure>([
   ["recipe", measureRecipe],
   ["class-recipe", measureClassRecipe],
   ["native-recipe", measureNativeRecipe],
 ]);
 
-const packages = fileURLToPath(new URL("../../packages/", import.meta.url));
-const measurements = fileURLToPath(
-  new URL("../../docs/src/measurements/", import.meta.url),
-);
+const measurements = path.join(root, "docs", "src", "measurements");
 
 async function formatJson(file: string, value: unknown): Promise<string> {
   const options = await resolveConfig(file);
   return format(JSON.stringify(value), { ...options, filepath: file });
 }
 
-const requested = process.argv.slice(FIRST_ARGUMENT);
+const { positionals: requested } = parseArgs({ allowPositionals: true });
 for (const name of requested) {
   if (!measures.has(name)) {
     throw new Error(`No package named "${name}" has measurements.`);
@@ -54,7 +49,7 @@ const measured = [...measures]
   )
   .map(([name, measure]: readonly [string, Measure]): Measured => ({
     file: path.join(measurements, `${name}.json`),
-    results: measure(path.join(packages, name)),
+    results: measure(path.join(packagesFolder, name)),
   }));
 
 await Promise.all(
