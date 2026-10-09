@@ -270,6 +270,7 @@ function isBooleanName(option: string): boolean {
 
 export {
   compileVariants,
+  isBooleanName,
   noOption,
   noProps,
   select,

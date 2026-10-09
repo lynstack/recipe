@@ -1,4 +1,4 @@
-import { toOptionName, toOptionNames } from "./variants.js";
+import { isBooleanName, toOptionName, toOptionNames } from "./variants.js";
 import type { Layer } from "./compose.js";
 
 /**
@@ -29,10 +29,6 @@ function declaredOptionsOf<Value>(
     }
   }
   return optionsByName;
-}
-
-function isBooleanName(option: string): boolean {
-  return option === "true" || option === "false";
 }
 
 function unknownDefaults(
