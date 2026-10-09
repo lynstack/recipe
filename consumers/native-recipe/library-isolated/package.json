@@ -1,7 +1,7 @@
 {
-  "name": "native-recipe-consumer",
+  "name": "native-recipe-library-isolated",
   "private": true,
-  "description": "An app that installs @lynstack/native-recipe: compiling it, with declarations, checks the published types.",
+  "description": "A library that installs @lynstack/native-recipe and emits each file's declarations on its own, with isolatedDeclarations, as oxc and tsdown do.",
   "license": "MIT",
   "type": "module",
   "scripts": {

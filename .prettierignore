@@ -1,4 +1,4 @@
 pnpm-lock.yaml
 dist/
-consumers/*/out/
+consumers/*/*/out/
 api/

@@ -1,5 +1,5 @@
 {
-  "name": "recipe-consumer",
+  "name": "recipe-app",
   "private": true,
   "description": "An app that installs @lynstack/recipe: compiling it, with declarations, checks the published types.",
   "license": "MIT",

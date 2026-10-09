@@ -1,6 +1,6 @@
 {
-  "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../.oxlintrc.json"],
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../../.oxlintrc.json"],
   "overrides": [
     {
       // With isolatedDeclarations, a value read from the theme needs its

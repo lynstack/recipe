@@ -40,10 +40,10 @@ dependency and a development dependency for those types.
 
 ## App
 
-`consumers/native-recipe` and `consumers/native-recipe-isolated`, at the
-root, compile with the settings of `@react-native/typescript-config`,
-which React Native apps extend, including `skipLibCheck`, since React
-Native's own declarations do not compile without it.
+The apps of `consumers/native-recipe`, at the root, compile with the
+settings of `@react-native/typescript-config`, which React Native apps
+extend, including `skipLibCheck`, since React Native's own declarations
+do not compile without it.
 
 ## Skill
 

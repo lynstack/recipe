@@ -275,13 +275,24 @@ function failureOf(
   return declarationsFailureOf(name, app);
 }
 
+/** The folders in `folder`. */
+function foldersIn(folder: string): readonly string[] {
+  return readdirSync(folder, { withFileTypes: true })
+    .filter((entry: Readonly<Dirent>) => entry.isDirectory())
+    .map((entry: Readonly<Dirent>) => entry.name);
+}
+
+/** The apps of `consumers`, named `<package>/<app>`. */
+const apps = foldersIn(consumers).flatMap((name: string) =>
+  foldersIn(path.join(consumers, name)).map((app: string) => `${name}/${app}`),
+);
+
 const folder = mkdtempSync(path.join(os.tmpdir(), "lynstack-consumers-"));
 const tarballs = tarballsIn(
   options.packages ?? pack(path.join(folder, "packages")),
 );
-const failures = readdirSync(consumers, { withFileTypes: true })
-  .filter((entry: Readonly<Dirent>) => entry.isDirectory())
-  .map((entry: Readonly<Dirent>) => failureOf(entry.name, folder, tarballs))
+const failures = apps
+  .map((name: string) => failureOf(name, folder, tarballs))
   .filter((failure: string | undefined) => failure !== undefined);
 if (failures.length > 0) {
   throw new Error(`${failures.join("; ")}. The apps are in ${folder}.`);

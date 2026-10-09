@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - packages/native-recipe/**
-      - consumers/native-recipe*/**
+      - consumers/native-recipe/**
       - packages/recipe/**
       - .github/workflows/ci-native-recipe.yml
       - package.json
@@ -18,7 +18,7 @@ on:
   pull_request:
     paths:
       - packages/native-recipe/**
-      - consumers/native-recipe*/**
+      - consumers/native-recipe/**
       - packages/recipe/**
       - .github/workflows/ci-native-recipe.yml
       - package.json
@@ -50,4 +50,4 @@ jobs:
           require-lockfile: true
       # The package depends on the built @lynstack/recipe.
       - run: pnpm --filter @lynstack/recipe build
-      - run: pnpm --filter @lynstack/native-recipe --filter "./consumers/native-recipe*" check
+      - run: pnpm --filter @lynstack/native-recipe --filter "./consumers/native-recipe/**" check

@@ -40,8 +40,9 @@ it before working in that folder.
   `*.bench.ts`. A benchmark imports its package by its name, so it runs
   against the built bundle, never against the sources directly.
 - `consumers` holds the apps that check the published types: an app of
-  each package, `consumers/<package>`, and a library of each package
-  that sets `isolatedDeclarations`, `consumers/<package>-isolated`. Each is a
+  each package, `consumers/<package>/app`, and a library of each package
+  that sets `isolatedDeclarations`, `consumers/<package>/library-isolated`.
+  Each is a
   private workspace package, with its own `package.json`,
   `tsconfig.json`, and `.oxlintrc.json`, that depends on its package and
   on no other package of the workspace, as an app does, and exports what
@@ -54,8 +55,8 @@ it before working in that folder.
   `RecipeComposition`, must therefore be exported by the package too.
 - `api` keeps the declarations that show every change to a public type
   in a diff: `api/<package>.d.ts`, the public API of each package, which
-  is its `dist/index.d.ts` without comments, and `api/consumers/<app>`,
-  the declarations that each app of `consumers` emits when it installs
+  is its `dist/index.d.ts` without comments, and
+  `api/consumers/<package>/<app>`, the declarations that each app of `consumers` emits when it installs
   the packed packages, which show how the types of the apps' recipes
   print. Only `pnpm api --update` and `pnpm consumers --update` write
   them.
@@ -116,7 +117,7 @@ checks its formatting, and runs its tests. The `check` of an app of
 Run a package's scripts with `pnpm --filter <name> <script>`, such as
 `pnpm --filter @lynstack/recipe test`, or from its folder. To check a
 package with its apps, run
-`pnpm --filter @lynstack/class-recipe --filter "./consumers/class-recipe*" check`.
+`pnpm --filter @lynstack/class-recipe --filter "./consumers/class-recipe/**" check`.
 
 - `pnpm test` runs the tests of every package.
 - `pnpm api` checks that the public API of each built package is the one
@@ -139,8 +140,8 @@ package with its apps, run
   `chain.ts` or a module ending in `-chain.ts`, each of which composes
   the one before, grow linearly with the level of composition, and,
   with the TypeScript and React Native of the repository, that each app
-  emits the declarations that `api/consumers/<app>` keeps. A TypeScript
-  older than 5.5, which has no `isolatedDeclarations`, compiles an app
+  emits the declarations that `api/consumers/<package>/<app>` keeps. A
+  TypeScript older than 5.5, which has no `isolatedDeclarations`, compiles an app
   that sets it without it. Pass
   `--typescript <version>` or `--react-native <version>` to compile with
   those, and `--update` to write the declarations of the apps to `api`.

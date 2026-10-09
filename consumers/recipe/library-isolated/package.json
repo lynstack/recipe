@@ -1,5 +1,5 @@
 {
-  "name": "recipe-isolated-consumer",
+  "name": "recipe-library-isolated",
   "private": true,
   "description": "A library that installs @lynstack/recipe and emits each file's declarations on its own, with isolatedDeclarations, as oxc and tsdown do.",
   "license": "MIT",
