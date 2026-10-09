@@ -2,13 +2,13 @@ import type {
   Composable,
   ComposableKindRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
   KindVariants,
   RecipeComposition,
 } from "@lynstack/recipe";
 
 import type {
   CompoundCondition,
-  InheritedDefaultedName,
   RecipeFunction,
   Simplify,
   VariantDefaults,

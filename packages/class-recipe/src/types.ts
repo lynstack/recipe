@@ -1,11 +1,9 @@
 import type {
-  ComposableKindSlotRecipe,
-  ComposedDefaultedName,
-  ComposedVariants,
   DefaultVariants,
   KindRecipe,
   VariantKey as KindVariantKey,
   VariantsOf as KindVariantsOf,
+  UnknownSlot,
   VariantOption,
   VariantSelection,
 } from "@lynstack/recipe";
@@ -15,21 +13,6 @@ import type {
  * its properties instead of the types it was built from.
  */
 type Simplify<Type> = { [Key in keyof Type]: Type[Key] };
-
-/**
- * The names of the variants that the recipes of `Composed` give a default,
- * among the variants of a recipe that composes them with its own
- * `Variants`. Kept apart from the recipe's own defaulted names, so that a
- * recipe that composes nothing has exactly those, even when they are
- * generic.
- */
-type InheritedDefaultedName<
-  Composed extends readonly unknown[],
-  Variants,
-> = Extract<
-  ComposedDefaultedName<Composed, never>,
-  keyof ComposedVariants<Composed, Variants>
->;
 
 /**
  * The names of the variants with a default in a config of type `Config`:
@@ -135,15 +118,6 @@ type SlotClasses<Slot extends string> = {
 type SlotClassNames<Slot extends string> = Readonly<Record<Slot, string>>;
 
 /**
- * The type of a slot name that names no slot, `Name`, among the slots
- * `Slot`: no classes are assignable to it, so an error names both.
- */
-interface UnknownSlot<Name, Slot extends string> {
-  readonly "~unknownSlot": Name;
-  readonly "~slots": Slot;
-}
-
-/**
  * Rejects the slots of each option's classes that neither `Slot` nor
  * `Inherited` names, unless the option's slot names are not known at
  * compile time, and lists every slot, so that an editor completes their
@@ -189,15 +163,6 @@ type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [
       >;
     }
   : DefaultVariants<Variants, DefaultedName>;
-
-/**
- * The slots of the slot recipes of `Composed`, as indexed access rather
- * than a conditional type, so that TypeScript relates a config to them
- * while `Composed` is generic.
- */
-type InheritedSlot<
-  Composed extends readonly ComposableKindSlotRecipe<string>[],
-> = NonNullable<Composed[number]["~composition"]>["slots"][number];
 
 /**
  * The variants of a slot recipe whose variant names are not known at
@@ -248,8 +213,6 @@ export type {
 } from "@lynstack/recipe";
 export type {
   DefaultedNameOf,
-  InheritedDefaultedName,
-  InheritedSlot,
   NoUnknownSlots,
   PropsOf,
   Simplify,

@@ -2,14 +2,14 @@ import type {
   Composable,
   ComposableKindSlotRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
+  InheritedSlot,
   KindVariants,
   RecipeComposition,
 } from "@lynstack/recipe";
 
 import type {
   CompoundCondition,
-  InheritedDefaultedName,
-  InheritedSlot,
   NoUnknownSlots,
   RecipeFunction,
   SlotClassNames,

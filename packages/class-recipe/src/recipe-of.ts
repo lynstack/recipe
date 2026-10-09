@@ -2,11 +2,12 @@ import type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
   ComposedVariants,
+  InheritedDefaultedName,
 } from "@lynstack/recipe";
 
 import type { ComposedRecipe, RecipeVariants } from "./recipe.js";
 import type { ComposedSlotRecipe, SlotRecipeVariants } from "./slot-recipe.js";
-import type { DefaultedNameOf, InheritedDefaultedName } from "./types.js";
+import type { DefaultedNameOf } from "./types.js";
 
 /**
  * The parts of a config that {@link RecipeOf} reads, without `composes`,
