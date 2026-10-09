@@ -5,7 +5,7 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
-## Unreleased
+## 1.8.0 — 2026-10-09
 
 ### Added
 
@@ -14,6 +14,10 @@ published on npm and as a
   `createStyleRecipe(() => ({ base: { gap: themeToken.gap } }))`, and
   editors complete the config even while it has an error. Reading it
   outside a config function throws a `TypeError`.
+
+### Changed
+
+- Requires `@lynstack/recipe` `^1.9.0`.
 
 ### Fixed
 

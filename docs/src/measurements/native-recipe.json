@@ -3,18 +3,18 @@
   "date": "2026-10-09",
   "node": "24.21.0",
   "slotStyleRecipeCache": [
-    { "hz": 15180722.237107918, "name": "cached" },
-    { "hz": 1342476.7726859895, "name": "uncached" }
+    { "hz": 15809111.0951503, "name": "cached" },
+    { "hz": 1394610.4298617225, "name": "uncached" }
   ],
   "styleRecipeCache": [
-    { "hz": 14999199.2500395, "name": "cached" },
-    { "hz": 3270446.242257795, "name": "uncached" }
+    { "hz": 15199960.318411332, "name": "cached" },
+    { "hz": 3453340.9008842474, "name": "uncached" }
   ],
   "themedStyleRecipe": [
-    { "hz": 15496053.445172032, "name": "plain" },
-    { "hz": 14643677.613078935, "name": "themed, one theme" },
-    { "hz": 14378593.989744514, "name": "themed, two themes" },
-    { "hz": 3541808.4380625784, "name": "uncached" }
+    { "hz": 16069988.248372965, "name": "plain" },
+    { "hz": 15264344.642211683, "name": "themed, one theme" },
+    { "hz": 15012692.433599634, "name": "themed, two themes" },
+    { "hz": 3589453.650256439, "name": "uncached" }
   ],
-  "versions": { "native-recipe": "1.7.1" }
+  "versions": { "native-recipe": "1.8.0" }
 }
