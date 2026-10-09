@@ -4,8 +4,9 @@
  * compiles it with declarations. Inside the workspace, pnpm links the
  * package folders, whose types TypeScript can always name; an app that
  * installs the packages can name only the types that its own dependencies
- * export. It also checks that the declarations of the slot recipes of an
- * app's `chain.ts` grow linearly with the level of composition, and,
+ * export. It also checks that the declarations of the recipes of each
+ * chain of an app, `chain.ts` or a module ending in `-chain.ts`, grow
+ * linearly with the level of composition, and,
  * with the TypeScript and React Native of the repository, that the app
  * emits the declarations that `api/consumers/<app>` keeps.
  *
