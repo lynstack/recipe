@@ -23,8 +23,12 @@ type NoUnknownSlots<Variants, Slot extends string> = NoUnknownComposedSlots<
 >;
 
 /**
- * The type of a slot name that names no slot, `Name`, among the slots
- * `Slot`: no value is assignable to it, so an error names both.
+ * The type that {@link NoUnknownSlots} gives a key of an option that is not
+ * one of the slots `Slot`. No value is assignable to it, so the error names
+ * both the key and the slots, as `UnknownSlot<"lable", "label" | "root">`.
+ *
+ * @typeParam Name - The key that names no slot.
+ * @typeParam Slot - The names of the slots.
  */
 interface UnknownSlot<Name, Slot extends string> {
   readonly "~unknownSlot": Name;

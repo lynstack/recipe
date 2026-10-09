@@ -92,9 +92,13 @@ type ComposedDefaultedName<Composed extends readonly unknown[], DefaultedName> =
 /**
  * The names of the variants that the recipes of `Composed` give a default,
  * among the variants of a recipe that composes them with its own
- * `Variants`. Kept apart from the recipe's own defaulted names, so that a
- * recipe that composes nothing has exactly those, even when they are
- * generic.
+ * `Variants`. A library adds them to the recipe's own `DefaultedName`,
+ * rather than passing that to {@link ComposedDefaultedName}, so that a
+ * function generic over a config can return the recipe, and a recipe that
+ * composes nothing has exactly its own defaulted names.
+ *
+ * @typeParam Composed - The types of the recipes composed.
+ * @typeParam Variants - The variant definitions of the recipe's own config.
  */
 type InheritedDefaultedName<
   Composed extends readonly unknown[],
@@ -115,9 +119,12 @@ type ComposedSlot<Composed extends readonly unknown[], Slot extends string> =
   Slot | SlotOf<ComposedPart<Composed, "slots">>;
 
 /**
- * The slots of the slot recipes of `Composed`, as indexed access rather
- * than a conditional type, so that TypeScript relates a config to them
- * while `Composed` is generic.
+ * The slots of the slot recipes of `Composed`. Unlike
+ * {@link ComposedSlot}, TypeScript relates a config to them while
+ * `Composed` is generic, so a library types the slots of a config's `base`
+ * and compound variants as `Slot | InheritedSlot<Composed>`.
+ *
+ * @typeParam Composed - The types of the slot recipes composed.
  */
 type InheritedSlot<
   Composed extends readonly ComposableKindSlotRecipe<unknown>[],

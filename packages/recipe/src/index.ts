@@ -32,6 +32,8 @@ export type {
   ComposedDefaultedName,
   ComposedSlot,
   ComposedVariants,
+  InheritedDefaultedName,
+  InheritedSlot,
   RecipeComposition,
 } from "./composition.js";
 export type {
@@ -45,4 +47,4 @@ export type {
   VariantsOf,
 } from "./types.js";
 export type { KindSelection } from "./kind-selection.js";
-export type { NoUnknownSlots } from "./unknown-slots.js";
+export type { NoUnknownSlots, UnknownSlot } from "./unknown-slots.js";

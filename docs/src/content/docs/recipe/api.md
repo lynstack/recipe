@@ -62,9 +62,9 @@ the option names of each variant as literal types:
   gives a default.
 - `Composed`, the recipes that `composes` lists, as a tuple.
 
-`ComposedKindRecipe` and `InheritedDefaultedName` are not exported.
-`InheritedDefaultedName` is the names of the variants that the recipes of
-`composes` give a default. `ComposedKindRecipe` is a
+[`InheritedDefaultedName`](#composition) is the names of the variants
+that the recipes of `composes` give a default. `ComposedKindRecipe`, which
+is not exported, is a
 [`KindRecipe`](#kindrecipe) whose selection is the
 [`KindSelection`](#kindselection) of the variants of the config and of the
 recipes it composes, and whose `Composition` is a
@@ -404,6 +404,8 @@ shows:
 | `ComposedVariants`         | The variants of a recipe that composes others: theirs and its own, with the options of each. |
 | `ComposedDefaultedName`    | The names of the variants with a default in a recipe that composes others.                   |
 | `ComposedSlot`             | The slots of a slot recipe that composes others.                                             |
+| `InheritedDefaultedName`   | The names of the variants that the recipes a recipe composes give a default.                 |
+| `InheritedSlot`            | The slots of the slot recipes a slot recipe composes, for the keys of its config.            |
 
 ### `RecipeComposition`
 
@@ -432,6 +434,7 @@ The config of a slot recipe has its own types:
 | `KindSlotCompoundVariant` | Values added to some slots when several variants have particular options at the same time.                      |
 | `SlotValues`              | Values for some of a slot recipe's slots, keyed by slot name.                                                   |
 | `NoUnknownSlots`          | Rejects a value for a slot that a list of slot names does not name.                                             |
+| `UnknownSlot`             | The type `NoUnknownSlots` gives a slot that the list does not name, so the error names it and the slots.        |
 
 `KindSlotRecipeConfig` rejects a value for a slot that `slots` does not
 name with `NoUnknownSlots`. A library that wraps slot recipes intersects

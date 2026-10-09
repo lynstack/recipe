@@ -1,10 +1,10 @@
 import type {
   Composable,
   ComposableKindRecipe,
-  ComposedDefaultedName,
   ComposedVariants,
   CompoundCondition,
   DefaultVariants,
+  InheritedDefaultedName,
   KindRecipe,
   KindVariants,
   RecipeComposition,
@@ -80,11 +80,7 @@ export function sv<
   config: StyleVariantsConfig<Variants, DefaultedName, Composed>,
 ): StyleVariants<
   ComposedVariants<Composed, Variants>,
-  | DefaultedName
-  | Extract<
-      ComposedDefaultedName<Composed, never>,
-      keyof ComposedVariants<Composed, Variants>
-    >
+  DefaultedName | InheritedDefaultedName<Composed, Variants>
 >;
 
 export function sv(config: LooseConfig): LooseStyleVariants {

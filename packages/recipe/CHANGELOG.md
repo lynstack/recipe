@@ -4,6 +4,16 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## Unreleased
+
+### Added
+
+- `InheritedSlot` and `InheritedDefaultedName`: the slots and defaulted
+  variants a recipe inherits from the recipes it composes, for libraries
+  that wrap composable recipes.
+- `UnknownSlot`, the type that errors show for a slot a recipe does not
+  declare.
+
 ## 1.8.1 — 2026-10-09
 
 An editor completes the defaults and the slots of a config written in

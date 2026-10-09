@@ -53,13 +53,14 @@ property, which exists in the type only. A wrapper's type carries it too:
   together with those of the recipes it composes. The config's compound
   variants and defaults name these, so that they can name the variants of
   the recipes it composes.
-- `ComposedDefaultedName<Composed, never>` is the names of the variants
-  with a default in a recipe it composes, and `Extract` keeps those that
-  are variants of the merged config. Add them to `DefaultedName` instead
-  of passing `DefaultedName` to `ComposedDefaultedName`: TypeScript
-  cannot reduce an `Extract` of a type parameter, so a function generic
-  over a config could not return the wrapper's recipe, and a wrapper
-  that composes nothing has exactly its own `DefaultedName`.
+- `InheritedDefaultedName<Composed, Variants>` is the names of the
+  variants that a composed recipe gives a default. Add them to
+  `DefaultedName` rather than passing `DefaultedName` to
+  `ComposedDefaultedName`. TypeScript cannot reduce the names that
+  `ComposedDefaultedName` keeps while `Composed` is generic, so a function
+  generic over a config could not return the wrapper's recipe. Adding
+  them also leaves a wrapper that composes nothing with exactly its own
+  `DefaultedName`.
 - `Composable<RecipeComposition<…>>` marks the type of the wrapper, so
   that other recipes can compose it in turn. Without it, `composes`
   rejects the wrapper.
@@ -85,12 +86,13 @@ A library of slot recipes does the same with the slot recipe types:
 
 - `ComposableKindSlotRecipe<Style>` instead of `ComposableKindRecipe`, as
   the type of `composes`.
-- The slots of `slots` and those of the slot recipes it composes,
-  written out, for the keys of `base` and of compound variants, as
-  `SlotValues<NoInfer<Slot> | NonNullable<Composed[number]["~composition"]>["slots"][number], Style>`.
-  Not `ComposedSlot<Composed, Slot>`, a conditional type that TypeScript
-  cannot reduce while `Composed` is generic: a user's function generic
-  over the recipe it composes could then name none of its own slots.
+- `Slot | InheritedSlot<Composed>`, the slots of `slots` and those of
+  the slot recipes it composes, for the keys of `base` and of compound
+  variants, as `SlotValues<NoInfer<Slot> | InheritedSlot<Composed>, Style>`.
+  Do not use `ComposedSlot<Composed, Slot>`: it is a conditional type that
+  TypeScript cannot reduce while `Composed` is generic, so a user's
+  function generic over the recipe it composes could name none of its
+  own slots.
 - The same slots for the keys of the result and in its
   `RecipeComposition`, whose last type parameter is the list of its
   slots:

@@ -4,6 +4,8 @@ import type {
   Composable,
   ComposedDefaultedName,
   ComposedSlot,
+  InheritedDefaultedName,
+  InheritedSlot,
   RecipeComposition,
 } from "./composition.js";
 import type {
@@ -100,6 +102,24 @@ describe("the slots of a slot recipe that composes others", () => {
     >().toEqualTypeOf<"footer">();
     expect(panel()).toStrictEqual({ footer: {}, root: { padding: 8 } });
   });
+
+  it("inherits the slots of the slot recipes it composes", () => {
+    const panel = slotStyleRecipe({
+      base: { root: { margin: 0 } },
+      composes: [card],
+      slots: ["footer"],
+      variants: {},
+    });
+
+    expectTypeOf<
+      InheritedSlot<readonly [typeof card]>
+    >().toEqualTypeOf<"root">();
+    expectTypeOf<InheritedSlot<readonly []>>().toEqualTypeOf<never>();
+    expect(panel()).toStrictEqual({
+      footer: {},
+      root: { padding: 8, margin: 0 },
+    });
+  });
 });
 
 describe("the defaulted names of a recipe that composes others", () => {
@@ -121,6 +141,18 @@ describe("the defaulted names of a recipe that composes others", () => {
       size: "md",
       tone: "neutral",
     });
+  });
+
+  it("inherits the defaulted names of the recipes it composes", () => {
+    const badge = styleRecipe({ composes: [box], variants: tones });
+
+    expectTypeOf<
+      InheritedDefaultedName<readonly [typeof box], typeof tones>
+    >().toEqualTypeOf<"size">();
+    expectTypeOf<
+      InheritedDefaultedName<readonly [], typeof tones>
+    >().toEqualTypeOf<never>();
+    expect(badge.defaultVariants).toStrictEqual({ size: "md" });
   });
 });
 
