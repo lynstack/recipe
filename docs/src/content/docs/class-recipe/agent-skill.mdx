@@ -75,6 +75,9 @@ default join, they are required. Then it teaches the agent to:
 - Style a component of several elements with one slot recipe, and type
   its props from the recipe.
 - Compose a shared recipe instead of copying its config.
+- Write the config inside `cva(…)` or `sva(…)`, declare one written before
+  the call `as const`, and fix every warning about names the config does
+  not declare.
 - Use `cx` only to add classes that set new properties.
 
 And not to:

@@ -73,8 +73,11 @@ theme. Then it teaches the agent to:
 - Give a component of several elements one slot recipe.
 - Compose a shared recipe instead of copying its config, and, in a themed
   recipe, compose the recipe of the same theme.
-- Take colors, spacing, and sizes from the theme, read from `themeToken`
-  in a config written in the call, and pass the theme object itself.
+- Take colors, spacing, and sizes from the theme through `themeToken`, and
+  pass the theme object itself.
+- Write the config in the call, declare one written before the call
+  `as const`, and fix every warning about names the config does not
+  declare.
 - Add a style to a recipe's style only when the component is given one,
   so that the `style` prop keeps the recipe's object otherwise.
 - Add dark mode or a theme with the smaller tool that fits: a variant for
