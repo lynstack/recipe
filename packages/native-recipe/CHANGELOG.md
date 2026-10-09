@@ -11,6 +11,11 @@ published on npm and as a
   slot style recipe, and, in a themed recipe of either kind, the variant
   names of a condition next to an option and of a compound variant after
   the first. It completed none of them before.
+- The TSDoc of `createThemedRecipes` and the skill advise typing the
+  parameter of the config function, as in `(theme: Theme) =>`: while a
+  config has an error, such as one being written, TypeScript infers
+  nothing from a function whose parameter has no type, and an editor
+  completes no variant name or option.
 
 ## 1.7.1 — 2026-10-09
 

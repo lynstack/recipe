@@ -281,3 +281,17 @@ describe("completions in the compound variants of themed recipes", () => {
     ).toStrictEqual(expect.arrayContaining([...names]));
   });
 });
+
+describe("completions in a themed config whose parameter is typed", () => {
+  it("completes the variant names of a condition being written", () => {
+    expect(
+      completionsAt(`${themed}
+      themed.createSlotStyleRecipe((theme: { readonly gap: number }) => ({
+        slots: ["root"],
+        base: { root: { gap: theme.gap } },
+        variants: { raised: { true: { root: { elevation: 2 } } } },
+        compoundVariants: [{ variants: { r${cursor} }, styles: {} }],
+      }));`),
+    ).toStrictEqual(["raised"]);
+  });
+});

@@ -161,7 +161,7 @@ interface Theme {
 
 const { createSlotStyleRecipe } = createThemedRecipes<Theme>();
 
-export const themedButton = createSlotStyleRecipe((theme) => ({
+export const themedButton = createSlotStyleRecipe((theme: Theme) => ({
   slots: ["root", "label"],
   base: {
     root: {

@@ -7,7 +7,7 @@ interface Theme {
 
 const { createStyleRecipe } = createThemedRecipes<Theme>();
 
-const button = createStyleRecipe((theme) => ({
+const button = createStyleRecipe((theme: Theme) => ({
   base: { borderRadius: theme.radius },
   variants: {
     tone: {

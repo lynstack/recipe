@@ -113,13 +113,18 @@ and compound variants against its variants, and its slots against
 ```ts
 const { createStyleRecipe } = createThemedRecipes<Theme>();
 
-createStyleRecipe((theme) => ({
+createStyleRecipe((theme: Theme) => ({
   variants: {
     // Error: Theme has no spacing.
     size: { sm: { padding: theme.spacing } },
   },
 }));
 ```
+
+Type the `theme` parameter, as above. Without its type, an editor
+completes nothing in a config that has an error, such as one you are
+writing (see
+[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)).
 
 The style a themed recipe returns has the types of the tokens it uses:
 `backgroundColor: theme.colors.primary` gives a `string`, where a literal

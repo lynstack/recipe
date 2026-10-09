@@ -79,7 +79,7 @@ button({ size: "sm" }).label; // a frozen style for each slot
 // theme first.
 const { createStyleRecipe: createThemedStyleRecipe } =
   createThemedRecipes<Theme>();
-const card = createThemedStyleRecipe((theme) => ({
+const card = createThemedStyleRecipe((theme: Theme) => ({
   base: { backgroundColor: theme.colors.surface },
   variants: {},
 }));
@@ -217,11 +217,15 @@ const card = createStyleRecipe(() => ({
 }));
 
 // Right
-const card = createStyleRecipe((theme) => ({
+const card = createStyleRecipe((theme: Theme) => ({
   base: { backgroundColor: theme.colors.surface, padding: theme.space.lg },
   variants: {},
 }));
 ```
+
+Give the `theme` parameter the theme type, as in `(theme: Theme) =>`:
+without it, an editor completes no variant name or option of a config
+that has an error, such as one being written.
 
 Keep the variants and options the same for every theme; only the styles
 may depend on the theme.

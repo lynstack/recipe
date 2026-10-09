@@ -205,13 +205,17 @@ over the system's color scheme.
 ### 4. Write recipes with tokens
 
 A recipe's config is a function of the theme. Variants still choose
-between options; the tokens give the options their values:
+between options; the tokens give the options their values. Give the
+`theme` parameter its type, so that your editor completes the config
+while you write it (see
+[Editor completions](/recipe/native-recipe/create-themed-recipes/#editor-completions)):
 
 ```ts
 // src/components/button.styles.ts
 import { createSlotStyleRecipe } from "../theme/recipes";
+import type { Theme } from "../theme/tokens";
 
-export const button = createSlotStyleRecipe((theme) => ({
+export const button = createSlotStyleRecipe((theme: Theme) => ({
   slots: ["root", "label"],
   base: {
     root: {

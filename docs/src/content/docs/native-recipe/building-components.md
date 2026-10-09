@@ -109,8 +109,9 @@ import type { ReactNode } from "react";
 import { View } from "react-native";
 import { createStyleRecipe } from "../theme/recipes";
 import { useTheme } from "../theme/provider";
+import type { Theme } from "../theme/tokens";
 
-const screen = createStyleRecipe((theme) => ({
+const screen = createStyleRecipe((theme: Theme) => ({
   base: { backgroundColor: theme.colors.background, flex: 1 },
   variants: {},
 }));

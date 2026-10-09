@@ -207,6 +207,11 @@ interface ThemedRecipeCreators<Theme extends object> {
  * as the recipes of `createStyleRecipe` and `createSlotStyleRecipe` do. A
  * theme that is no longer referenced is released with its recipe.
  *
+ * Give the parameter of the config function the theme type, as in
+ * `(theme: Theme) =>`. While a call has an error, such as a config being
+ * written, TypeScript infers nothing from a function whose parameters have
+ * no type, so an editor completes no variant name or option.
+ *
  * The config of every theme must declare the same variants and options;
  * only the styles may depend on the theme. A themed recipe composes the
  * recipe of a theme that `withTheme` returns, such as
@@ -225,7 +230,7 @@ interface ThemedRecipeCreators<Theme extends object> {
  *
  * const { createStyleRecipe } = createThemedRecipes<Theme>();
  *
- * const button = createStyleRecipe((theme) => ({
+ * const button = createStyleRecipe((theme: Theme) => ({
  *   base: { borderRadius: theme.radius },
  *   variants: {
  *     tone: {
@@ -249,7 +254,7 @@ interface ThemedRecipeCreators<Theme extends object> {
  * button.withTheme(light).variantKeys; // => ["tone"]
  * button.withTheme(light).defaultVariants; // => { tone: "primary" }
  *
- * const iconButton = createStyleRecipe((theme) => ({
+ * const iconButton = createStyleRecipe((theme: Theme) => ({
  *   composes: [button.withTheme(theme)],
  *   base: { width: 40, height: 40 },
  *   variants: {},
