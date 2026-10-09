@@ -8,8 +8,10 @@ import {
   defineSlots,
   dialog,
   link,
+  panel as overridable,
   slotStyleRecipe,
   styleRecipe,
+  sv,
   text,
   withFooter,
 } from "recipe-library";
@@ -43,6 +45,12 @@ const panel = slotStyleRecipe({
   variants: { tone: { dark: { body: { color: "white" } } } },
 });
 
+const banner = sv({
+  composes: [overridable, text],
+  defaultVariants: { size: "lg" },
+  variants: { wide: { true: { width: 400 } } },
+});
+
 const badge = define({
   defaultVariants: { tone: "neutral" },
   variants: { tone: { danger: { color: "red" }, neutral: { color: "gray" } } },
@@ -71,6 +79,7 @@ const displayStyle: Style = display({ size: "xl", tracking: "tight" });
 const panelStyles: Readonly<Record<"body" | "root" | "title", Style>> = panel({
   tone: "dark",
 });
+const bannerStyle: Style = banner({ style: { margin: 0 }, wide: true });
 const badgeStyle: Style = badge({});
 const labelStyle: Style = label({ size: "xs" });
 const fieldStyles: Readonly<Record<"input" | "label", Style>> = field({
@@ -83,6 +92,7 @@ const footedDialogStyles: Readonly<Record<"footer" | "root" | "title", Style>> =
 
 export {
   badgeStyle,
+  bannerStyle,
   captionStyle,
   displayStyle,
   drawerStyles,

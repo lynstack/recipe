@@ -17,3 +17,4 @@ export {
   text,
 } from "./recipes.js";
 export type { Style } from "./recipes.js";
+export { panel, surface, sv } from "./wrapper.js";
