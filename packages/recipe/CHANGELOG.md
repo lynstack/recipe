@@ -4,7 +4,7 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
-## Unreleased
+## 1.9.1 — 2026-10-10
 
 ### Fixed
 
