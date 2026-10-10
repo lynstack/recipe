@@ -15,6 +15,7 @@ import type {
   NoUnknownCompoundStyles,
   NoUnknownSlotStyles,
   NoUnknownVariantStyles,
+  RecipeSlot,
   RecipeSlotStyles,
   SlotStyles,
   VariantSelection,
@@ -139,22 +140,6 @@ type SlotStyleRecipe<Props, Styles, Composition = unknown> = KindRecipe<
 >;
 
 /**
- * The slot recipe of a config with the slot recipes it composes, whose
- * slots are `Slot`, whose variants are `Variants`, whose variants with a
- * default are `DefaultedName`, and which returns `Styles`.
- */
-type ComposedSlotStyleRecipe<
-  Slot extends string,
-  Variants,
-  DefaultedName extends keyof Variants,
-  Styles,
-> = SlotStyleRecipe<
-  VariantSelection<Variants, DefaultedName>,
-  Styles,
-  RecipeComposition<Variants, DefaultedName, NativeStyle, readonly Slot[]>
->;
-
-/**
  * Creates a slot style recipe: a function that returns the style of each
  * element of a component, its slots, for a selection of variants.
  *
@@ -267,21 +252,25 @@ function createSlotStyleRecipe<
     DefaultedName,
     Composed
   >,
-): ComposedSlotStyleRecipe<
-  // Not ComposedSlot, which declarations print with each composed type.
-  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
-  ComposedVariants<Composed, Variants>,
-  NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+): SlotStyleRecipe<
+  VariantSelection<
+    ComposedVariants<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>
+  >,
   RecipeSlotStyles<
-    | Slot
-    | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
+    RecipeSlot<Slot, Composed>,
     Variants,
     Base,
     Compounds,
     Composed
+  >,
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+    NativeStyle,
+    readonly RecipeSlot<Slot, Composed>[]
   >
 >;
-
 function createSlotStyleRecipe(
   config: LooseSlotStyleRecipeConfig,
 ): LooseSlotStyleRecipe {
@@ -290,7 +279,6 @@ function createSlotStyleRecipe(
 
 export { createSlotStyleRecipe };
 export type {
-  ComposedSlotStyleRecipe,
   SlotStyleCompoundVariant,
   SlotStyleRecipe,
   SlotStyleRecipeConfig,

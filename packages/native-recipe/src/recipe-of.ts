@@ -3,23 +3,56 @@ import type {
   ComposableKindSlotRecipe,
   ComposedVariants,
   InheritedDefaultedName,
+  RecipeComposition,
 } from "@lynstack/recipe";
 
-import type {
-  ComposedSlotStyleRecipe,
-  SlotStyleRecipeVariants,
-} from "./slot-style-recipe.js";
-import type {
-  ComposedStyleRecipe,
-  RecipeStyle,
-  StyleRecipeVariants,
-} from "./style-recipe.js";
 import type {
   DefaultedNameOf,
   NativeStyle,
   RecipeSlotStyles,
   SlotStyles,
+  VariantSelection,
 } from "./types.js";
+import type {
+  RecipeStyle,
+  StyleRecipe,
+  StyleRecipeVariants,
+} from "./style-recipe.js";
+import type {
+  SlotStyleRecipe,
+  SlotStyleRecipeVariants,
+} from "./slot-style-recipe.js";
+
+/**
+ * The recipe of a config whose variants, with those of the recipes it
+ * composes, are `Variants`, whose variants with a default are
+ * `DefaultedName`, and which returns `Style`.
+ */
+type ComposedStyleRecipe<
+  Variants,
+  DefaultedName extends keyof Variants,
+  Style,
+> = StyleRecipe<
+  VariantSelection<Variants, DefaultedName>,
+  Style,
+  RecipeComposition<Variants, DefaultedName, NativeStyle, undefined>
+>;
+
+/**
+ * The slot recipe of a config with the slot recipes it composes, whose
+ * slots are `Slot`, whose variants are `Variants`, whose variants with a
+ * default are `DefaultedName`, and which returns `Styles`.
+ */
+type ComposedSlotStyleRecipe<
+  Slot extends string,
+  Variants,
+  DefaultedName extends keyof Variants,
+  Styles,
+> = SlotStyleRecipe<
+  VariantSelection<Variants, DefaultedName>,
+  Styles,
+  RecipeComposition<Variants, DefaultedName, NativeStyle, readonly Slot[]>
+>;
 
 /** The base style of a config of type `Config`, or `never` without one. */
 type BaseOf<Config> = Config extends { readonly base: infer Base }

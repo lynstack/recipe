@@ -1,6 +1,7 @@
 import type {
   ComposedVariants,
   InheritedDefaultedName,
+  RecipeComposition,
 } from "@lynstack/recipe";
 
 import type {
@@ -9,9 +10,33 @@ import type {
   SlotStyleRecipeConfigParts,
   StyleRecipeConfigParts,
 } from "./recipe-of.js";
-import type { DefaultedNameOf, RecipeSlotStyles } from "./types.js";
-import type { ComposedThemedRecipe } from "./themed-recipes.js";
+import type {
+  DefaultedNameOf,
+  NativeStyle,
+  RecipeSlotStyles,
+  VariantSelection,
+} from "./types.js";
 import type { RecipeStyle } from "./style-recipe.js";
+import type { ThemedRecipe } from "./themed-recipes.js";
+
+/**
+ * The themed recipe of a config whose variants, with those of the recipes
+ * it composes, are `Variants`, whose variants with a default are
+ * `DefaultedName`, and which returns `Result`. `Slots` lists the slots of a
+ * slot recipe, or is `undefined` for a recipe without slots.
+ */
+type ComposedThemedRecipe<
+  Theme,
+  Variants,
+  DefaultedName extends keyof Variants,
+  Result,
+  Slots,
+> = ThemedRecipe<
+  Theme,
+  VariantSelection<Variants, DefaultedName>,
+  Result,
+  RecipeComposition<Variants, DefaultedName, NativeStyle, Slots>
+>;
 
 /**
  * The slots of each slot recipe of the union `Recipe`. A conditional type,

@@ -4,86 +4,58 @@ import type { Palette } from "./themed-generic";
 declare const badge: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly tone?: "primary" | "surface" | undefined;
 }, NativeStyle>;
-declare const chip: ((theme: Palette, props: {
+declare const chip: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly size: "md";
-}) => {
+}, {
     readonly borderRadius?: number | undefined;
     readonly height?: 40 | undefined;
-}) & {
-    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly size: "md";
-    }, {
-        readonly borderRadius?: number | undefined;
-        readonly height?: 40 | undefined;
-    }, import("@lynstack/native-recipe").RecipeComposition<{
-        readonly size: {
-            readonly md: {
-                readonly borderRadius: number;
-                readonly height: 40;
-            };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly size: {
+        readonly md: {
+            readonly borderRadius: number;
+            readonly height: 40;
         };
-    }, never, NativeStyle, undefined>>;
-};
-declare const card: ((theme: Palette, props?: {
+    };
+}, never, NativeStyle, undefined>>;
+declare const card: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly raised?: "false" | "true" | boolean | undefined;
-} | undefined) => {
+}, {
     readonly root: {
         readonly borderRadius?: number | undefined;
         readonly elevation?: 2 | undefined;
     };
     readonly title: {};
-}) & {
-    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly raised?: "false" | "true" | boolean | undefined;
-    }, {
-        readonly root: {
-            readonly borderRadius?: number | undefined;
-            readonly elevation?: 2 | undefined;
-        };
-        readonly title: {};
-    }, import("@lynstack/native-recipe").RecipeComposition<{
-        readonly raised: {
-            readonly true: {
-                readonly root: {
-                    readonly elevation: 2;
-                };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly raised: {
+        readonly true: {
+            readonly root: {
+                readonly elevation: 2;
             };
         };
-    }, never, NativeStyle, readonly ("root" | "title")[]>>;
-};
-declare const lightChip: ((props: {
+    };
+}, never, NativeStyle, readonly ("root" | "title")[]>>;
+declare const lightChip: import("@lynstack/native-recipe").StyleRecipe<{
     readonly round?: "false" | "true" | boolean | undefined;
     readonly size: "md";
-}) => {
+}, {
     readonly borderRadius?: number | undefined;
     readonly height?: 40 | undefined;
-}) & {
-    readonly variantKeys: readonly ("round" | "size")[];
-    readonly variantOptions: {
-        readonly round: readonly ("false" | "true")[];
-        readonly size: readonly "md"[];
-    };
-    readonly defaultVariants: {
-        readonly round: "false" | "true";
-    };
-} & {
-    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
-        readonly round: {
-            readonly true: {
-                readonly borderRadius: 999;
-            };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly round: {
+        readonly true: {
+            readonly borderRadius: 999;
         };
-        readonly size: {
-            readonly md: {
-                readonly borderRadius: number;
-                readonly height: 40;
-            };
+    };
+    readonly size: {
+        readonly md: {
+            readonly borderRadius: number;
+            readonly height: 40;
         };
-    }, never, NativeStyle, undefined> | undefined;
-};
-declare const lightCard: ((props?: {
+    };
+}, never, NativeStyle, undefined>>;
+declare const lightCard: import("@lynstack/native-recipe").SlotStyleRecipe<{
     readonly raised?: "false" | "true" | boolean | undefined;
-} | undefined) => {
+}, {
     readonly footer: {
         readonly paddingTop?: 8 | undefined;
     };
@@ -92,29 +64,19 @@ declare const lightCard: ((props?: {
         readonly elevation?: 2 | undefined;
     };
     readonly title: {};
-}) & {
-    readonly variantKeys: readonly "raised"[];
-    readonly variantOptions: {
-        readonly raised: readonly ("false" | "true")[];
-    };
-    readonly defaultVariants: {
-        readonly raised: "false" | "true";
-    };
-} & {
-    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
-        readonly raised: {
-            readonly true: {
-                readonly root: {
-                    readonly elevation: 2;
-                };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly raised: {
+        readonly true: {
+            readonly root: {
+                readonly elevation: 2;
             };
         };
-    }, never, NativeStyle, readonly ("footer" | "root" | "title")[]> | undefined;
-};
-declare const panel: ((props?: {
+    };
+}, never, NativeStyle, readonly ("footer" | ("root" | "title"))[]>>;
+declare const panel: import("@lynstack/native-recipe").SlotStyleRecipe<{
     readonly dense?: "false" | "true" | boolean | undefined;
     readonly raised?: "false" | "true" | boolean | undefined;
-} | undefined) => {
+}, {
     readonly body: {
         readonly padding?: 4 | undefined;
     };
@@ -127,44 +89,32 @@ declare const panel: ((props?: {
         readonly margin?: 0 | undefined;
     };
     readonly title: {};
-}) & {
-    readonly variantKeys: readonly ("dense" | "raised")[];
-    readonly variantOptions: {
-        readonly dense: readonly ("false" | "true")[];
-        readonly raised: readonly ("false" | "true")[];
-    };
-    readonly defaultVariants: {
-        readonly dense: "false" | "true";
-        readonly raised: "false" | "true";
-    };
-} & {
-    readonly "~composition"?: import("@lynstack/native-recipe").RecipeComposition<{
-        readonly dense: {
-            readonly true: {
-                readonly body: {
-                    readonly padding: 4;
-                };
-                readonly root: {
-                    readonly margin: 0;
-                };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly dense: {
+        readonly true: {
+            readonly body: {
+                readonly padding: 4;
+            };
+            readonly root: {
+                readonly margin: 0;
             };
         };
-        readonly raised: {
-            readonly true: {
-                readonly root: {
-                    readonly elevation: 2;
-                };
+    };
+    readonly raised: {
+        readonly true: {
+            readonly root: {
+                readonly elevation: 2;
             };
         };
-    }, never, NativeStyle, readonly ("body" | "footer" | "root" | "title")[]> | undefined;
-};
+    };
+}, never, NativeStyle, readonly ("body" | ("footer" | ("root" | "title")))[]>>;
 declare const pill: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly size?: "sm" | undefined;
 }, NativeStyle>;
-declare const sheet: ((theme: Palette, props?: {
+declare const sheet: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly open?: "false" | "true" | boolean | undefined;
     readonly raised?: "false" | "true" | boolean | undefined;
-} | undefined) => {
+}, {
     readonly handle: {
         readonly backgroundColor?: string | undefined;
     };
@@ -174,71 +124,47 @@ declare const sheet: ((theme: Palette, props?: {
         readonly height?: 320 | undefined;
     };
     readonly title: {};
-}) & {
-    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly open?: "false" | "true" | boolean | undefined;
-        readonly raised?: "false" | "true" | boolean | undefined;
-    }, {
-        readonly handle: {
-            readonly backgroundColor?: string | undefined;
-        };
-        readonly root: {
-            readonly borderRadius?: number | undefined;
-            readonly elevation?: 2 | undefined;
-            readonly height?: 320 | undefined;
-        };
-        readonly title: {};
-    }, import("@lynstack/native-recipe").RecipeComposition<{
-        readonly open: {
-            readonly true: {
-                readonly root: {
-                    readonly height: 320;
-                };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly open: {
+        readonly true: {
+            readonly root: {
+                readonly height: 320;
             };
         };
-        readonly raised: {
-            readonly true: {
-                readonly root: {
-                    readonly elevation: 2;
-                };
+    };
+    readonly raised: {
+        readonly true: {
+            readonly root: {
+                readonly elevation: 2;
             };
         };
-    }, never, NativeStyle, readonly ("handle" | "root" | "title")[]>>;
-};
-declare const denseChip: ((theme: Palette, props: {
+    };
+}, never, NativeStyle, readonly ("handle" | ("root" | "title"))[]>>;
+declare const denseChip: import("@lynstack/native-recipe").ThemedRecipe<Palette, {
     readonly dense?: "false" | "true" | boolean | undefined;
     readonly round?: "false" | "true" | boolean | undefined;
     readonly size: "md";
-}) => {
+}, {
     readonly borderRadius?: number | undefined;
     readonly height?: 40 | undefined;
-}) & {
-    readonly withTheme: (theme: Palette) => import("@lynstack/native-recipe").KindRecipe<{
-        readonly dense?: "false" | "true" | boolean | undefined;
-        readonly round?: "false" | "true" | boolean | undefined;
-        readonly size: "md";
-    }, {
-        readonly borderRadius?: number | undefined;
-        readonly height?: 40 | undefined;
-    }, import("@lynstack/native-recipe").RecipeComposition<{
-        readonly dense: {
-            readonly true: {
-                readonly borderRadius: number;
-            };
+}, import("@lynstack/native-recipe").RecipeComposition<{
+    readonly dense: {
+        readonly true: {
+            readonly borderRadius: number;
         };
-        readonly round: {
-            readonly true: {
-                readonly borderRadius: 999;
-            };
+    };
+    readonly round: {
+        readonly true: {
+            readonly borderRadius: 999;
         };
-        readonly size: {
-            readonly md: {
-                readonly borderRadius: number;
-                readonly height: 40;
-            };
+    };
+    readonly size: {
+        readonly md: {
+            readonly borderRadius: number;
+            readonly height: 40;
         };
-    }, never, NativeStyle, undefined>>;
-};
+    };
+}, never, NativeStyle, undefined>>;
 declare const denseChipStyle: NativeStyle;
 type LightChipVariants = VariantsOf<typeof lightChip>;
 declare const badgeStyle: StyleProp<ViewStyle>;

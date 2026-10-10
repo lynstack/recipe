@@ -2,6 +2,7 @@ import type {
   ComposedSlot,
   CompoundCondition,
   DefaultVariants,
+  KindRecipe,
   NativeStyle,
   RecipeFunction,
   SlotStyleRecipe,
@@ -45,14 +46,16 @@ const buttonRecipe: SlotStyleRecipe<
   SlotStyles<"label" | "root">
 > = button;
 const render: RecipeFunction<VariantsOf<typeof box>, NativeStyle> = box;
+const anyRecipe: KindRecipe<VariantsOf<typeof box>, NativeStyle> = box;
 const iconButtonSlots: readonly ComposedSlot<
   readonly [typeof button],
   "icon"
 >[] = ["icon", "label", "root"];
 
 const boxStyle: NativeStyle = render({ size, tone: "danger" });
+const anyStyle: NativeStyle = anyRecipe({ tone: "neutral" });
 const buttonStyles: SlotStyles<"label" | "root"> = buttonRecipe({
   size: "md",
 });
 
-export { box, boxRecipe, boxStyle, buttonStyles, iconButtonSlots };
+export { anyStyle, box, boxRecipe, boxStyle, buttonStyles, iconButtonSlots };

@@ -5,6 +5,14 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
+## Unreleased
+
+### Changed
+
+- Declarations of recipes name `StyleRecipe`, `SlotStyleRecipe`, and
+  `ThemedRecipe`, and are smaller, also for a function that returns a
+  recipe without a return type.
+
 ## 1.8.0 — 2026-10-09
 
 ### Added

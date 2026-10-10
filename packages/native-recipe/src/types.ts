@@ -1,8 +1,9 @@
-import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 import type {
+  ComposableKindSlotRecipe,
   VariantsOf as RecipeVariantsOf,
   UnknownSlot,
 } from "@lynstack/recipe";
+import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 /**
  * The style of a React Native element: a view, a text, or an image, as
@@ -237,6 +238,16 @@ type VariantsOf<Recipe extends (...args: never) => unknown> = Recipe extends {
     ? RecipeVariantsOf<Recipe>
     : never;
 
+/**
+ * The slots of a slot recipe and of those it composes. Not ComposedSlot,
+ * which declarations print with each composed type.
+ */
+type RecipeSlot<
+  Slot extends string,
+  Composed extends readonly ComposableKindSlotRecipe<NativeStyle>[],
+> =
+  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
+
 export type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
@@ -263,6 +274,7 @@ export type {
   NoUnknownVariantStyles,
   OptionValue,
   PropertyOfEach,
+  RecipeSlot,
   RecipeSlotStyles,
   SlotStyles,
   VariantsOf,

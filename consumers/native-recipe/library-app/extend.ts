@@ -6,7 +6,10 @@ import {
   chip,
   define,
   defineComposed,
+  defineRecipe,
+  defineSlotRecipe,
   defineSlots,
+  defineThemedRecipe,
   iconButton,
   light,
   themed,
@@ -59,6 +62,17 @@ const alert = defineSlots({
 });
 const footedField = withFooter(field);
 const footedButton = withFooter(button);
+const notice = defineRecipe({
+  defaultVariants: { tone: "info" },
+  variants: { tone: { info: { opacity: 1 }, warn: { opacity: 0.8 } } },
+});
+const tabs = defineSlotRecipe({
+  slots: ["list", "tab"],
+  variants: { size: { sm: { tab: { padding: 4 } } } },
+});
+const spacer = defineThemedRecipe((theme) => ({
+  variants: { size: { md: { height: theme.space * 4 } } },
+}));
 
 const toolbarStyles: SlotStyles<"divider" | "icon" | "label" | "root"> =
   toolbar(light, { dense: true, round: true });
@@ -72,6 +86,9 @@ const pillTagStyles: SlotStyles<"close" | "label" | "root"> = pillTag(
   isolatedLight,
   { closable: true, size: "sm" },
 );
+const noticeStyle: NativeStyle = notice({ tone: "warn" });
+const tabsStyles: SlotStyles<"list" | "tab"> = tabs({ size: "sm" });
+const spacerStyle: NativeStyle = spacer(light, { size: "md" });
 const avatarStyle: NativeStyle = avatar();
 const fabStyle: NativeStyle = fab({ size: "xl", tone: "neutral" });
 const alertStyles: SlotStyles<"icon" | "root"> = alert({ tone: "danger" });
@@ -88,8 +105,11 @@ export {
   fabStyle,
   footedButtonStyles,
   footedFieldStyles,
+  noticeStyle,
   pillTagStyles,
   sheetStyles,
+  spacerStyle,
+  tabsStyles,
   tileStyle,
   toolbarStyles,
 };

@@ -17,6 +17,7 @@ import type {
 } from "./compile-style-recipe.js";
 import type {
   NativeStyle,
+  RecipeSlot,
   RecipeSlotStyles,
   SlotStyles,
   VariantSelection,
@@ -74,25 +75,6 @@ type ThemedRecipe<
 };
 
 /**
- * The themed recipe of a config whose variants, with those of the recipes
- * it composes, are `Variants`, whose variants with a default are
- * `DefaultedName`, and which returns `Result`. `Slots` lists the slots of a
- * slot recipe, or is `undefined` for a recipe without slots.
- */
-type ComposedThemedRecipe<
-  Theme,
-  Variants,
-  DefaultedName extends keyof Variants,
-  Result,
-  Slots,
-> = ThemedRecipe<
-  Theme,
-  VariantSelection<Variants, DefaultedName>,
-  Result,
-  RecipeComposition<Variants, DefaultedName, NativeStyle, Slots>
->;
-
-/**
  * The functions that {@link createThemedRecipes} returns, which create
  * recipes whose styles are built from a theme of type `Theme`.
  *
@@ -135,12 +117,19 @@ interface ThemedRecipeCreators<Theme extends object> {
     config: (
       theme: Theme,
     ) => StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
-  ) => ComposedThemedRecipe<
+  ) => ThemedRecipe<
     Theme,
-    ComposedVariants<Composed, Variants>,
-    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+    VariantSelection<
+      ComposedVariants<Composed, Variants>,
+      NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>
+    >,
     RecipeStyle<Variants, Base, Compounds, Composed>,
-    undefined
+    RecipeComposition<
+      ComposedVariants<Composed, Variants>,
+      NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+      NativeStyle,
+      undefined
+    >
   >;
   /**
    * Creates a themed slot style recipe: `createSlotStyleRecipe` with a
@@ -181,23 +170,25 @@ interface ThemedRecipeCreators<Theme extends object> {
       DefaultedName,
       Composed
     >,
-  ) => ComposedThemedRecipe<
+  ) => ThemedRecipe<
     Theme,
-    ComposedVariants<Composed, Variants>,
-    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
-    // Not ComposedSlot, which declarations print with each composed type.
+    VariantSelection<
+      ComposedVariants<Composed, Variants>,
+      NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>
+    >,
     RecipeSlotStyles<
-      | Slot
-      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
+      RecipeSlot<Slot, Composed>,
       Variants,
       Base,
       Compounds,
       Composed
     >,
-    readonly (
-      | Slot
-      | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
-    )[]
+    RecipeComposition<
+      ComposedVariants<Composed, Variants>,
+      NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+      NativeStyle,
+      readonly RecipeSlot<Slot, Composed>[]
+    >
   >;
 }
 
@@ -297,4 +288,4 @@ function createThemedRecipes(): {
 }
 
 export { createThemedRecipes };
-export type { ComposedThemedRecipe, ThemedRecipe, ThemedRecipeCreators };
+export type { ThemedRecipe, ThemedRecipeCreators };

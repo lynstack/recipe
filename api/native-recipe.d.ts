@@ -26,29 +26,11 @@ type ComposedStyle<Composed> = Composed extends readonly (infer Recipe)[] ? Reci
 type VariantsOf<Recipe extends (...args: never) => unknown> = Recipe extends {
   readonly withTheme: (theme: never) => infer ThemeRecipe extends (props: never) => unknown;
 } ? VariantsOf$1<ThemeRecipe> : Recipe extends ((props: never) => unknown) ? VariantsOf$1<Recipe> : never;
+type RecipeSlot<Slot extends string, Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[]> = Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
 //#endregion
 //#region src/written-config.d.ts
 type WrittenDefaults<Variants, DefaultedName extends keyof Variants> = [DefaultedName] extends [never] ? { readonly [Name in keyof Variants]?: VariantOption$1<NoInfer<Variants>[Name]>; } : DefaultVariants$1<Variants, DefaultedName>;
 type WrittenCompounds<Compounds, Checked, Unchecked> = [Compounds] extends [readonly []] ? readonly Unchecked[] : Compounds & { readonly [Index in keyof Compounds]: Checked; };
-//#endregion
-//#region src/slot-style-recipe.d.ts
-type SlotStyleRecipeVariants = KindVariants<SlotStyles<string>>;
-interface SlotStyleCompoundVariant<Variants, Styles = SlotStyles<string>> {
-  readonly variants: CompoundCondition<Variants>;
-  readonly styles: Styles;
-}
-interface SlotStyleRecipeConfig<Slot extends string, Variants, Base, Compounds, DefaultedName extends keyof ComposedVariants$1<Composed, Variants>, Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []> {
-  readonly composes?: Composed | undefined;
-  readonly slots: readonly Slot[];
-  readonly base?: (Base & NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>) | undefined;
-  readonly variants: Variants & SlotStyleRecipeVariants & NoUnknownVariantStyles<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
-  readonly compoundVariants?: WrittenCompounds<Compounds, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>, InheritedSlot<Composed>>>, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>>> | undefined;
-  readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
-  readonly cache?: boolean | undefined;
-}
-type SlotStyleRecipe<Props, Styles, Composition = unknown> = KindRecipe$1<Props, Styles, Composition>;
-type ComposedSlotStyleRecipe<Slot extends string, Variants, DefaultedName extends keyof Variants, Styles> = SlotStyleRecipe<VariantSelection<Variants, DefaultedName>, Styles, RecipeComposition$1<Variants, DefaultedName, NativeStyle, readonly Slot[]>>;
-declare function createSlotStyleRecipe<const Slot extends string, const Variants extends SlotStyleRecipeVariants, const Base extends SlotStyles<string> = never, const Compounds extends readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []>(config: SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName, Composed>): ComposedSlotStyleRecipe<Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number], ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, RecipeSlotStyles<Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number], Variants, Base, Compounds, Composed>>;
 //#endregion
 //#region src/style-recipe.d.ts
 type StyleRecipeVariants = KindVariants<NativeStyle>;
@@ -71,10 +53,29 @@ type CompoundStyle<Compounds> = Compounds extends readonly (infer Compound)[] ? 
 } ? Style : never : never;
 type RecipeStyle<Variants, Base, Compounds, Composed = readonly []> = { readonly [Key in KeyOfEach<DeclaredStyle<Variants, Base, Compounds, Composed>>]?: PropertyOfEach<DeclaredStyle<Variants, Base, Compounds, Composed>, Key>; };
 type StyleRecipe<Props, Style, Composition = unknown> = KindRecipe$1<Props, Style, Composition>;
-type ComposedStyleRecipe<Variants, DefaultedName extends keyof Variants, Style> = StyleRecipe<VariantSelection<Variants, DefaultedName>, Style, RecipeComposition$1<Variants, DefaultedName, NativeStyle, undefined>>;
-declare function createStyleRecipe<const Variants extends StyleRecipeVariants, const Base extends NativeStyle = never, const Compounds extends readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<NativeStyle>[] = readonly []>(config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>): ComposedStyleRecipe<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, RecipeStyle<Variants, Base, Compounds, Composed>>;
+declare function createStyleRecipe<const Variants extends StyleRecipeVariants, const Base extends NativeStyle = never, const Compounds extends readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<NativeStyle>[] = readonly []>(config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>): StyleRecipe<VariantSelection<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>>, RecipeStyle<Variants, Base, Compounds, Composed>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, NativeStyle, undefined>>;
+//#endregion
+//#region src/slot-style-recipe.d.ts
+type SlotStyleRecipeVariants = KindVariants<SlotStyles<string>>;
+interface SlotStyleCompoundVariant<Variants, Styles = SlotStyles<string>> {
+  readonly variants: CompoundCondition<Variants>;
+  readonly styles: Styles;
+}
+interface SlotStyleRecipeConfig<Slot extends string, Variants, Base, Compounds, DefaultedName extends keyof ComposedVariants$1<Composed, Variants>, Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []> {
+  readonly composes?: Composed | undefined;
+  readonly slots: readonly Slot[];
+  readonly base?: (Base & NoUnknownSlotStyles<Base, NoInfer<Slot>, InheritedSlot<Composed>>) | undefined;
+  readonly variants: Variants & SlotStyleRecipeVariants & NoUnknownVariantStyles<Variants, NoInfer<Slot>, InheritedSlot<Composed>>;
+  readonly compoundVariants?: WrittenCompounds<Compounds, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, NoUnknownCompoundStyles<CompoundStyles<Compounds>, NoInfer<Slot>, InheritedSlot<Composed>>>, SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>, SlotStyles<NoInfer<Slot> | InheritedSlot<Composed>>>> | undefined;
+  readonly defaultVariants?: WrittenDefaults<ComposedVariants$1<Composed, Variants>, DefaultedName> | undefined;
+  readonly cache?: boolean | undefined;
+}
+type SlotStyleRecipe<Props, Styles, Composition = unknown> = KindRecipe$1<Props, Styles, Composition>;
+declare function createSlotStyleRecipe<const Slot extends string, const Variants extends SlotStyleRecipeVariants, const Base extends SlotStyles<string> = never, const Compounds extends readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []>(config: SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName, Composed>): SlotStyleRecipe<VariantSelection<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>>, RecipeSlotStyles<RecipeSlot<Slot, Composed>, Variants, Base, Compounds, Composed>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, NativeStyle, readonly RecipeSlot<Slot, Composed>[]>>;
 //#endregion
 //#region src/recipe-of.d.ts
+type ComposedStyleRecipe<Variants, DefaultedName extends keyof Variants, Style> = StyleRecipe<VariantSelection<Variants, DefaultedName>, Style, RecipeComposition$1<Variants, DefaultedName, NativeStyle, undefined>>;
+type ComposedSlotStyleRecipe<Slot extends string, Variants, DefaultedName extends keyof Variants, Styles> = SlotStyleRecipe<VariantSelection<Variants, DefaultedName>, Styles, RecipeComposition$1<Variants, DefaultedName, NativeStyle, readonly Slot[]>>;
 type BaseOf<Config> = Config extends {
   readonly base: infer Base;
 } ? Base : never;
@@ -104,15 +105,15 @@ type ThemedRecipeFunction<Theme, Props, Result> = Partial<Props> extends Props ?
 type ThemedRecipe<Theme, Props, Result, Composition = unknown> = ThemedRecipeFunction<Theme, Props, Result> & {
   readonly withTheme: (theme: Theme) => KindRecipe$1<Props, Result, Composition>;
 };
-type ComposedThemedRecipe<Theme, Variants, DefaultedName extends keyof Variants, Result, Slots> = ThemedRecipe<Theme, VariantSelection<Variants, DefaultedName>, Result, RecipeComposition$1<Variants, DefaultedName, NativeStyle, Slots>>;
 interface ThemedRecipeCreators<Theme extends object> {
   readonly themeToken: Theme;
-  readonly createStyleRecipe: <const Variants, const Base extends NativeStyle = never, const Compounds extends readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<NativeStyle>[] = readonly []>(config: (theme: Theme) => StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>) => ComposedThemedRecipe<Theme, ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, RecipeStyle<Variants, Base, Compounds, Composed>, undefined>;
-  readonly createSlotStyleRecipe: <const Slot extends string, const Variants, const Base extends SlotStyles<string> = never, const Compounds extends readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []>(config: (theme: Theme) => SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName, Composed>) => ComposedThemedRecipe<Theme, ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, RecipeSlotStyles<Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number], Variants, Base, Compounds, Composed>, readonly (Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number])[]>;
+  readonly createStyleRecipe: <const Variants, const Base extends NativeStyle = never, const Compounds extends readonly StyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<NativeStyle>[] = readonly []>(config: (theme: Theme) => StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>) => ThemedRecipe<Theme, VariantSelection<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>>, RecipeStyle<Variants, Base, Compounds, Composed>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, NativeStyle, undefined>>;
+  readonly createSlotStyleRecipe: <const Slot extends string, const Variants, const Base extends SlotStyles<string> = never, const Compounds extends readonly SlotStyleCompoundVariant<NoInfer<ComposedVariants$1<Composed, Variants>>>[] = readonly [], const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<NativeStyle>[] = readonly []>(config: (theme: Theme) => SlotStyleRecipeConfig<Slot, Variants, Base, Compounds, DefaultedName, Composed>) => ThemedRecipe<Theme, VariantSelection<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>>, RecipeSlotStyles<RecipeSlot<Slot, Composed>, Variants, Base, Compounds, Composed>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>, NativeStyle, readonly RecipeSlot<Slot, Composed>[]>>;
 }
 declare function createThemedRecipes<Theme extends object>(): ThemedRecipeCreators<Theme>;
 //#endregion
 //#region src/themed-recipe-of.d.ts
+type ComposedThemedRecipe<Theme, Variants, DefaultedName extends keyof Variants, Result, Slots> = ThemedRecipe<Theme, VariantSelection<Variants, DefaultedName>, Result, RecipeComposition$1<Variants, DefaultedName, NativeStyle, Slots>>;
 type SlotOfEach<Recipe> = Recipe extends {
   readonly "~composition"?: infer Composition;
 } ? Exclude<Composition, undefined> extends {

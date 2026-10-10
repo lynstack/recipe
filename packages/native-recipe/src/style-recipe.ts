@@ -156,21 +156,6 @@ type StyleRecipe<Props, Style, Composition = unknown> = KindRecipe<
 >;
 
 /**
- * The recipe of a config whose variants, with those of the recipes it
- * composes, are `Variants`, whose variants with a default are
- * `DefaultedName`, and which returns `Style`.
- */
-type ComposedStyleRecipe<
-  Variants,
-  DefaultedName extends keyof Variants,
-  Style,
-> = StyleRecipe<
-  VariantSelection<Variants, DefaultedName>,
-  Style,
-  RecipeComposition<Variants, DefaultedName, NativeStyle, undefined>
->;
-
-/**
  * Creates a style recipe: a function that returns the style of one element
  * for a selection of variants.
  *
@@ -277,10 +262,18 @@ function createStyleRecipe<
     readonly [],
 >(
   config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
-): ComposedStyleRecipe<
-  ComposedVariants<Composed, Variants>,
-  NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
-  RecipeStyle<Variants, Base, Compounds, Composed>
+): StyleRecipe<
+  VariantSelection<
+    ComposedVariants<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>
+  >,
+  RecipeStyle<Variants, Base, Compounds, Composed>,
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    NoInfer<DefaultedName> | InheritedDefaultedName<Composed, Variants>,
+    NativeStyle,
+    undefined
+  >
 >;
 
 function createStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
@@ -289,7 +282,6 @@ function createStyleRecipe(config: LooseStyleRecipeConfig): LooseStyleRecipe {
 
 export { createStyleRecipe };
 export type {
-  ComposedStyleRecipe,
   RecipeStyle,
   StyleCompoundVariant,
   StyleRecipe,
