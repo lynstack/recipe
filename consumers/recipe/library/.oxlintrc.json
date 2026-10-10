@@ -1,4 +1,15 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../../.oxlintrc.json"]
+  "extends": ["../../../.oxlintrc.json"],
+  "overrides": [
+    {
+      // Its helpers leave their return types to tsc, as the libraries that
+      // this checks the declarations of write them.
+      "files": ["inferred.ts"],
+      "rules": {
+        "typescript/explicit-function-return-type": "off",
+        "typescript/explicit-module-boundary-types": "off"
+      }
+    }
+  ]
 }

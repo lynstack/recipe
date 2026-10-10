@@ -4,6 +4,15 @@ All notable changes to `@lynstack/class-recipe`. Each version is published
 on npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `class-recipe@<version>`.
 
+## Unreleased
+
+### Fixed
+
+- A function that returns a recipe of `cva` or `sva` without a return type,
+  such as a library's helper, emits declarations that compile without
+  `skipLibCheck`; declarations name `Recipe` and `SlotRecipe`, and are
+  smaller.
+
 ## 1.7.2 — 2026-10-09
 
 ### Changed

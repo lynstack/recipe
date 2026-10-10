@@ -1,3 +1,6 @@
+declare const ghostClassName: string;
+declare const bannerClassName: string;
+declare const tabsClassNames: Readonly<Record<"list" | "tab", string>>;
 declare const linkClassName: string;
 declare const sheetClassNames: Readonly<Record<"body" | "footer" | "handle" | "root" | "title", string>>;
 declare const pressableClassName: string;
@@ -8,4 +11,4 @@ declare const fabClassName: string;
 declare const alertClassNames: Readonly<Record<"icon" | "root", string>>;
 declare const drawerClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
 declare const footedDialogClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
-export { alertClassNames, avatarClassName, comboboxClassNames, drawerClassNames, fabClassName, footedDialogClassNames, linkClassName, pressableClassName, sheetClassNames, switchClassNames, };
+export { alertClassNames, bannerClassName, avatarClassName, comboboxClassNames, drawerClassNames, fabClassName, footedDialogClassNames, ghostClassName, linkClassName, pressableClassName, sheetClassNames, switchClassNames, tabsClassNames, };

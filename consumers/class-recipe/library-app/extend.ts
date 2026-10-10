@@ -2,9 +2,12 @@ import {
   button,
   card,
   define,
+  defineRecipe,
+  defineSlotRecipe,
   defineComposed,
   defineComposedSlots,
   defineSlots,
+  defineVariants,
   dialog,
   ds,
   withFooter,
@@ -57,7 +60,21 @@ const drawer = defineComposedSlots({
   variants: { size: { sm: { footer: "gap-1" } } },
 });
 const footedDialog = withFooter(dialog);
+const ghost = defineVariants({ ghost: { true: "bg-transparent" } });
+const banner = defineRecipe({
+  defaultVariants: { tone: "info" },
+  variants: { tone: { info: "bg-blue-100", warn: "bg-amber-100" } },
+});
+const tabs = defineSlotRecipe({
+  slots: ["list", "tab"],
+  variants: { size: { sm: { tab: "px-2" } } },
+});
 
+const ghostClassName: string = ghost({ ghost: true });
+const bannerClassName: string = banner({ tone: "warn" });
+const tabsClassNames: Readonly<Record<"list" | "tab", string>> = tabs({
+  size: "sm",
+});
 const linkClassName: string = linkButton({ size: "sm", variant: "link" });
 const sheetClassNames: Readonly<
   Record<"body" | "footer" | "handle" | "root" | "title", string>
@@ -81,13 +98,16 @@ const footedDialogClassNames: Readonly<
 
 export {
   alertClassNames,
+  bannerClassName,
   avatarClassName,
   comboboxClassNames,
   drawerClassNames,
   fabClassName,
   footedDialogClassNames,
+  ghostClassName,
   linkClassName,
   pressableClassName,
   sheetClassNames,
   switchClassNames,
+  tabsClassNames,
 };

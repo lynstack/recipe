@@ -1,4 +1,5 @@
 import type {
+  ComposableKindSlotRecipe,
   DefaultVariants,
   KindRecipe,
   VariantKey as KindVariantKey,
@@ -203,6 +204,16 @@ type SlotRecipeProps<
   }
 >;
 
+/**
+ * The slots of a slot recipe and of those it composes. Not ComposedSlot,
+ * which declarations print with each composed type.
+ */
+type RecipeSlot<
+  Slot extends string,
+  Composed extends readonly ComposableKindSlotRecipe<string>[],
+> =
+  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
+
 export type {
   ComposableKindRecipe,
   ComposableKindSlotRecipe,
@@ -219,6 +230,7 @@ export type {
   DefaultedNameOf,
   NoUnknownSlots,
   PropsOf,
+  RecipeSlot,
   Simplify,
   SlotClasses,
   SlotClassNames,

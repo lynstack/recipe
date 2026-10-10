@@ -1,57 +1,33 @@
 import type { ComponentProps, ReactNode } from "react";
 import type { PropsOf } from "@lynstack/class-recipe";
-declare const button: ((props?: {
+declare const button: import("@lynstack/class-recipe").Recipe<{
     readonly className?: string | undefined;
     readonly disabled?: "false" | "true" | boolean | undefined;
     readonly size?: "lg" | "md" | undefined;
     readonly tone?: "danger" | "neutral" | undefined;
-} | undefined) => string) & {
-    readonly variantKeys: readonly ("disabled" | "size" | "tone")[];
-    readonly variantOptions: {
-        readonly disabled: readonly ("false" | "true")[];
-        readonly size: readonly ("lg" | "md")[];
-        readonly tone: readonly ("danger" | "neutral")[];
+}, import("@lynstack/class-recipe").RecipeComposition<{
+    readonly disabled: {
+        readonly true: "opacity-50";
     };
-    readonly defaultVariants: {
-        readonly disabled: "false" | "true";
-        readonly size: "lg" | "md";
-        readonly tone: "danger" | "neutral";
+    readonly size: {
+        readonly lg: "h-12";
+        readonly md: "h-10";
     };
-} & {
-    readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
-        readonly disabled: {
-            readonly true: "opacity-50";
-        };
-        readonly size: {
-            readonly lg: "h-12";
-            readonly md: "h-10";
-        };
-        readonly tone: {
-            readonly danger: "bg-red-600";
-            readonly neutral: "bg-gray-100";
-        };
-    }, "size" | "tone", string, undefined> | undefined;
-};
-declare const card: NoInfer<((props?: {
+    readonly tone: {
+        readonly danger: "bg-red-600";
+        readonly neutral: "bg-gray-100";
+    };
+}, "size" | "tone", string, undefined>>;
+declare const card: NoInfer<import("@lynstack/class-recipe").SlotRecipe<"body" | "root" | "title", {
     readonly classNames?: import("@lynstack/class-recipe").SlotClasses<"body" | "root" | "title"> | undefined;
     readonly raised?: "false" | "true" | boolean | undefined;
-} | undefined) => Readonly<Record<"body" | "root" | "title", string>>) & {
-    readonly variantKeys: readonly "raised"[];
-    readonly variantOptions: {
-        readonly raised: readonly ("false" | "true")[];
-    };
-    readonly defaultVariants: {
-        readonly raised: "false" | "true";
-    };
-} & {
-    readonly "~composition"?: import("@lynstack/class-recipe").RecipeComposition<{
-        readonly raised: {
-            readonly true: {
-                readonly root: "shadow";
-            };
+}, import("@lynstack/class-recipe").RecipeComposition<{
+    readonly raised: {
+        readonly true: {
+            readonly root: "shadow";
         };
-    }, never, string, readonly ("body" | "root" | "title")[]> | undefined;
-}>;
+    };
+}, never, string, readonly ("body" | "root" | "title")[]>>>;
 type ButtonProps = ComponentProps<"button"> & PropsOf<typeof button>;
 /** A button whose variants are props, next to those of the element. */
 declare function Button({ className, disabled, size, tone, ...props }: ButtonProps): ReactNode;

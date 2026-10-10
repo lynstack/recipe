@@ -140,16 +140,6 @@ type Recipe<Props, Composition = unknown> = RecipeFunction<Props, string> & {
 } & Composable<Composition>;
 
 /**
- * The recipe of a config whose variants, with those of the recipes it
- * composes, are `Variants`, and whose variants with a default are
- * `DefaultedName`.
- */
-type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<
-  RecipeProps<Variants, DefaultedName>,
-  RecipeComposition<Variants, DefaultedName, string, undefined>
->;
-
-/**
  * The type of {@link createRecipe}.
  *
  * @typeParam Variants - The variant definitions, inferred from
@@ -170,9 +160,17 @@ type CreateRecipe = <
   const Composed extends readonly ComposableKindRecipe<string>[] = readonly [],
 >(
   config: RecipeConfig<Variants, DefaultedName, Composed>,
-) => ComposedRecipe<
-  ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>
+) => Recipe<
+  RecipeProps<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>
+  >,
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    string,
+    undefined
+  >
 >;
 
 /**
@@ -276,7 +274,6 @@ const cva: CreateRecipe = createRecipe;
 
 export { createRecipe, cva, makeCreateRecipe };
 export type {
-  ComposedRecipe,
   CompoundVariant,
   CreateRecipe,
   Recipe,

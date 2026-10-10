@@ -6,6 +6,7 @@ export {
   defineSlots,
   withFooter,
 } from "./helpers.js";
+export { defineRecipe, defineVariants } from "./inferred.js";
 export {
   card,
   classRecipe,

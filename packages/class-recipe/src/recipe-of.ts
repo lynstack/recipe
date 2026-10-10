@@ -3,11 +3,33 @@ import type {
   ComposableKindSlotRecipe,
   ComposedVariants,
   InheritedDefaultedName,
+  RecipeComposition,
 } from "@lynstack/recipe";
 
-import type { ComposedRecipe, RecipeVariants } from "./recipe.js";
-import type { ComposedSlotRecipe, SlotRecipeVariants } from "./slot-recipe.js";
-import type { DefaultedNameOf } from "./types.js";
+import type { DefaultedNameOf, SlotRecipeProps } from "./types.js";
+import type { Recipe, RecipeProps, RecipeVariants } from "./recipe.js";
+import type { SlotRecipe, SlotRecipeVariants } from "./slot-recipe.js";
+
+/**
+ * The recipe of a config whose variants, with those of the recipes it
+ * composes, are `Variants`, and whose variants with a default are
+ * `DefaultedName`.
+ */
+type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<
+  RecipeProps<Variants, DefaultedName>,
+  RecipeComposition<Variants, DefaultedName, string, undefined>
+>;
+
+/** The slot recipe of a config with the slot recipes it composes. */
+type ComposedSlotRecipe<
+  Slot extends string,
+  Variants,
+  DefaultedName extends keyof Variants,
+> = SlotRecipe<
+  Slot,
+  SlotRecipeProps<Slot, Variants, DefaultedName>,
+  RecipeComposition<Variants, DefaultedName, string, readonly Slot[]>
+>;
 
 /**
  * The parts of a config that {@link RecipeOf} reads, without `composes`,

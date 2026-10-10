@@ -12,6 +12,7 @@ import type {
   CompoundCondition,
   NoUnknownSlots,
   RecipeFunction,
+  RecipeSlot,
   SlotClassNames,
   SlotClasses,
   SlotRecipeProps,
@@ -173,24 +174,20 @@ type CreateSlotRecipe = <
   config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>,
   // Infers from the config only, not a caller's return type (TS2590).
 ) => NoInfer<
-  ComposedSlotRecipe<
-    // Not ComposedSlot, which declarations print with each composed type.
-    | Slot
-    | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
-    ComposedVariants<Composed, Variants>,
-    DefaultedName | InheritedDefaultedName<Composed, Variants>
+  SlotRecipe<
+    RecipeSlot<Slot, Composed>,
+    SlotRecipeProps<
+      RecipeSlot<Slot, Composed>,
+      ComposedVariants<Composed, Variants>,
+      DefaultedName | InheritedDefaultedName<Composed, Variants>
+    >,
+    RecipeComposition<
+      ComposedVariants<Composed, Variants>,
+      DefaultedName | InheritedDefaultedName<Composed, Variants>,
+      string,
+      readonly RecipeSlot<Slot, Composed>[]
+    >
   >
->;
-
-/** The slot recipe of a config with the slot recipes it composes. */
-type ComposedSlotRecipe<
-  Slot extends string,
-  Variants,
-  DefaultedName extends keyof Variants,
-> = SlotRecipe<
-  Slot,
-  SlotRecipeProps<Slot, Variants, DefaultedName>,
-  RecipeComposition<Variants, DefaultedName, string, readonly Slot[]>
 >;
 
 /**
@@ -291,7 +288,6 @@ const sva: CreateSlotRecipe = createSlotRecipe;
 
 export { createSlotRecipe, makeCreateSlotRecipe, sva };
 export type {
-  ComposedSlotRecipe,
   CreateSlotRecipe,
   SlotCompoundVariant,
   SlotRecipe,

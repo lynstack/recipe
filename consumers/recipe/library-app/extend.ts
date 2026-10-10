@@ -5,7 +5,9 @@ import {
   define,
   defineComposed,
   defineComposedSlots,
+  defineRecipe,
   defineSlots,
+  defineVariants,
   dialog,
   link,
   panel as overridable,
@@ -69,7 +71,14 @@ const drawer = defineComposedSlots({
   variants: { tone: { dark: { footer: { borderColor: "white" } } } },
 });
 const footedDialog = withFooter(dialog);
+const ghost = defineVariants({ ghost: { true: { opacity: 0 } } });
+const notice = defineRecipe({
+  defaultVariants: { tone: "info" },
+  variants: { tone: { info: { color: "blue" }, warn: { color: "orange" } } },
+});
 
+const ghostStyle: Style = ghost({ ghost: true });
+const noticeStyle: Style = notice({ tone: "warn" });
 const captionStyle: Style = caption({ italic: true, size: "sm" });
 const sheetStyles: Readonly<
   Record<"footer" | "handle" | "root" | "title", Style>
@@ -98,8 +107,10 @@ export {
   drawerStyles,
   fieldStyles,
   footedDialogStyles,
+  ghostStyle,
   labelStyle,
   navLinkClassName,
+  noticeStyle,
   panelStyles,
   sheetStyles,
 };

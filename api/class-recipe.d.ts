@@ -29,6 +29,7 @@ type WideSelection<Slot extends string> = Readonly<Record<string, string | SlotC
 type SlotRecipeProps<Slot extends string, Variants, DefaultedName extends keyof Variants> = Simplify<(string extends keyof Variants ? WideSelection<Slot> : VariantSelection$1<Variants, DefaultedName>) & {
   readonly classNames?: SlotClasses<Slot> | undefined;
 }>;
+type RecipeSlot<Slot extends string, Composed extends readonly ComposableKindSlotRecipe$1<string>[]> = Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
 //#endregion
 //#region src/recipe.d.ts
 type RecipeVariants = KindVariants<string>;
@@ -55,8 +56,7 @@ type Recipe<Props, Composition = unknown> = RecipeFunction<Props, string> & {
   readonly variantOptions: VariantOptions<Props>;
   readonly defaultVariants: VariantDefaults<Props>;
 } & Composable<Composition>;
-type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<RecipeProps<Variants, DefaultedName>, RecipeComposition$1<Variants, DefaultedName, string, undefined>>;
-type CreateRecipe = <const Variants extends RecipeVariants, const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<string>[] = readonly []>(config: RecipeConfig<Variants, DefaultedName, Composed>) => ComposedRecipe<ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>;
+type CreateRecipe = <const Variants extends RecipeVariants, const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe$1<string>[] = readonly []>(config: RecipeConfig<Variants, DefaultedName, Composed>) => Recipe<RecipeProps<ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, string, undefined>>;
 declare const createRecipe: CreateRecipe;
 declare const cva: CreateRecipe;
 //#endregion
@@ -83,8 +83,7 @@ type SlotRecipe<Slot extends string, Props, Composition = unknown> = RecipeFunct
   readonly variantOptions: VariantOptions<Props>;
   readonly defaultVariants: VariantDefaults<Props>;
 } & Composable<Composition>;
-type CreateSlotRecipe = <const Slot extends string, const Variants extends SlotRecipeVariants, const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<string>[] = readonly []>(config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>) => NoInfer<ComposedSlotRecipe<Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number], ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>>;
-type ComposedSlotRecipe<Slot extends string, Variants, DefaultedName extends keyof Variants> = SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>, RecipeComposition$1<Variants, DefaultedName, string, readonly Slot[]>>;
+type CreateSlotRecipe = <const Slot extends string, const Variants extends SlotRecipeVariants, const DefaultedName extends keyof ComposedVariants$1<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe$1<string>[] = readonly []>(config: SlotRecipeConfig<Slot, Variants, DefaultedName, Composed>) => NoInfer<SlotRecipe<RecipeSlot<Slot, Composed>, SlotRecipeProps<RecipeSlot<Slot, Composed>, ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>, RecipeComposition$1<ComposedVariants$1<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, string, readonly RecipeSlot<Slot, Composed>[]>>>;
 declare const createSlotRecipe: CreateSlotRecipe;
 declare const sva: CreateSlotRecipe;
 //#endregion
@@ -103,6 +102,8 @@ interface Recipes {
 declare function createRecipes(options?: RecipesOptions): Recipes;
 //#endregion
 //#region src/recipe-of.d.ts
+type ComposedRecipe<Variants, DefaultedName extends keyof Variants> = Recipe<RecipeProps<Variants, DefaultedName>, RecipeComposition$1<Variants, DefaultedName, string, undefined>>;
+type ComposedSlotRecipe<Slot extends string, Variants, DefaultedName extends keyof Variants> = SlotRecipe<Slot, SlotRecipeProps<Slot, Variants, DefaultedName>, RecipeComposition$1<Variants, DefaultedName, string, readonly Slot[]>>;
 interface RecipeConfigParts {
   readonly composes?: never;
   readonly variants: RecipeVariants;
