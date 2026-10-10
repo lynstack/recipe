@@ -212,6 +212,15 @@ function defineComposedStyle<
 A slot recipe's helper does the same with `KindSlotRecipeConfig` and
 `ComposableKindSlotRecipe<Style>`.
 
+### Write the return type
+
+Write the return type of a helper, as `defineStyle` and
+`defineComposedStyle` do, rather than leaving it to TypeScript.
+TypeScript can write the declaration of a helper without one, but it then
+spells out the type of the recipe, whose size depends on the recipes that
+the config composes and on the version of TypeScript that writes it. A
+declaration that names the return type stays small.
+
 ## A function that takes any recipe
 
 A function that takes any recipe, such as one that lists the options of

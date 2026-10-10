@@ -172,6 +172,18 @@ A function that takes a recipe rather than a config, such as one that
 lists the options of each variant for a story, is typed in
 [A function that takes any recipe](/recipe/class-recipe/typescript/#a-function-that-takes-any-recipe).
 
+### Write the return type
+
+Write the return type of a helper, as `define` and `defineComposed` do,
+rather than leaving it to TypeScript. TypeScript can write the
+declaration of a helper without one, but it then spells out the type of
+the recipe, whose size depends on the recipes that the config composes
+and on the version of TypeScript that writes it. A declaration that names
+the return type stays small. For example, when TypeScript 5.8 writes the
+declaration of a helper that composes a recipe of its library, a project
+on TypeScript 5.8 that calls the helper fails with TS2589, "Type
+instantiation is excessively deep and possibly infinite."
+
 ## Next steps
 
 - [Composing recipes](/recipe/class-recipe/composing/) explains how the
