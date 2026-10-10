@@ -1,20 +1,20 @@
 {
   "cpu": "Apple M1 Pro",
-  "date": "2026-10-09",
+  "date": "2026-10-10",
   "node": "24.21.0",
   "slotStyleRecipeCache": [
-    { "hz": 15809111.0951503, "name": "cached" },
-    { "hz": 1394610.4298617225, "name": "uncached" }
+    { "hz": 15109077.59765384, "name": "cached" },
+    { "hz": 1427265.4413141708, "name": "uncached" }
   ],
   "styleRecipeCache": [
-    { "hz": 15199960.318411332, "name": "cached" },
-    { "hz": 3453340.9008842474, "name": "uncached" }
+    { "hz": 15016442.402158592, "name": "cached" },
+    { "hz": 3174307.676406076, "name": "uncached" }
   ],
   "themedStyleRecipe": [
-    { "hz": 16069988.248372965, "name": "plain" },
-    { "hz": 15264344.642211683, "name": "themed, one theme" },
-    { "hz": 15012692.433599634, "name": "themed, two themes" },
-    { "hz": 3589453.650256439, "name": "uncached" }
+    { "hz": 15561095.253870059, "name": "plain" },
+    { "hz": 14496185.752618346, "name": "themed, one theme" },
+    { "hz": 14359466.295252614, "name": "themed, two themes" },
+    { "hz": 3473864.5460327594, "name": "uncached" }
   ],
   "versions": { "native-recipe": "1.8.0" }
 }

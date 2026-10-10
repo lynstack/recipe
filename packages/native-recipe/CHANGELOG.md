@@ -5,7 +5,7 @@ published on npm and as a
 [GitHub release](https://github.com/lynstack/recipe/releases) tagged
 `native-recipe@<version>`.
 
-## Unreleased
+## 1.8.1 — 2026-10-10
 
 ### Changed
 
