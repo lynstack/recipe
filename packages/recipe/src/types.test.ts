@@ -2,15 +2,16 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type {
   KindRecipe,
-  KindRecipeConfig,
-  KindVariants,
-} from "./recipe-kind.js";
+  VariantKey,
+  VariantSelection,
+  VariantsOf,
+} from "./types.js";
+import type { KindRecipeConfig, KindVariants } from "./recipe-kind.js";
 import type {
   KindSlotRecipeConfig,
   KindSlotVariants,
 } from "./slot-recipe-kind.js";
 import type { NoUnknownSlots, UnknownSlot } from "./unknown-slots.js";
-import type { VariantKey, VariantSelection, VariantsOf } from "./types.js";
 import type { KindSelection } from "./kind-selection.js";
 import { createRecipeKind } from "./recipe-kind.js";
 import { createSlotRecipeKind } from "./slot-recipe-kind.js";

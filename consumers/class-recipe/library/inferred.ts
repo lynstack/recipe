@@ -1,4 +1,6 @@
 import type {
+  ComposableKindRecipe,
+  ComposedVariants,
   RecipeConfig,
   RecipeVariants,
   SlotRecipeConfig,
@@ -32,4 +34,14 @@ function defineSlotRecipe<
   return sva(config);
 }
 
-export { defineRecipe, defineSlotRecipe, defineVariants };
+/** Creates a recipe from any config, which may compose others. */
+function defineComposedRecipe<
+  const Variants extends RecipeVariants,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<string>[] = readonly [],
+>(config: RecipeConfig<Variants, DefaultedName, Composed>) {
+  return cva(config);
+}
+
+export { defineComposedRecipe, defineRecipe, defineSlotRecipe, defineVariants };

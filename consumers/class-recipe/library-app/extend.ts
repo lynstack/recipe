@@ -5,6 +5,7 @@ import {
   defineRecipe,
   defineSlotRecipe,
   defineComposed,
+  defineComposedRecipe,
   defineComposedSlots,
   defineSlots,
   defineVariants,
@@ -61,6 +62,10 @@ const drawer = defineComposedSlots({
 });
 const footedDialog = withFooter(dialog);
 const ghost = defineVariants({ ghost: { true: "bg-transparent" } });
+const outline = defineComposedRecipe({
+  composes: [button],
+  variants: { outlined: { true: "border" } },
+});
 const banner = defineRecipe({
   defaultVariants: { tone: "info" },
   variants: { tone: { info: "bg-blue-100", warn: "bg-amber-100" } },
@@ -71,6 +76,7 @@ const tabs = defineSlotRecipe({
 });
 
 const ghostClassName: string = ghost({ ghost: true });
+const outlineClassName: string = outline({ outlined: true, size: "sm" });
 const bannerClassName: string = banner({ tone: "warn" });
 const tabsClassNames: Readonly<Record<"list" | "tab", string>> = tabs({
   size: "sm",
@@ -106,6 +112,7 @@ export {
   footedDialogClassNames,
   ghostClassName,
   linkClassName,
+  outlineClassName,
   pressableClassName,
   sheetClassNames,
   switchClassNames,

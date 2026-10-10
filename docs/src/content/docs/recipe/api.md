@@ -45,12 +45,18 @@ type CreateKindRecipe<Value, Result> = <
   const Composed extends readonly ComposableKindRecipe<Value>[] = readonly [],
 >(
   config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>,
-) => ComposedKindRecipe<
-  ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>,
-  Value,
+) => KindRecipe<
+  KindSelection<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>
+  >,
   Result,
-  undefined
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    Value,
+    undefined
+  >
 >;
 ```
 
@@ -63,8 +69,7 @@ the option names of each variant as literal types:
 - `Composed`, the recipes that `composes` lists, as a tuple.
 
 [`InheritedDefaultedName`](#composition) is the names of the variants
-that the recipes of `composes` give a default. `ComposedKindRecipe`, which
-is not exported, is a
+that the recipes of `composes` give a default. The recipe is a
 [`KindRecipe`](#kindrecipe) whose selection is the
 [`KindSelection`](#kindselection) of the variants of the config and of the
 recipes it composes, and whose `Composition` is a
@@ -181,22 +186,24 @@ type CreateKindSlotRecipe<Value, Result> = <
     readonly [],
 >(
   config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>,
-) => ComposedKindRecipe<
-  ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>,
-  Value,
-  Readonly<
-    Record<
-      | Slot
-      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
-      Result
-    >
+) => KindRecipe<
+  KindSelection<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>
   >,
-  readonly (
-    Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
-  )[]
+  Readonly<Record<RecipeSlot<Slot, Composed>, Result>>,
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    Value,
+    readonly RecipeSlot<Slot, Composed>[]
+  >
 >;
 ```
+
+`RecipeSlot<Slot, Composed>`, which is not exported, is `Slot` and the
+slots of the slot recipes it composes:
+`Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]`.
 
 Takes a config and returns a slot recipe: a [`KindRecipe`](#kindrecipe)
 whose result is a frozen object of each slot's result, keyed by slot name.

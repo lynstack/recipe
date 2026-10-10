@@ -4,6 +4,15 @@ All notable changes to `@lynstack/recipe`. Each version is published on
 npm and as a [GitHub release](https://github.com/lynstack/recipe/releases)
 tagged `recipe@<version>`.
 
+## Unreleased
+
+### Fixed
+
+- A function that returns a recipe of a kind without a return type, and
+  whose config composes recipes, such as a library's helper, emits
+  declarations that compile without `skipLibCheck`; declarations name
+  `KindRecipe`, and are smaller.
+
 ## 1.9.0 — 2026-10-09
 
 ### Added

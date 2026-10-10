@@ -6,6 +6,7 @@ import {
   chip,
   define,
   defineComposed,
+  defineComposedRecipe,
   defineRecipe,
   defineSlotRecipe,
   defineSlots,
@@ -62,6 +63,10 @@ const alert = defineSlots({
 });
 const footedField = withFooter(field);
 const footedButton = withFooter(button);
+const pressable = defineComposedRecipe({
+  composes: [box],
+  variants: { pressed: { true: { opacity: 0.8 } } },
+});
 const notice = defineRecipe({
   defaultVariants: { tone: "info" },
   variants: { tone: { info: { opacity: 1 }, warn: { opacity: 0.8 } } },
@@ -86,6 +91,10 @@ const pillTagStyles: SlotStyles<"close" | "label" | "root"> = pillTag(
   isolatedLight,
   { closable: true, size: "sm" },
 );
+const pressableStyle: NativeStyle = pressable({
+  pressed: true,
+  tone: "danger",
+});
 const noticeStyle: NativeStyle = notice({ tone: "warn" });
 const tabsStyles: SlotStyles<"list" | "tab"> = tabs({ size: "sm" });
 const spacerStyle: NativeStyle = spacer(light, { size: "md" });
@@ -106,6 +115,7 @@ export {
   footedButtonStyles,
   footedFieldStyles,
   noticeStyle,
+  pressableStyle,
   pillTagStyles,
   sheetStyles,
   spacerStyle,

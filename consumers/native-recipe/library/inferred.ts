@@ -1,4 +1,6 @@
 import type {
+  ComposableKindRecipe,
+  ComposedVariants,
   NativeStyle,
   SlotStyleCompoundVariant,
   SlotStyleRecipeConfig,
@@ -56,4 +58,26 @@ function defineThemedRecipe<
   return themed.createStyleRecipe(config);
 }
 
-export { defineRecipe, defineSlotRecipe, defineThemedRecipe };
+/** Creates a recipe from any config, which may compose others. */
+function defineComposedRecipe<
+  const Variants extends StyleRecipeVariants,
+  const Base extends NativeStyle = never,
+  const Compounds extends readonly StyleCompoundVariant<
+    NoInfer<ComposedVariants<Composed, Variants>>
+  >[] = readonly [],
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<NativeStyle>[] =
+    readonly [],
+>(
+  config: StyleRecipeConfig<Variants, Base, Compounds, DefaultedName, Composed>,
+) {
+  return createStyleRecipe(config);
+}
+
+export {
+  defineComposedRecipe,
+  defineRecipe,
+  defineSlotRecipe,
+  defineThemedRecipe,
+};

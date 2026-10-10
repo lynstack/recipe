@@ -4,6 +4,7 @@ import {
   classRecipe,
   define,
   defineComposed,
+  defineComposedRecipe,
   defineComposedSlots,
   defineRecipe,
   defineSlots,
@@ -71,12 +72,17 @@ const drawer = defineComposedSlots({
   variants: { tone: { dark: { footer: { borderColor: "white" } } } },
 });
 const footedDialog = withFooter(dialog);
+const emphasis = defineComposedRecipe({
+  composes: [text],
+  variants: { italic: { true: { fontStyle: "italic" } } },
+});
 const ghost = defineVariants({ ghost: { true: { opacity: 0 } } });
 const notice = defineRecipe({
   defaultVariants: { tone: "info" },
   variants: { tone: { info: { color: "blue" }, warn: { color: "orange" } } },
 });
 
+const emphasisStyle: Style = emphasis({ italic: true, size: "lg" });
 const ghostStyle: Style = ghost({ ghost: true });
 const noticeStyle: Style = notice({ tone: "warn" });
 const captionStyle: Style = caption({ italic: true, size: "sm" });
@@ -105,6 +111,7 @@ export {
   captionStyle,
   displayStyle,
   drawerStyles,
+  emphasisStyle,
   fieldStyles,
   footedDialogStyles,
   ghostStyle,

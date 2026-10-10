@@ -1,4 +1,5 @@
 declare const ghostClassName: string;
+declare const outlineClassName: string;
 declare const bannerClassName: string;
 declare const tabsClassNames: Readonly<Record<"list" | "tab", string>>;
 declare const linkClassName: string;
@@ -11,4 +12,4 @@ declare const fabClassName: string;
 declare const alertClassNames: Readonly<Record<"icon" | "root", string>>;
 declare const drawerClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
 declare const footedDialogClassNames: Readonly<Record<"body" | "footer" | "root" | "title", string>>;
-export { alertClassNames, bannerClassName, avatarClassName, comboboxClassNames, drawerClassNames, fabClassName, footedDialogClassNames, ghostClassName, linkClassName, pressableClassName, sheetClassNames, switchClassNames, tabsClassNames, };
+export { alertClassNames, bannerClassName, avatarClassName, comboboxClassNames, drawerClassNames, fabClassName, footedDialogClassNames, ghostClassName, linkClassName, outlineClassName, pressableClassName, sheetClassNames, switchClassNames, tabsClassNames, };

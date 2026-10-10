@@ -1,4 +1,4 @@
-import type { KindRecipe } from "./recipe-kind.js";
+import type { KindRecipe } from "./types.js";
 import type { KindSelection } from "./kind-selection.js";
 
 /**
@@ -171,6 +171,16 @@ type ComposedKindRecipe<
   RecipeComposition<Variants, DefaultedName, Value, Slots>
 >;
 
+/**
+ * The slots of a slot recipe and of those it composes. Not ComposedSlot,
+ * which declarations print with each composed type.
+ */
+type RecipeSlot<
+  Slot extends string,
+  Composed extends readonly ComposableKindSlotRecipe<unknown>[],
+> =
+  Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
+
 export type {
   Composable,
   ComposableKindRecipe,
@@ -182,4 +192,5 @@ export type {
   InheritedDefaultedName,
   InheritedSlot,
   RecipeComposition,
+  RecipeSlot,
 };

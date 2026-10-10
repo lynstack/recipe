@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { KindRecipe, KindVariants } from "./recipe-kind.js";
+import type { KindRecipe } from "./types.js";
 import type { KindSelection } from "./kind-selection.js";
 import type { KindSlotVariants } from "./slot-recipe-kind.js";
+import type { KindVariants } from "./recipe-kind.js";
 import { createRecipeKind } from "./recipe-kind.js";
 import { createSlotRecipeKind } from "./slot-recipe-kind.js";
 

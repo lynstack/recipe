@@ -1,173 +1,121 @@
-declare const level0: ((props: {
+declare const level0: import("@lynstack/recipe").KindRecipe<{
     readonly size: "md" | "sm";
-}) => Readonly<Record<"root", string>>) & {
-    readonly variantKeys: readonly "size"[];
-    readonly variantOptions: {
-        readonly size: readonly ("md" | "sm")[];
-    };
-    readonly defaultVariants: {};
-} & {
-    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
-        readonly size: {
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
+}, Readonly<Record<"root", string>>, import("@lynstack/recipe").RecipeComposition<{
+    readonly size: {
+        readonly md: {
+            readonly root: "h-8";
         };
-    }, never, string, readonly "root"[]> | undefined;
-};
-declare const level1: ((props: {
+        readonly sm: {
+            readonly root: "h-6";
+        };
+    };
+}, never, string, readonly "root"[]>>;
+declare const level1: import("@lynstack/recipe").KindRecipe<{
     readonly size: "md" | "sm";
     readonly tone: "danger";
-}) => Readonly<Record<"icon" | "root", string>>) & {
-    readonly variantKeys: readonly ("size" | "tone")[];
-    readonly variantOptions: {
-        readonly size: readonly ("md" | "sm")[];
-        readonly tone: readonly "danger"[];
+}, Readonly<Record<"icon" | "root", string>>, import("@lynstack/recipe").RecipeComposition<{
+    readonly size: {
+        readonly md: {
+            readonly root: "h-8";
+        };
+        readonly sm: {
+            readonly root: "h-6";
+        };
     };
-    readonly defaultVariants: {};
-} & {
-    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
-        readonly size: {
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
+    readonly tone: {
+        readonly danger: {
+            readonly icon: "text-red-700";
         };
-        readonly tone: {
-            readonly danger: {
-                readonly icon: "text-red-700";
-            };
-        };
-    }, never, string, readonly ("icon" | "root")[]> | undefined;
-};
-declare const level2: ((props: {
+    };
+}, never, string, readonly ("icon" | "root")[]>>;
+declare const level2: import("@lynstack/recipe").KindRecipe<{
     readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
-}) => Readonly<Record<"icon" | "label" | "root", string>>) & {
-    readonly variantKeys: readonly ("size" | "tone" | "weight")[];
-    readonly variantOptions: {
-        readonly size: readonly ("md" | "sm")[];
-        readonly tone: readonly "danger"[];
-        readonly weight: readonly "bold"[];
+}, Readonly<Record<"label" | ("icon" | "root"), string>>, import("@lynstack/recipe").RecipeComposition<{
+    readonly size: {
+        readonly md: {
+            readonly root: "h-8";
+        };
+        readonly sm: {
+            readonly root: "h-6";
+        };
     };
-    readonly defaultVariants: {};
-} & {
-    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
-        readonly size: {
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
+    readonly tone: {
+        readonly danger: {
+            readonly icon: "text-red-700";
         };
-        readonly tone: {
-            readonly danger: {
-                readonly icon: "text-red-700";
-            };
+    };
+    readonly weight: {
+        readonly bold: {
+            readonly label: "font-bold";
         };
-        readonly weight: {
-            readonly bold: {
-                readonly label: "font-bold";
-            };
-        };
-    }, never, string, readonly ("icon" | "label" | "root")[]> | undefined;
-};
-declare const level3: ((props: {
+    };
+}, never, string, readonly ("label" | ("icon" | "root"))[]>>;
+declare const level3: import("@lynstack/recipe").KindRecipe<{
     readonly shape: "round";
     readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
-}) => Readonly<Record<"badge" | "icon" | "label" | "root", string>>) & {
-    readonly variantKeys: readonly ("shape" | "size" | "tone" | "weight")[];
-    readonly variantOptions: {
-        readonly shape: readonly "round"[];
-        readonly size: readonly ("md" | "sm")[];
-        readonly tone: readonly "danger"[];
-        readonly weight: readonly "bold"[];
+}, Readonly<Record<"badge" | ("label" | ("icon" | "root")), string>>, import("@lynstack/recipe").RecipeComposition<{
+    readonly shape: {
+        readonly round: {
+            readonly badge: "rounded-full";
+        };
     };
-    readonly defaultVariants: {};
-} & {
-    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
-        readonly shape: {
-            readonly round: {
-                readonly badge: "rounded-full";
-            };
+    readonly size: {
+        readonly md: {
+            readonly root: "h-8";
         };
-        readonly size: {
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
+        readonly sm: {
+            readonly root: "h-6";
         };
-        readonly tone: {
-            readonly danger: {
-                readonly icon: "text-red-700";
-            };
+    };
+    readonly tone: {
+        readonly danger: {
+            readonly icon: "text-red-700";
         };
-        readonly weight: {
-            readonly bold: {
-                readonly label: "font-bold";
-            };
+    };
+    readonly weight: {
+        readonly bold: {
+            readonly label: "font-bold";
         };
-    }, never, string, readonly ("badge" | "icon" | "label" | "root")[]> | undefined;
-};
-declare const level4: ((props: {
+    };
+}, never, string, readonly ("badge" | ("label" | ("icon" | "root")))[]>>;
+declare const level4: import("@lynstack/recipe").KindRecipe<{
     readonly muted?: "false" | "true" | boolean | undefined;
     readonly shape: "round";
     readonly size: "md" | "sm";
     readonly tone: "danger";
     readonly weight: "bold";
-}) => Readonly<Record<"badge" | "hint" | "icon" | "label" | "root", string>>) & {
-    readonly variantKeys: readonly ("muted" | "shape" | "size" | "tone" | "weight")[];
-    readonly variantOptions: {
-        readonly muted: readonly ("false" | "true")[];
-        readonly shape: readonly "round"[];
-        readonly size: readonly ("md" | "sm")[];
-        readonly tone: readonly "danger"[];
-        readonly weight: readonly "bold"[];
+}, Readonly<Record<"hint" | ("badge" | ("label" | ("icon" | "root"))), string>>, import("@lynstack/recipe").RecipeComposition<{
+    readonly muted: {
+        readonly true: {
+            readonly hint: "opacity-50";
+        };
     };
-    readonly defaultVariants: {
-        readonly muted: "false" | "true";
+    readonly shape: {
+        readonly round: {
+            readonly badge: "rounded-full";
+        };
     };
-} & {
-    readonly "~composition"?: import("@lynstack/recipe").RecipeComposition<{
-        readonly muted: {
-            readonly true: {
-                readonly hint: "opacity-50";
-            };
+    readonly size: {
+        readonly md: {
+            readonly root: "h-8";
         };
-        readonly shape: {
-            readonly round: {
-                readonly badge: "rounded-full";
-            };
+        readonly sm: {
+            readonly root: "h-6";
         };
-        readonly size: {
-            readonly md: {
-                readonly root: "h-8";
-            };
-            readonly sm: {
-                readonly root: "h-6";
-            };
+    };
+    readonly tone: {
+        readonly danger: {
+            readonly icon: "text-red-700";
         };
-        readonly tone: {
-            readonly danger: {
-                readonly icon: "text-red-700";
-            };
+    };
+    readonly weight: {
+        readonly bold: {
+            readonly label: "font-bold";
         };
-        readonly weight: {
-            readonly bold: {
-                readonly label: "font-bold";
-            };
-        };
-    }, never, string, readonly ("badge" | "hint" | "icon" | "label" | "root")[]> | undefined;
-};
+    };
+}, never, string, readonly ("hint" | ("badge" | ("label" | ("icon" | "root"))))[]>>;
 export { level0, level1, level2, level3, level4 };

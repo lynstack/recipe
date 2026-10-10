@@ -1,4 +1,9 @@
-import type { KindRecipeConfig, KindVariants } from "@lynstack/recipe";
+import type {
+  ComposableKindRecipe,
+  ComposedVariants,
+  KindRecipeConfig,
+  KindVariants,
+} from "@lynstack/recipe";
 
 import type { Style } from "./recipes.js";
 import { styleRecipe } from "./recipes.js";
@@ -20,4 +25,14 @@ function defineRecipe<
   return styleRecipe(config);
 }
 
-export { defineRecipe, defineVariants };
+/** Creates a recipe from any config, which may compose others. */
+function defineComposedRecipe<
+  const Variants extends KindVariants<Style>,
+  const DefaultedName extends keyof ComposedVariants<Composed, Variants> =
+    never,
+  const Composed extends readonly ComposableKindRecipe<Style>[] = readonly [],
+>(config: KindRecipeConfig<Style, Variants, DefaultedName, Composed>) {
+  return styleRecipe(config);
+}
+
+export { defineComposedRecipe, defineRecipe, defineVariants };

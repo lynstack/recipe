@@ -1,22 +1,24 @@
 import type {
   ComposableKindSlotRecipe,
-  ComposedKindRecipe,
   ComposedVariants,
   InheritedDefaultedName,
   InheritedSlot,
+  RecipeComposition,
+  RecipeSlot,
 } from "./composition.js";
 import type {
   KindCompoundCondition,
+  KindSelection,
   SlotVariantsCheck,
   WrittenKindDefaults,
 } from "./kind-selection.js";
+import type { KindRecipe, RecipeKind } from "./types.js";
 import type { LooseSlotValues, SlotsKind } from "./slots.js";
 import type { SelectedVariants, WithVariants } from "./variants.js";
 import { compileVariants, withVariants } from "./variants.js";
 import { createRegistry, layerOf, mergeLayers } from "./compose.js";
 import { createSlotsBuilder, noSlotValues } from "./slots.js";
 import type { KindVariants } from "./recipe-kind.js";
-import type { RecipeKind } from "./types.js";
 import { checkSlotRecipeConfig } from "./check-config.js";
 import { createSelector } from "./selector.js";
 import { warnUnknownNames } from "./check-names.js";
@@ -133,21 +135,18 @@ type CreateKindSlotRecipe<Value, Result> = <
     readonly [],
 >(
   config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>,
-) => ComposedKindRecipe<
-  ComposedVariants<Composed, Variants>,
-  DefaultedName | InheritedDefaultedName<Composed, Variants>,
-  Value,
-  // Not ComposedSlot, which declarations print with each composed type.
-  Readonly<
-    Record<
-      | Slot
-      | Exclude<Composed[number]["~composition"], undefined>["slots"][number],
-      Result
-    >
+) => KindRecipe<
+  KindSelection<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>
   >,
-  readonly (
-    Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number]
-  )[]
+  Readonly<Record<RecipeSlot<Slot, Composed>, Result>>,
+  RecipeComposition<
+    ComposedVariants<Composed, Variants>,
+    DefaultedName | InheritedDefaultedName<Composed, Variants>,
+    Value,
+    readonly RecipeSlot<Slot, Composed>[]
+  >
 >;
 
 interface LooseRecipeKind extends SlotsKind {

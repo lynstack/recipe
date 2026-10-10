@@ -12,7 +12,6 @@ export { createRecipeKind } from "./recipe-kind.js";
 export type {
   CreateKindRecipe,
   KindCompoundVariant,
-  KindRecipe,
   KindRecipeConfig,
   KindVariants,
 } from "./recipe-kind.js";
@@ -39,6 +38,7 @@ export type {
 export type {
   CompoundCondition,
   DefaultVariants,
+  KindRecipe,
   RecipeFunction,
   RecipeKind,
   VariantKey,

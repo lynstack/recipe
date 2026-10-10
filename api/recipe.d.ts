@@ -23,6 +23,11 @@ interface RecipeKind<Value, Accumulator, Result> {
   readonly finish?: ((accumulator: Accumulator) => Result) | undefined;
   readonly cache?: boolean | undefined;
 }
+type KindRecipe<Selection, Result, Composition = unknown> = RecipeFunction<Selection, Result> & {
+  readonly variantKeys: readonly VariantKey<Selection>[];
+  readonly variantOptions: VariantOptions<Selection>;
+  readonly defaultVariants: SelectionDefaults<Selection>;
+} & Composable<Composition>;
 //#endregion
 //#region src/unknown-slots.d.ts
 type NoUnknownSlots<Variants, Slot extends string> = NoUnknownComposedSlots<Variants, Slot, never>;
@@ -48,7 +53,7 @@ interface KindSlotRecipeConfig<Slot extends string, Value, Variants extends Kind
   readonly defaultVariants?: WrittenKindDefaults<ComposedVariants<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }
-type CreateKindSlotRecipe<Value, Result> = <const Slot extends string, const Variants extends KindSlotVariants<Value>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe<Value>[] = readonly []>(config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>) => ComposedKindRecipe<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, Value, Readonly<Record<Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number], Result>>, readonly (Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number])[]>;
+type CreateKindSlotRecipe<Value, Result> = <const Slot extends string, const Variants extends KindSlotVariants<Value>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindSlotRecipe<Value>[] = readonly []>(config: KindSlotRecipeConfig<Slot, Value, Variants, DefaultedName, Composed>) => KindRecipe<KindSelection<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>, Readonly<Record<RecipeSlot<Slot, Composed>, Result>>, RecipeComposition<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, Value, readonly RecipeSlot<Slot, Composed>[]>>;
 declare function createSlotRecipeKind<Value, Accumulator, Result = Accumulator>(kind: RecipeKind<Value, Accumulator, Result>): CreateKindSlotRecipe<Value, Result>;
 //#endregion
 //#region src/kind-selection.d.ts
@@ -86,6 +91,7 @@ type SlotOf<Slots> = Slots extends readonly (infer Slot extends string)[] ? Slot
 type ComposableKindRecipe<Value> = Composable<RecipeComposition<object, PropertyKey, Value, undefined>>;
 type ComposableKindSlotRecipe<Value> = Composable<RecipeComposition<object, PropertyKey, Value, readonly string[]>>;
 type ComposedKindRecipe<Variants, DefaultedName extends keyof Variants, Value, Result, Slots> = KindRecipe<KindSelection<Variants, DefaultedName>, Result, RecipeComposition<Variants, DefaultedName, Value, Slots>>;
+type RecipeSlot<Slot extends string, Composed extends readonly ComposableKindSlotRecipe<unknown>[]> = Slot | Exclude<Composed[number]["~composition"], undefined>["slots"][number];
 //#endregion
 //#region src/variants.d.ts
 type LooseVariants<Value> = Readonly<Record<string, Readonly<Record<string, Value>>>>;
@@ -104,12 +110,7 @@ interface KindRecipeConfig<Value, Variants extends KindVariants<Value>, Defaulte
   readonly defaultVariants?: WrittenKindDefaults<ComposedVariants<Composed, Variants>, DefaultedName> | undefined;
   readonly cache?: boolean | undefined;
 }
-type KindRecipe<Selection, Result, Composition = unknown> = RecipeFunction<Selection, Result> & {
-  readonly variantKeys: readonly VariantKey<Selection>[];
-  readonly variantOptions: VariantOptions<Selection>;
-  readonly defaultVariants: SelectionDefaults<Selection>;
-} & Composable<Composition>;
-type CreateKindRecipe<Value, Result> = <const Variants extends KindVariants<Value>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe<Value>[] = readonly []>(config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>) => ComposedKindRecipe<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, Value, Result, undefined>;
+type CreateKindRecipe<Value, Result> = <const Variants extends KindVariants<Value>, const DefaultedName extends keyof ComposedVariants<Composed, Variants> = never, const Composed extends readonly ComposableKindRecipe<Value>[] = readonly []>(config: KindRecipeConfig<Value, Variants, DefaultedName, Composed>) => KindRecipe<KindSelection<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>>, Result, RecipeComposition<ComposedVariants<Composed, Variants>, DefaultedName | InheritedDefaultedName<Composed, Variants>, Value, undefined>>;
 declare function createRecipeKind<Value, Accumulator, Result = Accumulator>(kind: RecipeKind<Value, Accumulator, Result>): CreateKindRecipe<Value, Result>;
 //#endregion
 //#region src/recipe-of.d.ts

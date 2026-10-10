@@ -1,4 +1,5 @@
 import type { Style } from "recipe-library";
+declare const emphasisStyle: Style;
 declare const ghostStyle: Style;
 declare const noticeStyle: Style;
 declare const captionStyle: Style;
@@ -12,4 +13,4 @@ declare const labelStyle: Style;
 declare const fieldStyles: Readonly<Record<"input" | "label", Style>>;
 declare const drawerStyles: Readonly<Record<"footer" | "root" | "title", Style>>;
 declare const footedDialogStyles: Readonly<Record<"footer" | "root" | "title", Style>>;
-export { badgeStyle, bannerStyle, captionStyle, displayStyle, drawerStyles, fieldStyles, footedDialogStyles, ghostStyle, labelStyle, navLinkClassName, noticeStyle, panelStyles, sheetStyles, };
+export { badgeStyle, bannerStyle, captionStyle, displayStyle, drawerStyles, emphasisStyle, fieldStyles, footedDialogStyles, ghostStyle, labelStyle, navLinkClassName, noticeStyle, panelStyles, sheetStyles, };

@@ -3,12 +3,12 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import type {
   CompoundCondition,
   DefaultVariants,
+  KindRecipe,
   RecipeFunction,
   VariantOption,
   VariantSelection,
   VariantsOf,
 } from "./types.js";
-import type { KindRecipe } from "./recipe-kind.js";
 import type { KindSelection } from "./kind-selection.js";
 import { createRecipeKind } from "./recipe-kind.js";
 

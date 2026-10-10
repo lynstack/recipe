@@ -6,5 +6,10 @@ export {
   defineSlots,
   withFooter,
 } from "./helpers.js";
-export { defineRecipe, defineSlotRecipe, defineVariants } from "./inferred.js";
+export {
+  defineComposedRecipe,
+  defineRecipe,
+  defineSlotRecipe,
+  defineVariants,
+} from "./inferred.js";
 export { badge, button, card, dialog, ds, iconButton } from "./recipes.js";
